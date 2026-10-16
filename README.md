@@ -22,3 +22,7 @@ git add -A && git commit -m "Update site" && git push
 ```
 
 Every push to `main` deploys `site/` through `.github/workflows/pages.yml`.
+
+## Search engines
+
+While the content is being finished, the build keeps the site out of search engines: `robots.txt` disallows everything and every page carries `<meta name="robots" content="noindex">`. When it's ready to be found, build with `node tools/build.mjs --public` (or set `ALLOW_INDEXING` to `true` in `tools/build.mjs`) and push.

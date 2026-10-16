@@ -11,6 +11,10 @@ const SRC = join(ROOT, 'src');
 const OUT = join(ROOT, 'site');
 const DOMAIN = 'craga.dev';
 const PRERENDER = !process.argv.includes('--no-prerender');
+// Keep search engines out while the content is being finished.
+// Set to true (or run with --public) when the site is ready to be found.
+const ALLOW_INDEXING = process.argv.includes('--public') || false;
+const ROBOTS_META = ALLOW_INDEXING ? '' : '\n<meta name="robots" content="noindex, nofollow, noarchive">';
 
 const between = (s, a, b, from = 0) => {
   const i = s.indexOf(a, from);
@@ -32,7 +36,7 @@ function splitDesign(file) {
 }
 
 // Paths are relative so the same build works at craga.dev/ and at craga89.github.io/portfolio/.
-const meta = (root) => `<meta name="viewport" content="width=device-width, initial-scale=1">
+const meta = (root) => `<meta name="viewport" content="width=device-width, initial-scale=1">${ROBOTS_META}
 <meta name="color-scheme" content="dark light">
 <link rel="icon" href="${root}favicon.svg" type="image/svg+xml">`;
 
@@ -110,7 +114,7 @@ const NOT_FOUND = `<!doctype html>
 <head>
 <meta charset="utf-8">
 <title>Not found · craga.dev</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1">${ROBOTS_META}
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Red+Hat+Mono:wght@400;700&display=swap">
 <style>
 body{margin:0;min-height:100vh;display:grid;place-items:center;background:#16271F;color:#E7EEEA;font-family:'Red Hat Mono',ui-monospace,monospace;padding:24px;box-sizing:border-box}
@@ -192,7 +196,9 @@ writeOut('404.html', NOT_FOUND);
 writeOut('favicon.svg', FAVICON);
 writeOut('CNAME', DOMAIN + '\n');
 writeOut('.nojekyll', '');
-writeOut('robots.txt', `User-agent: *\nAllow: /\nSitemap: https://${DOMAIN}/sitemap.xml\n`);
+writeOut('robots.txt', ALLOW_INDEXING
+  ? `User-agent: *\nAllow: /\nSitemap: https://${DOMAIN}/sitemap.xml\n`
+  : 'User-agent: *\nDisallow: /\n');
 const today = new Date().toISOString().slice(0, 10);
 writeOut('sitemap.xml', `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
