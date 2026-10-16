@@ -30,7 +30,7 @@
       "position": "Head of Engineering",
       "location": "Newcastle upon Tyne, UK",
       "startDate": "2018-12",
-      "summary": "Led engineering for a multi-tenant B2B SaaS platform running 24/7 for enterprise customers, with a cross-functional team of up to 12 engineers, through to the company's acquisition by WorkBuzz.",
+      "summary": "Led engineering for a multi-tenant B2B SaaS employee engagement platform running 24/7 for enterprise, mid-market and SME customers, with a cross-functional team of up to 12 engineers, through to the company's acquisition by WorkBuzz.",
       "highlights": [
         "Led the department's shift to AI-first engineering over the past year: most code is now AI-generated and reviewed by AI alongside human reviewers, against in-repo style and coding guidelines.",
         "Helped start an AI agent service built with Mastra on Amazon Bedrock with evals in CI.",
