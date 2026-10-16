@@ -100,6 +100,59 @@ function seoHead(head, { title, desc, url, type, today }) {
   return head.replace(/(<link rel="canonical"[^>]*>)/, `$1\n${social({ title, desc, url, type })}`);
 }
 
+// ---------- devtools greeting ----------
+// A terminal-styled hello for anyone who opens the console, plus ask("…") to query ask.sh from there.
+const BANNER = " ██████╗ ██████╗   █████╗  ██╗  ██████╗ \n██╔════╝ ██╔══██╗ ██╔══██╗ ██║ ██╔════╝ \n██║      ██████╔╝ ███████║ ██║ ██║  ███╗\n██║      ██╔══██╗ ██╔══██║ ██║ ██║   ██║\n╚██████╗ ██║  ██║ ██║  ██║ ██║ ╚██████╔╝\n ╚═════╝ ╚═╝  ╚═╝ ╚═╝  ╚═╝ ╚═╝  ╚═════╝ ";
+const CONSOLE_HELLO = `
+  (function () {
+    if (window.__cragaHello) return;
+    window.__cragaHello = true;
+    var bg = 'background:#16271F;';
+    var pad = bg + 'padding:2px 14px;font-family:"Red Hat Mono",ui-monospace,Menlo,Consolas,monospace;font-size:12px;line-height:1.5;';
+    var S = {
+      art: bg + 'color:#8EC3E6;padding:14px 14px 6px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11px;line-height:1.05;',
+      cmd: pad + 'color:#B7D47A;',
+      dim: pad + 'color:#99B0A5;',
+      head: pad + 'color:#F6F8F4;font-weight:700;font-size:13px;',
+      text: pad + 'color:#D9E4DD;',
+      key: pad + 'color:#99B0A5;',
+      link: pad + 'color:#8EC3E6;',
+      end: bg + 'padding:0 14px 12px;color:#99B0A5;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;',
+    };
+    var parts = [
+      ['art', ${JSON.stringify(BANNER)}],
+      ['cmd', '\\n$ whoami'],
+      ['head', '\\nCraig Michael Thompson'],
+      ['text', '\\nHead of Engineering · hands-on, AI-first · Newcastle upon Tyne, UK'],
+      ['dim', '\\n● open to new roles'],
+      ['cmd', '\\n\\n$ ls ./links'],
+      ['key', '\\nemail    '], ['link', 'craga89@gmail.com'],
+      ['key', '\\ngithub   '], ['link', 'https://github.com/Craga89'],
+      ['key', '\\nlinkedin '], ['link', 'https://www.linkedin.com/in/craigmichaelthompson/'],
+      ['key', '\\ncv       '], ['link', '${SITE}/cv/'], ['dim', ' (or /cv.json, JSON Resume)'],
+      ['key', '\\nsource   '], ['link', 'https://github.com/Craga89/portfolio'],
+      ['cmd', '\\n\\n$ ask("What roles is he looking for?")'],
+      ['end', '\\n# ask.sh works from here too: ask() any question about my experience.\\n'],
+    ];
+    try { console.log(parts.map(function (p) { return '%c' + p[1]; }).join(''), ...parts.map(function (p) { return S[p[0]]; })); } catch (e) {}
+    if (!('ask' in window)) {
+      window.ask = function (q) {
+        q = String(q || '').trim();
+        if (!q) return 'Try: ask("Has he been through an acquisition?")';
+        var cfg = window.CRAGA_ASK || {};
+        if (!cfg.endpoint) return 'ask.sh is only connected on the live site.';
+        fetch(cfg.endpoint, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ q: q }) })
+          .then(function (r) { return r.ok ? r.json() : Promise.reject(r.status); })
+          .then(function (d) {
+            console.log('%c$ ./ask.sh ' + JSON.stringify(q) + '%c\\n' + d.answer + (d.sources && d.sources.length ? '%c\\n# sources: ' + d.sources.join(', ') : '%c'),
+              S.cmd + 'padding-top:10px;', S.text + 'padding-bottom:' + (d.sources && d.sources.length ? '2px' : '12px') + ';', S.end);
+          })
+          .catch(function () { console.log('%cask.sh is busy right now. The ask.sh section on the page can still search the site.', S.end + 'padding-top:12px;'); });
+        return 'Asking ask.sh…';
+      };
+    }
+  })();`;
+
 // ---------- fonts (self-hosted, see tools/fetch-fonts.mjs) ----------
 // Metric-matched fallbacks: system fonts scaled to the web fonts' widths, so text doesn't
 // reflow (and shift the layout) when the web fonts arrive. Ratios measured with Chromium.
@@ -186,6 +239,7 @@ function buildHome(today) {
     return set.apply(this, arguments);
   };
 })();
+${CONSOLE_HELLO}
 `;
   const appName = 'assets/app.' + hash(app) + '.js';
   writeOut(appName, app);
