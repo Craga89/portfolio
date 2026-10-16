@@ -37,6 +37,8 @@ jobs:
       - name: Audit
         run: |
           mkdir -p out
+          # Read now: the Save step below switches to an orphan branch, which clears the checkout.
+          if grep -qx 'Disallow: /' site/robots.txt; then echo "INDEXED=0" >> "$GITHUB_ENV"; else echo "INDEXED=1" >> "$GITHUB_ENV"; fi
           sleep 20 # let the Pages CDN pick up a fresh deploy
           # Use the first address that serves the site (the new domain, then the old one while DNS moves).
           # A domain only counts if it serves this site (CRAGA_BUILD is in every build), not a redirect elsewhere.
@@ -81,7 +83,7 @@ jobs:
         run: |
           node -e '
             const s = require("./out/summary.json");
-            const indexed = !require("fs").readFileSync("site/robots.txt", "utf8").includes("Disallow: /");
+            const indexed = process.env.INDEXED === "1";
             const min = { performance: 95, accessibility: 100, "best-practices": 100, ...(indexed ? { seo: 100 } : {}) };
             let bad = 0;
             for (const preset of ["mobile", "desktop"]) {
