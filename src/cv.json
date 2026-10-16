@@ -199,7 +199,7 @@
         "VPC",
         "IAM",
         "Control Tower",
-        "GCP (limited)",
+        "GCP",
         "Azure (limited)"
       ]
     },

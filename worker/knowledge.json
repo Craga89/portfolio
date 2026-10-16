@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-16T11:22:08.126Z",
+ "generated": "2026-10-16T11:23:10.518Z",
  "passages": [
   {
    "id": "intro",
@@ -396,7 +396,7 @@
   {
    "id": "faq-17",
    "title": "FAQ: Which clouds do you know?",
-   "text": "Primarily AWS, with more limited exposure to GCP and Azure.",
+   "text": "Primarily AWS, with some GCP and more limited exposure to Azure.",
    "href": "#faq",
    "kind": "link",
    "key": ""
