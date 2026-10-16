@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-16T11:32:43.101Z",
+ "generated": "2026-10-16T11:35:56.852Z",
  "passages": [
   {
    "id": "intro",
@@ -372,7 +372,7 @@
   {
    "id": "faq-14",
    "title": "FAQ: Are you still hands-on?",
-   "text": "Yes. Alongside setting strategy and leading the team, I've kept writing code; several of the upstream pull requests on this page are recent.",
+   "text": "Yes. Alongside setting strategy and leading the team, I've remained a skilled, hands-on engineer and upskilled in AI-assisted development along the way. Several of the upstream pull requests on this page are recent.",
    "href": "#faq",
    "kind": "link",
    "key": ""
