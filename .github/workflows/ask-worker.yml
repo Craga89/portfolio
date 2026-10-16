@@ -35,3 +35,17 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           workingDirectory: worker
           wranglerVersion: '4'
+      - name: Smoke test
+        if: env.HAS_TOKEN == 'true'
+        run: |
+          sleep 5
+          for q in "Has he been through an acquisition?" "Where did he study?"; do
+            echo "Q: $q"
+            curl -sS -m 60 -X POST "$ASK_URL" -H 'origin: https://craga.dev' -H 'content-type: application/json' \
+              --data "$(jq -n --arg q "$q" '{q: $q}')" -w '\nHTTP %{http_code} in %{time_total}s\n'
+            echo
+          done
+          echo "Other origins are refused:"
+          curl -sS -o /dev/null -w 'HTTP %{http_code}\n' -X POST "$ASK_URL" -H 'origin: https://example.com' -H 'content-type: application/json' --data '{"q":"hi"}'
+        env:
+          ASK_URL: https://craga-ask.craga89.workers.dev/ask

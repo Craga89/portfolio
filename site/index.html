@@ -3860,7 +3860,7 @@ class Component extends DCLogic {
   try { saved = localStorage.getItem('theme'); } catch (e) {}
   var light = false;
   try { light = window.matchMedia('(prefers-color-scheme: light)').matches; } catch (e) {}
-  window.CRAGA_ASK = { endpoint: "", index: 'assets/ask-index.json' };
+  window.CRAGA_ASK = { endpoint: "https://craga-ask.craga89.workers.dev/ask", index: 'assets/ask-index.json' };
   var app = DCRuntime.mount({ root: '#app', template: '#dc-template', script: '#dc-component', props: { theme: saved || (light ? 'light' : 'dark') } });
   var set = app.c.setState;
   app.c.setState = function (p) {
