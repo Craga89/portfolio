@@ -4,7 +4,7 @@
     "name": "Craig Michael Thompson",
     "label": "Head of Engineering · Hands-on, AI-first",
     "email": "craga89@gmail.com",
-    "url": "https://craga.dev",
+    "url": "https://craigthompson.dev",
     "summary": "Head of Engineering and full-stack software engineer with 20+ years building for the web. Led Hive HR's engineering through to its acquisition by WorkBuzz, and drove the shift to AI-first delivery: most code is now AI-generated and AI-reviewed against in-repo standards. Still close to the code, from the 100+ package TypeScript monorepo and CI/CD to AWS architecture, auth and security. Looking for a hands-on technical leadership role. Remote first, flexible hybrid considered in the North East; 3-month notice.",
     "location": {
       "city": "Newcastle upon Tyne",
@@ -274,7 +274,7 @@
     }
   ],
   "meta": {
-    "canonical": "https://craga.dev/cv.json",
+    "canonical": "https://craigthompson.dev/cv.json",
     "version": "v1.0.0",
     "lastModified": "2026-10-16"
   },

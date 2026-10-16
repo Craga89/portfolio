@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-16T12:03:30.769Z",
+ "generated": "2026-10-16T12:20:17.740Z",
  "passages": [
   {
    "id": "intro",
@@ -404,7 +404,7 @@
   {
    "id": "faq-18",
    "title": "FAQ: Can I get a copy of your CV?",
-   "text": "Yes. There's a plain, one-page version at craga.dev/cv that you can print or save as a PDF, or email me and I'll send it.",
+   "text": "Yes. There's a plain, one-page version at craigthompson.dev/cv that you can print or save as a PDF, or email me and I'll send it.",
    "href": "#faq",
    "kind": "link",
    "key": ""

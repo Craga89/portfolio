@@ -11,7 +11,7 @@ export async function load(url, ctx, next) {
 }`));
 const mod = await import('../src/index.js');
 const worker = mod.default;
-const ORIGIN = 'https://craga.dev';
+const ORIGIN = 'https://craigthompson.dev';
 const req = (body, { origin = ORIGIN, method = 'POST', path = '/ask' } = {}) =>
   new Request('https://craga-ask.example.workers.dev' + path, { method, headers: { 'content-type': 'application/json', ...(origin ? { origin } : {}) }, body: method === 'POST' ? JSON.stringify(body) : undefined });
 

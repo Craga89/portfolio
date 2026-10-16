@@ -1,5 +1,5 @@
 /*
- * dc-runtime: a small standalone runtime for the craga.dev design files.
+ * dc-runtime: a small standalone runtime for the craigthompson.dev design files.
  *
  * It renders a <template> written in the design-canvas dialect:
  *   {{path}} holes in text and attributes, onClick/onChange/onKeyDown="{{fn}}",

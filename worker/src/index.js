@@ -1,4 +1,4 @@
-// craga-ask: answers questions about Craig's CV for the ask.sh section of craga.dev.
+// craga-ask: answers questions about Craig's CV for the ask.sh section of craigthompson.dev.
 // Runs on Cloudflare Workers AI's free daily allowance. When that's used up (or anything
 // fails) it returns an error and the site falls back to its own search.
 import knowledge from '../knowledge.json';
@@ -8,12 +8,12 @@ const MODELS = [
   '@cf/qwen/qwen3-30b-a3b-fp8',
   '@cf/meta/llama-3.1-8b-instruct-fp8-fast',
 ];
-const ALLOWED = [/^https:\/\/(www\.)?craga\.dev$/, /^https:\/\/craga89\.github\.io$/, /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/];
+const ALLOWED = [/^https:\/\/(www\.)?(craigthompson|craga)\.dev$/, /^https:\/\/craga89\.github\.io$/, /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/];
 const ALWAYS = ['intro', 'profile', 'faq-1', 'recognition'];
 const CONTEXT_CHARS = 14000;
 const MAX_Q = 300;
 
-const SYSTEM = `You answer questions from recruiters and hiring managers about Craig Michael Thompson, using only the CONTEXT passages from his portfolio site (craga.dev).
+const SYSTEM = `You answer questions from recruiters and hiring managers about Craig Michael Thompson, using only the CONTEXT passages from his portfolio site (craigthompson.dev).
 Rules:
 - Use only facts stated in CONTEXT. Never guess, embellish or add numbers, employers, dates or skills that are not there.
 - Each passage header shows its id and the site file it comes from, e.g. [resp-bud] (file: budget.md). In the answer text, where it helps, point the reader to that file name in a sentence, e.g. "See budget.md.". Never copy the "(file: …)" label itself, never make up file names, and keep passage ids (resp-bud, faq-1) out of the answer text: they belong only on the SOURCES line.

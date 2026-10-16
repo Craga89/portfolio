@@ -1,4 +1,4 @@
-// Builds the static craga.dev site from the design files in src/ into site/.
+// Builds the static craigthompson.dev site from the design files in src/ into site/.
 //   node tools/build.mjs            build + prerender (needs Playwright + Chromium)
 //   node tools/build.mjs --no-prerender
 import { readFileSync, writeFileSync, mkdirSync, copyFileSync, rmSync, existsSync, readdirSync } from 'node:fs';
@@ -10,7 +10,7 @@ import http from 'node:http';
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const SRC = join(ROOT, 'src');
 const OUT = join(ROOT, 'site');
-const DOMAIN = 'craga.dev';
+const DOMAIN = 'craigthompson.dev';
 const PRERENDER = !process.argv.includes('--no-prerender');
 // Keep search engines out while the content is being finished.
 // Set to true (or run with --public) when the site is ready to be found.
@@ -38,7 +38,7 @@ function splitDesign(file) {
   return { head, helmet, template, props: m[1], code: m[2] };
 }
 
-// Paths are relative so the same build works at craga.dev/ and at craga89.github.io/portfolio/.
+// Paths are relative so the same build works at craigthompson.dev/ and at craga89.github.io/portfolio/.
 const meta = (root) => `<meta name="viewport" content="width=device-width, initial-scale=1">${ROBOTS_META}
 <meta name="color-scheme" content="dark light">
 <meta name="theme-color" content="#16271F" media="(prefers-color-scheme: dark)">
@@ -57,7 +57,7 @@ const esc = (t) => String(t).replace(/&/g, '&amp;').replace(/"/g, '&quot;').repl
 function social({ title, desc, url, type }) {
   return [
     `<meta property="og:type" content="${type}">`,
-    `<meta property="og:site_name" content="craga.dev">`,
+    `<meta property="og:site_name" content="craigthompson.dev">`,
     `<meta property="og:locale" content="en_GB">`,
     `<meta property="og:title" content="${esc(title)}">`,
     `<meta property="og:description" content="${esc(desc)}">`,
@@ -65,7 +65,7 @@ function social({ title, desc, url, type }) {
     `<meta property="og:image" content="${SITE}/og.png">`,
     `<meta property="og:image:width" content="1200">`,
     `<meta property="og:image:height" content="630">`,
-    `<meta property="og:image:alt" content="Craig Michael Thompson, Head of Engineering. craga.dev">`,
+    `<meta property="og:image:alt" content="Craig Michael Thompson, Head of Engineering. craigthompson.dev">`,
     type === 'profile' ? `<meta property="profile:first_name" content="Craig">\n<meta property="profile:last_name" content="Thompson">` : '',
     `<meta name="twitter:card" content="summary_large_image">`,
     `<meta name="twitter:title" content="${esc(title)}">`,
@@ -174,6 +174,10 @@ function buildHome(today) {
   try { saved = localStorage.getItem('theme'); } catch (e) {}
   var light = false;
   try { light = window.matchMedia('(prefers-color-scheme: light)').matches; } catch (e) {}
+  document.addEventListener('focusin', function (e) {
+    var a = e.target && e.target.closest && e.target.closest('.v2-mbar nav a');
+    if (a) try { a.scrollIntoView({ block: 'nearest', inline: 'nearest' }); } catch (x) {}
+  });
   window.CRAGA_ASK = { endpoint: ${JSON.stringify(ASK.endpoint || '')}, index: 'assets/ask-index.json' };
   var app = DCRuntime.mount({ root: '#app', template: '#dc-template', script: '#dc-component', props: { theme: saved || (light ? 'light' : 'dark') } });
   var set = app.c.setState;
@@ -202,7 +206,7 @@ ${ASK.endpoint ? `<link rel="dns-prefetch" href="${new URL(ASK.endpoint).origin}
 ${fonts}
 ${FALLBACKS}
 .v2-ph picture{display:contents}
-.v2-main>section.c-rv{content-visibility:auto;contain-intrinsic-size:auto var(--cis,1000px)}
+.v2-main>section.c-rv{content-visibility:auto;contain-intrinsic-size:auto var(--cis,1000px);overflow-clip-margin:12px}
 .cv-all .v2-main>section.c-rv{content-visibility:visible}
 @media print{.v2-main>section.c-rv{content-visibility:visible}}
 /*CIS*/
@@ -229,7 +233,7 @@ function buildCV() {
   if (/\{\{/.test(body)) throw new Error('CV still has template holes');
   const today = new Date().toISOString().slice(0, 10);
   const title = (d.head.match(/<title>([\s\S]*?)<\/title>/) || [])[1] || 'CV';
-  let head = d.head.replace('href="https://craga.dev/cv"', 'href="https://craga.dev/cv/"');
+  let head = d.head.replace('href="https://craigthompson.dev/cv"', 'href="https://craigthompson.dev/cv/"');
   head = seoHead(head.trim(), { title: title.replace(/&amp;/g, '&'), desc: CV_DESC, url: SITE + '/cv/', type: 'website', today });
   const inter = existsSync(join(SRC, 'fonts', 'inter-latin-400.woff2'));
   const helmet = inter ? localFonts(d.helmet.trim()) : d.helmet.trim();
@@ -256,7 +260,7 @@ const NOT_FOUND = `<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Not found · craga.dev</title>
+<title>Not found · craigthompson.dev</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">${ROBOTS_META}
 <style>
 @font-face{font-family:'Red Hat Mono';font-weight:400 700;font-display:swap;src:url(/assets/fonts/red-hat-mono-latin-400.woff2) format('woff2')}
@@ -265,13 +269,13 @@ main{max-width:56ch}
 h1{font-size:20px;font-weight:400;color:#B7D47A;margin:0 0 12px}
 p{margin:0 0 20px;color:#C9D8CF;line-height:1.6}
 a{color:#8EC3E6}
-@media (prefers-color-scheme: light){body{background:#EDF1EE;color:#1B2A22}h1{color:#4E7A1E}p{color:#30403A}a{color:#1F6E9C}}
+@media (prefers-color-scheme: light){body{background:#EDF1EE;color:#1B2A22}h1{color:#43691A}p{color:#30403A}a{color:#1D6590}}
 </style>
 </head>
 <body>
 <main>
 <h1>$ cat this-page<br>cat: this-page: No such file or directory</h1>
-<p>That address doesn't exist on craga.dev. It may have moved when the site was rebuilt.</p>
+<p>That address doesn't exist on craigthompson.dev. It may have moved when the site was rebuilt.</p>
 <p><a href="/" data-path="">Go to the home page</a> · <a href="/cv/" data-path="cv/">Read the CV</a></p>
 </main>
 <script>
@@ -469,7 +473,7 @@ h1{margin:0;font:900 112px/0.88 BS;letter-spacing:.005em}
 <svg class="arc" viewBox="0 0 1040 200" preserveAspectRatio="none"><path d="M0 200 Q520 -60 1040 200" fill="none" stroke="#E7EEEA" stroke-width="4"/></svg>
 <div class="cmd">$ cat README.md <span># intro</span></div>
 <div class="row"><div class="ph"><img src="${img}"></div><div><h1>Craig Michael<br>Thompson</h1><div class="st">Head of Engineering · hands-on, AI-first</div></div></div>
-<div class="ft"><span><span class="dot"></span>open to new roles · Newcastle upon Tyne, UK</span><b>craga.dev</b></div>
+<div class="ft"><span><span class="dot"></span>open to new roles · Newcastle upon Tyne, UK</span><b>craigthompson.dev</b></div>
 </div></body></html>`);
   await page.evaluate(() => document.fonts.ready);
   await page.waitForTimeout(100);

@@ -7,10 +7,12 @@ on:
     inputs:
       url:
         description: Page to audit
-        default: https://craga.dev/
+        default: https://craigthompson.dev/
   workflow_run:
     workflows: [Deploy to GitHub Pages]
     types: [completed]
+  schedule:
+    - cron: '43 5 * * 1' # Mondays, 05:43 UTC
 
 permissions:
   contents: write
@@ -21,10 +23,10 @@ concurrency:
 
 jobs:
   audit:
-    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     env:
-      URL: ${{ inputs.url || 'https://craga.dev/' }}
+      URL: ${{ inputs.url || 'https://craigthompson.dev/' }}
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
