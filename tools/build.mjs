@@ -31,9 +31,10 @@ function splitDesign(file) {
   return { head, helmet, template, props: m[1], code: m[2] };
 }
 
-const META_COMMON = `<meta name="viewport" content="width=device-width, initial-scale=1">
+// Paths are relative so the same build works at craga.dev/ and at craga89.github.io/portfolio/.
+const meta = (root) => `<meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="dark light">
-<link rel="icon" href="/favicon.svg" type="image/svg+xml">`;
+<link rel="icon" href="${root}favicon.svg" type="image/svg+xml">`;
 
 // ---------- home page ----------
 function buildHome() {
@@ -42,7 +43,7 @@ function buildHome() {
   // The animated shader canvases are hidden in this theme, so don't load them at all.
   code = code.replace('async syncTabFx() {', 'async syncTabFx() { return;');
   code = code.replace('async mountFx() {', 'async mountFx() { return;');
-  const template = d.template.replace(/href="\/cv"/g, 'href="/cv/"');
+  const template = d.template.replace(/href="\/cv\/?"/g, 'href="cv/"');
   const props = d.props.replace('"$preview"', '"$x"');
   const boot = `<script>
 (function () {
@@ -62,7 +63,7 @@ function buildHome() {
 <html lang="en">
 <head>
 ${d.head.trim()}
-${META_COMMON}
+${meta('')}
 ${d.helmet.trim()}
 </head>
 <body>
@@ -71,7 +72,7 @@ ${d.helmet.trim()}
 ${template}
 </template>
 <script type="text/x-dc" id="dc-component" data-props='${props}'>${code}</script>
-<script src="/assets/dc-runtime.js"></script>
+<script src="assets/dc-runtime.js"></script>
 ${boot}
 </body>
 </html>
@@ -83,14 +84,15 @@ function buildCV() {
   const d = splitDesign('CV.dc.html');
   const body = d.template
     .replace(/onClick="\{\{print\}\}"/g, 'onclick="window.print()"')
-    .replace(/\s*hint-placeholder-[a-z]+="[^"]*"/g, '');
+    .replace(/\s*hint-placeholder-[a-z]+="[^"]*"/g, '')
+    .replace(/href="\/"/g, 'href="../"');
   if (/\{\{/.test(body)) throw new Error('CV still has template holes');
   const head = d.head.replace('href="https://craga.dev/cv"', 'href="https://craga.dev/cv/"');
   return `<!doctype html>
 <html lang="en">
 <head>
 ${head.trim()}
-${META_COMMON}
+${meta('../')}
 ${d.helmet.trim()}
 </head>
 <body>
@@ -108,7 +110,7 @@ const NOT_FOUND = `<!doctype html>
 <head>
 <meta charset="utf-8">
 <title>Not found · craga.dev</title>
-${META_COMMON}
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Red+Hat+Mono:wght@400;700&display=swap">
 <style>
 body{margin:0;min-height:100vh;display:grid;place-items:center;background:#16271F;color:#E7EEEA;font-family:'Red Hat Mono',ui-monospace,monospace;padding:24px;box-sizing:border-box}
@@ -123,8 +125,15 @@ a{color:#8EC3E6}
 <main>
 <h1>$ cat this-page<br>cat: this-page: No such file or directory</h1>
 <p>That address doesn't exist on craga.dev. It may have moved when the site was rebuilt.</p>
-<p><a href="/">Go to the home page</a> · <a href="/cv/">Read the CV</a></p>
+<p><a href="/" data-path="">Go to the home page</a> · <a href="/cv/" data-path="cv/">Read the CV</a></p>
 </main>
+<script>
+(function () {
+  // On a github.io project site the site lives under /<repo>/, not /.
+  var base = /\.github\.io$/.test(location.hostname) ? '/' + location.pathname.split('/')[1] + '/' : '/';
+  document.querySelectorAll('[data-path]').forEach(function (a) { a.setAttribute('href', base + a.getAttribute('data-path')); });
+})();
+</script>
 </body>
 </html>
 `;
