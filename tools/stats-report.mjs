@@ -10,8 +10,16 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const days = Number(process.argv[2] || 7);
 const since = `strftime('%Y-%m-%dT%H:%M:%SZ','now','-${days} days')`;
 const q = (sql) => {
-  const out = execFileSync('npx', ['-y', 'wrangler@4', 'd1', 'execute', 'craga-ask', '--remote', '--json', '--command', sql], { cwd: join(ROOT, 'worker'), encoding: 'utf8' });
-  return JSON.parse(out)[0].results;
+  let out;
+  try {
+    out = execFileSync('npx', ['-y', 'wrangler@4', 'd1', 'execute', 'craga-ask', '--remote', '--json', '--command', sql], { cwd: join(ROOT, 'worker'), encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
+  } catch (e) {
+    const msg = String((e.stdout || '') + ' ' + (e.stderr || '') || e.message).replace(/\s+/g, ' ').slice(0, 900);
+    console.log(`::error title=D1 query failed::${msg}`);
+    process.exit(1);
+  }
+  // wrangler can print a banner before the JSON.
+  return JSON.parse(out.slice(out.indexOf('[')))[0].results;
 };
 const table = (rows, cols) => rows.length ? `| ${cols.join(' | ')} |\n|${cols.map(() => '---').join('|')}|\n` + rows.map((r) => `| ${cols.map((c) => String(r[c] ?? '–').replace(/\|/g, '\\|')).join(' | ')} |`).join('\n') + '\n' : '_none_\n';
 

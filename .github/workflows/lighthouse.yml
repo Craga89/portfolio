@@ -45,16 +45,19 @@ jobs:
             done
           fi
           [ -n "$URL" ] || { echo "::error::No address is serving the site"; exit 1; }
-          echo "Auditing $URL"; echo "URL=$URL" >> "$GITHUB_ENV"
+          echo "::notice title=Lighthouse::Auditing $URL"; echo "URL=$URL" >> "$GITHUB_ENV"
           for preset in mobile desktop; do
             for i in 1 2 3; do
               flags=""; [ "$preset" = desktop ] && flags="--preset=desktop"
               lighthouse "$URL" $flags --quiet --output=json --output-path="out/$preset-$i.json" \
-                --chrome-flags="--headless=new --no-sandbox" || true
+                --chrome-flags="--headless=new --no-sandbox" 2> "out/$preset-$i.log" \
+                || echo "::warning title=Lighthouse $preset run $i::$(tail -c 600 "out/$preset-$i.log" | tr '\n' ' ')"
             done
           done
-          node tools/lighthouse-summary.mjs out > out/summary.json
-          cat out/summary.json | head -c 4000
+          if ! node tools/lighthouse-summary.mjs out > out/summary.json 2> out/summary.err; then
+            echo "::error title=Lighthouse summary::$(tail -c 800 out/summary.err | tr '\n' ' ')"; exit 1
+          fi
+          head -c 4000 out/summary.json
       - name: Save to the lighthouse branch
         run: |
           git config user.name "github-actions[bot]"

@@ -13,9 +13,11 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       - name: Check links
+        id: lychee
         uses: lycheeverse/lychee-action@v2
         with:
           fail: true
+          output: lychee/out.md
           jobSummary: true
           # LinkedIn refuses automated requests (HTTP 999); the site's own domain is checked by the other workflows.
           args: >-
@@ -25,3 +27,9 @@ jobs:
             --exclude 'workers\.dev' --exclude 'google\.com/maps'
             --root-dir "${{ github.workspace }}/site"
             'site/index.html' 'site/cv/index.html' 'site/llms.txt'
+      - name: List broken links
+        if: failure()
+        run: |
+          [ -f lychee/out.md ] || { echo "::error title=Link check::no report written"; exit 0; }
+          grep -E '^\s*[*-] \[' lychee/out.md | head -40 | while IFS= read -r l; do echo "::error title=Broken link::$l"; done
+          grep -qE '^\s*[*-] \[' lychee/out.md || echo "::error title=Link check::$(head -c 900 lychee/out.md | tr '\n' ' ')"

@@ -38,6 +38,11 @@ for (const c of cases) {
   rows.push({ q: c.q, pass, problems, answer: d && d.answer, model: d && d.model });
   console.log(`${pass ? 'PASS' : 'FAIL'} ${c.q}${pass ? '' : '  → ' + problems.join('; ')}`);
   if (!pass && d) console.log('     ' + String(d.answer).replace(/\n/g, ' ').slice(0, 300));
+  if (process.env.GITHUB_ACTIONS) {
+    const esc = (x) => String(x).replace(/%/g, '%25').replace(/\r?\n/g, ' ').replace(/::/g, ': :');
+    const line = esc((d ? `${d.answer} [sources: ${(d.sources || []).join(', ')}] [${d.model}]` : '').slice(0, 600));
+    console.log(pass ? `::notice title=${esc(c.q)}::PASS ${line}` : `::error title=${esc(c.q)}::${esc(problems.join('; '))} — ${line}`);
+  }
 }
 if (process.env.GITHUB_STEP_SUMMARY) {
   const { appendFileSync } = await import('node:fs');
