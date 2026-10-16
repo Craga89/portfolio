@@ -1,7 +1,8 @@
 // Builds the static craga.dev site from the design files in src/ into site/.
 //   node tools/build.mjs            build + prerender (needs Playwright + Chromium)
 //   node tools/build.mjs --no-prerender
-import { readFileSync, writeFileSync, mkdirSync, copyFileSync, rmSync, existsSync } from 'node:fs';
+import { readFileSync, writeFileSync, mkdirSync, copyFileSync, rmSync, existsSync, readdirSync } from 'node:fs';
+import { createHash } from 'node:crypto';
 import { dirname, join, extname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import http from 'node:http';
@@ -40,19 +41,130 @@ function splitDesign(file) {
 // Paths are relative so the same build works at craga.dev/ and at craga89.github.io/portfolio/.
 const meta = (root) => `<meta name="viewport" content="width=device-width, initial-scale=1">${ROBOTS_META}
 <meta name="color-scheme" content="dark light">
-<link rel="icon" href="${root}favicon.svg" type="image/svg+xml">`;
+<meta name="theme-color" content="#16271F" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#EDF1EE" media="(prefers-color-scheme: light)">
+<link rel="icon" href="${root}favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="${root}apple-touch-icon.png">`;
+
+// ---------- shared head pieces ----------
+const SITE = 'https://' + DOMAIN;
+const HOME_TITLE = 'Craig Michael Thompson · Head of Engineering, hands-on & AI-first';
+const CV_DESC = 'CV of Craig Michael Thompson: hands-on, AI-first Head of Engineering and full-stack engineer in Newcastle upon Tyne, UK, open to technical leadership roles.';
+const HOME_DESC = 'Craig Michael Thompson: hands-on, AI-first Head of Engineering and full-stack engineer in Newcastle upon Tyne, UK. 20+ years, from start-up to acquisition.';
+const OG_DESC = "Hands-on, AI-first Head of Engineering and full-stack engineer. 20+ years' experience in software development and management, from start-up to acquisition.";
+const esc = (t) => String(t).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+
+function social({ title, desc, url, type }) {
+  return [
+    `<meta property="og:type" content="${type}">`,
+    `<meta property="og:site_name" content="craga.dev">`,
+    `<meta property="og:locale" content="en_GB">`,
+    `<meta property="og:title" content="${esc(title)}">`,
+    `<meta property="og:description" content="${esc(desc)}">`,
+    `<meta property="og:url" content="${url}">`,
+    `<meta property="og:image" content="${SITE}/og.png">`,
+    `<meta property="og:image:width" content="1200">`,
+    `<meta property="og:image:height" content="630">`,
+    `<meta property="og:image:alt" content="Craig Michael Thompson, Head of Engineering. craga.dev">`,
+    type === 'profile' ? `<meta property="profile:first_name" content="Craig">\n<meta property="profile:last_name" content="Thompson">` : '',
+    `<meta name="twitter:card" content="summary_large_image">`,
+    `<meta name="twitter:title" content="${esc(title)}">`,
+    `<meta name="twitter:description" content="${esc(desc)}">`,
+    `<meta name="twitter:image" content="${SITE}/og.png">`,
+  ].filter(Boolean).join('\n');
+}
+
+// Replace the design file's title/description/social tags with the tuned set, and
+// enrich its JSON-LD (portrait, ids, last-modified).
+function seoHead(head, { title, desc, url, type, today }) {
+  head = head
+    .replace(/<title>[\s\S]*?<\/title>/, `<title>${esc(title)}</title>`)
+    .replace(/<meta name="description" content="[^"]*">/, `<meta name="description" content="${esc(desc)}">`)
+    .replace(/\s*<meta (?:property="og:[^"]+"|name="twitter:[^"]+") content="[^"]*">/g, '');
+  head = head.replace(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/, (all, json) => {
+    try {
+      const d = JSON.parse(json);
+      const person = d.mainEntity || d;
+      if (person['@type'] === 'Person') {
+        person['@id'] = SITE + '/#person';
+        person.image = SITE + '/assets/img/portrait-352.webp';
+        person.url = SITE + '/';
+        person.description = OG_DESC;
+        person.knowsAbout = [...new Set(['AI-first engineering', 'AI-assisted development', 'Engineering management', 'Full-stack development', ...(person.knowsAbout || []), 'Google Cloud'])];
+        person.knowsLanguage = 'en-GB';
+      }
+      if (d['@type'] === 'ProfilePage') { d['@id'] = url; d.url = url; d.name = title; d.dateModified = today; d.inLanguage = 'en-GB'; }
+      return `<script type="application/ld+json">${JSON.stringify(d)}</script>`;
+    } catch (e) { return all; }
+  });
+  return head.replace(/(<link rel="canonical"[^>]*>)/, `$1\n${social({ title, desc, url, type })}`);
+}
+
+// ---------- fonts (self-hosted, see tools/fetch-fonts.mjs) ----------
+// Metric-matched fallbacks: system fonts scaled to the web fonts' widths, so text doesn't
+// reflow (and shift the layout) when the web fonts arrive. Ratios measured with Chromium.
+const FALLBACKS = `@font-face{font-family:'Big Shoulders Display Fallback';src:local('Arial Bold'),local('Arial-BoldMT'),local('Liberation Sans Bold'),local('Helvetica Neue Bold'),local('Roboto Bold');font-weight:100 699;size-adjust:68.4%}
+@font-face{font-family:'Big Shoulders Display Fallback';src:local('Arial Bold'),local('Arial-BoldMT'),local('Liberation Sans Bold'),local('Helvetica Neue Bold'),local('Roboto Bold');font-weight:700 900;size-adjust:81.2%}
+@font-face{font-family:'Public Sans Fallback';src:local('Arial'),local('ArialMT'),local('Liberation Sans'),local('Helvetica Neue'),local('Roboto');font-weight:100 599;size-adjust:104.4%}
+@font-face{font-family:'Public Sans Fallback';src:local('Arial Bold'),local('Arial-BoldMT'),local('Liberation Sans Bold'),local('Helvetica Neue Bold'),local('Roboto Bold');font-weight:600 900;size-adjust:99.6%}
+@font-face{font-family:'Inter Fallback';src:local('Arial'),local('ArialMT'),local('Liberation Sans'),local('Helvetica Neue'),local('Roboto');font-weight:100 599;size-adjust:106.7%}
+@font-face{font-family:'Inter Fallback';src:local('Arial Bold'),local('Arial-BoldMT'),local('Liberation Sans Bold'),local('Helvetica Neue Bold'),local('Roboto Bold');font-weight:600 900;size-adjust:102.7%}`;
+
+// Collapses fonts.css (one rule per weight) into one rule per variable-font file with a weight range.
+function fontFaces(dir, families) {
+  const css = readFileSync(join(SRC, 'fonts', 'fonts.css'), 'utf8');
+  const groups = new Map();
+  for (const m of css.matchAll(/@font-face\{font-family:'([^']+)';font-style:normal;font-weight:(\d+);font-display:swap;src:url\(FONTDIR\/([^)]+)\) format\('woff2'\);unicode-range:([^}]+)\}/g)) {
+    const [, fam, w, file, range] = m;
+    if (families && !families.includes(fam)) continue;
+    const k = fam + '|' + file;
+    const g = groups.get(k) || { fam, file, range, lo: +w, hi: +w };
+    g.lo = Math.min(g.lo, +w); g.hi = Math.max(g.hi, +w);
+    groups.set(k, g);
+  }
+  return [...groups.values()].map((g) => `@font-face{font-family:'${g.fam}';font-style:normal;font-weight:${g.lo === g.hi ? g.lo : g.lo + ' ' + g.hi};font-display:swap;src:url(${dir}${g.file}) format('woff2');unicode-range:${g.range}}`).join('\n');
+}
+const preloadFont = (href) => `<link rel="preload" href="${href}" as="font" type="font/woff2" crossorigin>`;
+// Drop the Google Fonts links and point the font stacks at the metric-matched fallbacks.
+const localFonts = (helmet) => helmet
+  .replace(/\s*<link rel="preconnect" href="https:\/\/fonts\.(googleapis|gstatic)\.com"[^>]*>/g, '')
+  .replace(/\s*<link rel="stylesheet" href="https:\/\/fonts\.googleapis\.com[^>]*>/g, '')
+  .replace(/'Big Shoulders Display',/g, "'Big Shoulders Display','Big Shoulders Display Fallback',")
+  .replace(/'Public Sans',/g, "'Public Sans','Public Sans Fallback',")
+  .replace(/(font-family:\s*)'?Inter'?,/g, "$1'Inter','Inter Fallback',");
+
+const hash = (s) => createHash('sha256').update(s).digest('hex').slice(0, 10);
+
+// Responsive portrait: AVIF and WebP at 1x/2x for each displayed size.
+const PORTRAIT_ALT = 'Illustrated caricature of Craig Michael Thompson at his keyboard, with his dog on his shoulder';
+const portraitPicture = () => `<picture><source type="image/avif" srcset="assets/img/portrait-96.avif 96w, assets/img/portrait-192.avif 192w, assets/img/portrait-352.avif 352w" sizes="(max-width: 370px) 68px, (max-width: 600px) 96px, 176px"><img src="assets/img/portrait-192.webp" srcset="assets/img/portrait-96.webp 96w, assets/img/portrait-192.webp 192w, assets/img/portrait-352.webp 352w" sizes="(max-width: 370px) 68px, (max-width: 600px) 96px, 176px" alt="${PORTRAIT_ALT}" width="512" height="512" fetchpriority="high" decoding="async"></picture>`;
 
 // ---------- home page ----------
-function buildHome() {
+function buildHome(today) {
   const d = splitDesign('ThemeTyne.dc.html');
   let code = d.code;
   // The animated shader canvases are hidden in this theme, so don't load them at all.
   code = code.replace('async syncTabFx() {', 'async syncTabFx() { return;');
   code = code.replace('async mountFx() {', 'async mountFx() { return;');
-  const template = d.template.replace(/href="\/cv\/?"/g, 'href="cv/"');
+  const template = d.template.replace(/href="\/cv\/?"/g, 'href="cv/"')
+    .replace(/<img src="\.\/portrait\.webp" alt="Illustrated caricature[^"]*" width="512" height="512" loading="eager" decoding="async">/g, portraitPicture())
+    .replace(/<img src="\.\/portrait\.webp" alt="" width="28" height="28" loading="lazy" decoding="async">/g, '<img src="assets/img/portrait-56.webp" alt="" width="28" height="28" loading="lazy" decoding="async">');
+  if (/\.\/portrait\.webp/.test(template)) throw new Error('unhandled portrait image in the template');
   const props = d.props.replace('"$preview"', '"$x"');
-  const boot = `<script>
-(function () {
+  // Everything the page needs only once JavaScript runs (runtime, template, component,
+  // boot) goes into one deferred, cache-busted file, so the HTML stays small.
+  const app = readFileSync(join(ROOT, 'tools', 'dc-runtime.js'), 'utf8') + `
+;(function () {
+  var t = document.createElement('template');
+  t.id = 'dc-template';
+  t.innerHTML = ${JSON.stringify(template)};
+  document.body.appendChild(t);
+  var s = document.createElement('script');
+  s.type = 'text/x-dc';
+  s.id = 'dc-component';
+  s.setAttribute('data-props', ${JSON.stringify(props)});
+  s.text = ${JSON.stringify(code)};
+  document.body.appendChild(s);
   var saved = null;
   try { saved = localStorage.getItem('theme'); } catch (e) {}
   var light = false;
@@ -65,22 +177,33 @@ function buildHome() {
     return set.apply(this, arguments);
   };
 })();
-</script>`;
+`;
+  const appName = 'assets/app.' + hash(app) + '.js';
+  writeOut(appName, app);
+  // Runs before first paint: applies a saved or system light theme to the prerendered (dark) markup.
+  const themeNow = `<script>try{var t=localStorage.getItem('theme');if(t?t==='light':matchMedia('(prefers-color-scheme: light)').matches){var r=document.querySelector('#app .c-root');if(r)r.classList.add('c-light')}}catch(e){}</script>`;
+  const fonts = fontFaces('assets/fonts/', ['Big Shoulders Display', 'Public Sans', 'Red Hat Mono']);
+  const head = seoHead(d.head.trim(), { title: HOME_TITLE, desc: HOME_DESC, url: SITE + '/', type: 'profile', today });
   return `<!doctype html>
-<html lang="en">
+<html lang="en-GB">
 <head>
-${d.head.trim()}
+${head}
 ${meta('')}
-${d.helmet.trim()}
+${preloadFont('assets/fonts/big-shoulders-display-latin-600.woff2')}
+${preloadFont('assets/fonts/public-sans-latin-400.woff2')}
+${preloadFont('assets/fonts/red-hat-mono-latin-400.woff2')}
+${ASK.endpoint ? `<link rel="dns-prefetch" href="${new URL(ASK.endpoint).origin}">\n` : ''}<link rel="alternate" type="application/json" href="cv.json" title="CV (JSON Resume)">
+<style>
+${fonts}
+${FALLBACKS}
+.v2-ph picture{display:contents}
+</style>
+${localFonts(d.helmet.trim())}
+<script src="${appName}" defer></script>
 </head>
 <body>
 <div id="app"><!--PRERENDER--></div>
-<template id="dc-template">
-${template}
-</template>
-<script type="text/x-dc" id="dc-component" data-props='${props}'>${code}</script>
-<script src="assets/dc-runtime.js"></script>
-${boot}
+${themeNow}
 </body>
 </html>
 `;
@@ -94,13 +217,20 @@ function buildCV() {
     .replace(/\s*hint-placeholder-[a-z]+="[^"]*"/g, '')
     .replace(/href="\/"/g, 'href="../"');
   if (/\{\{/.test(body)) throw new Error('CV still has template holes');
-  const head = d.head.replace('href="https://craga.dev/cv"', 'href="https://craga.dev/cv/"');
+  const today = new Date().toISOString().slice(0, 10);
+  const title = (d.head.match(/<title>([\s\S]*?)<\/title>/) || [])[1] || 'CV';
+  let head = d.head.replace('href="https://craga.dev/cv"', 'href="https://craga.dev/cv/"');
+  head = seoHead(head.trim(), { title: title.replace(/&amp;/g, '&'), desc: CV_DESC, url: SITE + '/cv/', type: 'website', today });
+  const inter = existsSync(join(SRC, 'fonts', 'inter-latin-400.woff2'));
+  const helmet = inter ? localFonts(d.helmet.trim()) : d.helmet.trim();
   return `<!doctype html>
-<html lang="en">
+<html lang="en-GB">
 <head>
-${head.trim()}
+${head}
 ${meta('../')}
-${d.helmet.trim()}
+<link rel="alternate" type="application/json" href="../cv.json" title="CV (JSON Resume)">
+${inter ? preloadFont('../assets/fonts/inter-latin-400.woff2') + '\n<style>\n' + fontFaces('../assets/fonts/', ['Inter']) + '\n' + FALLBACKS + '\n</style>' : ''}
+${helmet}
 </head>
 <body>
 ${body}
@@ -118,8 +248,8 @@ const NOT_FOUND = `<!doctype html>
 <meta charset="utf-8">
 <title>Not found · craga.dev</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">${ROBOTS_META}
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Red+Hat+Mono:wght@400;700&display=swap">
 <style>
+@font-face{font-family:'Red Hat Mono';font-weight:400 700;font-display:swap;src:url(/assets/fonts/red-hat-mono-latin-400.woff2) format('woff2')}
 body{margin:0;min-height:100vh;display:grid;place-items:center;background:#16271F;color:#E7EEEA;font-family:'Red Hat Mono',ui-monospace,monospace;padding:24px;box-sizing:border-box}
 main{max-width:56ch}
 h1{font-size:20px;font-weight:400;color:#B7D47A;margin:0 0 12px}
@@ -152,7 +282,7 @@ function writeOut(rel, content) {
 }
 
 // ---------- prerender ----------
-const TYPES = { '.html': 'text/html', '.js': 'text/javascript', '.json': 'application/json', '.webp': 'image/webp', '.svg': 'image/svg+xml', '.txt': 'text/plain', '.xml': 'application/xml' };
+const TYPES = { '.html': 'text/html', '.js': 'text/javascript', '.json': 'application/json', '.webp': 'image/webp', '.avif': 'image/avif', '.png': 'image/png', '.woff2': 'font/woff2', '.svg': 'image/svg+xml', '.txt': 'text/plain', '.xml': 'application/xml' };
 function serve(dir) {
   return new Promise((resolve) => {
     const srv = http.createServer((req, res) => {
@@ -250,13 +380,12 @@ async function prerender() {
     const page = await browser.newPage({ viewport: { width: 1440, height: 1000 }, reducedMotion: 'reduce', colorScheme: 'dark' });
     const errors = [];
     page.on('pageerror', (e) => errors.push(String(e)));
-    await page.route(/fonts\.(googleapis|gstatic)\.com/, (r) => r.abort());
     await page.goto(`http://127.0.0.1:${port}/`, { waitUntil: 'load' });
     await page.waitForSelector('#app .c-root');
     await page.waitForTimeout(300);
     if (errors.length) throw new Error('page errors during prerender:\n' + errors.join('\n'));
-    // The chat bar only works with JavaScript, so leave it out of the static HTML; the runtime adds it.
-    const html = await page.$eval('#app', (el) => { const c = el.cloneNode(true); c.querySelectorAll('.c-chat').forEach((n) => n.remove()); return c.innerHTML; });
+    // The chat bar and mic buttons only work with JavaScript, so leave it out of the static HTML; the runtime adds it.
+    const html = await page.$eval('#app', (el) => { const c = el.cloneNode(true); c.querySelectorAll('.c-chat, .c-mic').forEach((n) => n.remove()); return c.innerHTML; });
     const passages = await page.evaluate(extractPassages);
     const index = { generated: new Date().toISOString(), passages };
     writeFileSync(join(OUT, 'assets', 'ask-index.json'), JSON.stringify(index));
@@ -265,16 +394,69 @@ async function prerender() {
     console.log('ask.sh index:', passages.length, 'passages,', passages.reduce((n, p) => n + p.text.length, 0), 'chars');
     const file = join(OUT, 'index.html');
     writeFileSync(file, readFileSync(file, 'utf8').replace('<!--PRERENDER-->', html));
+    await buildOgImage(browser);
   } finally {
     await browser.close();
     srv.close();
   }
 }
 
+// ---------- images ----------
+async function buildImages() {
+  const sharp = (await import('sharp')).default;
+  const dir = join(OUT, 'assets', 'img');
+  mkdirSync(dir, { recursive: true });
+  const src = join(SRC, 'portrait.webp');
+  for (const w of [96, 192, 352]) {
+    await sharp(src).resize(w, w).webp({ quality: 80, effort: 6 }).toFile(join(dir, `portrait-${w}.webp`));
+    await sharp(src).resize(w, w).avif({ quality: 55, effort: 6 }).toFile(join(dir, `portrait-${w}.avif`));
+  }
+  await sharp(src).resize(56, 56).webp({ quality: 80 }).toFile(join(dir, 'portrait-56.webp'));
+  await sharp(Buffer.from(FAVICON)).resize(180, 180).flatten({ background: '#16271F' }).png().toFile(join(OUT, 'apple-touch-icon.png'));
+}
+
+// Social preview card (1200x630), rendered with the site's own fonts and colours.
+async function buildOgImage(browser) {
+  const page = await browser.newPage({ viewport: { width: 1200, height: 630 }, deviceScaleFactor: 1 });
+  const font = (f) => 'data:font/woff2;base64,' + readFileSync(join(SRC, 'fonts', f)).toString('base64');
+  const img = 'data:image/webp;base64,' + readFileSync(join(OUT, 'assets', 'img', 'portrait-352.webp')).toString('base64');
+  await page.setContent(`<!doctype html><html><head><style>
+@font-face{font-family:BS;src:url(${font('big-shoulders-display-latin-600.woff2')});font-weight:100 900}
+@font-face{font-family:PS;src:url(${font('public-sans-latin-400.woff2')});font-weight:100 900}
+@font-face{font-family:RH;src:url(${font('red-hat-mono-latin-400.woff2')});font-weight:300 700}
+html,body{margin:0;width:1200px;height:630px;background:#16271F;color:#F6F8F4;overflow:hidden}
+.c{position:relative;box-sizing:border-box;width:1200px;height:630px;padding:72px 80px;display:flex;flex-direction:column;justify-content:space-between;
+ background:radial-gradient(circle at 24px 24px,#47685A 3px,transparent 3.5px),radial-gradient(circle at calc(100% - 24px) 24px,#47685A 3px,transparent 3.5px),radial-gradient(circle at 24px calc(100% - 24px),#47685A 3px,transparent 3.5px),radial-gradient(circle at calc(100% - 24px) calc(100% - 24px),#47685A 3px,transparent 3.5px)}
+.cmd{font:500 30px RH;color:#B7D47A}.cmd span{color:#7C9A8B}
+.row{display:flex;align-items:center;gap:52px}
+.ph{flex:none;width:236px;height:236px;border-radius:8px;overflow:hidden;background:#fff;box-shadow:0 0 0 6px #47685A,0 0 0 8px #335041}
+.ph img{width:100%;height:100%;display:block;object-fit:cover}
+h1{margin:0;font:900 112px/0.88 BS;letter-spacing:.005em}
+.st{margin-top:22px;font:600 38px/1.2 BS;color:#8EC3E6}
+.ft{display:flex;justify-content:space-between;align-items:center;font:500 28px RH;color:#A7BFB2}
+.ft b{color:#F6F8F4;font-weight:700}.dot{display:inline-block;width:14px;height:14px;border-radius:50%;background:#B7D47A;margin-right:14px;vertical-align:middle}
+.arc{position:absolute;left:80px;right:80px;bottom:150px;height:200px;opacity:.12}
+</style></head><body><div class="c">
+<svg class="arc" viewBox="0 0 1040 200" preserveAspectRatio="none"><path d="M0 200 Q520 -60 1040 200" fill="none" stroke="#E7EEEA" stroke-width="4"/></svg>
+<div class="cmd">$ cat README.md <span># intro</span></div>
+<div class="row"><div class="ph"><img src="${img}"></div><div><h1>Craig Michael<br>Thompson</h1><div class="st">Head of Engineering · hands-on, AI-first</div></div></div>
+<div class="ft"><span><span class="dot"></span>open to new roles · Newcastle upon Tyne, UK</span><b>craga.dev</b></div>
+</div></body></html>`);
+  await page.evaluate(() => document.fonts.ready);
+  await page.waitForTimeout(100);
+  await page.screenshot({ path: join(OUT, 'og.png'), type: 'png' });
+  await page.close();
+  const sharp = (await import('sharp')).default;
+  const buf = await sharp(join(OUT, 'og.png')).png({ palette: true, quality: 90, effort: 10 }).toBuffer();
+  writeFileSync(join(OUT, 'og.png'), buf);
+}
+
 // ---------- main ----------
+const TODAY = new Date().toISOString().slice(0, 10);
 rmSync(OUT, { recursive: true, force: true });
-mkdirSync(OUT, { recursive: true });
-writeOut('index.html', buildHome());
+mkdirSync(join(OUT, 'assets', 'fonts'), { recursive: true });
+for (const f of readdirSync(join(SRC, 'fonts')).filter((f) => f.endsWith('.woff2'))) copyFileSync(join(SRC, 'fonts', f), join(OUT, 'assets', 'fonts', f));
+writeOut('index.html', buildHome(TODAY));
 writeOut('cv/index.html', buildCV());
 writeOut('404.html', NOT_FOUND);
 writeOut('favicon.svg', FAVICON);
@@ -283,16 +465,13 @@ writeOut('.nojekyll', '');
 writeOut('robots.txt', ALLOW_INDEXING
   ? `User-agent: *\nAllow: /\nSitemap: https://${DOMAIN}/sitemap.xml\n`
   : 'User-agent: *\nDisallow: /\n');
-const today = new Date().toISOString().slice(0, 10);
 writeOut('sitemap.xml', `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-<url><loc>https://${DOMAIN}/</loc><lastmod>${today}</lastmod></url>
-<url><loc>https://${DOMAIN}/cv/</loc><lastmod>${today}</lastmod></url>
+<url><loc>https://${DOMAIN}/</loc><lastmod>${TODAY}</lastmod></url>
+<url><loc>https://${DOMAIN}/cv/</loc><lastmod>${TODAY}</lastmod></url>
 </urlset>
 `);
-mkdirSync(join(OUT, 'assets'), { recursive: true });
-copyFileSync(join(ROOT, 'tools', 'dc-runtime.js'), join(OUT, 'assets', 'dc-runtime.js'));
-copyFileSync(join(SRC, 'portrait.webp'), join(OUT, 'portrait.webp'));
 copyFileSync(join(SRC, 'cv.json'), join(OUT, 'cv.json'));
+await buildImages();
 if (PRERENDER) await prerender();
 console.log('built', OUT);

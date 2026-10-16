@@ -23,6 +23,13 @@ git add -A && git commit -m "Update site" && git push
 
 Every push to `main` deploys `site/` through `.github/workflows/pages.yml`.
 
+## Performance
+
+- Fonts are self-hosted from `src/fonts/` (fetched once from Google Fonts by `.github/workflows/fetch-fonts.yml`). The build inlines the `@font-face` rules, preloads the three used for first paint, and adds size-matched system fallbacks so text doesn't move when the web fonts arrive.
+- The home page HTML holds the prerendered content and the CSS. The runtime, template and component code go in one deferred, content-hashed `assets/app.<hash>.js`.
+- The portrait is served as AVIF/WebP at the sizes it's shown. The build also renders the social preview card (`og.png`) and the home-screen icon.
+- `.github/workflows/lighthouse.yml` runs Lighthouse (3 runs each, mobile and desktop) after every Pages deploy and saves a summary to the `lighthouse` branch (`reports/summary.json`).
+
 ## Search engines
 
 While the content is being finished, the build keeps the site out of search engines: `robots.txt` disallows everything and every page carries `<meta name="robots" content="noindex">`. When it's ready to be found, build with `node tools/build.mjs --public` (or set `ALLOW_INDEXING` to `true` in `tools/build.mjs`) and push.

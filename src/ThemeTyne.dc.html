@@ -311,6 +311,11 @@ body:has(.c-light){background:#EDF1EE!important}
 .c-ask-go{all:unset;box-sizing:border-box;cursor:pointer;min-height:40px;padding:0 14px;display:inline-flex;align-items:center;border-radius:6px;background:var(--acc);color:var(--bg);font-weight:700;font-size:14px}
 .c-ask-go[disabled]{opacity:.5;cursor:default}
 .c-ask-go:focus-visible,.c-ask-chip:focus-visible,.c-ask-field:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.c-mic{all:unset;box-sizing:border-box;cursor:pointer;flex:none;display:grid;place-items:center;width:40px;height:40px;border-radius:50%;color:var(--mute);transition:color .2s ease,background-color .2s ease}
+.c-mic:hover{background:var(--line2);color:var(--head)}
+.c-mic:focus-visible{outline:2px solid var(--acc);outline-offset:1px}
+.c-mic[data-on="true"]{color:var(--bad);background:color-mix(in srgb,var(--bad) 16%,transparent);animation:c-micp 1.4s ease-in-out infinite}
+@keyframes c-micp{0%,100%{box-shadow:0 0 0 0 color-mix(in srgb,var(--bad) 45%,transparent)}50%{box-shadow:0 0 0 7px color-mix(in srgb,var(--bad) 0%,transparent)}}
 .c-ask-ln{color:var(--acc);text-decoration:underline;text-underline-offset:2px}
 .c-chat{position:fixed;right:304px;bottom:0;z-index:30;width:272px;display:flex;flex-direction:column;background:var(--panel);border:1px solid var(--line3);border-bottom:0;border-radius:10px 10px 0 0;box-shadow:0 -4px 22px rgba(0,0,0,.18);transition:transform .25s ease;font-family:var(--f-body)}
 .c-chat[data-open="true"]{width:360px}
@@ -1783,7 +1788,8 @@ body:has(.c-light){background:#EDF1EE!important}
 <div class="c-ask-sugg"><sc-for list="{{askSugg}}" as="s" hint-placeholder-count="4"><button type="button" class="c-ask-chip" onClick="{{s.pick}}" disabled="{{askBusy}}">{{s.t}}</button></sc-for></div>
 <div class="c-ask-in">
 <label class="c-ask-p" for="c-ask-field">$ ./ask.sh</label>
-<input id="c-ask-field" class="c-ask-field" type="text" maxlength="300" autocomplete="off" spellcheck="false" placeholder="e.g. has he led on-call and incidents?" value="{{askQ}}" onChange="{{askType}}" onKeyDown="{{askKey}}">
+<input id="c-ask-field" class="c-ask-field" type="text" maxlength="300" autocomplete="off" spellcheck="false" placeholder="{{askPh}}" value="{{askQ}}" onChange="{{askType}}" onKeyDown="{{askKey}}">
+<sc-if value="{{micOk}}" hint-placeholder-val="false"><button type="button" class="c-mic" data-on="{{micAsk}}" aria-pressed="{{micAsk}}" onClick="{{micAskGo}}" aria-label="{{micAskLabel}}" title="{{micAskLabel}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><path d="M12 19v3"></path></svg></button></sc-if>
 <button type="button" class="c-ask-go" onClick="{{askGo}}" disabled="{{askBusy}}">ask ↵</button>
 </div>
 </div>
@@ -1811,7 +1817,8 @@ body:has(.c-light){background:#EDF1EE!important}
 <sc-if value="{{askEmpty}}" hint-placeholder-val="true"><div class="c-chat-sugg"><sc-for list="{{askSugg}}" as="s" hint-placeholder-count="4"><button type="button" class="c-ask-chip" onClick="{{s.pick}}" disabled="{{askBusy}}">{{s.t}}</button></sc-for></div></sc-if>
 </div>
 <div class="c-chat-in">
-<input id="c-chat-field" class="c-chat-field" type="text" maxlength="300" autocomplete="off" aria-label="Ask a question about Craig" placeholder="Ask a question…" value="{{chatQ}}" onChange="{{chatType}}" onKeyDown="{{chatKey}}">
+<input id="c-chat-field" class="c-chat-field" type="text" maxlength="300" autocomplete="off" aria-label="Ask a question about Craig" placeholder="{{chatPh}}" value="{{chatQ}}" onChange="{{chatType}}" onKeyDown="{{chatKey}}">
+<sc-if value="{{micOk}}" hint-placeholder-val="false"><button type="button" class="c-mic" data-on="{{micChat}}" aria-pressed="{{micChat}}" onClick="{{micChatGo}}" aria-label="{{micChatLabel}}" title="{{micChatLabel}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><path d="M12 19v3"></path></svg></button></sc-if>
 <button type="button" class="c-chat-go" onClick="{{chatGo}}" disabled="{{askBusy}}" aria-label="Send" title="Send"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 2 11 13"></path><path d="M22 2 15 22l-4-9-9-4 20-7z"></path></svg></button>
 </div>
 </div>
@@ -1830,6 +1837,42 @@ class Component extends DCLogic {
       if (a && window.innerWidth <= 900) setTimeout(() => this.setState({ chatOpen: false }), 0);
     };
     document.addEventListener('click', this._onChatLink);
+    try { if (window.SpeechRecognition || window.webkitSpeechRecognition) this.setState({ micOk: true }); } catch (e) {}
+  }
+  // Voice dictation into the ask.sh or chat field, using the browser's own speech recognition.
+  dictate(target) {
+    if (this._rec) { try { this._rec.stop(); } catch (e) {} return; }
+    const SR = typeof window !== 'undefined' && (window.SpeechRecognition || window.webkitSpeechRecognition);
+    if (!SR) return;
+    const key = target === 'chat' ? 'chatQ' : 'askQ';
+    const id = target === 'chat' ? 'c-chat-field' : 'c-ask-field';
+    const base = String((this.state || {})[key] || '').trim();
+    const rec = new SR();
+    this._rec = rec;
+    rec.lang = typeof navigator !== 'undefined' && /^en\b/i.test(navigator.language || '') ? navigator.language : 'en-GB';
+    rec.interimResults = true;
+    rec.continuous = false;
+    rec.maxAlternatives = 1;
+    rec.onresult = (e) => {
+      let said = '';
+      for (let i = 0; i < e.results.length; i++) said += e.results[i][0].transcript;
+      let v = ((base ? base + ' ' : '') + said.trim()).replace(/\s+/g, ' ');
+      v = v.charAt(0).toUpperCase() + v.slice(1);
+      this.setState({ [key]: v });
+      try { const f = document.getElementById(id); if (f) f.value = v; } catch (x) {}
+    };
+    rec.onerror = (e) => {
+      const err = e && e.error;
+      const note = err === 'not-allowed' ? 'Microphone access is blocked' : err === 'no-speech' ? "Didn't catch that. Try again?" : err === 'aborted' ? '' : "Voice input isn't available here";
+      this.setState({ micNote: note, micNoteFor: target, micOk: !(err === 'network' || err === 'service-not-allowed' || err === 'language-not-supported') });
+    };
+    rec.onend = () => {
+      this._rec = null;
+      this.setState({ micOn: null });
+      try { const f = document.getElementById(id); if (f && window.matchMedia('(pointer: fine)').matches) f.focus(); } catch (x) {}
+    };
+    this.setState({ micOn: target, micNote: '' });
+    try { rec.start(); } catch (e) { this._rec = null; this.setState({ micOn: null }); }
   }
   scrollToId(id) {
     try {
@@ -2019,6 +2062,7 @@ class Component extends DCLogic {
     const q = String(raw || '').trim().slice(0, 300);
     const st = this.state || {};
     if (!q || st.askBusy) return;
+    if (this._rec) { try { this._rec.abort(); } catch (e) {} this._rec = null; }
     const log = (st.askLog || []).concat([{ q, pending: true }]).slice(-8);
     this.setState(from === 'chat' ? { askLog: log, chatQ: '', askBusy: true } : { askLog: log, askQ: '', askBusy: true });
     try { const fld = document.getElementById(from === 'chat' ? 'c-chat-field' : 'c-ask-field'); if (fld) fld.value = ''; } catch (e) {}
@@ -2055,7 +2099,7 @@ class Component extends DCLogic {
     const id = typeof step === 'string' ? step : ids[(cur + step + ids.length) % ids.length];
     this.setState({ rtab: id, rSeq: (st.rSeq || 0) + 1 });
   }
-  componentWillUnmount() { if (this._onSpy) { window.removeEventListener('scroll', this._onSpy, true); window.removeEventListener('resize', this._onSpy); ['wheel', 'touchstart', 'keydown'].forEach((t) => window.removeEventListener(t, this._onSpyUser)); document.removeEventListener('click', this._onSpyClick, true); } this._fxKey = null; this.destroyFx(); clearTimeout(this._rTo); if (this._rIo) this._rIo.disconnect(); if (this._rEl && this._rOn) Object.keys(this._rOn).forEach((k) => this._rEl.removeEventListener(k, this._rOn[k])); if (this._onAnchor) document.removeEventListener('click', this._onAnchor, true); if (this._onChatLink) document.removeEventListener('click', this._onChatLink); if (this._hdrRo) { try { this._hdrRo.disconnect(); } catch (e) {} } }
+  componentWillUnmount() { if (this._onSpy) { window.removeEventListener('scroll', this._onSpy, true); window.removeEventListener('resize', this._onSpy); ['wheel', 'touchstart', 'keydown'].forEach((t) => window.removeEventListener(t, this._onSpyUser)); document.removeEventListener('click', this._onSpyClick, true); } this._fxKey = null; this.destroyFx(); clearTimeout(this._rTo); if (this._rIo) this._rIo.disconnect(); if (this._rEl && this._rOn) Object.keys(this._rOn).forEach((k) => this._rEl.removeEventListener(k, this._rOn[k])); if (this._onAnchor) document.removeEventListener('click', this._onAnchor, true); if (this._onChatLink) document.removeEventListener('click', this._onChatLink); if (this._rec) { try { this._rec.abort(); } catch (e) {} } if (this._hdrRo) { try { this._hdrRo.disconnect(); } catch (e) {} } }
   fxKey() {
     const motion = this.props.motion ?? true;
     const theme = (this.state && this.state.theme) || this.props.theme || 'dark';
@@ -2272,7 +2316,13 @@ class Component extends DCLogic {
     const askSugg = ASK_SUGG.map((t) => ({ t, pick: () => this.askSubmit(t) }));
     return {
       askLog, askSugg, askBusy, askEmpty: askLog.length === 0, askQ: askSt.askQ || '',
-      askType: (e) => this.setState({ askQ: e.target.value }),
+      askType: (e) => this.setState({ askQ: e.target.value, micNote: '' }),
+      micOk: !!askSt.micOk,
+      micAsk: askSt.micOn === 'ask' ? 'true' : 'false', micChat: askSt.micOn === 'chat' ? 'true' : 'false',
+      micAskLabel: askSt.micOn === 'ask' ? 'Stop dictating' : 'Dictate your question', micChatLabel: askSt.micOn === 'chat' ? 'Stop dictating' : 'Dictate your question',
+      micAskGo: () => this.dictate('ask'), micChatGo: () => this.dictate('chat'),
+      askPh: askSt.micOn === 'ask' ? 'Listening…' : (askSt.micNoteFor === 'ask' && askSt.micNote) || 'e.g. has he led on-call and incidents?',
+      chatPh: askSt.micOn === 'chat' ? 'Listening…' : (askSt.micNoteFor === 'chat' && askSt.micNote) || 'Ask a question…',
       askKey: (e) => { if (e.key === 'Enter') { e.preventDefault(); this.askSubmit(e.target.value); } },
       askGo: () => this.askSubmit((this.state || {}).askQ),
       chatOpen: !!askSt.chatOpen, chatOpenAttr: askSt.chatOpen ? 'true' : 'false',
@@ -2284,7 +2334,7 @@ class Component extends DCLogic {
         this.setState({ chatOpen: open });
         if (open) setTimeout(() => { try { document.querySelectorAll('.c-chat-log').forEach((el) => { el.scrollTop = el.scrollHeight; }); const f = document.getElementById('c-chat-field'); if (f && window.matchMedia('(pointer: fine)').matches) f.focus(); } catch (e) {} }, 40);
       },
-      chatType: (e) => this.setState({ chatQ: e.target.value }),
+      chatType: (e) => this.setState({ chatQ: e.target.value, micNote: '' }),
       chatKey: (e) => {
         if (e.key === 'Enter') { e.preventDefault(); this.askSubmit(e.target.value, 'chat'); }
         else if (e.key === 'Escape') { this.setState({ chatOpen: false }); try { document.querySelector('.c-chat-bar').focus(); } catch (x) {} }
