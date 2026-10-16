@@ -48,7 +48,15 @@
 @font-face{font-family:'Inter Fallback';src:local('Arial'),local('ArialMT'),local('Liberation Sans'),local('Helvetica Neue'),local('Roboto');font-weight:100 599;size-adjust:106.7%}
 @font-face{font-family:'Inter Fallback';src:local('Arial Bold'),local('Arial-BoldMT'),local('Liberation Sans Bold'),local('Helvetica Neue Bold'),local('Roboto Bold');font-weight:600 900;size-adjust:102.7%}
 .v2-ph picture{display:contents}
+.v2-main>section.c-rv{content-visibility:auto;contain-intrinsic-size:auto var(--cis,1000px)}
+.cv-all .v2-main>section.c-rv{content-visibility:visible}
+@media print{.v2-main>section.c-rv{content-visibility:visible}}
+@media (max-width:600px){#career{--cis:2656px}#responsibilities{--cis:1585px}#case-studies{--cis:1526px}#stack{--cis:2458px}#oss{--cis:2440px}#recommendations{--cis:986px}section[aria-labelledby="c-awards"]{--cis:318px}#faq{--cis:1383px}#ask{--cis:435px}}
+@media (min-width:601px) and (max-width:900px){#career{--cis:1505px}#responsibilities{--cis:1186px}#case-studies{--cis:1034px}#stack{--cis:1453px}#oss{--cis:1683px}#recommendations{--cis:648px}section[aria-labelledby="c-awards"]{--cis:165px}#faq{--cis:1378px}#ask{--cis:332px}}
+@media (min-width:901px) and (max-width:1400px){#career{--cis:1512px}#responsibilities{--cis:1011px}#case-studies{--cis:1012px}#stack{--cis:1185px}#oss{--cis:1470px}#recommendations{--cis:451px}section[aria-labelledby="c-awards"]{--cis:172px}#faq{--cis:1385px}#ask{--cis:338px}}
+@media (min-width:1401px){#career{--cis:1512px}#responsibilities{--cis:927px}#case-studies{--cis:958px}#stack{--cis:1094px}#oss{--cis:1292px}#recommendations{--cis:396px}section[aria-labelledby="c-awards"]{--cis:172px}#faq{--cis:728px}#ask{--cis:294px}}
 </style>
+<script>if(location.hash.length>1)document.documentElement.classList.add('cv-all')</script>
 
 <style>
 body{margin:0;background:#0D0F0B}
@@ -401,7 +409,7 @@ body:has(.c-light){background:#EDF1EE!important}
 @media (max-width:600px){.v2-name{display:block}.v2-name::after{content:'';display:block;clear:both}.v2-name .v2-ph{float:left;width:96px;margin:4px 14px 8px 0}}
 @media (max-width:370px){.v2-name .v2-ph{width:68px;margin-right:10px}.v2-lead .v2-name h1{font-size:15vw!important}}
 </style>
-<script src="assets/app.0058677b90.js" defer></script>
+<script src="assets/app.bd72b41922.js" defer></script>
 </head>
 <body>
 <div id="app"><div class="c-root" style="background: var(--bg); color: var(--text); min-height: 100vh; font-size: 16px; line-height: 1.7">

@@ -146,6 +146,11 @@ function buildHome(today) {
   // The animated shader canvases are hidden in this theme, so don't load them at all.
   code = code.replace('async syncTabFx() {', 'async syncTabFx() { return;');
   code = code.replace('async mountFx() {', 'async mountFx() { return;');
+  // Sections below the fold skip rendering until needed (content-visibility). Before an
+  // in-page jump, render them all so the target position is exact.
+  const jumps = code.split("const hdr = document.getElementById('c-hdr');\n      const gap").length - 1;
+  if (jumps !== 2) throw new Error('expected 2 in-page scroll handlers, found ' + jumps);
+  code = code.replaceAll("const hdr = document.getElementById('c-hdr');\n      const gap", "document.documentElement.classList.add('cv-all');\n      const hdr = document.getElementById('c-hdr');\n      const gap");
   const template = d.template.replace(/href="\/cv\/?"/g, 'href="cv/"')
     .replace(/<img src="\.\/portrait\.webp" alt="Illustrated caricature[^"]*" width="512" height="512" loading="eager" decoding="async">/g, portraitPicture())
     .replace(/<img src="\.\/portrait\.webp" alt="" width="28" height="28" loading="lazy" decoding="async">/g, '<img src="assets/img/portrait-56.webp" alt="" width="28" height="28" loading="lazy" decoding="async">');
@@ -197,7 +202,12 @@ ${ASK.endpoint ? `<link rel="dns-prefetch" href="${new URL(ASK.endpoint).origin}
 ${fonts}
 ${FALLBACKS}
 .v2-ph picture{display:contents}
+.v2-main>section.c-rv{content-visibility:auto;contain-intrinsic-size:auto var(--cis,1000px)}
+.cv-all .v2-main>section.c-rv{content-visibility:visible}
+@media print{.v2-main>section.c-rv{content-visibility:visible}}
+/*CIS*/
 </style>
+<script>if(location.hash.length>1)document.documentElement.classList.add('cv-all')</script>
 ${localFonts(d.helmet.trim())}
 <script src="${appName}" defer></script>
 </head>
@@ -385,6 +395,25 @@ async function prerender() {
     await page.waitForTimeout(300);
     if (errors.length) throw new Error('page errors during prerender:\n' + errors.join('\n'));
     // The chat bar and mic buttons only work with JavaScript, so leave it out of the static HTML; the runtime adds it.
+    // Real section heights at a few widths, so skipped sections reserve the right space.
+    const cis = [];
+    for (const [w, media] of [[390, '(max-width:600px)'], [768, '(min-width:601px) and (max-width:900px)'], [1280, '(min-width:901px) and (max-width:1400px)'], [1680, '(min-width:1401px)']]) {
+      await page.setViewportSize({ width: w, height: 1000 });
+      await page.waitForTimeout(150);
+      const rules = await page.evaluate(() => {
+        document.documentElement.classList.add('cv-all');
+        const out = [];
+        document.querySelectorAll('.v2-main>section.c-rv').forEach((sec) => {
+          const sel = sec.id ? '#' + sec.id : sec.getAttribute('aria-labelledby') ? `section[aria-labelledby="${sec.getAttribute('aria-labelledby')}"]` : null;
+          if (sel) out.push(`${sel}{--cis:${Math.round(sec.getBoundingClientRect().height)}px}`);
+        });
+        document.documentElement.classList.remove('cv-all');
+        return out.join('');
+      });
+      cis.push(`@media ${media}{${rules}}`);
+    }
+    await page.setViewportSize({ width: 1440, height: 1000 });
+    await page.waitForTimeout(150);
     const html = await page.$eval('#app', (el) => { const c = el.cloneNode(true); c.querySelectorAll('.c-chat, .c-mic').forEach((n) => n.remove()); return c.innerHTML; });
     const passages = await page.evaluate(extractPassages);
     const index = { generated: new Date().toISOString(), passages };
@@ -393,7 +422,7 @@ async function prerender() {
     writeFileSync(join(ROOT, 'worker', 'knowledge.json'), JSON.stringify(index, null, 1) + '\n');
     console.log('ask.sh index:', passages.length, 'passages,', passages.reduce((n, p) => n + p.text.length, 0), 'chars');
     const file = join(OUT, 'index.html');
-    writeFileSync(file, readFileSync(file, 'utf8').replace('<!--PRERENDER-->', html));
+    writeFileSync(file, readFileSync(file, 'utf8').replace('<!--PRERENDER-->', html).replace('/*CIS*/', cis.join('\n')));
     await buildOgImage(browser);
   } finally {
     await browser.close();
