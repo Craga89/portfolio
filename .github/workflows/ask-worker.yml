@@ -40,7 +40,7 @@ jobs:
         run: |
           sleep 5
           fail=0
-          for q in "Has he been through an acquisition?" "Where did he study?"; do
+          for q in "Has he been through an acquisition?" "Where did he study?" "What roles is he looking for?"; do
             code=$(curl -sS -m 60 -o out.json -w '%{http_code}' -X POST "$ASK_URL" -H 'origin: https://craga.dev' -H 'content-type: application/json' \
               --data "$(jq -n --arg q "$q" '{q: $q}')" || echo 000)
             if [ "$code" = 200 ] && jq -e '.answer | length > 0' out.json >/dev/null; then

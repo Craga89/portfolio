@@ -16,7 +16,7 @@ const MAX_Q = 300;
 const SYSTEM = `You answer questions from recruiters and hiring managers about Craig Michael Thompson, using only the CONTEXT passages from his portfolio site (craga.dev).
 Rules:
 - Use only facts stated in CONTEXT. Never guess, embellish or add numbers, employers, dates or skills that are not there.
-- Each passage shows the site file it comes from, e.g. (file: budget.md). Where it helps, point the reader to that exact file name, e.g. "See budget.md.". Never make up file names, and never mention passage ids such as faq-1 or career-2 in the answer.
+- Each passage header shows its id and the site file it comes from, e.g. [resp-bud] (file: budget.md). In the answer text, where it helps, point the reader to that file name in a sentence, e.g. "See budget.md.". Never copy the "(file: …)" label itself, never make up file names, and keep passage ids (resp-bud, faq-1) out of the answer text: they belong only on the SOURCES line.
 - If CONTEXT doesn't answer the question, reply only: "That isn't covered on the site, but Craig can answer it directly: craga89@gmail.com."
 - Refer to Craig in the third person ("he", "Craig"). Be plain, direct and specific. At most 120 words. No headings, no bullet lists, no markdown.
 - Don't discuss salary or pay expectations; suggest emailing instead.
@@ -82,15 +82,24 @@ export const fixRefs = (t) => t
   .replace(ID_RE, (all, a, b) => fileOf(a || b) || all)
   .replace(/(\b[\w/.-]+\.(?:md|log|txt)) and \1(?![\w/-])/g, '$1');
 
-function parse(raw) {
+export function parse(raw, ctx) {
   let text = String(raw || '').replace(/<think>[\s\S]*?<\/think>/gi, '').replace(/^\s*<think>[\s\S]*$/i, '').trim();
   let sources = [];
-  const m = text.match(/\n?\s*\**SOURCES?\**:?\**\s*(.*)\s*$/i);
+  const m = text.match(/\n?\s*\**SOURCES?\**:?\**\s*([\s\S]*)$/i);
   if (m) {
-    sources = m[1].split(/[,\s]+/).map((s) => s.replace(/[^\w-]/g, '')).filter((id) => BY_ID[id]);
+    // Ids are expected, but the model sometimes lists file names (budget.md); map those to the passages it was given.
+    const pool = ctx && ctx.length ? ctx : PASSAGES;
+    m[1].split(/[,\s]+/).map((s) => s.replace(/^[^\w]+|[^\w/.-]+$/g, '').replace(/\.$/, '')).filter(Boolean).forEach((tok) => {
+      if (BY_ID[tok]) { sources.push(tok); return; }
+      const f = tok.toLowerCase();
+      pool.filter((p) => (fileOf(p.id) || '').toLowerCase() === f).slice(0, 2).forEach((p) => sources.push(p.id));
+    });
     text = text.slice(0, m.index).trim();
   }
-  text = text.replace(/\s*\[([\w, -]+)\]/g, (all, ids) => (ids.split(/[,\s]+/).every((id) => !id || BY_ID[id]) ? '' : all)).replace(/\*\*/g, '').replace(/[ \t]+\n/g, '\n').replace(/ {2,}/g, ' ').trim();
+  text = text
+    .replace(/\s*\((?:file|source)s?:\s*[^)]*\)/gi, '')
+    .replace(/\s*\[([\w, -]+)\]/g, (all, ids) => (ids.split(/[,\s]+/).every((id) => !id || BY_ID[id]) ? '' : all))
+    .replace(/\*\*/g, '').replace(/[ \t]+\n/g, '\n').replace(/ {2,}/g, ' ').replace(/\s+([.,;:])/g, '$1').replace(/\.{2,}/g, '.').trim();
   text = fixRefs(text);
   return { answer: text, sources: [...new Set(sources)].slice(0, 3) };
 }
@@ -110,7 +119,7 @@ async function answer(env, q) {
         ...(/gemma-4|qwen3/.test(model) ? { chat_template_kwargs: { enable_thinking: false } } : {}),
       });
       const raw = r && (r.response ?? r.choices?.[0]?.message?.content ?? r.result?.response);
-      const out = parse(typeof raw === 'string' ? raw : '');
+      const out = parse(typeof raw === 'string' ? raw : '', ctx);
       if (out.answer) return { ...out, model };
       lastErr = new Error('empty answer from ' + model);
     } catch (e) {

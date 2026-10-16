@@ -79,6 +79,18 @@ test('passage ids cited as files become real file names', async () => {
   assert.equal(d.answer, 'He wants hands-on leadership roles. See faq.md and career.log.');
 });
 
+test('copied file labels are dropped and file names on the SOURCES line map to passages', () => {
+  const ctx = mod.pickContext('Where did he study?');
+  let d = mod.parse('He earned an MEng from Newcastle University (file: recommendations.txt).\nSOURCES: recommendations.txt', ctx);
+  assert.equal(d.answer, 'He earned an MEng from Newcastle University.');
+  assert.ok(d.sources.includes('recognition'), JSON.stringify(d.sources));
+  d = mod.parse('Yes, he has. See acquisition.md.\nSOURCES: acquisition.md, faq.md', mod.pickContext('Has he been through an acquisition?'));
+  assert.ok(d.sources.includes('resp-acq'), JSON.stringify(d.sources));
+  assert.ok(d.sources.some((id) => id.startsWith('faq-')), JSON.stringify(d.sources));
+  d = mod.parse('Answer.\n\nSOURCES:\n- [faq-1]\n- career-1', ctx);
+  assert.deepEqual(d.sources, ['faq-1', 'career-1']);
+});
+
 test('context selection finds the right passages', () => {
   const ids = (q) => mod.pickContext(q).map((p) => p.id);
   assert.ok(ids('Has he been through an acquisition?').includes('resp-acq'));
