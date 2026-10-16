@@ -135,7 +135,8 @@ const CONSOLE_HELLO = `
       ['end', '\\n# ask.sh works from here too: ask() any question about my experience.\\n'],
     ];
     try { console.log(parts.map(function (p) { return '%c' + p[1]; }).join(''), ...parts.map(function (p) { return S[p[0]]; })); } catch (e) {}
-    if (!('ask' in window)) {
+    // (window.ask is the #ask section element by default, so only skip if a real function is already there.)
+    if (typeof window.ask !== 'function') {
       window.ask = function (q) {
         q = String(q || '').trim();
         if (!q) return 'Try: ask("Has he been through an acquisition?")';
