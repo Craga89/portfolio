@@ -102,7 +102,8 @@ try {
   const nojs = await browser.newContext({ javaScriptEnabled: false });
   const p2 = await nojs.newPage();
   await p2.goto(base + '/');
-  const txt = await p2.locator('#app').innerText();
+  // textContent, not innerText: offscreen sections skip rendering (content-visibility) but stay in the page.
+  const txt = await p2.locator('#app').evaluate((el) => el.textContent);
   ok('content readable without JavaScript', /Craig Michael Thompson/.test(txt) && /hiring\.md/.test(txt) && /monorepo/.test(txt), txt.length + ' chars');
 
   // mobile
