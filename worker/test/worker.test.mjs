@@ -68,6 +68,17 @@ test('rate limiter and question length', async () => {
   assert.ok(/QUESTION: x{300}$/.test(q));
 });
 
+test('passage ids cited as files become real file names', async () => {
+  assert.equal(mod.fixRefs('See faq-1.md and career-1.md.'), 'See faq.md and career.log.');
+  assert.equal(mod.fixRefs('See faq-1.md and faq-13.md.'), 'See faq.md.');
+  assert.equal(mod.fixRefs('See resp-bud and case-ai.md.'), 'See budget.md and ' + mod.fileOf('case-ai') + '.');
+  assert.equal(mod.fixRefs('He knows the stack well; see intro.md.'), 'He knows the stack well; see README.md.');
+  assert.equal(mod.fixRefs('See budget.md.'), 'See budget.md.');
+  const env = { AI: { run: async (m, i) => { assert.match(i.messages[1].content, /\[faq-1\] \(file: faq\.md\)/); return { response: 'He wants hands-on leadership roles. See faq-1.md and career-1.md.\nSOURCES: faq-1' }; } } };
+  const d = await (await worker.fetch(req({ q: 'What roles is he looking for?' }), env)).json();
+  assert.equal(d.answer, 'He wants hands-on leadership roles. See faq.md and career.log.');
+});
+
 test('context selection finds the right passages', () => {
   const ids = (q) => mod.pickContext(q).map((p) => p.id);
   assert.ok(ids('Has he been through an acquisition?').includes('resp-acq'));

@@ -3489,6 +3489,8 @@ class Component extends DCLogic {
           d.passages.forEach((p) => {
             const f = String(p.title).split(':')[0].trim().toLowerCase();
             if ((p.kind === 'resp' || p.kind === 'case') && /^[\w/-]+\.\w+$/.test(f)) map[f] = { href: p.href, kind: p.kind, key: p.key };
+            // In case an answer cites a passage id (faq-1.md, resp-bud) instead of its file, link that too.
+            if (p.id.indexOf('-') > 0) map[p.id] = map[p.id + '.md'] = { href: p.href, kind: p.kind, key: p.key };
           });
           const esc = (k) => k.replace(/[.*+?^${}()|[\]\\/]/g, '\\$&');
           const keys = Object.keys(map).sort((a, b) => b.length - a.length).map(esc);

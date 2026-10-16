@@ -16,7 +16,7 @@ const MAX_Q = 300;
 const SYSTEM = `You answer questions from recruiters and hiring managers about Craig Michael Thompson, using only the CONTEXT passages from his portfolio site (craga.dev).
 Rules:
 - Use only facts stated in CONTEXT. Never guess, embellish or add numbers, employers, dates or skills that are not there.
-- When a passage title starts with a file name (like budget.md or ai/platform.md), mention that file name where it helps, e.g. "See budget.md.", so the reader can open it.
+- Each passage shows the site file it comes from, e.g. (file: budget.md). Where it helps, point the reader to that exact file name, e.g. "See budget.md.". Never make up file names, and never mention passage ids such as faq-1 or career-2 in the answer.
 - If CONTEXT doesn't answer the question, reply only: "That isn't covered on the site, but Craig can answer it directly: craga89@gmail.com."
 - Refer to Craig in the third person ("he", "Craig"). Be plain, direct and specific. At most 120 words. No headings, no bullet lists, no markdown.
 - Don't discuss salary or pay expectations; suggest emailing instead.
@@ -64,6 +64,24 @@ export function pickContext(q) {
   return chosen;
 }
 
+// The section file a passage lives in on the site, as visitors see it (budget.md, faq.md, career.log…).
+export function fileOf(id) {
+  const p = BY_ID[id];
+  if (!p) return null;
+  if (p.kind === 'resp' || p.kind === 'case') return String(p.title).split(':')[0].trim();
+  if (/^faq-/.test(id)) return 'faq.md';
+  if (/^career-/.test(id)) return 'career.log';
+  return { intro: 'README.md', profile: 'README.md', stack: 'stack/', oss: 'open-source/', recommendations: 'recommendations.txt', recognition: 'recommendations.txt' }[id] || null;
+}
+
+// Passage ids the model sometimes cites as if they were files ("faq-1.md", "resp-bud") become the real file name.
+const DASHED = PASSAGES.map((p) => p.id).filter((id) => id.includes('-')).sort((a, b) => b.length - a.length);
+const PLAIN = PASSAGES.map((p) => p.id).filter((id) => !id.includes('-'));
+const ID_RE = new RegExp('(?<![\\w./-])(?:(' + DASHED.join('|') + ')(?:\\.(?:md|log|txt))?|(' + PLAIN.join('|') + ')\\.(?:md|log|txt))(?![\\w/-])', 'g');
+export const fixRefs = (t) => t
+  .replace(ID_RE, (all, a, b) => fileOf(a || b) || all)
+  .replace(/(\b[\w/.-]+\.(?:md|log|txt)) and \1(?![\w/-])/g, '$1');
+
 function parse(raw) {
   let text = String(raw || '').replace(/<think>[\s\S]*?<\/think>/gi, '').replace(/^\s*<think>[\s\S]*$/i, '').trim();
   let sources = [];
@@ -73,12 +91,13 @@ function parse(raw) {
     text = text.slice(0, m.index).trim();
   }
   text = text.replace(/\s*\[([\w, -]+)\]/g, (all, ids) => (ids.split(/[,\s]+/).every((id) => !id || BY_ID[id]) ? '' : all)).replace(/\*\*/g, '').replace(/[ \t]+\n/g, '\n').replace(/ {2,}/g, ' ').trim();
+  text = fixRefs(text);
   return { answer: text, sources: [...new Set(sources)].slice(0, 3) };
 }
 
 async function answer(env, q) {
   const ctx = pickContext(q);
-  const context = ctx.map((p) => `[${p.id}] ${p.title}\n${p.text}`).join('\n\n');
+  const context = ctx.map((p) => `[${p.id}] (file: ${fileOf(p.id) || 'none'}) ${p.title}\n${p.text}`).join('\n\n');
   let lastErr;
   for (const model of MODELS) {
     try {
