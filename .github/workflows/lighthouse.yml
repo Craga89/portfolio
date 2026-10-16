@@ -1,0 +1,61 @@
+# Runs Lighthouse (mobile and desktop) against the live site and saves a summary to the
+# `lighthouse` branch (reports/summary.json + full reports), so results can be read back later.
+name: Lighthouse audit
+
+on:
+  workflow_dispatch:
+    inputs:
+      url:
+        description: Page to audit
+        default: https://craga.dev/
+  workflow_run:
+    workflows: [Deploy to GitHub Pages]
+    types: [completed]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: lighthouse
+  cancel-in-progress: true
+
+jobs:
+  audit:
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    env:
+      URL: ${{ inputs.url || 'https://craga.dev/' }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - name: Install Lighthouse
+        run: npm i -g lighthouse@12
+      - name: Audit
+        run: |
+          mkdir -p out
+          sleep 20 # let the Pages CDN pick up a fresh deploy
+          for preset in mobile desktop; do
+            for i in 1 2 3; do
+              flags=""; [ "$preset" = desktop ] && flags="--preset=desktop"
+              lighthouse "$URL" $flags --quiet --output=json --output-path="out/$preset-$i.json" \
+                --chrome-flags="--headless=new --no-sandbox" || true
+            done
+          done
+          node tools/lighthouse-summary.mjs out > out/summary.json
+          cat out/summary.json | head -c 4000
+      - name: Save to the lighthouse branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          sha=${{ github.event.workflow_run.head_sha || github.sha }}
+          git fetch origin lighthouse || true
+          git switch --orphan lh-tmp
+          git rm -rq --cached . || true
+          mkdir -p reports && cp out/summary.json reports/summary.json
+          for f in out/mobile-2.json out/desktop-2.json; do [ -f "$f" ] && cp "$f" reports/; done
+          echo "$sha" > reports/commit.txt
+          git add reports
+          git commit -qm "Lighthouse for $sha"
+          git push -f origin lh-tmp:lighthouse
