@@ -360,9 +360,9 @@ body:has(.c-light){background:#EDF1EE!important}
 /* Portrait sits beside the name in the README intro, on every screen size. */
 .v2-name{display:flex;align-items:center;gap:clamp(16px,3vw,40px);margin-bottom:18px}
 .v2-name h1{margin:0!important;flex:0 1 auto;min-width:0}
-.v2-name .v2-ph{order:2;flex:none;width:clamp(88px,13vw,176px)}
-@media (max-width:600px){.v2-name{display:block}.v2-name::after{content:'';display:block;clear:both}.v2-name .v2-ph{float:right;width:96px;margin:4px 0 8px 14px}}
-@media (max-width:370px){.v2-name .v2-ph{width:68px;margin-left:10px}.v2-lead .v2-name h1{font-size:15vw!important}}
+.v2-name .v2-ph{flex:none;width:clamp(88px,13vw,176px)}
+@media (max-width:600px){.v2-name{display:block}.v2-name::after{content:'';display:block;clear:both}.v2-name .v2-ph{float:left;width:96px;margin:4px 14px 8px 0}}
+@media (max-width:370px){.v2-name .v2-ph{width:68px;margin-right:10px}.v2-lead .v2-name h1{font-size:15vw!important}}
 </style>
 </helmet>
 <div class="{{rootClass}}" style="background: var(--bg); color: var(--text); min-height: 100vh; font-size: 16px; line-height: 1.7">
