@@ -255,7 +255,8 @@ async function prerender() {
     await page.waitForSelector('#app .c-root');
     await page.waitForTimeout(300);
     if (errors.length) throw new Error('page errors during prerender:\n' + errors.join('\n'));
-    const html = await page.$eval('#app', (el) => el.innerHTML);
+    // The chat bar only works with JavaScript, so leave it out of the static HTML; the runtime adds it.
+    const html = await page.$eval('#app', (el) => { const c = el.cloneNode(true); c.querySelectorAll('.c-chat').forEach((n) => n.remove()); return c.innerHTML; });
     const passages = await page.evaluate(extractPassages);
     const index = { generated: new Date().toISOString(), passages };
     writeFileSync(join(OUT, 'assets', 'ask-index.json'), JSON.stringify(index));

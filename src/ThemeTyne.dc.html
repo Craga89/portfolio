@@ -311,6 +311,51 @@ body:has(.c-light){background:#EDF1EE!important}
 .c-ask-go{all:unset;box-sizing:border-box;cursor:pointer;min-height:40px;padding:0 14px;display:inline-flex;align-items:center;border-radius:6px;background:var(--acc);color:var(--bg);font-weight:700;font-size:14px}
 .c-ask-go[disabled]{opacity:.5;cursor:default}
 .c-ask-go:focus-visible,.c-ask-chip:focus-visible,.c-ask-field:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.c-ask-ln{color:var(--acc);text-decoration:underline;text-underline-offset:2px}
+.c-chat{position:fixed;right:304px;bottom:0;z-index:30;width:272px;display:flex;flex-direction:column;background:var(--panel);border:1px solid var(--line3);border-bottom:0;border-radius:10px 10px 0 0;box-shadow:0 -4px 22px rgba(0,0,0,.18);transition:transform .25s ease;font-family:var(--f-body)}
+.c-chat[data-open="true"]{width:360px}
+.c-chat[data-hide="true"]{transform:translateY(calc(100% + 16px))}
+.c-chat-bar{all:unset;box-sizing:border-box;cursor:pointer;display:flex;align-items:center;gap:10px;width:100%;min-height:48px;padding:8px 14px 8px 12px;border-radius:10px 10px 0 0;color:var(--head)}
+.c-chat-bar:hover{background:var(--panel2)}
+.c-chat-bar:focus-visible{outline:2px solid var(--acc);outline-offset:-2px}
+.c-chat[data-open="true"] .c-chat-bar{border-bottom:1px solid var(--line2)}
+.c-chat-av{position:relative;flex:none;width:28px;height:28px}
+.c-chat-av img{display:block;width:28px;height:28px;border-radius:50%;object-fit:cover;box-shadow:0 0 0 1px var(--line3)}
+.c-chat-av i{position:absolute;right:-2px;bottom:-1px;width:9px;height:9px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 2px var(--panel)}
+.c-chat-t{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px;line-height:1.25}
+.c-chat-t b{font-family:var(--f-mono,ui-monospace,monospace);font-size:14px;font-weight:700;color:var(--head)}
+.c-chat-t span{font-size:12px;color:var(--mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.c-chat-chev{flex:none;color:var(--mute);transition:transform .2s ease}
+.c-chat[data-open="true"] .c-chat-chev{transform:rotate(180deg)}
+.c-chat-panel{display:flex;flex-direction:column;height:min(460px,calc(100vh - 120px))}
+.c-chat-log{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;display:flex;flex-direction:column;gap:8px;padding:14px 12px}
+.c-chat-msg{max-width:88%;box-sizing:border-box;padding:8px 12px;border-radius:14px;font-size:14px;line-height:1.5;overflow-wrap:anywhere}
+.c-chat-msg p{margin:0}
+.c-chat-msg p+p{margin-top:6px}
+.c-chat-msg p.c-ask-li{position:relative;padding-left:14px}
+.c-chat-msg p.c-ask-li::before{content:'–';position:absolute;left:0;color:var(--acc)}
+.c-chat-them{align-self:flex-start;background:var(--panel2);color:var(--text2);border-bottom-left-radius:4px}
+.c-chat-me{align-self:flex-end;background:var(--acc);color:var(--bg);border-bottom-right-radius:4px}
+.c-chat-src{display:flex;flex-wrap:wrap;gap:2px 10px;margin-top:8px;font-family:var(--f-mono,ui-monospace,monospace);font-size:12px}
+.c-chat-src a{color:var(--acc)}
+.c-chat-meta{margin-top:6px;font-size:11px;color:var(--dim)}
+.c-chat-meta:empty{display:none}
+.c-chat-typing{display:flex;gap:5px;padding:13px 14px}
+.c-chat-typing i{width:6px;height:6px;border-radius:50%;background:var(--mute);animation:c-pulse 1.1s ease-in-out infinite}
+.c-chat-typing i:nth-child(2){animation-delay:.18s}
+.c-chat-typing i:nth-child(3){animation-delay:.36s}
+.c-chat-sugg{display:flex;flex-wrap:wrap;gap:6px;margin-top:2px}
+.c-chat-sugg .c-ask-chip{min-height:32px;padding:0 11px;font-size:12.5px}
+.c-chat-in{display:flex;align-items:center;gap:6px;padding:8px;border-top:1px solid var(--line2)}
+.c-chat-field{all:unset;box-sizing:border-box;flex:1;min-width:0;min-height:40px;padding:0 14px;border-radius:999px;background:var(--panel2);font-size:14px;color:var(--head);caret-color:var(--acc)}
+.c-chat-field::placeholder{color:var(--dim)}
+.c-chat-field:focus-visible,.c-chat-go:focus-visible{outline:2px solid var(--acc);outline-offset:1px}
+.c-chat-go{all:unset;box-sizing:border-box;cursor:pointer;flex:none;display:grid;place-items:center;width:40px;height:40px;border-radius:50%;color:var(--acc)}
+.c-chat-go:hover{background:var(--panel2)}
+.c-chat-go[disabled]{opacity:.45;cursor:default}
+@media (max-width:900px){.c-chat{right:12px}}
+@media (max-width:600px){.c-chat{width:236px}.c-chat[data-open="true"]{left:8px;right:8px;width:auto}.c-chat-panel{height:min(520px,calc(100vh - 110px))}.c-chat-field,.c-ask-field{font-size:16px}}
+@media print{.c-chat{display:none}}
 @media (max-width:600px){.c-ask-in .c-ask-p{display:none}.c-ask-log{padding:14px 14px 4px}.c-ask-sugg{padding:10px 14px 14px}}
 </style>
 </helmet>
@@ -1723,7 +1768,7 @@ body:has(.c-light){background:#EDF1EE!important}
 <div class="c-ask-q"><span class="c-ask-p">$</span> ./ask.sh "{{e.q}}"</div>
 <sc-if value="{{e.pending}}" hint-placeholder-val="false"><div class="c-ask-a c-ask-wait">thinking<span class="c-cursor" aria-hidden="true"></span></div></sc-if>
 <sc-if value="{{e.done}}" hint-placeholder-val="true"><div class="c-ask-a">
-<sc-for list="{{e.lines}}" as="l" hint-placeholder-count="2"><p class="{{l.cls}}">{{l.t}}</p></sc-for>
+<sc-for list="{{e.lines}}" as="l" hint-placeholder-count="2"><p class="{{l.cls}}"><sc-for list="{{l.parts}}" as="x" hint-placeholder-count="1"><sc-if value="{{x.link}}" hint-placeholder-val="false"><a class="c-ask-ln" href="{{x.href}}" onClick="{{x.pick}}">{{x.t}}</a></sc-if><sc-if value="{{x.plain}}" hint-placeholder-val="true">{{x.t}}</sc-if></sc-for></p></sc-for>
 <sc-if value="{{e.hasSources}}" hint-placeholder-val="true"><div class="c-ask-src"><span># sources</span><sc-for list="{{e.sources}}" as="s" hint-placeholder-count="2"><a href="{{s.href}}" onClick="{{s.pick}}">{{s.label}}</a></sc-for></div></sc-if>
 <div class="c-ask-meta">{{e.meta}}</div>
 </div></sc-if>
@@ -1739,12 +1784,48 @@ body:has(.c-light){background:#EDF1EE!important}
 </div>
 </section>
 </main>
+<div class="c-chat" data-open="{{chatOpenAttr}}" data-hide="{{chatHide}}">
+<button type="button" class="c-chat-bar" onClick="{{chatToggle}}" aria-expanded="{{chatOpenAttr}}" aria-controls="c-chat-panel" title="{{chatBarTitle}}">
+<span class="c-chat-av"><img src="./portrait.webp" alt="" width="28" height="28" loading="lazy" decoding="async"><i aria-hidden="true"></i></span>
+<span class="c-chat-t"><b>ask.sh</b><span>{{chatSub}}</span></span>
+<svg class="c-chat-chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 15 6-6 6 6"></path></svg>
+</button>
+<sc-if value="{{chatOpen}}" hint-placeholder-val="false">
+<div id="c-chat-panel" class="c-chat-panel" role="region" aria-label="Ask about Craig">
+<div class="c-chat-log" aria-live="polite">
+<div class="c-chat-msg c-chat-them"><p>Hi! Ask me anything about Craig's experience, roles or skills. Answers come from this site, with links to where they were found.</p></div>
+<sc-for list="{{askLog}}" as="e" hint-placeholder-count="1">
+<div class="c-chat-msg c-chat-me"><p>{{e.q}}</p></div>
+<sc-if value="{{e.pending}}" hint-placeholder-val="false"><div class="c-chat-msg c-chat-them c-chat-typing" role="status" aria-label="Thinking"><i></i><i></i><i></i></div></sc-if>
+<sc-if value="{{e.done}}" hint-placeholder-val="true"><div class="c-chat-msg c-chat-them">
+<sc-for list="{{e.lines}}" as="l" hint-placeholder-count="1"><p class="{{l.cls}}"><sc-for list="{{l.parts}}" as="x" hint-placeholder-count="1"><sc-if value="{{x.link}}" hint-placeholder-val="false"><a class="c-ask-ln" href="{{x.href}}" onClick="{{x.pick}}">{{x.t}}</a></sc-if><sc-if value="{{x.plain}}" hint-placeholder-val="true">{{x.t}}</sc-if></sc-for></p></sc-for>
+<sc-if value="{{e.hasSources}}" hint-placeholder-val="true"><div class="c-chat-src"><sc-for list="{{e.sources}}" as="s" hint-placeholder-count="2"><a href="{{s.href}}" onClick="{{s.pick}}" title="{{s.label}}">{{s.short}}</a></sc-for></div></sc-if>
+<div class="c-chat-meta">{{e.metaShort}}</div>
+</div></sc-if>
+</sc-for>
+<sc-if value="{{askEmpty}}" hint-placeholder-val="true"><div class="c-chat-sugg"><sc-for list="{{askSugg}}" as="s" hint-placeholder-count="4"><button type="button" class="c-ask-chip" onClick="{{s.pick}}" disabled="{{askBusy}}">{{s.t}}</button></sc-for></div></sc-if>
+</div>
+<div class="c-chat-in">
+<input id="c-chat-field" class="c-chat-field" type="text" maxlength="300" autocomplete="off" aria-label="Ask a question about Craig" placeholder="Ask a question…" value="{{chatQ}}" onChange="{{chatType}}" onKeyDown="{{chatKey}}">
+<button type="button" class="c-chat-go" onClick="{{chatGo}}" disabled="{{askBusy}}" aria-label="Send" title="Send"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 2 11 13"></path><path d="M22 2 15 22l-4-9-9-4 20-7z"></path></svg></button>
+</div>
+</div>
+</sc-if>
+</div>
 </div>
 </div>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props='{"motion":{"editor":"boolean","default":true},"theme":{"editor":"enum","options":["dark","light"],"default":"dark"},"$preview":{"width":1440,"height":7600}}'>
 class Component extends DCLogic {
-  componentDidMount() { this.mountFx(); this.trackHeader(); this.bindAnchors(); this.bindDeck(); this.bindSpy(); }
+  componentDidMount() { this.mountFx(); this.trackHeader(); this.bindAnchors(); this.bindDeck(); this.bindSpy(); this.bindChat(); }
+  bindChat() {
+    if (this._onChatLink || typeof document === 'undefined') return;
+    this._onChatLink = (e) => {
+      const a = e.target && e.target.closest ? e.target.closest('.c-chat-log a[href^="#"]') : null;
+      if (a && window.innerWidth <= 900) setTimeout(() => this.setState({ chatOpen: false }), 0);
+    };
+    document.addEventListener('click', this._onChatLink);
+  }
   scrollToId(id) {
     try {
       const el = document.getElementById(id);
@@ -1889,6 +1970,15 @@ class Component extends DCLogic {
             d.byId[p.id] = p;
           });
           d.idf = (w) => Math.log(1 + d.passages.length / (df[w] || 0.5));
+          // File names mentioned in answers (budget.md, ai/platform.md…) link to their tab.
+          const map = { 'readme.md': { href: '#top' }, 'career.log': { href: '#career' }, 'responsibilities/': { href: '#responsibilities' }, 'case-studies/': { href: '#case-studies' }, 'faq.md': { href: '#faq' }, 'recommendations.txt': { href: '#recommendations' }, 'craga.dev/cv': { href: 'cv/' } };
+          d.passages.forEach((p) => {
+            const f = String(p.title).split(':')[0].trim().toLowerCase();
+            if ((p.kind === 'resp' || p.kind === 'case') && /^[\w/-]+\.\w+$/.test(f)) map[f] = { href: p.href, kind: p.kind, key: p.key };
+          });
+          const esc = (k) => k.replace(/[.*+?^${}()|[\]\\/]/g, '\\$&');
+          const keys = Object.keys(map).sort((a, b) => b.length - a.length).map(esc);
+          this._askLinks = { map, re: new RegExp('(?<![\\w./-])(?:' + keys.join('|') + ')(?![\\w/-])|[\\w.+-]+@[\\w-]+\\.[\\w.]+[a-z]', 'gi') };
           d.toks = toks;
           return d;
         });
@@ -1918,14 +2008,14 @@ class Component extends DCLogic {
     for (const s of sentences) { if ((answer + s).length > 420 && answer) break; answer += s; }
     return { answer: answer.trim(), sources: scored.slice(0, 3).map((x) => x.p) };
   }
-  askSubmit(raw) {
+  askSubmit(raw, from) {
     const q = String(raw || '').trim().slice(0, 300);
     const st = this.state || {};
     if (!q || st.askBusy) return;
     const log = (st.askLog || []).concat([{ q, pending: true }]).slice(-8);
-    this.setState({ askLog: log, askQ: '', askBusy: true });
-    try { const fld = document.getElementById('c-ask-field'); if (fld) fld.value = ''; } catch (e) {}
-    const scroll = () => setTimeout(() => { try { const el = document.querySelector('.c-ask-log'); if (el) el.scrollTop = el.scrollHeight; } catch (e) {} }, 30);
+    this.setState(from === 'chat' ? { askLog: log, chatQ: '', askBusy: true } : { askLog: log, askQ: '', askBusy: true });
+    try { const fld = document.getElementById(from === 'chat' ? 'c-chat-field' : 'c-ask-field'); if (fld) fld.value = ''; } catch (e) {}
+    const scroll = () => setTimeout(() => { try { document.querySelectorAll('.c-ask-log, .c-chat-log').forEach((el) => { el.scrollTop = el.scrollHeight; }); } catch (e) {} }, 30);
     scroll();
     const finish = (patch) => {
       const l = ((this.state || {}).askLog || []).slice();
@@ -1958,7 +2048,7 @@ class Component extends DCLogic {
     const id = typeof step === 'string' ? step : ids[(cur + step + ids.length) % ids.length];
     this.setState({ rtab: id, rSeq: (st.rSeq || 0) + 1 });
   }
-  componentWillUnmount() { if (this._onSpy) { window.removeEventListener('scroll', this._onSpy, true); window.removeEventListener('resize', this._onSpy); ['wheel', 'touchstart', 'keydown'].forEach((t) => window.removeEventListener(t, this._onSpyUser)); document.removeEventListener('click', this._onSpyClick, true); } this._fxKey = null; this.destroyFx(); clearTimeout(this._rTo); if (this._rIo) this._rIo.disconnect(); if (this._rEl && this._rOn) Object.keys(this._rOn).forEach((k) => this._rEl.removeEventListener(k, this._rOn[k])); if (this._onAnchor) document.removeEventListener('click', this._onAnchor, true); if (this._hdrRo) { try { this._hdrRo.disconnect(); } catch (e) {} } }
+  componentWillUnmount() { if (this._onSpy) { window.removeEventListener('scroll', this._onSpy, true); window.removeEventListener('resize', this._onSpy); ['wheel', 'touchstart', 'keydown'].forEach((t) => window.removeEventListener(t, this._onSpyUser)); document.removeEventListener('click', this._onSpyClick, true); } this._fxKey = null; this.destroyFx(); clearTimeout(this._rTo); if (this._rIo) this._rIo.disconnect(); if (this._rEl && this._rOn) Object.keys(this._rOn).forEach((k) => this._rEl.removeEventListener(k, this._rOn[k])); if (this._onAnchor) document.removeEventListener('click', this._onAnchor, true); if (this._onChatLink) document.removeEventListener('click', this._onChatLink); if (this._hdrRo) { try { this._hdrRo.disconnect(); } catch (e) {} } }
   fxKey() {
     const motion = this.props.motion ?? true;
     const theme = (this.state && this.state.theme) || this.props.theme || 'dark';
@@ -2145,13 +2235,30 @@ class Component extends DCLogic {
     const sqSummary = sql ? sqHits + ' match' + (sqHits === 1 ? '' : 'es') + ' for "' + sqRaw.trim() + '"' : sqTotal + ' tools across ' + SG.length + ' areas · type to search';
     const askSt = this.state || {};
     const askBusy = !!askSt.askBusy;
+    const askLinks = this._askLinks;
+    const askParts = (t) => {
+      if (!askLinks) return [{ t, plain: true }];
+      const out = [];
+      let last = 0;
+      t.replace(askLinks.re, (m, at) => {
+        const L = askLinks.map[m.toLowerCase()] || (m.indexOf('@') > 0 ? { href: 'mailto:' + m } : null);
+        if (!L) return m;
+        if (at > last) out.push({ t: t.slice(last, at), plain: true });
+        out.push({ t: m, link: true, href: L.href, pick: L.kind === 'resp' ? toResp(L.key) : L.kind === 'case' ? toCase(L.key) : null });
+        last = at + m.length;
+        return m;
+      });
+      if (last < t.length) out.push({ t: t.slice(last), plain: true });
+      return out;
+    };
     const askLog = (askSt.askLog || []).map((e) => ({
       q: e.q,
       pending: !!e.pending,
       done: !e.pending,
-      lines: String(e.answer || '').split(/\n+/).map((t) => t.trim()).filter(Boolean).map((t) => (/^[-•*]\s+/.test(t) ? { t: t.replace(/^[-•*]\s+/, ''), cls: 'c-ask-li' } : { t, cls: '' })),
+      lines: String(e.answer || '').split(/\n+/).map((t) => t.trim()).filter(Boolean).map((t) => (/^[-•*]\s+/.test(t) ? { parts: askParts(t.replace(/^[-•*]\s+/, '')), cls: 'c-ask-li' } : { parts: askParts(t), cls: '' })),
       hasSources: !e.pending && (e.sources || []).length > 0,
-      sources: (e.sources || []).map((s) => ({ label: s.title, href: s.href, pick: s.kind === 'resp' ? toResp(s.key) : s.kind === 'case' ? toCase(s.key) : null })),
+      sources: (e.sources || []).map((s) => ({ label: s.title, short: s.kind === 'resp' || s.kind === 'case' ? String(s.title).split(':')[0] : s.title, href: s.href, pick: s.kind === 'resp' ? toResp(s.key) : s.kind === 'case' ? toCase(s.key) : null })),
+      metaShort: e.mode === 'ai' ? 'AI answer from this site · can be wrong' : e.mode === 'search' ? (e.note ? "AI unavailable · closest match" : 'Closest match from the site') : '',
       meta: e.mode === 'ai' ? 'Answered by an AI model using only this site. It can get things wrong, so check the linked sections.' : e.mode === 'search' ? (e.note || 'Closest match from the site.') : ''
     }));
     const ASK_SUGG = ['What roles is he looking for?', 'How has he used AI in engineering?', 'Has he owned a budget?', 'Has he been through an acquisition?'];
@@ -2161,6 +2268,21 @@ class Component extends DCLogic {
       askType: (e) => this.setState({ askQ: e.target.value }),
       askKey: (e) => { if (e.key === 'Enter') { e.preventDefault(); this.askSubmit(e.target.value); } },
       askGo: () => this.askSubmit((this.state || {}).askQ),
+      chatOpen: !!askSt.chatOpen, chatOpenAttr: askSt.chatOpen ? 'true' : 'false',
+      chatHide: !askSt.chatOpen && (askSt.spy || 'top') === 'ask' ? 'true' : 'false',
+      chatSub: askBusy ? 'thinking…' : 'Ask about my experience', chatBarTitle: askSt.chatOpen ? 'Minimise' : 'Ask about my experience',
+      chatQ: askSt.chatQ || '',
+      chatToggle: () => {
+        const open = !(this.state || {}).chatOpen;
+        this.setState({ chatOpen: open });
+        if (open) setTimeout(() => { try { document.querySelectorAll('.c-chat-log').forEach((el) => { el.scrollTop = el.scrollHeight; }); const f = document.getElementById('c-chat-field'); if (f && window.matchMedia('(pointer: fine)').matches) f.focus(); } catch (e) {} }, 40);
+      },
+      chatType: (e) => this.setState({ chatQ: e.target.value }),
+      chatKey: (e) => {
+        if (e.key === 'Enter') { e.preventDefault(); this.askSubmit(e.target.value, 'chat'); }
+        else if (e.key === 'Escape') { this.setState({ chatOpen: false }); try { document.querySelector('.c-chat-bar').focus(); } catch (x) {} }
+      },
+      chatGo: () => this.askSubmit((this.state || {}).chatQ, 'chat'),
       spy: { 'ask': ((this.state || {}).spy || 'top') === 'ask' ? 'true' : 'false', 'top': ((this.state || {}).spy || 'top') === 'top' ? 'true' : 'false', 'about': ((this.state || {}).spy || 'top') === 'about' ? 'true' : 'false', 'career': ((this.state || {}).spy || 'top') === 'career' ? 'true' : 'false', 'responsibilities': ((this.state || {}).spy || 'top') === 'responsibilities' ? 'true' : 'false', 'caseStudies': ((this.state || {}).spy || 'top') === 'case-studies' ? 'true' : 'false', 'stack': ((this.state || {}).spy || 'top') === 'stack' ? 'true' : 'false', 'oss': ((this.state || {}).spy || 'top') === 'oss' ? 'true' : 'false', 'recommendations': ((this.state || {}).spy || 'top') === 'recommendations' ? 'true' : 'false', 'faq': ((this.state || {}).spy || 'top') === 'faq' ? 'true' : 'false', 'contact': ((this.state || {}).spy || 'top') === 'contact' ? 'true' : 'false' },
       rootClass: (motion ? 'c-root' : 'c-root still') + (light ? ' c-light' : ''),
       sq: sqRaw, noSq: !sql, onSq: (e) => this.setState({ sq: e.target.value }), sqResults, sqSummary, sqEmpty: sqHits === 0,
