@@ -1,0 +1,28 @@
+# One-off: downloads the site's Google Fonts (woff2, latin + latin-ext) into src/fonts/
+# so the site can serve them itself, then commits them to main.
+name: Fetch fonts
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - name: Download
+        run: node tools/fetch-fonts.mjs
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/fonts
+          git diff --cached --quiet && exit 0
+          git commit -m "Self-host the site fonts (fetched from Google Fonts)"
+          git push
