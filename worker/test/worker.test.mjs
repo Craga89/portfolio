@@ -74,4 +74,6 @@ test('context selection finds the right passages', () => {
   assert.ok(ids('Tell me about the monorepo').includes('case-mono'));
   assert.ok(ids('What does he know about Terraform?').includes('stack'));
   assert.ok(ids('qwerty zzz').length >= 6);
+  assert.ok(ids('Where did he study?').includes('recognition'));
+  assert.ok(ids('Is he good at hiring?').includes('resp-hire'));
 });
