@@ -11,10 +11,20 @@ const endpoint = process.argv[2] || JSON.parse(readFileSync(join(ROOT, 'ask.conf
 const { cases } = JSON.parse(readFileSync(join(ROOT, 'worker', 'evals.json'), 'utf8'));
 const ORIGIN = 'https://craigthompson.dev';
 
+// The Worker allows 8 questions a minute per visitor, so pace the requests and wait out a 429.
+const PACE = Number(process.env.EVAL_PACE_MS || 8000);
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+let last = 0;
 async function ask(q) {
-  const r = await fetch(endpoint, { method: 'POST', headers: { origin: ORIGIN, 'content-type': 'application/json', 'x-craga-test': '1' }, body: JSON.stringify({ q }) });
-  if (!r.ok) throw new Error('HTTP ' + r.status);
-  return r.json();
+  for (let tries = 0; ; tries++) {
+    const wait = last + PACE - Date.now();
+    if (wait > 0) await sleep(wait);
+    last = Date.now();
+    const r = await fetch(endpoint, { method: 'POST', headers: { origin: ORIGIN, 'content-type': 'application/json', 'x-craga-test': '1' }, body: JSON.stringify({ q }) });
+    if (r.status === 429 && tries < 3) { await sleep(30000); continue; }
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    return r.json();
+  }
 }
 function grade(c, d) {
   const problems = [];

@@ -56,6 +56,8 @@ jobs:
           ASK_URL: https://craga-ask.craga89.workers.dev/ask
       - name: Answer tests (evals)
         if: env.HAS_TOKEN == 'true'
-        run: node tools/ask-evals.mjs "$ASK_URL"
+        run: |
+          sleep 60 # let the smoke test's requests leave the rate-limit window
+          node tools/ask-evals.mjs "$ASK_URL"
         env:
           ASK_URL: https://craga-ask.craga89.workers.dev/ask

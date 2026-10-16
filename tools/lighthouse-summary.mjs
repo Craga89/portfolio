@@ -24,8 +24,10 @@ for (const preset of ['mobile', 'desktop']) {
     for (const ref of c.auditRefs) {
       const a = pick.audits[ref.id];
       if (!a || a.score == null || a.score >= 0.9 || a.scoreDisplayMode === 'notApplicable' || a.scoreDisplayMode === 'manual') continue;
-      const items = ((a.details && a.details.items) || []).slice(0, 5).map((it) => {
+      const raw = a.details && a.details.items;
+      const items = (Array.isArray(raw) ? raw : []).slice(0, 5).map((it) => {
         const o = {};
+        if (!it || typeof it !== 'object') return {};
         for (const k of ['url', 'source', 'node', 'wastedBytes', 'wastedMs', 'totalBytes', 'label', 'description', 'value']) {
           if (it[k] == null) continue;
           o[k] = k === 'node' ? (it.node.snippet || it.node.selector) : k === 'source' && typeof it.source === 'object' ? it.source.url : it[k];
