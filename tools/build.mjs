@@ -14,6 +14,8 @@ const PRERENDER = !process.argv.includes('--no-prerender');
 // Keep search engines out while the content is being finished.
 // Set to true (or run with --public) when the site is ready to be found.
 const ALLOW_INDEXING = process.argv.includes('--public') || false;
+// ask.sh: the Cloudflare Worker URL lives in ask.config.json ("" = search-only).
+const ASK = existsSync(join(ROOT, 'ask.config.json')) ? JSON.parse(readFileSync(join(ROOT, 'ask.config.json'), 'utf8')) : { endpoint: '' };
 const ROBOTS_META = ALLOW_INDEXING ? '' : '\n<meta name="robots" content="noindex, nofollow, noarchive">';
 
 const between = (s, a, b, from = 0) => {
@@ -55,6 +57,7 @@ function buildHome() {
   try { saved = localStorage.getItem('theme'); } catch (e) {}
   var light = false;
   try { light = window.matchMedia('(prefers-color-scheme: light)').matches; } catch (e) {}
+  window.CRAGA_ASK = { endpoint: ${JSON.stringify(ASK.endpoint || '')}, index: 'assets/ask-index.json' };
   var app = DCRuntime.mount({ root: '#app', template: '#dc-template', script: '#dc-component', props: { theme: saved || (light ? 'light' : 'dark') } });
   var set = app.c.setState;
   app.c.setState = function (p) {
@@ -164,6 +167,78 @@ function serve(dir) {
   });
 }
 
+// Pull the site's own words out of the rendered page as short passages. ask.sh
+// searches these in the browser, and the Worker gives them to the model as its
+// only source of facts.
+function extractPassages() {
+  const clean = (t) => String(t || '').replace(/\s+/g, ' ').replace(/\s+([,.;:!?)])/g, '$1').trim();
+  const INLINE = new Set(['a', 'b', 'strong', 'em', 'i', 'code', 'mark', 'small', 'abbr', 'sup', 'sub', 'u']);
+  const SKIP = new Set(['script', 'style', 'svg', 'canvas', 'input', 'template']);
+  // Node text with a space between block-level pieces, so words don't run together.
+  const txt = (n) => {
+    if (!n) return '';
+    if (n.nodeType === 3) return n.data;
+    if (n.nodeType !== 1 || SKIP.has(n.localName)) return '';
+    let out = '';
+    for (const c of n.childNodes) out += txt(c);
+    return INLINE.has(n.localName) ? out : ' ' + out + ' ';
+  };
+  const out = [];
+  const add = (id, title, text, href, kind, key) => {
+    // Drop the terminal decoration ($ cat file.txt, # comments, → bullets) so passages read as prose.
+    text = clean(String(text || '')
+      .replace(/\$ (?:cat|ls|grep -ri|git log|\.\/[\w.-]+)(?: [^\s#]+)?/g, ' ')
+      .replace(/(^|\s)# [a-z][\w ./-]*?(?=\s{2}|\s[A-Z0-9→$]|$)/g, ' ')
+      .replace(/\s*→\s*/g, '; ')
+      .replace(/^[;\s]+/, ''));
+    if (text.length > 1800) text = text.slice(0, 1800).replace(/\s\S*$/, '') + '…';
+    if (text) out.push({ id, title: clean(title), text, href, kind: kind || 'link', key: key || '' });
+  };
+  const q = (sel, root) => (root || document).querySelector(sel);
+  const qa = (sel, root) => Array.from((root || document).querySelectorAll(sel));
+  const intro = q('section[aria-label="Introduction"]');
+  if (intro) add('intro', 'About Craig', [q('h1', intro), q('.v2-st', intro), q('#about', intro)].map(txt).join(' '), '#top');
+  const side = q('.v2-id');
+  if (side) add('profile', 'Profile', txt(side) + '. Contact: craga89@gmail.com, github.com/Craga89, linkedin.com/in/craigmichaelthompson.', '#top');
+  qa('#career article.c-job').forEach((a, i) => {
+    const h = q('h3', a);
+    add('career-' + (i + 1), h ? txt(h) : 'Career', txt(a), '#career');
+  });
+  const rmap = { lead: 'lead', hire: 'hire', people: 'people', proc: 'proc', aiproc: 'aiproc', prod: 'prod', cust: 'cust', bud: 'bud', acq: 'acq', inc: 'inc', comp: 'comp', it: 'it' };
+  qa('#responsibilities [role="tabpanel"][id^="rp-"]').forEach((p) => {
+    const key = p.id.slice(3);
+    const file = p.getAttribute('aria-label') || key;
+    const h = q('h3', p);
+    const body = [q('.c-rs-s', p), q('.c-rs-pts', p), q('.c-rs-n', p) && q('.c-rs-n', p).parentNode, q('.c-rs-body', p)].filter(Boolean).map(txt).join(' ');
+    add('resp-' + key, file + (h ? ': ' + clean(txt(h)) : ''), body, '#responsibilities', 'resp', rmap[key] || key);
+  });
+  const cmap = { 'monorepo.md': 'mono', 'refactor.md': 'refactor', 'ci-cd.md': 'ci', 'testing.md': 'test', 'aws.md': 'aws', 'security.md': 'sec', 'auth.md': 'auth', 'data.md': 'data', 'cost.md': 'cost', 'ai/platform.md': 'ai' };
+  qa('#case-studies [role="tabpanel"]').forEach((p) => {
+    const file = p.getAttribute('aria-label') || '';
+    const h = q('h3', p);
+    add('case-' + (cmap[file] || file), file + (h ? ': ' + clean(txt(h)) : ''), txt(p), '#case-studies', 'case', cmap[file] || '');
+  });
+  const stack = q('#stack');
+  if (stack) {
+    const rows = qa('#stack .c-sq-row').map((r) => {
+      const kids = Array.from(r.children);
+      const items = kids.slice(1).flatMap((k) => (k.children.length ? Array.from(k.children) : [k])).map((x) => clean(txt(x))).filter(Boolean);
+      return items.length ? clean(txt(kids[0])) + ' ' + items.join(', ') : '';
+    }).filter(Boolean);
+    add('stack', 'Skills and tools (stack)', rows.length ? rows.join('. ') : txt(stack), '#stack');
+  }
+  ['oss', 'recommendations'].forEach((id) => { const n = q('#' + id); if (n) add(id, id === 'oss' ? 'Open source' : 'Recommendations', txt(n), '#' + id); });
+  const aw = q('section[aria-labelledby="c-awards"]');
+  if (aw) add('recognition', 'Recognition and education', clean(txt(aw))
+    .replace(/\$ cat recognition\.txt\s*→?\s*/, 'Recognition: ')
+    .replace(/\s*\$ cat education\.txt\s*(# education)?\s*/, '. Education: '), '#recommendations');
+  qa('#faq details').forEach((d, i) => {
+    const sum = q('summary', d);
+    add('faq-' + (i + 1), 'FAQ: ' + (sum ? clean(txt(sum)) : ''), txt(d), '#faq');
+  });
+  return out;
+}
+
 async function prerender() {
   const { chromium } = await import('playwright');
   const srv = await serve(OUT);
@@ -179,6 +254,12 @@ async function prerender() {
     await page.waitForTimeout(300);
     if (errors.length) throw new Error('page errors during prerender:\n' + errors.join('\n'));
     const html = await page.$eval('#app', (el) => el.innerHTML);
+    const passages = await page.evaluate(extractPassages);
+    const index = { generated: new Date().toISOString(), passages };
+    writeFileSync(join(OUT, 'assets', 'ask-index.json'), JSON.stringify(index));
+    mkdirSync(join(ROOT, 'worker'), { recursive: true });
+    writeFileSync(join(ROOT, 'worker', 'knowledge.json'), JSON.stringify(index, null, 1) + '\n');
+    console.log('ask.sh index:', passages.length, 'passages,', passages.reduce((n, p) => n + p.text.length, 0), 'chars');
     const file = join(OUT, 'index.html');
     writeFileSync(file, readFileSync(file, 'utf8').replace('<!--PRERENDER-->', html));
   } finally {

@@ -1,0 +1,17 @@
+name = "craga-ask"
+main = "src/index.js"
+compatibility_date = "2026-09-01"
+workers_dev = true
+
+# Workers AI (free daily allowance; requests fail rather than bill once it's used up).
+[ai]
+binding = "AI"
+
+# 8 questions a minute per visitor.
+[[ratelimits]]
+name = "ASK_LIMITER"
+namespace_id = "1001"
+simple = { limit = 8, period = 60 }
+
+[observability]
+enabled = true

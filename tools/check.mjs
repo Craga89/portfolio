@@ -83,6 +83,13 @@ try {
   await page.reload({ waitUntil: 'networkidle' });
   await page.waitForTimeout(400);
   ok('theme choice remembered', (await page.locator('#app .c-root').evaluate((el) => el.classList.contains('c-light'))) === nowLight);
+  // ask.sh (search mode: no endpoint in a local build)
+  await page.locator('#c-ask-field').fill('Has he been through an acquisition?');
+  await page.locator('#c-ask-field').press('Enter');
+  await page.waitForTimeout(800);
+  const askLog = await page.locator('#ask .c-ask-log').innerText();
+  ok('ask.sh answers from the site', /acqui/i.test(askLog) && (await page.locator('#ask .c-ask-log a').count()) > 0);
+  ok('ask.sh clears the field', (await page.locator('#c-ask-field').inputValue()) === '');
   ok('no page errors', errors.length === 0, errors.join(' | '));
 
   // full page
