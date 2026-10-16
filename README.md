@@ -30,6 +30,17 @@ Every push to `main` deploys `site/` through `.github/workflows/pages.yml`.
 - The portrait is served as AVIF/WebP at the sizes it's shown. The build also renders the social preview card (`og.png`) and the home-screen icon.
 - `.github/workflows/lighthouse.yml` runs Lighthouse (3 runs each, mobile and desktop) after every Pages deploy and saves a summary to the `lighthouse` branch (`reports/summary.json`).
 
+## Extras
+
+- **Downloads:** the build prints the plain CV to `cv.pdf` (Chromium, the CV's own print styles) and writes a `craig-thompson.vcf` contact card. Both are linked from the sidebar, the mobile links and the CV page.
+- **Text files:** `llms.txt` (a summary for AI assistants, built from `cv.json`), `humans.txt` and `.well-known/security.txt`.
+- **Offline:** `sw.js` makes pages network-first and assets cache-first, so return visits are instant and the site works offline. It only registers over https.
+- **Version stamp:** the sidebar shows `main@<commit> · <date>`. The Pages workflow fills in the commit at deploy time; local builds show the placeholder.
+- **ask.sh:** shell commands (`help`, `ls`, `cat <file>`, `whoami`, `clear`…) are answered locally. Every answer has a "copy link", and `/?ask=…` opens the page with that question answered.
+- **Jargon toggletips:** buttons on technical terms open a definition in a shared popover. CSS anchor positioning places it, and a few lines of JS take over in browsers without it.
+- **Print:** the home page prints as a light, single-column document with every tab and FAQ answer laid out, controls hidden and outbound link URLs shown.
+- **Console:** opening DevTools shows a greeting, and `ask("…")` queries ask.sh from the console.
+
 ## Accessibility (WCAG 2.2 AA)
 
 `npm run a11y` (`tools/a11y.mjs`) checks the built site against WCAG 2.2 AA:

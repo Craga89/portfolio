@@ -323,6 +323,64 @@ body:has(.c-light){background:#EDF1EE!important}
 /* keep focused elements clear of the sticky header and the chat bar */
 html{scroll-padding-top:calc(var(--hdr-h,0px) + 12px);scroll-padding-bottom:72px}
 .c-ask-src a,.c-chat-src a{display:inline-block;padding:3px 0}
+/* sidebar extras: copy email, local time, version stamp */
+.v2-copy{all:unset;box-sizing:border-box;cursor:pointer;display:inline-grid;place-items:center;width:24px;height:24px;margin-left:-6px;border-radius:5px;color:var(--mute)}
+.v2-copy:hover{color:var(--head);background:var(--panel2)}
+.v2-copy:focus-visible{outline:2px solid var(--acc);outline-offset:1px}
+.v2-time{display:inline-flex;align-items:center;gap:6px;color:var(--mute)}
+.v2-time .v2-ico{margin:0 6px 0 7px}
+.v2-ver{font-size:11.5px;color:var(--dim);text-decoration:none;font-family:var(--f-mono,ui-monospace,monospace)}
+.v2-ver:hover{color:var(--head);text-decoration:underline}
+/* ask.sh answer actions */
+.c-ask-share{all:unset;box-sizing:border-box;cursor:pointer;display:inline-flex;align-items:center;min-height:24px;padding:0 2px;margin-left:8px;color:var(--acc);text-decoration:underline;text-underline-offset:2px;font-size:12px}
+.c-ask-share:focus-visible{outline:2px solid var(--acc);outline-offset:2px;border-radius:3px}
+/* jargon toggletips: anchored to the term with CSS anchor positioning; JS places them where unsupported */
+.c-term{all:unset;cursor:help;border-bottom:1px dotted currentColor;color:inherit}
+.c-term:hover{color:var(--head)}
+.c-term:focus-visible{outline:2px solid var(--acc);outline-offset:2px;border-radius:2px}
+.c-term[aria-expanded="true"]{color:var(--head);border-bottom-style:solid}
+.c-tip{display:none;position:fixed;inset:auto;margin:0;box-sizing:border-box;width:max-content;max-width:min(300px,calc(100vw - 24px));padding:10px 12px;border:1px solid var(--line3);border-radius:8px;background:var(--panel2);color:var(--text2);font-size:13px;line-height:1.45;text-align:left;box-shadow:0 12px 30px -14px rgba(0,0,0,.6)}
+.c-tip:popover-open,.c-tip.is-open{display:block}
+.c-tip b{display:block;color:var(--head);margin-bottom:2px}
+@supports (position-area: bottom) and (anchor-name: --a){.c-tip{position-anchor:--c-tip;position-area:bottom;margin-top:8px;position-try-fallbacks:flip-block,bottom span-right,bottom span-left,top span-right,top span-left}}
+@media print{.c-tip,.v2-copy{display:none!important}}
+/* ---------- print: a clean, light, paper-friendly version of the whole page ---------- */
+.v2-print{display:none}
+@media print{
+@page{size:A4;margin:14mm 14mm 16mm}
+.c-root,.c-root.c-light{--bg:#FFFFFF;--panel:#FFFFFF;--panel2:#F2F4F3;--line:#D9DEDB;--line2:#CFD6D2;--line3:#B8C2BC;--conn:#9AA79F;--bar0:#C9D1CC;--dim:#55615A;--mute2:#4D5952;--mute:#47524C;--text3:#26302B;--text2:#1E2622;--text:#1A211D;--head:#0B110E;--acc:#17557A;--acc-h:#17557A;--acc-dim:#9CC6E0;--acc-bg:#EEF5FA;--ok:#3A5F14;--ok-text:#3A5F14;--ok-bg:#F1F6EA;--bad:#9E2F22;--blue:#17557A;background:#FFFFFF!important;color:#1A211D;font-size:10.5pt!important;line-height:1.5!important}
+html,body{background:#FFFFFF!important}
+*,*::before,*::after{animation:none!important;transition:none!important}
+.c-rv,.c-pop,.c-lit,.c-reveal{opacity:1!important;transform:none!important;clip-path:none!important}
+/* chrome and controls that mean nothing on paper */
+.v2-side,.v2-mbar,.v2-mcta,.c-chat,.c-tip,.c-mic,.v2-copy,.c-fx,#ask,.c-deck-prog,.c-deck-ctl,.c-cs-tabs,.c-theme,.c-ask-share,.c-sr,
+#stack div:has(> .c-sq-in),.c-rs-more,.c-faq>summary::marker,.c-cursor{display:none!important}
+.v2-print{display:block;margin:0 0 14pt;font-size:9.5pt;color:var(--mute)}
+.v2-print a{color:inherit;text-decoration:none}
+/* one column, full width */
+.v2-shell{display:block!important;min-height:0!important}
+.v2-main{max-width:none!important;padding:0!important;margin:0!important}
+.v2-intro{background:none!important;padding:0!important}
+.v2-lead h1{font-size:34pt!important;line-height:.9!important;margin:0!important}
+.v2-name{gap:14pt!important;margin-bottom:10pt!important}
+.v2-name .v2-ph{width:64pt!important;float:none!important;margin:0!important}
+section.c-rv{margin-top:20pt!important;content-visibility:visible!important;contain:none!important}
+h2.c-cmd{font-size:12pt!important;margin-bottom:8pt!important;break-after:avoid}
+h3{break-after:avoid}
+/* show every tab and every disclosure, one after another */
+#responsibilities div[style*="display: none"],#case-studies div[style*="display: none"]{display:block!important}
+.c-deck,.c-cs,.c-cs-panels{display:block!important;overflow:visible!important;border:0!important;height:auto!important;min-height:0!important}
+.c-deck [role="tabpanel"],.c-cs-panels [role="tabpanel"]{margin:0 0 14pt!important;padding:10pt 0 0!important;border:0!important;border-top:1px solid var(--line2)!important;border-radius:0!important;box-shadow:none!important}
+details>*{display:block}
+details::details-content{content-visibility:visible;display:block}
+/* keep small blocks whole, let long ones flow */
+li,.c-card,article.c-card,.c-faq,[role="row"],figure,.c-sq-row,blockquote{break-inside:avoid}
+.c-card{box-shadow:none!important}
+/* print link destinations for prose links that leave the site */
+main p:not(.v2-print) a[href^="http"]::after,main li a[href^="http"]:not(#oss *)::after{content:" (" attr(href) ")";font-size:8.5pt;color:var(--mute);word-break:break-all}
+a{color:var(--acc)!important;text-decoration:none!important}
+.c-term{border-bottom:0!important}
+}
 .c-ask-ln{color:var(--acc);text-decoration:underline;text-underline-offset:2px}
 .c-chat{position:fixed;right:304px;bottom:0;z-index:30;width:272px;display:flex;flex-direction:column;background:var(--panel);border:1px solid var(--line3);border-bottom:0;border-radius:10px 10px 0 0;box-shadow:0 -4px 22px rgba(0,0,0,.18);transition:transform .25s ease;font-family:var(--f-body)}
 .c-chat[data-open="true"]{width:360px}
@@ -392,7 +450,7 @@ html{scroll-padding-top:calc(var(--hdr-h,0px) + 12px);scroll-padding-bottom:72px
 <svg class="c-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"></path></svg>
 </sc-if>
 </button></div>
-<div class="v2-id"><b>Craig Michael Thompson</b><span>Full-stack engineer</span><a class="v2-loc" href="https://www.google.com/maps/search/?api=1&amp;query=Newcastle+upon+Tyne%2C+UK" target="_blank" rel="noopener" title="Open Newcastle upon Tyne in Google Maps"><svg class="v2-ico v2-angel" viewBox="0 5.4 19.94 9.3" width="28" height="13" fill="currentColor" aria-hidden="true"><path d="M19.842,7.215c0-0.143-0.261-0.107-0.261-0.107l-8.789,0.127c-0.047-0.042-0.116-0.084-0.198-0.099c-0.172-0.033-0.36-0.08-0.36-0.08s-0.094-0.217,0-0.391c0.096-0.173,0.188-0.328,0.143-0.564c-0.048-0.235-0.188-0.39-0.408-0.376C9.75,5.712,9.608,5.867,9.562,6.102C9.514,6.338,9.608,6.493,9.703,6.666c0.094,0.173,0,0.391,0,0.391s-0.188,0.047-0.36,0.08C9.262,7.15,9.192,7.193,9.146,7.235L0.278,7.121c0,0-0.183-0.049-0.183,0.094C0.095,7.354,0,8.905,0,8.905s-0.022,0.258,0.353,0.33C0.694,9.3,7.629,9.651,9.24,9.719C9.237,9.744,9.234,9.77,9.232,9.798c-0.062,0.719,0.221,1.519,0.282,1.769c0.063,0.25-0.015,0.312-0.093,0.563c-0.079,0.251-0.079,0.47,0.093,0.971c0.174,0.503,0.141,0.723,0.032,0.831c-0.11,0.109-0.125,0.282-0.125,0.282h1.095c0,0-0.016-0.171-0.125-0.282c-0.105-0.108-0.139-0.328,0.032-0.831c0.172-0.501,0.172-0.72,0.093-0.971c-0.078-0.251-0.156-0.313-0.093-0.563c0.062-0.25,0.345-1.05,0.282-1.769c-0.003-0.028-0.004-0.055-0.01-0.079c1.611-0.069,8.549-0.419,8.891-0.484c0.375-0.072,0.352-0.33,0.352-0.33S19.842,7.354,19.842,7.215zM0.74,7.41C0.488,7.394,0.323,7.513,0.323,7.513s0-0.119,0.046-0.192c0.044-0.075,0.193-0.044,0.193-0.044l8.544,0.117l0.043,0.15C9.15,7.544,0.992,7.425,0.74,7.41zM19.303,7.41c-0.251,0.017-8.41,0.134-8.41,0.134l0.043-0.15l8.546-0.117c0,0,0.149-0.031,0.192,0.046c0.044,0.071,0.044,0.191,0.044,0.191S19.556,7.397,19.303,7.41z"></path></svg>Newcastle upon Tyne, UK</a><span class="v2-open">open to new roles</span></div>
+<div class="v2-id"><b>Craig Michael Thompson</b><span>Full-stack engineer</span><a class="v2-loc" href="https://www.google.com/maps/search/?api=1&amp;query=Newcastle+upon+Tyne%2C+UK" target="_blank" rel="noopener" title="Open Newcastle upon Tyne in Google Maps"><svg class="v2-ico v2-angel" viewBox="0 5.4 19.94 9.3" width="28" height="13" fill="currentColor" aria-hidden="true"><path d="M19.842,7.215c0-0.143-0.261-0.107-0.261-0.107l-8.789,0.127c-0.047-0.042-0.116-0.084-0.198-0.099c-0.172-0.033-0.36-0.08-0.36-0.08s-0.094-0.217,0-0.391c0.096-0.173,0.188-0.328,0.143-0.564c-0.048-0.235-0.188-0.39-0.408-0.376C9.75,5.712,9.608,5.867,9.562,6.102C9.514,6.338,9.608,6.493,9.703,6.666c0.094,0.173,0,0.391,0,0.391s-0.188,0.047-0.36,0.08C9.262,7.15,9.192,7.193,9.146,7.235L0.278,7.121c0,0-0.183-0.049-0.183,0.094C0.095,7.354,0,8.905,0,8.905s-0.022,0.258,0.353,0.33C0.694,9.3,7.629,9.651,9.24,9.719C9.237,9.744,9.234,9.77,9.232,9.798c-0.062,0.719,0.221,1.519,0.282,1.769c0.063,0.25-0.015,0.312-0.093,0.563c-0.079,0.251-0.079,0.47,0.093,0.971c0.174,0.503,0.141,0.723,0.032,0.831c-0.11,0.109-0.125,0.282-0.125,0.282h1.095c0,0-0.016-0.171-0.125-0.282c-0.105-0.108-0.139-0.328,0.032-0.831c0.172-0.501,0.172-0.72,0.093-0.971c-0.078-0.251-0.156-0.313-0.093-0.563c0.062-0.25,0.345-1.05,0.282-1.769c-0.003-0.028-0.004-0.055-0.01-0.079c1.611-0.069,8.549-0.419,8.891-0.484c0.375-0.072,0.352-0.33,0.352-0.33S19.842,7.354,19.842,7.215zM0.74,7.41C0.488,7.394,0.323,7.513,0.323,7.513s0-0.119,0.046-0.192c0.044-0.075,0.193-0.044,0.193-0.044l8.544,0.117l0.043,0.15C9.15,7.544,0.992,7.425,0.74,7.41zM19.303,7.41c-0.251,0.017-8.41,0.134-8.41,0.134l0.043-0.15l8.546-0.117c0,0,0.149-0.031,0.192,0.046c0.044,0.071,0.044,0.191,0.044,0.191S19.556,7.397,19.303,7.41z"></path></svg>Newcastle upon Tyne, UK</a><sc-if value="{{clockOn}}" hint-placeholder-val="false"><span class="v2-time"><svg class="v2-ico" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg><span class="v2-time-v">{{clock}}</span><span>in Newcastle</span></span></sc-if><span class="v2-open">open to new roles</span></div>
 <div class="v2-exp">EXPLORER</div>
 <nav class="v2-tree" aria-label="Main">
 <a href="#top" aria-current="{{spy.top}}"><i>·</i>README.md</a>
@@ -407,7 +465,8 @@ html{scroll-padding-top:calc(var(--hdr-h,0px) + 12px);scroll-padding-bottom:72px
 </nav>
 <div class="v2-foot">
 <a class="c-btn" href="mailto:craga89@gmail.com" style="display: inline-flex; align-items: center; min-height: 44px; padding: 0 16px; border-radius: 8px; background: var(--acc); color: var(--bg); font-weight: 700; text-decoration: none">./get-in-touch</a>
-<div style="display: flex; flex-wrap: wrap; gap: 6px 14px"><a class="v2-soc" href="mailto:craga89@gmail.com" title="craga89@gmail.com"><svg class="v2-ico" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="m22 7-10 6L2 7"></path></svg>email</a><a class="v2-soc" href="https://github.com/Craga89"><svg class="v2-ico" viewBox="0 0 16 16" width="15" height="15" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path></svg>github</a><a class="v2-soc" href="https://www.linkedin.com/in/craigmichaelthompson/"><svg class="v2-ico" viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"></path></svg>linkedin</a><a class="v2-soc" href="/cv"><svg class="v2-ico" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><path d="M14 2v6h6"></path><path d="M16 13H8M16 17H8M10 9H8"></path></svg>plain CV</a></div>
+<div style="display: flex; flex-wrap: wrap; gap: 6px 14px"><a class="v2-soc" href="mailto:craga89@gmail.com" title="craga89@gmail.com"><svg class="v2-ico" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="m22 7-10 6L2 7"></path></svg>email</a><button type="button" class="v2-copy" onClick="{{copyEmail}}" aria-label="Copy email address" title="{{copyTitle}}"><sc-if value="{{copied}}" hint-placeholder-val="false"><svg class="v2-ico" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7"></path></svg></sc-if><sc-if value="{{notCopied}}" hint-placeholder-val="true"><svg class="v2-ico" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg></sc-if></button><a class="v2-soc" href="https://github.com/Craga89"><svg class="v2-ico" viewBox="0 0 16 16" width="15" height="15" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path></svg>github</a><a class="v2-soc" href="https://www.linkedin.com/in/craigmichaelthompson/"><svg class="v2-ico" viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"></path></svg>linkedin</a><a class="v2-soc" href="/cv"><svg class="v2-ico" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><path d="M14 2v6h6"></path><path d="M16 13H8M16 17H8M10 9H8"></path></svg>plain CV</a><a class="v2-soc" href="cv.pdf" download="Craig-Michael-Thompson-CV.pdf"><svg class="v2-ico" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"></path><path d="m7 10 5 5 5-5"></path><path d="M5 21h14"></path></svg>cv.pdf</a><a class="v2-soc" href="craig-thompson.vcf" download="Craig-Michael-Thompson.vcf"><svg class="v2-ico" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="4"></circle><path d="M2 21a7 7 0 0 1 14 0"></path><path d="M19 8v6M16 11h6"></path></svg>add contact</a></div>
+<sc-if value="{{build.show}}" hint-placeholder-val="false"><a class="v2-ver" href="{{build.href}}" title="The commit this version of the site was built from">{{build.label}}</a></sc-if>
 </div>
 </div>
 </aside>
@@ -417,6 +476,7 @@ html{scroll-padding-top:calc(var(--hdr-h,0px) + 12px);scroll-padding-bottom:72px
 <div class="v2-lead">
 <p class="c-cmd" style="margin: 0 0 24px; font-size: clamp(16px, 2vw, 20px); font-weight: 500; color: var(--ok)">$ cat README.md <span style="color: var(--dim)"># intro</span></p>
 <div class="v2-name"><figure class="v2-ph"><img src="./portrait.webp" alt="Illustrated caricature of Craig Michael Thompson at his keyboard, with his dog on his shoulder" width="512" height="512" loading="eager" decoding="async"></figure><h1 >Craig Michael Thompson</h1></div>
+<p class="v2-print"><a href="mailto:craga89@gmail.com">craga89@gmail.com</a> · <a href="https://craigthompson.dev/">craigthompson.dev</a> · github.com/Craga89 · linkedin.com/in/craigmichaelthompson · Newcastle upon Tyne, UK<br>The short CV is at craigthompson.dev/cv.</p>
 <p class="v2-st">20+ years' experience in software development and management, from start-up to <button type="button" class="v2-x" onClick="{{goAcq}}">acquisition</button>.</p>
 <div id="about" class="v2-about">
 <p>I'm a hands-on, full-stack engineer across UI, back end, infrastructure and AI, with extensive engineering leadership experience. I led an engineering department to <button type="button" class="v2-x" onClick="{{goAi}}">AI-first development</button>, where most code is now generated by AI, then reviewed by AI and people. Problem solving is what I do best, whether the problem sits in the code, the platform or the team.</p>
@@ -425,7 +485,7 @@ html{scroll-padding-top:calc(var(--hdr-h,0px) + 12px);scroll-padding-bottom:72px
 </div>
 <div class="v2-mcta">
 <a class="c-btn" href="mailto:craga89@gmail.com" style="display: inline-flex; align-items: center; min-height: 44px; padding: 0 18px; border-radius: 8px; background: var(--acc); color: var(--bg); font-weight: 700; text-decoration: none">./get-in-touch</a>
-<a class="v2-soc" href="mailto:craga89@gmail.com" title="craga89@gmail.com"><svg class="v2-ico" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="m22 7-10 6L2 7"></path></svg>email</a><a class="v2-soc" href="https://github.com/Craga89"><svg class="v2-ico" viewBox="0 0 16 16" width="15" height="15" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path></svg>github</a><a class="v2-soc" href="https://www.linkedin.com/in/craigmichaelthompson/"><svg class="v2-ico" viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"></path></svg>linkedin</a><a class="v2-soc" href="/cv"><svg class="v2-ico" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><path d="M14 2v6h6"></path><path d="M16 13H8M16 17H8M10 9H8"></path></svg>plain CV</a>
+<a class="v2-soc" href="mailto:craga89@gmail.com" title="craga89@gmail.com"><svg class="v2-ico" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="m22 7-10 6L2 7"></path></svg>email</a><button type="button" class="v2-copy" onClick="{{copyEmail}}" aria-label="Copy email address" title="{{copyTitle}}"><sc-if value="{{copied}}" hint-placeholder-val="false"><svg class="v2-ico" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7"></path></svg></sc-if><sc-if value="{{notCopied}}" hint-placeholder-val="true"><svg class="v2-ico" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg></sc-if></button><a class="v2-soc" href="https://github.com/Craga89"><svg class="v2-ico" viewBox="0 0 16 16" width="15" height="15" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path></svg>github</a><a class="v2-soc" href="https://www.linkedin.com/in/craigmichaelthompson/"><svg class="v2-ico" viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"></path></svg>linkedin</a><a class="v2-soc" href="/cv"><svg class="v2-ico" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><path d="M14 2v6h6"></path><path d="M16 13H8M16 17H8M10 9H8"></path></svg>plain CV</a><a class="v2-soc" href="cv.pdf" download="Craig-Michael-Thompson-CV.pdf"><svg class="v2-ico" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"></path><path d="m7 10 5 5 5-5"></path><path d="M5 21h14"></path></svg>cv.pdf</a><a class="v2-soc" href="craig-thompson.vcf" download="Craig-Michael-Thompson.vcf"><svg class="v2-ico" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="4"></circle><path d="M2 21a7 7 0 0 1 14 0"></path><path d="M19 8v6M16 11h6"></path></svg>add contact</a>
 </div>
 </div>
 </div>
@@ -452,11 +512,11 @@ html{scroll-padding-top:calc(var(--hdr-h,0px) + 12px);scroll-padding-bottom:72px
 <span style="font-size: 14px; color: var(--mute)">Dec 2018 — present (8 years)</span>
 </div>
 <h3 class="c-role" style="margin: 6px 0 10px; font-size: clamp(20px, 2.6vw, 26px); color: var(--head)">Head of Engineering · Hive HR</h3>
-<p style="margin: 0 0 18px; color: var(--text2); max-width: 80ch">Led engineering for a multi-tenant B2B SaaS platform that runs 24/7 for enterprise, mid-market and SME customers, with a cross-functional team of up to 12 engineers.</p>
+<p style="margin: 0 0 18px; color: var(--text2); max-width: 80ch">Led engineering for a <button type="button" class="c-term" popovertarget="c-tip" popovertargetaction="show" aria-controls="c-tip" aria-expanded="{{tipOpen.multitenant}}" style="{{tipAnchor.multitenant}}" onClick="{{tip.multitenant}}">multi-tenant</button> B2B SaaS platform that runs 24/7 for enterprise, mid-market and SME customers, with a cross-functional team of up to 12 engineers.</p>
 <ol style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 14px; max-width: 86ch">
-<li style="display: flex; gap: 14px"><span aria-hidden="true" style="color: var(--dim); flex: none">├─</span><div><span style="color: var(--acc); font-weight: 700">2019–21 · Founding &amp; foundations.</span> <span style="color: var(--text2)">Led the consolidation of ~18 repositories into one TypeScript monorepo, with history intact, and set up its CI/CD, Docker and local dev. Started the React design system and led front-end work on the core product.</span></div></li>
-<li style="display: flex; gap: 14px"><span aria-hidden="true" style="color: var(--dim); flex: none">├─</span><div><span style="color: var(--acc); font-weight: 700">2021–24 · Platform ownership.</span> <span style="color: var(--text2)">Moved CI to self-hosted Buildkite as code, driven by an in-house TypeScript build engine. Helped take the company to continuous deployment, led repo-wide toolchain migrations and hardened AWS access.</span></div></li>
-<li style="display: flex; gap: 14px"><span aria-hidden="true" style="color: var(--dim); flex: none">├─</span><div><span style="color: var(--acc); font-weight: 700">2024–26 · Architecture, security &amp; AI.</span> <span style="color: var(--text2)">Led the move to Fargate and an edge behind CloudFront and WAF, the replacement of our authentication system and an evidence-led push on AWS costs, and helped start an AI agent service.</span></div></li>
+<li style="display: flex; gap: 14px"><span aria-hidden="true" style="color: var(--dim); flex: none">├─</span><div><span style="color: var(--acc); font-weight: 700">2019–21 · Founding &amp; foundations.</span> <span style="color: var(--text2)">Led the consolidation of ~18 repositories into one TypeScript monorepo, with history intact, and set up its <button type="button" class="c-term" popovertarget="c-tip" popovertargetaction="show" aria-controls="c-tip" aria-expanded="{{tipOpen.cicd}}" style="{{tipAnchor.cicd}}" onClick="{{tip.cicd}}">CI/CD</button>, Docker and local dev. Started the React design system and led front-end work on the core product.</span></div></li>
+<li style="display: flex; gap: 14px"><span aria-hidden="true" style="color: var(--dim); flex: none">├─</span><div><span style="color: var(--acc); font-weight: 700">2021–24 · Platform ownership.</span> <span style="color: var(--text2)">Moved CI to self-hosted Buildkite as code, driven by an in-house TypeScript build engine. Helped take the company to <button type="button" class="c-term" popovertarget="c-tip" popovertargetaction="show" aria-controls="c-tip" aria-expanded="{{tipOpen.cd}}" style="{{tipAnchor.cd}}" onClick="{{tip.cd}}">continuous deployment</button>, led repo-wide toolchain migrations and hardened AWS access.</span></div></li>
+<li style="display: flex; gap: 14px"><span aria-hidden="true" style="color: var(--dim); flex: none">├─</span><div><span style="color: var(--acc); font-weight: 700">2024–26 · Architecture, security &amp; AI.</span> <span style="color: var(--text2)">Led the move to <button type="button" class="c-term" popovertarget="c-tip" popovertargetaction="show" aria-controls="c-tip" aria-expanded="{{tipOpen.fargate}}" style="{{tipAnchor.fargate}}" onClick="{{tip.fargate}}">Fargate</button> and an edge behind <button type="button" class="c-term" popovertarget="c-tip" popovertargetaction="show" aria-controls="c-tip" aria-expanded="{{tipOpen.cloudfront}}" style="{{tipAnchor.cloudfront}}" onClick="{{tip.cloudfront}}">CloudFront</button> and <button type="button" class="c-term" popovertarget="c-tip" popovertargetaction="show" aria-controls="c-tip" aria-expanded="{{tipOpen.waf}}" style="{{tipAnchor.waf}}" onClick="{{tip.waf}}">WAF</button>, the replacement of our authentication system and an evidence-led push on AWS costs, and helped start an AI agent service.</span></div></li>
 <li style="display: flex; gap: 14px"><span aria-hidden="true" style="color: var(--dim); flex: none">└─</span><div><span style="color: var(--acc); font-weight: 700">2026 · Acquisition by WorkBuzz.</span> <span style="color: var(--text2)">Saw the company through from startup to its acquisition, providing technical leadership along the way and representing engineering right through due diligence.</span></div></li>
 </ol>
 </article>
@@ -1007,7 +1067,7 @@ html{scroll-padding-top:calc(var(--hdr-h,0px) + 12px);scroll-padding-bottom:72px
 <div class="c-pop" style="border: 1px solid var(--line2); border-radius: 10px; padding: 18px; animation-delay: .1s"><div style="font-weight: 700; color: var(--head); margin-bottom: 6px">GDPR</div><div style="font-size: 14px; color: var(--text3)">Was part of the accreditation work, handling the technical queries alongside the InfoSec Manager.</div></div>
 <div class="c-pop" style="border: 1px solid var(--line2); border-radius: 10px; padding: 18px; animation-delay: .2s"><div style="font-weight: 700; color: var(--head); margin-bottom: 6px">ISO 27001</div><div style="font-size: 14px; color: var(--text3)">Was part of the accreditation and the annual audits, as the engineering contact for the InfoSec Manager.</div></div>
 <div class="c-pop" style="border: 1px solid var(--line2); border-radius: 10px; padding: 18px; animation-delay: .3s"><div style="font-weight: 700; color: var(--head); margin-bottom: 6px">Penetration testing</div><div style="font-size: 14px; color: var(--text3)">Arranged the yearly test with external vendors and liaised with them so it could be carried out, with findings then fixed in code.</div></div>
-<div class="c-pop" style="border: 1px solid var(--line2); border-radius: 10px; padding: 18px; animation-delay: .4s"><div style="font-weight: 700; color: var(--head); margin-bottom: 6px">Device compliance</div><div style="font-size: 14px; color: var(--text3)">Oversaw the MDM that provisions every Mac and enforces central InfoSec and compliance policies. See <a class="c-see" href="#responsibilities" onClick="{{see.r_it}}">it.md</a>.</div></div>
+<div class="c-pop" style="border: 1px solid var(--line2); border-radius: 10px; padding: 18px; animation-delay: .4s"><div style="font-weight: 700; color: var(--head); margin-bottom: 6px">Device compliance</div><div style="font-size: 14px; color: var(--text3)">Oversaw the <button type="button" class="c-term" popovertarget="c-tip" popovertargetaction="show" aria-controls="c-tip" aria-expanded="{{tipOpen.mdm}}" style="{{tipAnchor.mdm}}" onClick="{{tip.mdm}}">MDM</button> that provisions every Mac and enforces central InfoSec and compliance policies. See <a class="c-see" href="#responsibilities" onClick="{{see.r_it}}">it.md</a>.</div></div>
 </div>
 </div>
 </details>
@@ -1145,7 +1205,7 @@ html{scroll-padding-top:calc(var(--hdr-h,0px) + 12px);scroll-padding-bottom:72px
 <div>
 <div style="font-size: 13px; color: var(--acc)">// refactors &amp; tooling migrations</div>
 <h3 style="margin: 8px 0 10px; font-size: clamp(22px, 3vw, 30px); line-height: 1.25; color: var(--head)">Keep the toolchain modern, one reviewed change at a time</h3>
-<p style="margin: 0; color: var(--text3); max-width: 72ch">Tooling ages fast. Rather than letting it drift, I've led a steady run of repo-wide migrations: linting, packages, bundling, types, runtime and the compiler itself. Each one was scripted with a codemod and landed as a single reviewed change, so there was never a long-lived branch or a half-migrated codebase.</p>
+<p style="margin: 0; color: var(--text3); max-width: 72ch">Tooling ages fast. Rather than letting it drift, I've led a steady run of repo-wide migrations: linting, packages, bundling, types, runtime and the compiler itself. Each one was scripted with a <button type="button" class="c-term" popovertarget="c-tip" popovertargetaction="show" aria-controls="c-tip" aria-expanded="{{tipOpen.codemod}}" style="{{tipAnchor.codemod}}" onClick="{{tip.codemod}}">codemod</button> and landed as a single reviewed change, so there was never a long-lived branch or a half-migrated codebase.</p>
 </div>
 
 <div>
@@ -1367,7 +1427,7 @@ html{scroll-padding-top:calc(var(--hdr-h,0px) + 12px);scroll-padding-bottom:72px
 <div>
 <div style="font-size: 13px; color: var(--acc)">// aws architecture · 2021 → 2026</div>
 <h3 style="margin: 8px 0 10px; font-size: clamp(22px, 3vw, 30px); line-height: 1.25; color: var(--head)">Nothing public but the CDN</h3>
-<p style="margin: 0; color: var(--text3); max-width: 72ch">I led the platform's move from containers on EC2 hosts behind a public load balancer to Fargate tasks that talk over ECS Service Connect, with all customer traffic entering through CloudFront and WAF. Each step shipped without a big-bang cutover.</p>
+<p style="margin: 0; color: var(--text3); max-width: 72ch">I led the platform's move from containers on EC2 hosts behind a public load balancer to Fargate tasks that talk over <button type="button" class="c-term" popovertarget="c-tip" popovertargetaction="show" aria-controls="c-tip" aria-expanded="{{tipOpen.svcconnect}}" style="{{tipAnchor.svcconnect}}" onClick="{{tip.svcconnect}}">ECS Service Connect</button>, with all customer traffic entering through CloudFront and WAF. Each step shipped without a big-bang cutover.</p>
 </div>
 
 <div style="display: flex; flex-wrap: wrap; gap: 24px">
@@ -1650,7 +1710,7 @@ html{scroll-padding-top:calc(var(--hdr-h,0px) + 12px);scroll-padding-bottom:72px
 <div>
 <div style="font-size: 13px; color: var(--acc)">// ai platform · mastra + bedrock · 2024 → 2026</div>
 <h3 style="margin: 8px 0 10px; font-size: clamp(22px, 3vw, 30px); line-height: 1.25; color: var(--head)">AI where it earns its keep</h3>
-<p style="margin: 0; color: var(--text3); max-width: 72ch">I helped introduce AI into the product: an agent service built with Mastra, running models through Amazon Bedrock in its own isolated AWS account, with an eval suite that runs in CI.</p>
+<p style="margin: 0; color: var(--text3); max-width: 72ch">I helped introduce AI into the product: an agent service built with <button type="button" class="c-term" popovertarget="c-tip" popovertargetaction="show" aria-controls="c-tip" aria-expanded="{{tipOpen.mastra}}" style="{{tipAnchor.mastra}}" onClick="{{tip.mastra}}">Mastra</button>, running models through <button type="button" class="c-term" popovertarget="c-tip" popovertargetaction="show" aria-controls="c-tip" aria-expanded="{{tipOpen.bedrock}}" style="{{tipAnchor.bedrock}}" onClick="{{tip.bedrock}}">Amazon Bedrock</button> in its own isolated AWS account, with an <button type="button" class="c-term" popovertarget="c-tip" popovertargetaction="show" aria-controls="c-tip" aria-expanded="{{tipOpen.evals}}" style="{{tipAnchor.evals}}" onClick="{{tip.evals}}">eval suite</button> that runs in CI.</p>
 </div>
 
 <div>
@@ -1818,7 +1878,7 @@ html{scroll-padding-top:calc(var(--hdr-h,0px) + 12px);scroll-padding-bottom:72px
 <details class="c-faq"><summary>What industries have you worked in?</summary><p>Mostly B2B SaaS for enterprise, mid-market and SME customers, including Hive HR's employee engagement platform and an email marketing platform sending billions of emails, plus consulting for clients worldwide.</p></details>
 <details class="c-faq"><summary>Do you have compliance experience?</summary><p>Yes: GDPR and ISO 27001 accreditation, the annual audits, and arranging the yearly penetration test. See <a class="c-see" href="#responsibilities" onClick="{{see.r_comp}}">compliance.md</a>.</p></details>
 <details class="c-faq"><summary>Which clouds do you know?</summary><p>Primarily AWS, with some GCP and more limited exposure to Azure.</p></details>
-<details class="c-faq"><summary>Can I get a copy of your CV?</summary><p>Yes. There's a plain, one-page version at <a href="/cv">craigthompson.dev/cv</a> that you can print or save as a PDF, or email me and I'll send it.</p></details>
+<details class="c-faq"><summary>Can I get a copy of your CV?</summary><p>Yes. There's a plain version at <a href="/cv">craigthompson.dev/cv</a>, also as a <a href="cv.pdf" download="Craig-Michael-Thompson-CV.pdf">PDF</a> and as <a href="cv.json">JSON Resume</a>, or email me and I'll send it.</p></details>
 </div>
 </section>
 
@@ -1827,15 +1887,15 @@ html{scroll-padding-top:calc(var(--hdr-h,0px) + 12px);scroll-padding-bottom:72px
 <p style="margin: 0 0 20px; color: var(--mute); font-size: 14px; max-width: 72ch">Ask anything about my experience, roles or skills. An AI model answers using only what's on this site and links to where it found it.</p>
 <div class="c-ask">
 <div class="c-ask-log" aria-live="polite">
-<sc-if value="{{askEmpty}}" hint-placeholder-val="true"><p class="c-ask-hint">Pick a question below or type your own.</p></sc-if>
+<sc-if value="{{askEmpty}}" hint-placeholder-val="true"><p class="c-ask-hint">Pick a question below or type your own. Type <code>help</code> for commands.</p></sc-if>
 <sc-for list="{{askLog}}" as="e" hint-placeholder-count="1">
 <div class="c-ask-turn">
-<div class="c-ask-q"><span class="c-ask-p">$</span> ./ask.sh "{{e.q}}"</div>
+<div class="c-ask-q"><span class="c-ask-p">$</span> {{e.qline}}</div>
 <sc-if value="{{e.pending}}" hint-placeholder-val="false"><div class="c-ask-a c-ask-wait">thinking<span class="c-cursor" aria-hidden="true"></span></div></sc-if>
 <sc-if value="{{e.done}}" hint-placeholder-val="true"><div class="c-ask-a">
 <sc-for list="{{e.lines}}" as="l" hint-placeholder-count="2"><p class="{{l.cls}}"><sc-for list="{{l.parts}}" as="x" hint-placeholder-count="1"><sc-if value="{{x.link}}" hint-placeholder-val="false"><a class="c-ask-ln" href="{{x.href}}" onClick="{{x.pick}}">{{x.t}}</a></sc-if><sc-if value="{{x.plain}}" hint-placeholder-val="true">{{x.t}}</sc-if></sc-for></p></sc-for>
 <sc-if value="{{e.hasSources}}" hint-placeholder-val="true"><div class="c-ask-src"><span># sources</span><sc-for list="{{e.sources}}" as="s" hint-placeholder-count="2"><a href="{{s.href}}" onClick="{{s.pick}}">{{s.label}}</a></sc-for></div></sc-if>
-<div class="c-ask-meta">{{e.meta}}</div>
+<div class="c-ask-meta">{{e.meta}}<sc-if value="{{e.canShare}}" hint-placeholder-val="false"><button type="button" class="c-ask-share" onClick="{{e.shareGo}}">{{e.shareLabel}}</button></sc-if></div>
 </div></sc-if>
 </div>
 </sc-for>
@@ -1850,6 +1910,8 @@ html{scroll-padding-top:calc(var(--hdr-h,0px) + 12px);scroll-padding-bottom:72px
 </div>
 </section>
 </main>
+<div id="c-tip" class="{{tipClass}}" popover="auto" style="{{tipPos}}"><b>{{tipTitle}}</b>{{tipText}}</div>
+<span class="c-sr" role="status">{{srNote}}</span>
 <div class="c-chat" data-open="{{chatOpenAttr}}" data-hide="{{chatHide}}">
 <button type="button" class="c-chat-bar" onClick="{{chatToggle}}" aria-expanded="{{chatOpenAttr}}" aria-controls="c-chat-panel" title="{{chatBarTitle}}">
 <span class="c-chat-av"><img src="./portrait.webp" alt="" width="28" height="28" loading="lazy" decoding="async"><i aria-hidden="true"></i></span>
@@ -1866,7 +1928,7 @@ html{scroll-padding-top:calc(var(--hdr-h,0px) + 12px);scroll-padding-bottom:72px
 <sc-if value="{{e.done}}" hint-placeholder-val="true"><div class="c-chat-msg c-chat-them">
 <sc-for list="{{e.lines}}" as="l" hint-placeholder-count="1"><p class="{{l.cls}}"><sc-for list="{{l.parts}}" as="x" hint-placeholder-count="1"><sc-if value="{{x.link}}" hint-placeholder-val="false"><a class="c-ask-ln" href="{{x.href}}" onClick="{{x.pick}}">{{x.t}}</a></sc-if><sc-if value="{{x.plain}}" hint-placeholder-val="true">{{x.t}}</sc-if></sc-for></p></sc-for>
 <sc-if value="{{e.hasSources}}" hint-placeholder-val="true"><div class="c-chat-src"><sc-for list="{{e.sources}}" as="s" hint-placeholder-count="2"><a href="{{s.href}}" onClick="{{s.pick}}" title="{{s.label}}">{{s.short}}</a></sc-for></div></sc-if>
-<div class="c-chat-meta">{{e.metaShort}}</div>
+<div class="c-chat-meta">{{e.metaShort}}<sc-if value="{{e.canShare}}" hint-placeholder-val="false"><button type="button" class="c-ask-share" onClick="{{e.shareGo}}">{{e.shareLabel}}</button></sc-if></div>
 </div></sc-if>
 </sc-for>
 <sc-if value="{{askEmpty}}" hint-placeholder-val="true"><div class="c-chat-sugg"><sc-for list="{{askSugg}}" as="s" hint-placeholder-count="4"><button type="button" class="c-ask-chip" onClick="{{s.pick}}" disabled="{{askBusy}}">{{s.t}}</button></sc-for></div></sc-if>
@@ -1893,6 +1955,25 @@ class Component extends DCLogic {
     };
     document.addEventListener('click', this._onChatLink);
     try { if (window.SpeechRecognition || window.webkitSpeechRecognition) this.setState({ micOk: true }); } catch (e) {}
+    // Local time in Newcastle: render once, then update the text in place each minute.
+    const fmt = () => { try { return new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/London', hour: '2-digit', minute: '2-digit' }).format(new Date()); } catch (e) { return ''; } };
+    this._clock = fmt();
+    if (this._clock) this.setState({ clockOn: true });
+    this._clockT = setInterval(() => { this._clock = fmt(); document.querySelectorAll('.v2-time-v').forEach((n) => { if (n.textContent !== this._clock) n.textContent = this._clock; }); }, 15000);
+    // Printing: render every section and open every disclosure, then restore.
+    this._beforePrint = () => {
+      document.documentElement.classList.add('cv-all');
+      this._printOpened = [...document.querySelectorAll('#faq details:not([open])')];
+      this._printOpened.forEach((d) => { d.open = true; });
+    };
+    this._afterPrint = () => { (this._printOpened || []).forEach((d) => { d.open = false; }); this._printOpened = null; };
+    window.addEventListener('beforeprint', this._beforePrint);
+    window.addEventListener('afterprint', this._afterPrint);
+    // Shareable questions: ?ask=… answers it in ask.sh.
+    try {
+      const q = new URLSearchParams(location.search).get('ask');
+      if (q) setTimeout(() => { this.askSubmit(q.slice(0, 300)); this.scrollToId('ask'); }, 60);
+    } catch (e) {}
   }
   // Voice dictation into the ask.sh or chat field, using the browser's own speech recognition.
   dictate(target) {
@@ -2074,7 +2155,7 @@ class Component extends DCLogic {
           });
           d.idf = (w) => Math.log(1 + d.passages.length / (df[w] || 0.5));
           // File names mentioned in answers (budget.md, ai/platform.md…) link to their tab.
-          const map = { 'readme.md': { href: '#top' }, 'career.log': { href: '#career' }, 'responsibilities/': { href: '#responsibilities' }, 'case-studies/': { href: '#case-studies' }, 'faq.md': { href: '#faq' }, 'recommendations.txt': { href: '#recommendations' }, 'craigthompson.dev/cv': { href: 'cv/' } };
+          const map = { 'readme.md': { href: '#top' }, 'career.log': { href: '#career' }, 'responsibilities/': { href: '#responsibilities' }, 'case-studies/': { href: '#case-studies' }, 'faq.md': { href: '#faq' }, 'recommendations.txt': { href: '#recommendations' }, 'craigthompson.dev/cv': { href: 'cv/' }, 'stack/': { href: '#stack' }, 'open-source/': { href: '#oss' }, 'ask.sh': { href: '#ask' }, 'cv.json': { href: 'cv.json' }, 'cv.pdf': { href: 'cv.pdf' }, 'contact.vcf': { href: 'craig-thompson.vcf' } };
           d.passages.forEach((p) => {
             const f = String(p.title).split(':')[0].trim().toLowerCase();
             if ((p.kind === 'resp' || p.kind === 'case') && /^[\w/-]+\.\w+$/.test(f)) map[f] = { href: p.href, kind: p.kind, key: p.key };
@@ -2118,7 +2199,8 @@ class Component extends DCLogic {
     const st = this.state || {};
     if (!q || st.askBusy) return;
     if (this._rec) { try { this._rec.abort(); } catch (e) {} this._rec = null; }
-    const log = (st.askLog || []).concat([{ q, pending: true }]).slice(-8);
+    const shell = this.isShell(q);
+    const log = (st.askLog || []).concat([{ q, pending: true, shell }]).slice(-8);
     this.setState(from === 'chat' ? { askLog: log, chatQ: '', askBusy: true } : { askLog: log, askQ: '', askBusy: true });
     try { const fld = document.getElementById(from === 'chat' ? 'c-chat-field' : 'c-ask-field'); if (fld) fld.value = ''; } catch (e) {}
     const scroll = () => setTimeout(() => { try { document.querySelectorAll('.c-ask-log, .c-chat-log').forEach((el) => { el.scrollTop = el.scrollHeight; }); } catch (e) {} }, 30);
@@ -2131,6 +2213,12 @@ class Component extends DCLogic {
     };
     const cfg = (typeof window !== 'undefined' && window.CRAGA_ASK) || {};
     this.askIndex().then((index) => {
+      if (shell) {
+        const out = this.askShell(q, index);
+        if (out.clear) { this.setState({ askLog: [], askBusy: false }); return; }
+        finish({ answer: out.answer, sources: [], mode: 'shell' });
+        return;
+      }
       const viaSearch = (note) => { const r = this.askSearch(index, q); finish({ answer: r.answer, sources: r.sources, mode: 'search', note }); };
       if (!cfg.endpoint) { viaSearch(''); return; }
       const ctl = typeof AbortController !== 'undefined' ? new AbortController() : null;
@@ -2147,6 +2235,95 @@ class Component extends DCLogic {
         .catch(() => { clearTimeout(timer); viaSearch("The AI isn't available right now, so this is the closest match from the site."); });
     }).catch(() => finish({ answer: 'ask.sh needs the live site to run. Try it at craigthompson.dev.', sources: [], mode: 'error' }));
   }
+  // A few shell commands in ask.sh, answered locally (no AI call).
+  isShell(q) {
+    return /^(help|man( \S+)?|ls( \S+)?|whoami|pwd|date|clear|contact|cat \S+|echo .*|sudo( .*)?|exit)$/i.test(String(q).trim());
+  }
+  askShell(raw, index) {
+    const q = String(raw).trim();
+    const [cmd, ...rest] = q.split(/\s+/);
+    const arg = rest.join(' ').replace(/^\.\//, '');
+    const c = cmd.toLowerCase();
+    const files = (kind) => index.passages.filter((p) => p.kind === kind).map((p) => String(p.title).split(':')[0].trim());
+    const london = (opts) => { try { return new Intl.DateTimeFormat('en-GB', Object.assign({ timeZone: 'Europe/London' }, opts)).format(new Date()); } catch (e) { return ''; } };
+    if (c === 'help' || c === 'man') return { answer: 'Commands: help, ls, ls case-studies, ls responsibilities, cat <file>, whoami, pwd, date, contact, clear.\nAnything else is a question for ask.sh.' };
+    if (c === 'ls') {
+      const a = arg.replace(/\/$/, '').toLowerCase();
+      if (a === 'case-studies') return { answer: files('case').join('  ') };
+      if (a === 'responsibilities') return { answer: files('resp').join('  ') };
+      if (a === 'stack' || a === 'open-source') return { answer: 'Open ' + a + '/ on the page for the full list.' };
+      if (a && a !== '.' && a !== '~') return { answer: 'ls: ' + arg + ': No such directory. Try ls on its own.' };
+      return { answer: 'README.md  career.log  responsibilities/  case-studies/  stack/  open-source/  recommendations.txt  faq.md  ask.sh  cv.json  cv.pdf  contact.vcf' };
+    }
+    if (c === 'whoami') return { answer: "visitor\nYou're reading the portfolio of Craig Michael Thompson: Head of Engineering, hands-on and AI-first, in Newcastle upon Tyne, UK." };
+    if (c === 'pwd') return { answer: '/home/craig/portfolio' };
+    if (c === 'date') return { answer: london({ weekday: 'short', day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) + ' in Newcastle (Europe/London)' };
+    if (c === 'contact') return { answer: 'email  craga89@gmail.com\ncard   contact.vcf\ncv     cv.pdf' };
+    if (c === 'clear') return { clear: true };
+    if (c === 'echo') return { answer: arg };
+    if (c === 'exit') return { answer: "There's no exit. The chat bar is always here if you need it." };
+    if (c === 'sudo') return { answer: 'craig is not in the sudoers file. This incident will be reported to Craig, who would be glad to hear from you: craga89@gmail.com' };
+    if (c === 'cat') {
+      const f = arg.toLowerCase();
+      if (f === 'cv.json') return { answer: 'cv.json is the CV as JSON Resume. Open cv.json, or cv.pdf for a printable copy.' };
+      if (f === 'readme.md') { const p = index.byId.intro; return { answer: p ? p.text.split(/(?<=\.)\s/).slice(0, 3).join(' ') : 'See README.md.' }; }
+      if (f === 'faq.md') return { answer: index.passages.filter((p) => /^faq-/.test(p.id)).map((p) => '- ' + String(p.title).replace(/^FAQ:\s*/, '')).join('\n') };
+      if (f === 'career.log') return { answer: index.passages.filter((p) => /^career-/.test(p.id)).map((p) => '- ' + p.title).join('\n') + '\nSee career.log.' };
+      const hit = index.passages.find((p) => (p.kind === 'resp' || p.kind === 'case') && String(p.title).split(':')[0].trim().toLowerCase() === f);
+      if (hit) return { answer: hit.text.replace(/^\/\/.*?\s(?=[A-Z])/, '').split(/(?<=\.)\s/).slice(0, 3).join(' ') + '\nSee ' + String(hit.title).split(':')[0].trim() + '.' };
+      return { answer: 'cat: ' + arg + ': No such file. Try ls.' };
+    }
+    return { answer: q + ': command not found. Try help.' };
+  }
+  copyText(text) {
+    try { if (navigator.clipboard && window.isSecureContext) return navigator.clipboard.writeText(text); } catch (e) {}
+    return new Promise((ok, fail) => {
+      try {
+        const t = document.createElement('textarea');
+        t.value = text; t.setAttribute('readonly', ''); t.style.position = 'fixed'; t.style.opacity = '0';
+        document.body.appendChild(t); t.select(); document.execCommand('copy'); t.remove(); ok();
+      } catch (e) { fail(e); }
+    });
+  }
+  note(msg) {
+    this.setState({ srNote: msg });
+    clearTimeout(this._noteT);
+    this._noteT = setTimeout(() => this.setState({ srNote: '' }), 4000);
+  }
+  // Jargon toggletips: one shared popover, anchored to whichever term opened it.
+  openTip(key, btn) {
+    const pop = document.getElementById('c-tip');
+    this.setState({ tipKey: key, tipPos: '' });
+    const show = () => {
+      if (!pop) return;
+      const native = typeof pop.showPopover === 'function';
+      if (native) { try { if (!pop.matches(':popover-open')) pop.showPopover(); } catch (e) {} }
+      else this.setState({ tipFallbackOpen: true });
+      // No anchor positioning: place it below the term (or above if there's no room), kept on screen.
+      const anchored = typeof CSS !== 'undefined' && CSS.supports && CSS.supports('position-area: bottom') && CSS.supports('anchor-name: --a');
+      if (!anchored && btn) {
+        requestAnimationFrame(() => {
+          const r = btn.getBoundingClientRect(), w = pop.offsetWidth, h = pop.offsetHeight;
+          const left = Math.max(12, Math.min(r.left + r.width / 2 - w / 2, innerWidth - w - 12));
+          const top = r.bottom + 8 + h > innerHeight - 8 && r.top - 8 - h > 8 ? r.top - 8 - h : r.bottom + 8;
+          this.setState({ tipPos: 'top:' + Math.round(top) + 'px;left:' + Math.round(left) + 'px' });
+        });
+      }
+    };
+    setTimeout(show, 0);
+    if (!this._tipBound && pop) {
+      this._tipBound = true;
+      pop.addEventListener('toggle', (e) => { if (e.newState === 'closed') this.setState({ tipKey: null, tipFallbackOpen: false }); });
+      // Fallback dismissal where the popover API is missing.
+      this._tipKey = (e) => { if (e.key === 'Escape' && (this.state || {}).tipFallbackOpen) this.setState({ tipKey: null, tipFallbackOpen: false }); };
+      this._tipDown = (e) => { if ((this.state || {}).tipFallbackOpen && !(e.target.closest && e.target.closest('#c-tip, .c-term'))) this.setState({ tipKey: null, tipFallbackOpen: false }); };
+      document.addEventListener('keydown', this._tipKey);
+      document.addEventListener('pointerdown', this._tipDown);
+      const reflow = () => { const st = this.state || {}; if (st.tipKey && st.tipPos) { const b = document.querySelector('.c-term[aria-expanded="true"]'); if (b) this.openTip(st.tipKey, b); } };
+      window.addEventListener('resize', reflow);
+      window.addEventListener('scroll', reflow, true);
+    }
+  }
   goResp(step) {
     const ids = ['lead', 'hire', 'people', 'proc', 'aiproc', 'prod', 'cust', 'bud', 'acq', 'inc', 'comp', 'it'];
     const st = this.state || {};
@@ -2154,7 +2331,7 @@ class Component extends DCLogic {
     const id = typeof step === 'string' ? step : ids[(cur + step + ids.length) % ids.length];
     this.setState({ rtab: id, rSeq: (st.rSeq || 0) + 1 });
   }
-  componentWillUnmount() { if (this._onSpy) { window.removeEventListener('scroll', this._onSpy, true); window.removeEventListener('resize', this._onSpy); ['wheel', 'touchstart', 'keydown'].forEach((t) => window.removeEventListener(t, this._onSpyUser)); document.removeEventListener('click', this._onSpyClick, true); } this._fxKey = null; this.destroyFx(); clearTimeout(this._rTo); if (this._rIo) this._rIo.disconnect(); if (this._rEl && this._rOn) Object.keys(this._rOn).forEach((k) => this._rEl.removeEventListener(k, this._rOn[k])); if (this._onAnchor) document.removeEventListener('click', this._onAnchor, true); if (this._onChatLink) document.removeEventListener('click', this._onChatLink); if (this._rec) { try { this._rec.abort(); } catch (e) {} } if (this._hdrRo) { try { this._hdrRo.disconnect(); } catch (e) {} } }
+  componentWillUnmount() { if (this._onSpy) { window.removeEventListener('scroll', this._onSpy, true); window.removeEventListener('resize', this._onSpy); ['wheel', 'touchstart', 'keydown'].forEach((t) => window.removeEventListener(t, this._onSpyUser)); document.removeEventListener('click', this._onSpyClick, true); } this._fxKey = null; this.destroyFx(); clearTimeout(this._rTo); if (this._rIo) this._rIo.disconnect(); if (this._rEl && this._rOn) Object.keys(this._rOn).forEach((k) => this._rEl.removeEventListener(k, this._rOn[k])); if (this._onAnchor) document.removeEventListener('click', this._onAnchor, true); if (this._onChatLink) document.removeEventListener('click', this._onChatLink); if (this._rec) { try { this._rec.abort(); } catch (e) {} } clearInterval(this._clockT); if (this._beforePrint) { window.removeEventListener('beforeprint', this._beforePrint); window.removeEventListener('afterprint', this._afterPrint); } if (this._tipKey) { document.removeEventListener('keydown', this._tipKey); document.removeEventListener('pointerdown', this._tipDown); } if (this._hdrRo) { try { this._hdrRo.disconnect(); } catch (e) {} } }
   fxKey() {
     const motion = this.props.motion ?? true;
     const theme = (this.state && this.state.theme) || this.props.theme || 'dark';
@@ -2365,9 +2542,17 @@ class Component extends DCLogic {
       lines: String(e.answer || '').split(/\n+/).map((t) => t.trim()).filter(Boolean).map((t) => (/^[-•*]\s+/.test(t) ? { parts: askParts(t.replace(/^[-•*]\s+/, '')), cls: 'c-ask-li' } : { parts: askParts(t), cls: '' })),
       hasSources: !e.pending && (e.sources || []).length > 0,
       sources: (e.sources || []).map((s) => ({ label: s.title, short: s.kind === 'resp' || s.kind === 'case' ? String(s.title).split(':')[0] : s.title, href: s.href, pick: s.kind === 'resp' ? toResp(s.key) : s.kind === 'case' ? toCase(s.key) : null })),
+      qline: e.shell ? e.q : './ask.sh "' + e.q + '"',
+      canShare: !e.pending && !e.shell && (e.mode === 'ai' || e.mode === 'search'),
+      shareLabel: askSt.sharedQ === e.q ? 'link copied' : 'copy link',
+      shareGo: () => {
+        const url = location.origin + location.pathname + '?ask=' + encodeURIComponent(e.q);
+        this.copyText(url).then(() => { this.setState({ sharedQ: e.q }); this.note('Link to this answer copied'); setTimeout(() => { if ((this.state || {}).sharedQ === e.q) this.setState({ sharedQ: null }); }, 2500); }).catch(() => {});
+      },
       metaShort: e.mode === 'ai' ? 'AI answer from this site · can be wrong' : e.mode === 'search' ? (e.note ? "AI unavailable · closest match" : 'Closest match from the site') : '',
       meta: e.mode === 'ai' ? 'Answered by an AI model using only this site. It can get things wrong, so check the linked sections.' : e.mode === 'search' ? (e.note || 'Closest match from the site.') : ''
     }));
+    const TIPS = {"multitenant": ["Multi-tenant", "One shared platform serving many customer organisations, with each one's data kept separate."], "cicd": ["CI/CD", "Continuous integration and delivery: every change is built and tested automatically, then released."], "cd": ["Continuous deployment", "Every change that passes the automated checks goes to production automatically, with no manual release step."], "fargate": ["AWS Fargate", "AWS's serverless way to run containers: no servers to manage, and you pay only for what runs."], "cloudfront": ["Amazon CloudFront", "AWS's content delivery network, serving traffic from locations close to each user."], "waf": ["WAF", "Web application firewall: filters malicious traffic before it reaches the application."], "svcconnect": ["ECS Service Connect", "An AWS feature that lets services in a container cluster find and call each other, with traffic metrics built in."], "codemod": ["Codemod", "A script that rewrites source code automatically, so one change can land across thousands of files at once."], "mastra": ["Mastra", "An open-source TypeScript framework for building AI agents and workflows."], "bedrock": ["Amazon Bedrock", "AWS's service for using foundation AI models through an API, inside your own AWS account."], "evals": ["Eval suite", "Automated tests for AI behaviour: set inputs checked against expected qualities, run on every change to catch regressions."], "mdm": ["MDM", "Mobile device management: software that sets up company laptops and enforces security settings remotely."]};
     const ASK_SUGG = ['What roles is he looking for?', 'How has he used AI in engineering?', 'Has he owned a budget?', 'Has he been through an acquisition?'];
     const askSugg = ASK_SUGG.map((t) => ({ t, pick: () => this.askSubmit(t) }));
     return {
@@ -2381,6 +2566,18 @@ class Component extends DCLogic {
       chatPh: askSt.micOn === 'chat' ? 'Listening…' : (askSt.micNoteFor === 'chat' && askSt.micNote) || 'Ask a question…',
       askKey: (e) => { if (e.key === 'Enter') { e.preventDefault(); this.askSubmit(e.target.value); } },
       askGo: () => this.askSubmit((this.state || {}).askQ),
+      tip: { multitenant: (ev) => this.openTip('multitenant', ev && ev.target && ev.target.closest ? ev.target.closest('.c-term') : null), cicd: (ev) => this.openTip('cicd', ev && ev.target && ev.target.closest ? ev.target.closest('.c-term') : null), cd: (ev) => this.openTip('cd', ev && ev.target && ev.target.closest ? ev.target.closest('.c-term') : null), fargate: (ev) => this.openTip('fargate', ev && ev.target && ev.target.closest ? ev.target.closest('.c-term') : null), cloudfront: (ev) => this.openTip('cloudfront', ev && ev.target && ev.target.closest ? ev.target.closest('.c-term') : null), waf: (ev) => this.openTip('waf', ev && ev.target && ev.target.closest ? ev.target.closest('.c-term') : null), svcconnect: (ev) => this.openTip('svcconnect', ev && ev.target && ev.target.closest ? ev.target.closest('.c-term') : null), codemod: (ev) => this.openTip('codemod', ev && ev.target && ev.target.closest ? ev.target.closest('.c-term') : null), mastra: (ev) => this.openTip('mastra', ev && ev.target && ev.target.closest ? ev.target.closest('.c-term') : null), bedrock: (ev) => this.openTip('bedrock', ev && ev.target && ev.target.closest ? ev.target.closest('.c-term') : null), evals: (ev) => this.openTip('evals', ev && ev.target && ev.target.closest ? ev.target.closest('.c-term') : null), mdm: (ev) => this.openTip('mdm', ev && ev.target && ev.target.closest ? ev.target.closest('.c-term') : null) },
+      tipOpen: { multitenant: askSt.tipKey === 'multitenant' ? 'true' : 'false', cicd: askSt.tipKey === 'cicd' ? 'true' : 'false', cd: askSt.tipKey === 'cd' ? 'true' : 'false', fargate: askSt.tipKey === 'fargate' ? 'true' : 'false', cloudfront: askSt.tipKey === 'cloudfront' ? 'true' : 'false', waf: askSt.tipKey === 'waf' ? 'true' : 'false', svcconnect: askSt.tipKey === 'svcconnect' ? 'true' : 'false', codemod: askSt.tipKey === 'codemod' ? 'true' : 'false', mastra: askSt.tipKey === 'mastra' ? 'true' : 'false', bedrock: askSt.tipKey === 'bedrock' ? 'true' : 'false', evals: askSt.tipKey === 'evals' ? 'true' : 'false', mdm: askSt.tipKey === 'mdm' ? 'true' : 'false' },
+      tipAnchor: { multitenant: askSt.tipKey === 'multitenant' ? 'anchor-name: --c-tip' : '', cicd: askSt.tipKey === 'cicd' ? 'anchor-name: --c-tip' : '', cd: askSt.tipKey === 'cd' ? 'anchor-name: --c-tip' : '', fargate: askSt.tipKey === 'fargate' ? 'anchor-name: --c-tip' : '', cloudfront: askSt.tipKey === 'cloudfront' ? 'anchor-name: --c-tip' : '', waf: askSt.tipKey === 'waf' ? 'anchor-name: --c-tip' : '', svcconnect: askSt.tipKey === 'svcconnect' ? 'anchor-name: --c-tip' : '', codemod: askSt.tipKey === 'codemod' ? 'anchor-name: --c-tip' : '', mastra: askSt.tipKey === 'mastra' ? 'anchor-name: --c-tip' : '', bedrock: askSt.tipKey === 'bedrock' ? 'anchor-name: --c-tip' : '', evals: askSt.tipKey === 'evals' ? 'anchor-name: --c-tip' : '', mdm: askSt.tipKey === 'mdm' ? 'anchor-name: --c-tip' : '' },
+      tipTitle: askSt.tipKey ? (TIPS[askSt.tipKey] || [])[0] : '',
+      tipText: askSt.tipKey ? (TIPS[askSt.tipKey] || [])[1] : '',
+      tipClass: 'c-tip' + (askSt.tipFallbackOpen ? ' is-open' : ''),
+      tipPos: askSt.tipPos || '',
+      srNote: askSt.srNote || '',
+      clockOn: !!askSt.clockOn, clock: this._clock || '',
+      copied: !!askSt.copied, notCopied: !askSt.copied, copyTitle: askSt.copied ? 'Copied' : 'Copy email address',
+      copyEmail: () => { this.copyText('craga89@gmail.com').then(() => { this.setState({ copied: true }); this.note('Email address copied'); clearTimeout(this._copyT); this._copyT = setTimeout(() => this.setState({ copied: false }), 2000); }).catch(() => { location.href = 'mailto:craga89@gmail.com'; }); },
+      build: (() => { const B = typeof window !== 'undefined' && window.CRAGA_BUILD; if (!B) return { show: false }; const d = new Date(B.date + 'T12:00:00Z'); return { show: true, label: 'main@' + B.short + ' · ' + d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' }), href: 'https://github.com/Craga89/portfolio/commit/' + B.sha }; })(),
       chatOpen: !!askSt.chatOpen, chatOpenAttr: askSt.chatOpen ? 'true' : 'false',
       chatHide: !askSt.chatOpen && (askSt.spy || 'top') === 'ask' ? 'true' : 'false',
       chatSub: askBusy ? 'thinking…' : 'Ask about my experience', chatBarTitle: askSt.chatOpen ? 'Minimise' : 'Ask about my experience',

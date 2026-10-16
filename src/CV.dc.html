@@ -25,16 +25,18 @@ body{margin:0;background:#F4F4F2}
 .v-root li{margin:0 0 4px}
 .v-btn{all:unset;box-sizing:border-box;display:inline-flex;align-items:center;min-height:44px;padding:0 18px;border-radius:6px;background:var(--ink);color:#FFFFFF;font-weight:600;font-size:14px;cursor:pointer}
 .v-btn:hover{background:#000000}
+.v-btn2{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 1.5px var(--ink);text-decoration:none}
+.v-btn2:hover{background:var(--ink);color:#FFFFFF}
 .v-btn:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
 @media (max-width:700px){.v-page{margin:0;padding:28px 18px;box-shadow:none}}
 @page{size:A4;margin:14mm}
-@media print{body{background:#FFFFFF}.v-page{margin:0;padding:0;box-shadow:none;max-width:none}.v-noprint{display:none!important}.v-root a{color:var(--ink);text-decoration:none}.v-job{break-inside:avoid}}
+@media print{body{background:#FFFFFF}.v-page{margin:0;padding:0;box-shadow:none;max-width:none}.v-noprint{display:none!important}.v-root a{color:var(--ink);text-decoration:none}.v-job{break-inside:auto}.v-job h3,.v-job .v-meta{break-after:avoid}.v-job li{break-inside:avoid}}
 </style>
 </helmet>
 <div class="v-root" style="font-size: 14.5px; line-height: 1.5">
 <div class="v-noprint" style="max-width: 820px; margin: 24px auto 0; padding: 0 16px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px">
 <a href="/" style="font-size: 14px">← craigthompson.dev</a>
-<button type="button" class="v-btn" onClick="{{print}}">Print / save as PDF</button>
+<span style="display: flex; flex-wrap: wrap; gap: 10px"><a class="v-btn v-btn2" href="../cv.pdf" download="Craig-Michael-Thompson-CV.pdf">Download PDF</a><button type="button" class="v-btn" onClick="{{print}}">Print</button></span>
 </div>
 
 <main class="v-page">

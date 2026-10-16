@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-16T20:59:07.732Z",
+ "generated": "2026-10-16T21:17:34.521Z",
  "passages": [
   {
    "id": "intro",
@@ -12,7 +12,7 @@
   {
    "id": "profile",
    "title": "Profile",
-   "text": "Craig Michael Thompson Full-stack engineer Newcastle upon Tyne, UK open to new roles. Contact: craga89@gmail.com, github.com/Craga89, linkedin.com/in/craigmichaelthompson.",
+   "text": "Craig Michael Thompson Full-stack engineer Newcastle upon Tyne, UK 22:17 in Newcastle open to new roles. Contact: craga89@gmail.com, github.com/Craga89, linkedin.com/in/craigmichaelthompson.",
    "href": "#top",
    "kind": "link",
    "key": ""
@@ -412,7 +412,7 @@
   {
    "id": "faq-18",
    "title": "FAQ: Can I get a copy of your CV?",
-   "text": "Yes. There's a plain, one-page version at craigthompson.dev/cv that you can print or save as a PDF, or email me and I'll send it.",
+   "text": "Yes. There's a plain version at craigthompson.dev/cv, also as a PDF and as JSON Resume, or email me and I'll send it.",
    "href": "#faq",
    "kind": "link",
    "key": ""

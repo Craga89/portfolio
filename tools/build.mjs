@@ -232,6 +232,10 @@ function buildHome(today) {
     var a = e.target && e.target.closest && e.target.closest('.v2-mbar nav a');
     if (a) try { a.scrollIntoView({ block: 'nearest', inline: 'nearest' }); } catch (x) {}
   });
+  // Offline support and instant repeat visits (https only, so local previews aren't cached).
+  if ('serviceWorker' in navigator && location.protocol === 'https:') {
+    window.addEventListener('load', function () { navigator.serviceWorker.register('sw.js').catch(function () {}); });
+  }
   window.CRAGA_ASK = { endpoint: ${JSON.stringify(ASK.endpoint || '')}, index: 'assets/ask-index.json' };
   var app = DCRuntime.mount({ root: '#app', template: '#dc-template', script: '#dc-component', props: { theme: saved || (light ? 'light' : 'dark') } });
   var set = app.c.setState;
@@ -268,6 +272,7 @@ ${FALLBACKS}
 </style>
 <script>if(location.hash.length>1)document.documentElement.classList.add('cv-all')</script>
 ${localFonts(d.helmet.trim())}
+<script>window.CRAGA_BUILD={sha:"__BUILD_SHA__",short:"__BUILD_SHORT__",date:"${today}"}</script>
 <script src="${appName}" defer></script>
 </head>
 <body>
@@ -473,7 +478,7 @@ async function prerender() {
     }
     await page.setViewportSize({ width: 1440, height: 1000 });
     await page.waitForTimeout(150);
-    const html = await page.$eval('#app', (el) => { const c = el.cloneNode(true); c.querySelectorAll('.c-chat, .c-mic').forEach((n) => n.remove()); return c.innerHTML; });
+    const html = await page.$eval('#app', (el) => { const c = el.cloneNode(true); c.querySelectorAll('.c-chat, .c-mic, .v2-time').forEach((n) => n.remove()); return c.innerHTML; });
     const passages = await page.evaluate(extractPassages);
     const index = { generated: new Date().toISOString(), passages };
     writeFileSync(join(OUT, 'assets', 'ask-index.json'), JSON.stringify(index));
@@ -483,6 +488,7 @@ async function prerender() {
     const file = join(OUT, 'index.html');
     writeFileSync(file, readFileSync(file, 'utf8').replace('<!--PRERENDER-->', html).replace('/*CIS*/', cis.join('\n')));
     await buildOgImage(browser);
+    await buildPdf(browser, port);
   } finally {
     await browser.close();
     srv.close();
@@ -539,6 +545,120 @@ h1{margin:0;font:900 112px/0.88 BS;letter-spacing:.005em}
   writeFileSync(join(OUT, 'og.png'), buf);
 }
 
+// The plain CV as a PDF, printed by Chromium with the page's own print styles.
+async function buildPdf(browser, port) {
+  const page = await browser.newPage();
+  await page.emulateMedia({ media: 'print', colorScheme: 'light' });
+  await page.goto(`http://127.0.0.1:${port}/cv/`, { waitUntil: 'networkidle' });
+  await page.evaluate(() => document.fonts.ready);
+  await page.pdf({ path: join(OUT, 'cv.pdf'), format: 'A4', preferCSSPageSize: true, printBackground: true, tagged: true, outline: true });
+  await page.close();
+}
+
+// Contact card (vCard 3.0, CRLF line endings, long lines folded at 75 octets).
+async function buildVcard() {
+  const sharp = (await import('sharp')).default;
+  const photo = (await sharp(join(SRC, 'portrait.webp')).resize(192, 192).flatten({ background: '#FFFFFF' }).jpeg({ quality: 78 }).toBuffer()).toString('base64');
+  const fold = (line) => { const out = []; let rest = Buffer.from(line, 'utf8'); out.push(rest.subarray(0, 75).toString('utf8')); rest = rest.subarray(75); while (rest.length) { out.push(' ' + rest.subarray(0, 74).toString('utf8')); rest = rest.subarray(74); } return out.join('\r\n'); };
+  const lines = [
+    'BEGIN:VCARD', 'VERSION:3.0',
+    'N:Thompson;Craig;Michael;;', 'FN:Craig Michael Thompson',
+    'TITLE:Head of Engineering',
+    'EMAIL;TYPE=INTERNET,PREF:craga89@gmail.com',
+    `URL:${SITE}/`,
+    'ADR;TYPE=HOME:;;;Newcastle upon Tyne;;;United Kingdom',
+    'X-SOCIALPROFILE;TYPE=linkedin:https://www.linkedin.com/in/craigmichaelthompson/',
+    'X-SOCIALPROFILE;TYPE=github:https://github.com/Craga89',
+    'NOTE:Hands-on\\, AI-first Head of Engineering and full-stack engineer. Open to new roles.',
+    `PHOTO;ENCODING=b;TYPE=JPEG:${photo}`,
+    'END:VCARD',
+  ];
+  writeOut('craig-thompson.vcf', lines.map(fold).join('\r\n') + '\r\n');
+}
+
+// llms.txt (a plain summary for AI assistants), humans.txt and security.txt.
+function buildTextFiles() {
+  const cv = JSON.parse(readFileSync(join(SRC, 'cv.json'), 'utf8'));
+  const b = cv.basics;
+  const job = (w) => `### ${w.position}, ${w.name} (${w.startDate.slice(0, 4)}${w.endDate ? '–' + w.endDate.slice(0, 4) : '–present'})\n\n${w.summary}\n${(w.highlights || []).map((h) => '\n- ' + h).join('')}`;
+  writeOut('llms.txt', `# ${b.name}
+
+> ${b.label}. ${b.summary}
+
+Location: ${b.location.city}, UK. Contact: ${b.email}.
+
+## Links
+
+- [Portfolio](${SITE}/): career, responsibilities, case studies, stack, open source, FAQ and ask.sh
+- [Plain CV](${SITE}/cv/), also as [PDF](${SITE}/cv.pdf) and [JSON Resume](${SITE}/cv.json)
+- [GitHub](https://github.com/Craga89)
+- [LinkedIn](https://www.linkedin.com/in/craigmichaelthompson/)
+
+## Experience
+
+${cv.work.map(job).join('\n\n')}
+
+## Education
+
+${cv.education.map((e) => `- ${e.studyType}, ${e.area}, ${e.institution} (${e.startDate}–${e.endDate})`).join('\n')}
+
+## Skills
+
+${cv.skills.map((s) => `- ${s.name}: ${s.keywords.join(', ')}`).join('\n')}
+`);
+  writeOut('humans.txt', `/* TEAM */
+Name: Craig Michael Thompson
+Role: Head of Engineering, full-stack engineer
+Contact: ${b.email}
+GitHub: https://github.com/Craga89
+From: Newcastle upon Tyne, UK
+
+/* SITE */
+Last update: ${TODAY}
+Standards: HTML, CSS, JavaScript, WCAG 2.2 AA
+Components: a small hand-written runtime, prerendered with Playwright
+Fonts: Big Shoulders Display, Public Sans, Red Hat Mono (self-hosted)
+Hosting: GitHub Pages; ask.sh on Cloudflare Workers AI
+Source: https://github.com/Craga89/portfolio
+`);
+  const expires = new Date(Date.now() + 365 * 864e5).toISOString().slice(0, 19) + 'Z';
+  writeOut('.well-known/security.txt', `Contact: mailto:${b.email}
+Expires: ${expires}
+Preferred-Languages: en
+Canonical: ${SITE}/.well-known/security.txt
+`);
+}
+
+// Service worker: network-first for pages (always fresh when online), cache-first for
+// content-hashed and static assets, everything available offline after the first visit.
+function buildServiceWorker(appName) {
+  const core = ['./', 'cv/', appName, 'assets/fonts/big-shoulders-display-latin-600.woff2', 'assets/fonts/public-sans-latin-400.woff2', 'assets/fonts/red-hat-mono-latin-400.woff2', 'assets/img/portrait-56.webp', 'favicon.svg'];
+  const version = hash(core.join('|') + TODAY + readFileSync(join(OUT, 'index.html'), 'utf8').length);
+  writeOut('sw.js', `// Generated by tools/build.mjs
+const CACHE = 'craga-${version}';
+const CORE = ${JSON.stringify(core)};
+self.addEventListener('install', (e) => { e.waitUntil(caches.open(CACHE).then((c) => c.addAll(CORE)).then(() => self.skipWaiting())); });
+self.addEventListener('activate', (e) => { e.waitUntil(caches.keys().then((ks) => Promise.all(ks.filter((k) => k !== CACHE).map((k) => caches.delete(k)))).then(() => self.clients.claim())); });
+self.addEventListener('fetch', (e) => {
+  const req = e.request;
+  if (req.method !== 'GET') return;
+  const url = new URL(req.url);
+  if (url.origin !== self.location.origin) return;
+  if (req.mode === 'navigate') {
+    // Pages: network first so content is never stale online; cached copy offline.
+    e.respondWith(fetch(req).then((res) => { const copy = res.clone(); caches.open(CACHE).then((c) => c.put(req, copy)); return res; })
+      .catch(() => caches.match(req).then((r) => r || caches.match('./'))));
+    return;
+  }
+  // Assets: cache first, then network (and keep a copy).
+  e.respondWith(caches.match(req).then((hit) => hit || fetch(req).then((res) => {
+    if (res.ok && res.type === 'basic') { const copy = res.clone(); caches.open(CACHE).then((c) => c.put(req, copy)); }
+    return res;
+  })));
+});
+`);
+}
+
 // ---------- main ----------
 const TODAY = new Date().toISOString().slice(0, 10);
 rmSync(OUT, { recursive: true, force: true });
@@ -561,5 +681,8 @@ writeOut('sitemap.xml', `<?xml version="1.0" encoding="UTF-8"?>
 `);
 copyFileSync(join(SRC, 'cv.json'), join(OUT, 'cv.json'));
 await buildImages();
+await buildVcard();
+buildTextFiles();
 if (PRERENDER) await prerender();
+buildServiceWorker(readdirSync(join(OUT, 'assets')).filter((f) => /^app\.[0-9a-f]+\.js$/.test(f)).map((f) => 'assets/' + f)[0]);
 console.log('built', OUT);

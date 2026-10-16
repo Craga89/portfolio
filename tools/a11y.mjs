@@ -109,6 +109,15 @@ for (const [width, scheme] of [[1440, 'dark'], [1440, 'light'], [390, 'dark'], [
     await page.waitForTimeout(60);
     await axe(page, `case study tab ${i + 1} ${tag}`, '#case-studies');
   }
+  // A jargon toggletip open.
+  const term = page.locator('.c-term').first();
+  if (await term.count()) {
+    await term.scrollIntoViewIfNeeded();
+    await term.click();
+    await page.waitForTimeout(150);
+    await axe(page, `toggletip open ${tag}`);
+    await page.keyboard.press('Escape');
+  }
   // Stack search with results, and with none.
   await page.locator('#stack input').fill('aws');
   await axe(page, `stack search ${tag}`, '#stack');
