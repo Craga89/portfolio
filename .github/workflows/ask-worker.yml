@@ -18,8 +18,8 @@ jobs:
     env:
       HAS_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN != '' }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
           node-version: 22
       - name: Test
@@ -39,13 +39,18 @@ jobs:
         if: env.HAS_TOKEN == 'true'
         run: |
           sleep 5
+          fail=0
           for q in "Has he been through an acquisition?" "Where did he study?"; do
-            echo "Q: $q"
-            curl -sS -m 60 -X POST "$ASK_URL" -H 'origin: https://craga.dev' -H 'content-type: application/json' \
-              --data "$(jq -n --arg q "$q" '{q: $q}')" -w '\nHTTP %{http_code} in %{time_total}s\n'
-            echo
+            code=$(curl -sS -m 60 -o out.json -w '%{http_code}' -X POST "$ASK_URL" -H 'origin: https://craga.dev' -H 'content-type: application/json' \
+              --data "$(jq -n --arg q "$q" '{q: $q}')" || echo 000)
+            if [ "$code" = 200 ] && jq -e '.answer | length > 0' out.json >/dev/null; then
+              echo "::notice title=$q::$(jq -r '"\(.answer | gsub("\n"; " ")) [sources: \(.sources | join(", "))] [\(.model)]"' out.json)"
+            else
+              echo "::error title=$q::HTTP $code $(head -c 300 out.json 2>/dev/null)"; fail=1
+            fi
           done
-          echo "Other origins are refused:"
-          curl -sS -o /dev/null -w 'HTTP %{http_code}\n' -X POST "$ASK_URL" -H 'origin: https://example.com' -H 'content-type: application/json' --data '{"q":"hi"}'
+          code=$(curl -sS -o /dev/null -w '%{http_code}' -X POST "$ASK_URL" -H 'origin: https://example.com' -H 'content-type: application/json' --data '{"q":"hi"}')
+          if [ "$code" = 403 ]; then echo "::notice title=Other origins::refused (403)"; else echo "::error title=Other origins::expected 403, got $code"; fail=1; fi
+          exit $fail
         env:
           ASK_URL: https://craga-ask.craga89.workers.dev/ask
