@@ -234,7 +234,9 @@ function extractPassages() {
     .replace(/\s*\$ cat education\.txt\s*(# education)?\s*/, '. Education: '), '#recommendations');
   qa('#faq details').forEach((d, i) => {
     const sum = q('summary', d);
-    add('faq-' + (i + 1), 'FAQ: ' + (sum ? clean(txt(sum)) : ''), txt(d), '#faq');
+    // The question is the title; the text is just the answer, so it isn't read back to the visitor.
+    const answer = Array.from(d.childNodes).filter((n) => n !== sum).map(txt).join(' ');
+    add('faq-' + (i + 1), 'FAQ: ' + (sum ? clean(txt(sum)) : ''), answer, '#faq');
   });
   return out;
 }
