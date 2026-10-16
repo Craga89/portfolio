@@ -100,3 +100,38 @@ test('context selection finds the right passages', () => {
   assert.ok(ids('Where did he study?').includes('recognition'));
   assert.ok(ids('Is he good at hiring?').includes('resp-hire'));
 });
+
+// A fake D1 that records statements.
+const fakeDB = () => { const rows = []; return { rows, prepare: (sql) => ({ bind: (...args) => ({ run: async () => { rows.push({ sql, args }); return { success: true }; } }) }) }; };
+
+test('questions are logged anonymously, with whether they were answered', async () => {
+  const DB = fakeDB();
+  let env = { DB, AI: { run: async () => ({ response: 'He has. See budget.md.\nSOURCES: resp-bud' }) } };
+  await worker.fetch(req({ q: 'Has he owned a budget?' }), env);
+  env = { DB, AI: { run: async () => ({ response: "That isn't covered on the site, but Craig can answer it directly: craga89@gmail.com." }) } };
+  await worker.fetch(req({ q: 'What is his favourite colour?' }), env);
+  assert.equal(DB.rows.length, 2);
+  assert.match(DB.rows[0].sql, /INSERT INTO questions/);
+  assert.deepEqual(DB.rows[0].args.slice(0, 2), ['Has he owned a budget?', 1]);
+  assert.deepEqual(DB.rows[1].args.slice(0, 2), ['What is his favourite colour?', 0]);
+  assert.ok(!JSON.stringify(DB.rows).includes('127.0.0.1'));
+  // CI and smoke-test traffic is not logged.
+  const r = new Request('https://x/ask', { method: 'POST', headers: { origin: ORIGIN, 'content-type': 'application/json', 'x-craga-test': '1' }, body: '{"q":"hi"}' });
+  await worker.fetch(r, env);
+  assert.equal(DB.rows.length, 2);
+});
+
+test('visit beacons are cleaned, bots and other sites ignored', async () => {
+  const DB = fakeDB();
+  const env = { DB, AI: { run: async () => ({ response: 'x' }) } };
+  const beacon = (body, headers = {}) => worker.fetch(new Request('https://x/hit', { method: 'POST', headers: { origin: 'https://craigthompson.dev', 'content-type': 'text/plain', 'user-agent': 'Mozilla/5.0 Chrome/150', ...headers }, body: JSON.stringify(body) }), env);
+  const r = await beacon({ path: '/', ref: 'https://www.linkedin.com/feed/?x=1', device: 'mobile', sections: ['career', 'faq', 'evil', 'faq'], seconds: 99999 });
+  assert.equal(r.status, 204);
+  assert.deepEqual(DB.rows[0].args, ['/', 'linkedin.com', null, 'mobile', 'career,faq', 3600]);
+  await beacon({ path: '/cv/', ref: 'https://craigthompson.dev/' });
+  assert.deepEqual(DB.rows[1].args.slice(0, 2), ['/cv/', null]);
+  await beacon({ path: '/' }, { 'user-agent': 'Mozilla/5.0 (compatible; Googlebot/2.1)' });
+  await beacon({ path: '/' }, { origin: 'https://evil.example' });
+  await beacon({ path: 'javascript:alert(1)' });
+  assert.equal(DB.rows.length, 2);
+});

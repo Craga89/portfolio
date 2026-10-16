@@ -100,6 +100,27 @@ function seoHead(head, { title, desc, url, type, today }) {
   return head.replace(/(<link rel="canonical"[^>]*>)/, `$1\n${social({ title, desc, url, type })}`);
 }
 
+// Cookie-free visit count: one small beacon as the visitor leaves (page, referring site, device
+// class, sections seen, time on page). Skipped for Do Not Track / Global Privacy Control.
+const beacon = (endpoint, sections) => !endpoint ? '' : `(function () {
+  try {
+    if (navigator.globalPrivacyControl || navigator.doNotTrack === '1' || !navigator.sendBeacon) return;
+    var url = ${JSON.stringify(new URL(endpoint || 'https://x').origin + '/hit')}, t0 = Date.now(), seen = {}, sent = false;
+    ${sections ? `seen.top = 1;
+    if ('IntersectionObserver' in window) {
+      var io = new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) seen[e.target.id] = 1; }); }, { threshold: 0.2 });
+      document.querySelectorAll('main > section[id]').forEach(function (n) { io.observe(n); });
+    }` : ''}
+    var send = function () {
+      if (sent) return; sent = true;
+      var w = window.innerWidth;
+      navigator.sendBeacon(url, new Blob([JSON.stringify({ path: location.pathname, ref: document.referrer, device: w < 601 ? 'mobile' : w < 1025 ? 'tablet' : 'desktop', sections: Object.keys(seen), seconds: (Date.now() - t0) / 1000 })], { type: 'text/plain' }));
+    };
+    document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'hidden') send(); });
+    window.addEventListener('pagehide', send);
+  } catch (e) {}
+})();`;
+
 // ---------- devtools greeting ----------
 // A terminal-styled hello for anyone who opens the console, plus ask("…") to query ask.sh from there.
 const BANNER = " ██████╗ ██████╗   █████╗  ██╗  ██████╗ \n██╔════╝ ██╔══██╗ ██╔══██╗ ██║ ██╔════╝ \n██║      ██████╔╝ ███████║ ██║ ██║  ███╗\n██║      ██╔══██╗ ██╔══██║ ██║ ██║   ██║\n╚██████╗ ██║  ██║ ██║  ██║ ██║ ╚██████╔╝\n ╚═════╝ ╚═╝  ╚═╝ ╚═╝  ╚═╝ ╚═╝  ╚═════╝ ";
@@ -245,11 +266,12 @@ function buildHome(today) {
   };
 })();
 ${CONSOLE_HELLO}
+${beacon(ASK.endpoint, true)}
 `;
   const appName = 'assets/app.' + hash(app) + '.js';
   writeOut(appName, app);
   // Runs before first paint: applies a saved or system light theme to the prerendered (dark) markup.
-  const themeNow = `<script>try{var t=localStorage.getItem('theme');if(t?t==='light':matchMedia('(prefers-color-scheme: light)').matches){var r=document.querySelector('#app .c-root');if(r)r.classList.add('c-light')}}catch(e){}</script>`;
+  const themeNow = `<script>try{var r=document.querySelector('#app .c-root'),t=localStorage.getItem('theme');if(r&&(t?t==='light':matchMedia('(prefers-color-scheme: light)').matches))r.classList.add('c-light');if(r&&localStorage.getItem('motion')==='off')r.classList.add('still')}catch(e){}</script>`;
   const fonts = fontFaces('assets/fonts/', ['Big Shoulders Display', 'Public Sans', 'Red Hat Mono']);
   const head = seoHead(d.head.trim(), { title: HOME_TITLE, desc: HOME_DESC, url: SITE + '/', type: 'profile', today });
   return `<!doctype html>
@@ -308,7 +330,7 @@ ${helmet}
 </head>
 <body>
 ${body}
-</body>
+${ASK.endpoint ? '<script>' + beacon(ASK.endpoint, false) + '</script>\n' : ''}</body>
 </html>
 `;
 }

@@ -41,6 +41,18 @@ Every push to `main` deploys `site/` through `.github/workflows/pages.yml`.
 - **Print:** the home page prints as a light, single-column document with every tab and FAQ answer laid out, controls hidden and outbound link URLs shown.
 - **Console:** opening DevTools shows a greeting, and `ask("…")` queries ask.sh from the console.
 
+## Visits and questions (anonymous)
+
+- The Worker keeps two tables in the D1 database `craga-ask` (schema in `worker/schema.sql`). `questions` holds each ask.sh question, whether it was answered, the model and the sources. `visits` holds one row per page view: path, referring site, country, device class, sections seen and seconds on the page. No IP addresses, cookies or user agents are stored. Bots, CI traffic (`x-craga-test: 1`) and Do Not Track / Global Privacy Control visitors are skipped. The page says so in ask.sh, the chat and the FAQ.
+- `.github/workflows/stats.yml` writes a weekly summary to its run page: visits, referrers, how far people read, devices, countries, and the questions ask.sh couldn't answer (FAQ candidates). You can also query the tables in the Cloudflare dashboard (D1 → craga-ask → Console).
+
+## Quality checks in CI
+
+- **ask.sh evals** (`worker/evals.json`, `tools/ask-evals.mjs`): after every Worker deploy, known questions must get answers with the right facts, no invented ones, no salary figures, and no response to prompt injection.
+- **Lighthouse thresholds:** performance at least 95 and accessibility and best practices at 100 on mobile and desktop. SEO counts once the site is open to search engines.
+- **Screenshot comparison** (`tools/visual.mjs`, `.github/workflows/visual.yml`): 11 views compared against baselines on the `visual-baselines` branch. Put `[visual]` in a commit message to accept an intended change.
+- **Link check** (`.github/workflows/links.yml`): every outbound link, weekly.
+
 ## Accessibility (WCAG 2.2 AA)
 
 `npm run a11y` (`tools/a11y.mjs`) checks the built site against WCAG 2.2 AA:

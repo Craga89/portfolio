@@ -140,12 +140,63 @@ function cors(origin) {
 }
 const json = (body, status, headers) => new Response(JSON.stringify(body), { status, headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store', ...headers } });
 
+// ---------- anonymous logging (D1) ----------
+// Nothing here identifies a visitor: no IP addresses, cookies or user agents are stored.
+const BOT = /bot|crawl|spider|slurp|headless|lighthouse|preview|facebookexternalhit|embedly|pingdom|monitor|curl|wget|python|node-fetch|axios/i;
+const SECTIONS = new Set(['top', 'career', 'responsibilities', 'case-studies', 'stack', 'oss', 'recommendations', 'faq', 'ask']);
+const isTest = (request) => request.headers.get('x-craga-test') === '1';
+const country = (request) => (request.cf && request.cf.country) || null;
+const NOT_COVERED = /isn't covered on the site/i;
+
+export async function logQuestion(env, request, q, result) {
+  if (!env.DB || isTest(request) || BOT.test(request.headers.get('user-agent') || '')) return;
+  try {
+    await env.DB.prepare('INSERT INTO questions (question, answered, model, sources, country, via) VALUES (?, ?, ?, ?, ?, ?)')
+      .bind(q, result && result.answer && !NOT_COVERED.test(result.answer) ? 1 : 0, (result && result.model) || 'unavailable', result && result.sources ? result.sources.join(',') : '', country(request), 'site')
+      .run();
+  } catch (e) { console.log('log question failed:', e && e.message); }
+}
+
+export function cleanHit(body, origin) {
+  const path = String(body.path || '/').slice(0, 100);
+  if (!/^\/[\w\-./]*$/.test(path)) return null;
+  let referrer = null;
+  try {
+    const host = new URL(String(body.ref || '')).hostname.replace(/^www\./, '');
+    if (host && host !== new URL(origin).hostname.replace(/^www\./, '')) referrer = host.slice(0, 80);
+  } catch (e) { /* no or bad referrer */ }
+  const device = ['mobile', 'tablet', 'desktop'].includes(body.device) ? body.device : null;
+  const sections = Array.isArray(body.sections) ? [...new Set(body.sections.filter((x) => SECTIONS.has(x)))].join(',') : '';
+  const seconds = Math.max(0, Math.min(3600, Math.round(Number(body.seconds) || 0)));
+  return { path, referrer, device, sections, seconds };
+}
+
+async function hit(request, env, origin) {
+  if (!env.DB || isTest(request) || BOT.test(request.headers.get('user-agent') || '') || /localhost|127\.0\.0\.1/.test(origin)) return;
+  if (env.HIT_LIMITER) {
+    const { success } = await env.HIT_LIMITER.limit({ key: request.headers.get('cf-connecting-ip') || 'anon' });
+    if (!success) return;
+  }
+  let body = {};
+  try { body = JSON.parse(await request.text()); } catch (e) { return; }
+  const v = cleanHit(body, origin);
+  if (!v) return;
+  await env.DB.prepare('INSERT INTO visits (path, referrer, country, device, sections, seconds) VALUES (?, ?, ?, ?, ?, ?)')
+    .bind(v.path, v.referrer, country(request), v.device, v.sections, v.seconds).run();
+}
+
 export default {
-  async fetch(request, env) {
+  async fetch(request, env, ctx) {
+    const wait = (p) => (ctx && ctx.waitUntil ? ctx.waitUntil(p) : p);
     const url = new URL(request.url);
     const origin = request.headers.get('origin') || '';
     const okOrigin = ALLOWED.some((re) => re.test(origin));
     const h = okOrigin ? cors(origin) : {};
+    // Cookie-free visit counts, sent with navigator.sendBeacon (text/plain, so no preflight).
+    if (url.pathname === '/hit') {
+      if (request.method === 'POST' && okOrigin) await wait(hit(request, env, origin).catch((e) => console.log('hit failed:', e && e.message)));
+      return new Response(null, { status: 204, headers: h });
+    }
     if (url.pathname !== '/ask') return json({ error: 'not found' }, 404, h);
     if (request.method === 'OPTIONS') return new Response(null, { status: okOrigin ? 204 : 403, headers: h });
     if (request.method !== 'POST') return json({ error: 'method not allowed' }, 405, h);
@@ -163,9 +214,12 @@ export default {
     if (!q) return json({ error: 'missing q' }, 400, h);
 
     try {
-      return json(await answer(env, q), 200, h);
+      const result = await answer(env, q);
+      await wait(logQuestion(env, request, q, result));
+      return json(result, 200, h);
     } catch (e) {
       console.log('ask failed:', e && e.message);
+      await wait(logQuestion(env, request, q, null));
       return json({ error: 'unavailable' }, 503, h);
     }
   },

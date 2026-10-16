@@ -177,5 +177,19 @@ body{margin:0;background:#F4F4F2}
 </section>
 </main>
 </div>
+<script>(function () {
+  try {
+    if (navigator.globalPrivacyControl || navigator.doNotTrack === '1' || !navigator.sendBeacon) return;
+    var url = "https://craga-ask.craga89.workers.dev/hit", t0 = Date.now(), seen = {}, sent = false;
+    
+    var send = function () {
+      if (sent) return; sent = true;
+      var w = window.innerWidth;
+      navigator.sendBeacon(url, new Blob([JSON.stringify({ path: location.pathname, ref: document.referrer, device: w < 601 ? 'mobile' : w < 1025 ? 'tablet' : 'desktop', sections: Object.keys(seen), seconds: (Date.now() - t0) / 1000 })], { type: 'text/plain' }));
+    };
+    document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'hidden') send(); });
+    window.addEventListener('pagehide', send);
+  } catch (e) {}
+})();</script>
 </body>
 </html>

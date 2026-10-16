@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-16T21:29:04.782Z",
+ "generated": "2026-10-16T21:43:56.993Z",
  "passages": [
   {
    "id": "intro",
@@ -12,7 +12,7 @@
   {
    "id": "profile",
    "title": "Profile",
-   "text": "Craig Michael Thompson Full-stack engineer Newcastle upon Tyne, UK 22:29 in Newcastle open to new roles. Contact: craga89@gmail.com, github.com/Craga89, linkedin.com/in/craigmichaelthompson.",
+   "text": "Craig Michael Thompson Full-stack engineer Newcastle upon Tyne, UK 22: 43 (UTC+1) 22:43 UTC+1 in Newcastle open to new roles. Contact: craga89@gmail.com, github.com/Craga89, linkedin.com/in/craigmichaelthompson.",
    "href": "#top",
    "kind": "link",
    "key": ""
@@ -413,6 +413,14 @@
    "id": "faq-18",
    "title": "FAQ: Can I get a copy of your CV?",
    "text": "Yes. There's a plain version at craigthompson.dev/cv, also as a PDF and as JSON Resume, or email me and I'll send it.",
+   "href": "#faq",
+   "kind": "link",
+   "key": ""
+  },
+  {
+   "id": "faq-19",
+   "title": "FAQ: Do you track visitors?",
+   "text": "No cookies, and nothing that identifies you. The site counts visits (the page, the country, the site you came from and which sections you saw) and keeps ask.sh questions anonymously, so I can see what's useful and fill any gaps. It respects Do Not Track and Global Privacy Control.",
    "href": "#faq",
    "kind": "link",
    "key": ""

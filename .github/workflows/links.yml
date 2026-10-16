@@ -1,0 +1,27 @@
+# Weekly dead-link check across the built site (site/), so moved or deleted projects in the
+# open-source list, recommendations and case studies get noticed.
+name: Link check
+
+on:
+  schedule:
+    - cron: '29 6 * * 1' # Mondays, 06:29 UTC
+  workflow_dispatch:
+
+jobs:
+  links:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Check links
+        uses: lycheeverse/lychee-action@v2
+        with:
+          fail: true
+          jobSummary: true
+          # LinkedIn refuses automated requests (HTTP 999); the site's own domain is checked by the other workflows.
+          args: >-
+            --no-progress --max-concurrency 8 --timeout 20 --max-retries 2
+            --accept 200,201,204,206,301,302,307,308,403,429
+            --exclude 'linkedin\.com' --exclude '^mailto:' --exclude 'craigthompson\.dev' --exclude 'craga\.dev'
+            --exclude 'workers\.dev' --exclude 'google\.com/maps'
+            --root-dir "${{ github.workspace }}/site"
+            'site/index.html' 'site/cv/index.html' 'site/llms.txt'

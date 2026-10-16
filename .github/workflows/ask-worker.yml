@@ -5,7 +5,7 @@ name: Deploy ask.sh worker
 on:
   push:
     branches: [main]
-    paths: ['worker/**', '.github/workflows/ask-worker.yml']
+    paths: ['worker/**', 'tools/ask-evals.mjs', '.github/workflows/ask-worker.yml']
   workflow_dispatch:
 
 concurrency:
@@ -41,7 +41,7 @@ jobs:
           sleep 5
           fail=0
           for q in "Has he been through an acquisition?" "Where did he study?" "What roles is he looking for?"; do
-            code=$(curl -sS -m 60 -o out.json -w '%{http_code}' -X POST "$ASK_URL" -H 'origin: https://craigthompson.dev' -H 'content-type: application/json' \
+            code=$(curl -sS -m 60 -o out.json -w '%{http_code}' -X POST "$ASK_URL" -H 'origin: https://craigthompson.dev' -H 'content-type: application/json' -H 'x-craga-test: 1' \
               --data "$(jq -n --arg q "$q" '{q: $q}')" || echo 000)
             if [ "$code" = 200 ] && jq -e '.answer | length > 0' out.json >/dev/null; then
               echo "::notice title=$q::$(jq -r '"\(.answer | gsub("\n"; " ")) [sources: \(.sources | join(", "))] [\(.model)]"' out.json)"
@@ -52,5 +52,10 @@ jobs:
           code=$(curl -sS -o /dev/null -w '%{http_code}' -X POST "$ASK_URL" -H 'origin: https://example.com' -H 'content-type: application/json' --data '{"q":"hi"}')
           if [ "$code" = 403 ]; then echo "::notice title=Other origins::refused (403)"; else echo "::error title=Other origins::expected 403, got $code"; fail=1; fi
           exit $fail
+        env:
+          ASK_URL: https://craga-ask.craga89.workers.dev/ask
+      - name: Answer tests (evals)
+        if: env.HAS_TOKEN == 'true'
+        run: node tools/ask-evals.mjs "$ASK_URL"
         env:
           ASK_URL: https://craga-ask.craga89.workers.dev/ask

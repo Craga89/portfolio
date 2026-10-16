@@ -13,5 +13,17 @@ name = "ASK_LIMITER"
 namespace_id = "1001"
 simple = { limit = 8, period = 60 }
 
+# Visit counts: 30 beacons a minute per visitor at most.
+[[ratelimits]]
+name = "HIT_LIMITER"
+namespace_id = "1002"
+simple = { limit = 30, period = 60 }
+
+# Anonymous question log and visit counts (schema in schema.sql).
+[[d1_databases]]
+binding = "DB"
+database_name = "craga-ask"
+database_id = "50a1bb5b-4518-449e-a2a3-c62990219ca0"
+
 [observability]
 enabled = true

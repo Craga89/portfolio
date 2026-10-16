@@ -26,7 +26,7 @@ jobs:
     if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     env:
-      URL: ${{ inputs.url || 'https://craigthompson.dev/' }}
+      URL: ${{ inputs.url }}
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
@@ -38,6 +38,14 @@ jobs:
         run: |
           mkdir -p out
           sleep 20 # let the Pages CDN pick up a fresh deploy
+          # Use the first address that serves the site (the new domain, then the old one while DNS moves).
+          if [ -z "$URL" ]; then
+            for u in https://craigthompson.dev/ https://craga.dev/ https://craga89.github.io/portfolio/; do
+              if curl -sfL -o /dev/null -m 20 "$u"; then URL="$u"; break; fi
+            done
+          fi
+          [ -n "$URL" ] || { echo "::error::No address is serving the site"; exit 1; }
+          echo "Auditing $URL"; echo "URL=$URL" >> "$GITHUB_ENV"
           for preset in mobile desktop; do
             for i in 1 2 3; do
               flags=""; [ "$preset" = desktop ] && flags="--preset=desktop"
@@ -61,3 +69,21 @@ jobs:
           git add reports
           git commit -qm "Lighthouse for $sha"
           git push -f origin lh-tmp:lighthouse
+      - name: Check thresholds
+        # Fails the run if a score drops: performance under 95, or accessibility / best practices
+        # under 100. SEO is only checked once the site is open to search engines (no noindex).
+        run: |
+          node -e '
+            const s = require("./out/summary.json");
+            const indexed = !require("fs").readFileSync("site/robots.txt", "utf8").includes("Disallow: /");
+            const min = { performance: 95, accessibility: 100, "best-practices": 100, ...(indexed ? { seo: 100 } : {}) };
+            let bad = 0;
+            for (const preset of ["mobile", "desktop"]) {
+              const sc = (s[preset] || {}).scores || {};
+              for (const [k, v] of Object.entries(min)) {
+                if (sc[k] == null || sc[k] < v) { bad++; console.log(`::error title=Lighthouse ${preset}::${k} ${sc[k]} (needs ${v})`); }
+                else console.log(`${preset} ${k}: ${sc[k]}`);
+              }
+            }
+            process.exit(bad ? 1 : 0);
+          '

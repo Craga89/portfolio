@@ -242,6 +242,24 @@ for (const path of ['', 'cv/']) {
   const running = await r.page.evaluate(() => (document.getAnimations ? document.getAnimations() : []).filter((a) => a.playState === 'running' && a.effect && a.effect.getTiming().iterations === Infinity).map((a) => (a.effect.target && a.effect.target.className) || a.animationName).slice(0, 5));
   if (running.length) failures.push({ check: '2.3.3 / 2.2.2 motion', state: 'prefers-reduced-motion', what: `looping animations still run: ${running.join(', ')}` });
   await r.ctx.close();
+  // Motion allowed: every looping animation (clock colon, status dots, glow) can be paused (2.2.2).
+  {
+    const g = await open('', { width: 1440 });
+    await g.page.waitForTimeout(400);
+    const loops = () => g.page.evaluate(() => (document.getAnimations ? document.getAnimations() : []).filter((a) => a.playState === 'running' && a.effect && a.effect.getTiming().iterations === Infinity).length);
+    const before = await loops();
+    if (before) {
+      const btn = g.page.locator('.v2-side .v2-motion');
+      if (!(await btn.count())) failures.push({ check: '2.2.2 Pause, Stop, Hide', state: 'home', what: `${before} looping animations and no pause control` });
+      else {
+        await btn.click(); await g.page.waitForTimeout(200);
+        const after = await loops();
+        if (after) failures.push({ check: '2.2.2 Pause, Stop, Hide', state: 'home', what: `${after} looping animations still run after "pause animations"` });
+        notes.push(`pause animations stops ${before} looping animations`);
+      }
+    }
+    await g.ctx.close();
+  }
   // Motion allowed: the auto-playing tour must offer a pause control (2.2.2).
   const m = await open('', { width: 1440 });
   await m.page.locator('#responsibilities').scrollIntoViewIfNeeded();
