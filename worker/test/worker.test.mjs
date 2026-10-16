@@ -99,6 +99,8 @@ test('context selection finds the right passages', () => {
   assert.ok(ids('qwerty zzz').length >= 6);
   assert.ok(ids('Where did he study?').includes('recognition'));
   assert.ok(ids('Is he good at hiring?').includes('resp-hire'));
+  assert.ok(ids('Who did he work for before Hive HR?').includes('career-3'));
+  assert.ok(ids('Where has he worked?').includes('career-4'));
 });
 
 // A fake D1 that records statements.

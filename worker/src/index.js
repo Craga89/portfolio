@@ -58,6 +58,8 @@ export function pickContext(q) {
     used += size;
   };
   ALWAYS.forEach((id) => take(BY_ID[id]));
+  // Career-history questions ("before Hive", "previous job", "where has he worked") get every career entry.
+  if (/\b(before|previous|previously|prior|earlier|past|history|employers?|worked|jobs?|companies|career)\b/i.test(q)) PASSAGES.filter((p) => /^career-/.test(p.id)).forEach(take);
   scored.filter((x) => x.s > 0).forEach((x) => take(x.p));
   // Questions with no keyword overlap still get the career history and FAQ.
   if (chosen.length < 6) PASSAGES.filter((p) => /^career-|^faq-/.test(p.id)).forEach(take);
