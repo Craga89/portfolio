@@ -1,0 +1,278 @@
+{
+  "mobile": {
+    "runs": 3,
+    "scores": {
+      "performance": 98,
+      "accessibility": 100,
+      "best-practices": 100,
+      "seo": 69
+    },
+    "metrics": {
+      "first-contentful-paint": 1259,
+      "largest-contentful-paint": 2320,
+      "total-blocking-time": 87,
+      "cumulative-layout-shift": 0,
+      "speed-index": 1259,
+      "interactive": 2327
+    },
+    "totalBytes": 230491,
+    "lcpElement": "[{\"type\":\"table\",\"headings\":[{\"key\":\"node\",\"valueType\":\"node\",\"label\":\"Element\"}],\"items\":[{\"node\":{\"type\":\"node\",\"lhId\":\"page-0-P\",\"path\":\"1,HTML,1,BODY,0,DIV,0,DIV,1,DIV,1,MAIN,0,SECTION,1,DIV,0,DIV,4,DIV,0,P\",\"selector\":\"div.v2-in > div.v2-lead > div#about > p\",\"boundingRect\":{\"top\":439,\"bottom\":657,\"left\":20,\"right\":392,\"width\":372,\"height\":219},\"snippet\":\"<p>\",\"nodeLabel\":\"I'm a hands-on, ful",
+    "failing": [
+      {
+        "category": "performance",
+        "id": "cache-insight",
+        "title": "Use efficient cache lifetimes",
+        "score": 0,
+        "display": "Est savings of 152 KiB",
+        "items": [
+          {
+            "url": "https://craga.dev/assets/app.76215764e6.js",
+            "wastedBytes": 67941.5,
+            "totalBytes": 74118
+          },
+          {
+            "url": "https://craga.dev/assets/fonts/big-shoulders-display-latin-600.woff2",
+            "wastedBytes": 32629.666666666664,
+            "totalBytes": 35596
+          },
+          {
+            "url": "https://craga.dev/assets/fonts/public-sans-latin-400.woff2",
+            "wastedBytes": 24778.416666666664,
+            "totalBytes": 27031
+          },
+          {
+            "url": "https://craga.dev/assets/fonts/red-hat-mono-latin-400.woff2",
+            "wastedBytes": 20682.75,
+            "totalBytes": 22563
+          },
+          {
+            "url": "https://craga.dev/assets/img/portrait-192.avif",
+            "wastedBytes": 7857.666666666666,
+            "totalBytes": 8572
+          }
+        ]
+      },
+      {
+        "category": "performance",
+        "id": "max-potential-fid",
+        "title": "Max Potential First Input Delay",
+        "score": 0.62,
+        "display": "210 ms",
+        "items": []
+      },
+      {
+        "category": "performance",
+        "id": "uses-long-cache-ttl",
+        "title": "Serve static assets with an efficient cache policy",
+        "score": 0.5,
+        "display": "6 resources found",
+        "items": [
+          {
+            "url": "https://craga.dev/assets/app.76215764e6.js",
+            "wastedBytes": 67941.5,
+            "totalBytes": 74118
+          },
+          {
+            "url": "https://craga.dev/assets/fonts/big-shoulders-display-latin-600.woff2",
+            "wastedBytes": 32629.666666666664,
+            "totalBytes": 35596
+          },
+          {
+            "url": "https://craga.dev/assets/fonts/public-sans-latin-400.woff2",
+            "wastedBytes": 24778.416666666664,
+            "totalBytes": 27031
+          },
+          {
+            "url": "https://craga.dev/assets/fonts/red-hat-mono-latin-400.woff2",
+            "wastedBytes": 20682.75,
+            "totalBytes": 22563
+          },
+          {
+            "url": "https://craga.dev/assets/img/portrait-192.avif",
+            "wastedBytes": 7857.666666666666,
+            "totalBytes": 8572
+          }
+        ]
+      },
+      {
+        "category": "performance",
+        "id": "dom-size",
+        "title": "Avoid an excessive DOM size",
+        "score": 0,
+        "display": "2,667 elements",
+        "items": [
+          {
+            "value": {
+              "type": "numeric",
+              "granularity": 1,
+              "value": 2667
+            }
+          },
+          {
+            "node": "<div style=\"font-weight: 700; font-size: 14px\">",
+            "value": {
+              "type": "numeric",
+              "granularity": 1,
+              "value": 18
+            }
+          },
+          {
+            "node": "<div class=\"c-hm-g\" role=\"img\" aria-label=\"59 merged pull requests to other projects from 2012 to 2026, busiest in 20…\" style=\"grid-template-columns: 2.2em repeat(15, minmax(0, 1fr))\">",
+            "value": {
+              "type": "numeric",
+              "granularity": 1,
+              "value": 80
+            }
+          }
+        ]
+      },
+      {
+        "category": "seo",
+        "id": "is-crawlable",
+        "title": "Page is blocked from indexing",
+        "score": 0,
+        "display": "",
+        "items": [
+          {},
+          {
+            "source": "https://craga.dev/robots.txt"
+          }
+        ]
+      }
+    ]
+  },
+  "desktop": {
+    "runs": 3,
+    "scores": {
+      "performance": 100,
+      "accessibility": 100,
+      "best-practices": 100,
+      "seo": 69
+    },
+    "metrics": {
+      "first-contentful-paint": 316,
+      "largest-contentful-paint": 504,
+      "total-blocking-time": 0,
+      "cumulative-layout-shift": 0.002,
+      "speed-index": 322,
+      "interactive": 506
+    },
+    "totalBytes": 230668,
+    "lcpElement": "[{\"type\":\"table\",\"headings\":[{\"key\":\"node\",\"valueType\":\"node\",\"label\":\"Element\"}],\"items\":[{\"node\":{\"type\":\"node\",\"lhId\":\"page-0-H1\",\"path\":\"1,HTML,1,BODY,0,DIV,0,DIV,1,DIV,1,MAIN,0,SECTION,1,DIV,0,DIV,1,DIV,1,H1\",\"selector\":\"div.v2-in > div.v2-lead > div.v2-name > h1\",\"boundingRect\":{\"top\":132,\"bottom\":318,\"left\":270,\"right\":1001,\"width\":732,\"height\":186},\"snippet\":\"<h1>\",\"nodeLabel\":\"Craig Micha",
+    "failing": [
+      {
+        "category": "performance",
+        "id": "cache-insight",
+        "title": "Use efficient cache lifetimes",
+        "score": 0,
+        "display": "Est savings of 152 KiB",
+        "items": [
+          {
+            "url": "https://craga.dev/assets/app.76215764e6.js",
+            "wastedBytes": 67940.58333333333,
+            "totalBytes": 74117
+          },
+          {
+            "url": "https://craga.dev/assets/fonts/big-shoulders-display-latin-600.woff2",
+            "wastedBytes": 32799.25,
+            "totalBytes": 35781
+          },
+          {
+            "url": "https://craga.dev/assets/fonts/public-sans-latin-400.woff2",
+            "wastedBytes": 24779.333333333332,
+            "totalBytes": 27032
+          },
+          {
+            "url": "https://craga.dev/assets/fonts/red-hat-mono-latin-400.woff2",
+            "wastedBytes": 20683.666666666664,
+            "totalBytes": 22564
+          },
+          {
+            "url": "https://craga.dev/assets/img/portrait-192.avif",
+            "wastedBytes": 7687.166666666666,
+            "totalBytes": 8386
+          }
+        ]
+      },
+      {
+        "category": "performance",
+        "id": "uses-long-cache-ttl",
+        "title": "Serve static assets with an efficient cache policy",
+        "score": 0.5,
+        "display": "6 resources found",
+        "items": [
+          {
+            "url": "https://craga.dev/assets/app.76215764e6.js",
+            "wastedBytes": 67940.58333333333,
+            "totalBytes": 74117
+          },
+          {
+            "url": "https://craga.dev/assets/fonts/big-shoulders-display-latin-600.woff2",
+            "wastedBytes": 32799.25,
+            "totalBytes": 35781
+          },
+          {
+            "url": "https://craga.dev/assets/fonts/public-sans-latin-400.woff2",
+            "wastedBytes": 24779.333333333332,
+            "totalBytes": 27032
+          },
+          {
+            "url": "https://craga.dev/assets/fonts/red-hat-mono-latin-400.woff2",
+            "wastedBytes": 20683.666666666664,
+            "totalBytes": 22564
+          },
+          {
+            "url": "https://craga.dev/assets/img/portrait-192.avif",
+            "wastedBytes": 7687.166666666666,
+            "totalBytes": 8386
+          }
+        ]
+      },
+      {
+        "category": "performance",
+        "id": "dom-size",
+        "title": "Avoid an excessive DOM size",
+        "score": 0.5,
+        "display": "2,667 elements",
+        "items": [
+          {
+            "value": {
+              "type": "numeric",
+              "granularity": 1,
+              "value": 2667
+            }
+          },
+          {
+            "node": "<div style=\"font-weight: 700; font-size: 14px\">",
+            "value": {
+              "type": "numeric",
+              "granularity": 1,
+              "value": 18
+            }
+          },
+          {
+            "node": "<div class=\"c-hm-g\" role=\"img\" aria-label=\"59 merged pull requests to other projects from 2012 to 2026, busiest in 20…\" style=\"grid-template-columns: 2.2em repeat(15, minmax(0, 1fr))\">",
+            "value": {
+              "type": "numeric",
+              "granularity": 1,
+              "value": 80
+            }
+          }
+        ]
+      },
+      {
+        "category": "seo",
+        "id": "is-crawlable",
+        "title": "Page is blocked from indexing",
+        "score": 0,
+        "display": "",
+        "items": [
+          {},
+          {
+            "source": "https://craga.dev/robots.txt"
+          }
+        ]
+      }
+    ]
+  }
+}
