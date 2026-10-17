@@ -104,6 +104,11 @@ function seoHead(head, { title, desc, url, type, today }) {
 
 // Cookie-free visit count: one small beacon as the visitor leaves (page, referring site, device
 // class, sections seen, time on page). Skipped for Do Not Track / Global Privacy Control.
+// Cloudflare Web Analytics: cookieless page-view counts. Only on the live domains (not local or
+// preview builds), not for Do Not Track / Global Privacy Control, and loaded after the page has.
+const CF_ANALYTICS_TOKEN = '3204254163b94619a6f630b47e82c749';
+const cfAnalytics = `<script>(function(){try{if(!/(^|\\.)(craigthompson|craga)\\.dev$/.test(location.hostname)||navigator.globalPrivacyControl||navigator.doNotTrack==='1')return;var go=function(){var s=document.createElement('script');s.defer=true;s.src='https://static.cloudflareinsights.com/beacon.min.js';s.setAttribute('data-cf-beacon','{"token":"${CF_ANALYTICS_TOKEN}"}');document.head.appendChild(s)};if(document.readyState==='complete')go();else addEventListener('load',go,{once:true})}catch(e){}})()</script>`;
+
 const beacon = (endpoint, sections) => !endpoint ? '' : `(function () {
   try {
     if (navigator.globalPrivacyControl || navigator.doNotTrack === '1' || !navigator.sendBeacon) return;
@@ -311,6 +316,7 @@ ${localFonts(d.helmet.trim())}
 <body>
 <div id="app"><!--PRERENDER--></div>
 ${themeNow}
+${cfAnalytics}
 </body>
 </html>
 `;
@@ -348,7 +354,8 @@ ${helmet}
 <body>
 ${body}
 ${cvThemeTail}
-${ASK.endpoint ? '<script>' + beacon(ASK.endpoint, false) + '</script>\n' : ''}</body>
+${ASK.endpoint ? '<script>' + beacon(ASK.endpoint, false) + '</script>\n' : ''}${cfAnalytics}
+</body>
 </html>
 `;
 }

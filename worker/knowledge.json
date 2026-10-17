@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-17T09:37:27.098Z",
+ "generated": "2026-10-17T13:37:58.644Z",
  "passages": [
   {
    "id": "intro",
@@ -12,7 +12,7 @@
   {
    "id": "profile",
    "title": "Profile",
-   "text": "Craig Michael Thompson Full-stack engineer Newcastle upon Tyne, UK 10: 37 (UTC+1) 10:37 UTC+1 in Newcastle open to new roles. Contact: craga89@gmail.com, github.com/Craga89, linkedin.com/in/craigmichaelthompson.",
+   "text": "Craig Michael Thompson Full-stack engineer Newcastle upon Tyne, UK 14: 37 (UTC+1) 14:37 UTC+1 in Newcastle open to new roles. Contact: craga89@gmail.com, github.com/Craga89, linkedin.com/in/craigmichaelthompson.",
    "href": "#top",
    "kind": "link",
    "key": ""
@@ -428,7 +428,7 @@
   {
    "id": "faq-19",
    "title": "FAQ: Do you track visitors?",
-   "text": "No cookies, and nothing that identifies you. The site counts visits (the page, the country, the site you came from and which sections you saw) and keeps ask.sh questions anonymously, so I can see what's useful and fill any gaps. It respects Do Not Track and Global Privacy Control.",
+   "text": "No cookies, and nothing that identifies you. The site counts visits (the page, the country, the site you came from and which sections you saw), using its own counter and Cloudflare Web Analytics, and keeps ask.sh questions anonymously, so I can see what's useful and fill any gaps. Both respect Do Not Track and Global Privacy Control.",
    "href": "#faq",
    "kind": "link",
    "key": ""
