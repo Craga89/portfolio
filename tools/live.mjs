@@ -27,4 +27,5 @@ const o = json('origin/oss:reports/oss.json');
 if (o && o.prs) out.oss = { prs: o.prs, repos: o.repos, since: o.since, qtip: o.qtip, at: o.at };
 
 writeFileSync(process.argv[2] || 'live.json', JSON.stringify(out));
-console.log('live.json:', Object.keys(out).filter((k) => k !== 'at').join(', ') || '(nothing yet)');
+const have = Object.keys(out).filter((k) => k !== 'at').join(', ') || '(nothing yet)';
+console.log((process.env.GITHUB_ACTIONS ? '::notice title=live.json::' : 'live.json: ') + have + (out.evals ? ` · ask.sh ${out.evals.passed}/${out.evals.total}` : '') + (out.lighthouse ? ` · Lighthouse ${out.lighthouse.mobile.performance}/${out.lighthouse.desktop ? out.lighthouse.desktop.performance : '–'}` : '') + (out.a11y ? ` · WCAG ${out.a11y.pass ? 'pass' : 'fail'}` : ''));
