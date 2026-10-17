@@ -6,8 +6,8 @@ on:
   workflow_dispatch:
     inputs:
       url:
-        description: Page to audit
-        default: https://craigthompson.dev/
+        description: Page to audit (blank = the first address that's serving this site)
+        default: ''
   workflow_run:
     workflows: [Deploy to GitHub Pages]
     types: [completed]
