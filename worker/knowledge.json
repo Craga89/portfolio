@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-17T09:24:10.174Z",
+ "generated": "2026-10-17T09:27:50.631Z",
  "passages": [
   {
    "id": "intro",
@@ -12,7 +12,7 @@
   {
    "id": "profile",
    "title": "Profile",
-   "text": "Craig Michael Thompson Full-stack engineer Newcastle upon Tyne, UK 10: 24 (UTC+1) 10:24 UTC+1 in Newcastle open to new roles. Contact: craga89@gmail.com, github.com/Craga89, linkedin.com/in/craigmichaelthompson.",
+   "text": "Craig Michael Thompson Full-stack engineer Newcastle upon Tyne, UK 10: 27 (UTC+1) 10:27 UTC+1 in Newcastle open to new roles. Contact: craga89@gmail.com, github.com/Craga89, linkedin.com/in/craigmichaelthompson.",
    "href": "#top",
    "kind": "link",
    "key": ""
@@ -188,7 +188,7 @@
   {
    "id": "case-a11y",
    "title": "accessibility.md: Accessible by default, checked on every deploy",
-   "text": "// accessibility · wcag 2.2 aa · this site Accessible by default, checked on every deploy Accessible UI has been part of my work since building UI libraries held to WCAG for clients. This site is held to WCAG 2.2 AA, and an automated suite checks it after every deploy and every week, failing the check if anything regresses. 1 · audit; 2 · walk it by keyboard; 3 · fix at the source; 4 · gate in CI What the suite checks axe-core · WCAG 2.0–2.2 A/AA Every automated rule, in every state Both themes, desktop and mobile, every tab, open FAQs, search results, ask.sh, the chat and the search dialogs: 147 page states per run. 2.1.1 · 2.4.7 Keyboard only A Tab-key walk through every focus stop, confirming each one shows a visible focus ring. 2.4.11 · new in 2.2 Focus never hidden Nothing focused can sit behind the sticky header or the chat bar. 2.5.8 · new in 2.2 Targets you can hit Controls are at least 24px, or spaced so a miss won't land on a neighbour. 1.4.10 · 1.4.12 Reflow and spacing Nothing scrolls sideways at 320px, and nothing clips with the WCAG text-spacing overrides applied. 2.2.2 · 2.3.3 Motion under control Reduced-motion users get a still page, and the auto-playing tour can be paused. 2.1.4 Shortcuts you can switch off The single-key shortcuts can be turned off, so they never clash with screen readers or speech input. area before after contrast muted text under 4.5:1 Every text colour at 4.6:1 or more on every background it sits on focus some controls with no ring A visible focus ring on everything that can take focus obscured focus focus could hide off screen Scroll padding clears the sticky bars; hidden UI leaves the tab order targets 18px links 24px minimum wide tables unreachable by keyboard Focusable, named scroll regions Lighthouse alone scored the site 100…",
+   "text": "// accessibility · wcag 2.2 aa · this site Accessible by default, checked on every deploy Accessible UI has been part of my work since building UI libraries held to WCAG for clients. This site is held to WCAG 2.2 AA, and an automated suite checks it after every deploy and every week, failing the check if anything regresses. 1 · audit; 2 · walk it by keyboard; 3 · fix at the source; 4 · gate in CI What the suite checks axe-core · WCAG 2.0–2.2 A/AA Every automated rule, in every state Both themes, desktop and mobile, every tab, open FAQs, search results, ask.sh, the chat and the search dialogs: 148 page states per run. 2.1.1 · 2.4.7 Keyboard only A Tab-key walk through every focus stop, confirming each one shows a visible focus ring. 2.4.11 · new in 2.2 Focus never hidden Nothing focused can sit behind the sticky header or the chat bar. 2.5.8 · new in 2.2 Targets you can hit Controls are at least 24px, or spaced so a miss won't land on a neighbour. 1.4.10 · 1.4.12 Reflow and spacing Nothing scrolls sideways at 320px, and nothing clips with the WCAG text-spacing overrides applied. 2.2.2 · 2.3.3 Motion under control Reduced-motion users get a still page, and the auto-playing tour can be paused. 2.1.4 Shortcuts you can switch off The single-key shortcuts can be turned off, so they never clash with screen readers or speech input. area before after contrast muted text under 4.5:1 Every text colour at 4.6:1 or more on every background it sits on focus some controls with no ring A visible focus ring on everything that can take focus obscured focus focus could hide off screen Scroll padding clears the sticky bars; hidden UI leaves the tab order targets 18px links 24px minimum wide tables unreachable by keyboard Focusable, named scroll regions Lighthouse alone scored the site 100…",
    "href": "#case-studies",
    "kind": "case",
    "key": "a11y"
