@@ -356,6 +356,9 @@ html{scroll-padding-top:calc(var(--hdr-h,0px) + 12px);scroll-padding-bottom:72px
 /* ask.sh answer actions */
 .c-ask-share{all:unset;box-sizing:border-box;cursor:pointer;display:inline-flex;align-items:center;min-height:24px;padding:0 2px;margin-left:8px;color:var(--acc);text-decoration:underline;text-underline-offset:2px;font-size:12px}
 .c-ask-share:focus-visible{outline:2px solid var(--acc);outline-offset:2px;border-radius:3px}
+.c-say{gap:4px}
+.c-say[data-on="true"]{color:var(--ok)}
+.c-say[data-on="true"] svg{animation:c-pulse 1.2s ease-in-out infinite}
 /* jargon toggletips: anchored to the term with CSS anchor positioning; JS places them where unsupported */
 .c-term{all:unset;cursor:help;border-bottom:1px dotted currentColor;color:inherit}
 .c-term:hover{color:var(--head)}

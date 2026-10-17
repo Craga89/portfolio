@@ -137,3 +137,32 @@ test('visit beacons are cleaned, bots and other sites ignored', async () => {
   await beacon({ path: 'javascript:alert(1)' });
   assert.equal(DB.rows.length, 2);
 });
+
+test('answers are read aloud with a natural voice, falling back to the next one', async () => {
+  const seen = [];
+  const mp3 = new Uint8Array(4000).fill(7);
+  const env = { AI: { run: async (model, input) => { seen.push([model, input]); if (model.includes('aura-2')) throw new Error('quota'); return new ReadableStream({ start(c) { c.enqueue(mp3); c.close(); } }); } } };
+  const r = await worker.fetch(req({ text: 'He has. See budget.md and faq.md, or email craga89@gmail.com.' }, { path: '/speak' }), env);
+  assert.equal(r.status, 200);
+  assert.equal(r.headers.get('content-type'), 'audio/mpeg');
+  assert.equal(r.headers.get('x-voice'), 'aura-1');
+  assert.equal(r.headers.get('access-control-allow-origin'), ORIGIN);
+  assert.equal((await r.arrayBuffer()).byteLength, 4000);
+  assert.equal(seen[0][0], '@cf/deepgram/aura-2-en');
+  assert.equal(seen[1][1].text, 'He has. See the budget file and the FAQ, or email craga89 at gmail dot com.');
+  assert.equal(seen[1][1].speaker, 'helios');
+});
+
+test('speak: MeloTTS base64 as a last resort, 503 when nothing works, origin and input checks', async () => {
+  const b64 = Buffer.from(new Uint8Array(500).fill(1)).toString('base64');
+  let env = { AI: { run: async (model) => { if (!model.includes('melotts')) throw new Error('down'); return { audio: b64 }; } } };
+  let r = await worker.fetch(req({ text: 'Hello.' }, { path: '/speak' }), env);
+  assert.equal(r.status, 200);
+  assert.equal(r.headers.get('x-voice'), 'melotts');
+  env = { AI: { run: async () => { throw new Error('down'); } } };
+  assert.equal((await worker.fetch(req({ text: 'Hello.' }, { path: '/speak' }), env)).status, 503);
+  assert.equal((await worker.fetch(req({ text: 'Hello.' }, { path: '/speak', origin: 'https://evil.example' }), env)).status, 403);
+  assert.equal((await worker.fetch(req({ text: '  ' }, { path: '/speak' }), env)).status, 400);
+  assert.equal(mod.speakable('x'.repeat(5000)).length, 1000);
+  assert.equal(mod.speakable('See ai/platform.md, ci-cd.md and README.md.'), 'See the AI platform case study, the ci cd file and the README.');
+});

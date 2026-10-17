@@ -364,6 +364,9 @@ html{scroll-padding-top:calc(var(--hdr-h,0px) + 12px);scroll-padding-bottom:72px
 /* ask.sh answer actions */
 .c-ask-share{all:unset;box-sizing:border-box;cursor:pointer;display:inline-flex;align-items:center;min-height:24px;padding:0 2px;margin-left:8px;color:var(--acc);text-decoration:underline;text-underline-offset:2px;font-size:12px}
 .c-ask-share:focus-visible{outline:2px solid var(--acc);outline-offset:2px;border-radius:3px}
+.c-say{gap:4px}
+.c-say[data-on="true"]{color:var(--ok)}
+.c-say[data-on="true"] svg{animation:c-pulse 1.2s ease-in-out infinite}
 /* jargon toggletips: anchored to the term with CSS anchor positioning; JS places them where unsupported */
 .c-term{all:unset;cursor:help;border-bottom:1px dotted currentColor;color:inherit}
 .c-term:hover{color:var(--head)}
@@ -2205,7 +2208,7 @@ html[data-vt-dir="prev"]::view-transition-new(c-rs),html[data-vt-dir="prev"]::vi
 <sc-if value="{{e.done}}" hint-placeholder-val="true"><div class="c-ask-a">
 <sc-for list="{{e.lines}}" as="l" hint-placeholder-count="2"><p class="{{l.cls}}"><sc-for list="{{l.parts}}" as="x" hint-placeholder-count="1"><sc-if value="{{x.link}}" hint-placeholder-val="false"><a class="c-ask-ln" href="{{x.href}}" onClick="{{x.pick}}">{{x.t}}</a></sc-if><sc-if value="{{x.plain}}" hint-placeholder-val="true">{{x.t}}</sc-if></sc-for></p></sc-for>
 <sc-if value="{{e.hasSources}}" hint-placeholder-val="true"><div class="c-ask-src"><span># sources</span><sc-for list="{{e.sources}}" as="s" hint-placeholder-count="2"><a href="{{s.href}}" onClick="{{s.pick}}">{{s.label}}</a></sc-for></div></sc-if>
-<div class="c-ask-meta">{{e.meta}}<sc-if value="{{e.canShare}}" hint-placeholder-val="false"><button type="button" class="c-ask-share" onClick="{{e.shareGo}}">{{e.shareLabel}}</button></sc-if></div>
+<div class="c-ask-meta">{{e.meta}}<sc-if value="{{e.canShare}}" hint-placeholder-val="false"><button type="button" class="c-ask-share" onClick="{{e.shareGo}}">{{e.shareLabel}}</button></sc-if><sc-if value="{{e.canSay}}" hint-placeholder-val="false"><button type="button" class="c-ask-share c-say" onClick="{{e.sayGo}}" data-on="{{e.sayOn}}"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"></path><path d="M15.5 8.5a5 5 0 0 1 0 7"></path><path d="M18.5 5.5a9 9 0 0 1 0 13"></path></svg>{{e.sayLabel}}<span class="c-sr">{{e.saySr}}</span></button></sc-if></div>
 </div></sc-if>
 </div>
 </sc-for>
@@ -2297,7 +2300,7 @@ html[data-vt-dir="prev"]::view-transition-new(c-rs),html[data-vt-dir="prev"]::vi
 <sc-if value="{{e.done}}" hint-placeholder-val="true"><div class="c-chat-msg c-chat-them">
 <sc-for list="{{e.lines}}" as="l" hint-placeholder-count="1"><p class="{{l.cls}}"><sc-for list="{{l.parts}}" as="x" hint-placeholder-count="1"><sc-if value="{{x.link}}" hint-placeholder-val="false"><a class="c-ask-ln" href="{{x.href}}" onClick="{{x.pick}}">{{x.t}}</a></sc-if><sc-if value="{{x.plain}}" hint-placeholder-val="true">{{x.t}}</sc-if></sc-for></p></sc-for>
 <sc-if value="{{e.hasSources}}" hint-placeholder-val="true"><div class="c-chat-src"><sc-for list="{{e.sources}}" as="s" hint-placeholder-count="2"><a href="{{s.href}}" onClick="{{s.pick}}" title="{{s.label}}">{{s.short}}</a></sc-for></div></sc-if>
-<div class="c-chat-meta">{{e.metaShort}}<sc-if value="{{e.canShare}}" hint-placeholder-val="false"><button type="button" class="c-ask-share" onClick="{{e.shareGo}}">{{e.shareLabel}}</button></sc-if></div>
+<div class="c-chat-meta">{{e.metaShort}}<sc-if value="{{e.canShare}}" hint-placeholder-val="false"><button type="button" class="c-ask-share" onClick="{{e.shareGo}}">{{e.shareLabel}}</button></sc-if><sc-if value="{{e.canSay}}" hint-placeholder-val="false"><button type="button" class="c-ask-share c-say" onClick="{{e.sayGo}}" data-on="{{e.sayOn}}"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"></path><path d="M15.5 8.5a5 5 0 0 1 0 7"></path><path d="M18.5 5.5a9 9 0 0 1 0 13"></path></svg>{{e.sayLabel}}<span class="c-sr">{{e.saySr}}</span></button></sc-if></div>
 </div></sc-if>
 </sc-for>
 <sc-if value="{{askEmpty}}" hint-placeholder-val="true"><div class="c-chat-sugg"><sc-for list="{{askSugg}}" as="s" hint-placeholder-count="4"><button type="button" class="c-ask-chip" onClick="{{s.pick}}" disabled="{{askBusy}}">{{s.t}}</button></sc-for></div></sc-if>
@@ -2538,11 +2541,83 @@ class Component extends DCLogic {
     this.scrollToId(id);
     this.palFocus(document.getElementById(id));
   }
+  // Read an answer aloud. A natural voice comes from the Worker (Deepgram Aura on Workers AI) and
+  // plays through Web Audio, which is unlocked on the click (so Safari allows it); if that isn't
+  // available, the browser's own best English voice reads it instead.
+  audioCtx() {
+    try {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return null;
+      if (!this._ac) this._ac = new AC();
+      if (this._ac.state === 'suspended') this._ac.resume().catch(() => {});
+      return this._ac;
+    } catch (e) { return null; }
+  }
+  sayStop() {
+    this._sayToken = (this._sayToken || 0) + 1;
+    if (this._saySrc) { try { this._saySrc.onended = null; this._saySrc.stop(); } catch (e) {} this._saySrc = null; }
+    try { if (window.speechSynthesis) window.speechSynthesis.cancel(); } catch (e) {}
+    const st = this.state || {};
+    if (st.sayIdx != null) this.setState({ sayIdx: null, sayBusy: false });
+  }
+  say(idx) {
+    const st = this.state || {};
+    if (st.sayIdx === idx) { this.sayStop(); return; }
+    this.sayStop();
+    const e = (st.askLog || [])[idx];
+    if (!e || !e.answer) return;
+    const text = String(e.answer).replace(/\s+/g, ' ').trim();
+    const token = this._sayToken;
+    const ac = this.audioCtx();
+    this.setState({ sayIdx: idx, sayBusy: true });
+    const done = () => { if (this._sayToken === token) { this._saySrc = null; this.setState({ sayIdx: null, sayBusy: false }); } };
+    const browser = () => {
+      if (this._sayToken !== token) return;
+      try {
+        const synth = window.speechSynthesis;
+        if (!synth || typeof SpeechSynthesisUtterance === 'undefined') throw new Error('no speech');
+        const words = text.replace(/\bREADME\.md\b/gi, 'the README').replace(/\bfaq\.md\b/gi, 'the FAQ').replace(/\bcareer\.log\b/gi, 'the career log').replace(/\b([a-z][\w-]*)\.md\b/gi, (m, f) => 'the ' + f.replace(/-/g, ' ') + ' file').replace(/craga89@gmail\.com/gi, 'craga89 at gmail dot com');
+        const u = new SpeechSynthesisUtterance(words);
+        const score = (v) => (/^en-GB/i.test(v.lang) ? 4 : 0) + (/natural|neural|premium|enhanced|online/i.test(v.name) ? 6 : 0) + (/google|microsoft|siri/i.test(v.name) ? 2 : 0);
+        const v = (synth.getVoices() || []).filter((x) => /^en([-_]|$)/i.test(x.lang)).sort((a, b) => score(b) - score(a))[0];
+        if (v) { u.voice = v; u.lang = v.lang; } else u.lang = 'en-GB';
+        u.rate = 1;
+        let started = false;
+        u.onstart = () => { started = true; };
+        u.onend = done; u.onerror = done;
+        synth.speak(u);
+        // Some browsers have no voices installed and never start: give up quietly.
+        setTimeout(() => { if (!started && this._sayToken === token) { try { synth.cancel(); } catch (y) {} done(); this.note("Reading aloud isn't available in this browser"); } }, 3000);
+        this.setState({ sayBusy: false });
+      } catch (x) { done(); this.note("Reading aloud isn't available in this browser"); }
+    };
+    const play = (buf) => {
+      if (this._sayToken !== token) return;
+      if (!ac) { browser(); return; }
+      try {
+        const src = ac.createBufferSource();
+        src.buffer = buf; src.connect(ac.destination); src.onended = done;
+        this._saySrc = src; src.start();
+        this.setState({ sayBusy: false });
+      } catch (x) { browser(); }
+    };
+    this._sayCache = this._sayCache || new Map();
+    if (this._sayCache.has(text)) { play(this._sayCache.get(text)); return; }
+    const cfg = (typeof window !== 'undefined' && window.CRAGA_ASK) || {};
+    const url = cfg.endpoint ? cfg.endpoint.replace(/\/ask$/, '/speak') : '';
+    if (!url || !ac) { browser(); return; }
+    fetch(url, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ text }) })
+      .then((r) => (r.ok ? r.arrayBuffer() : Promise.reject(new Error('speak ' + r.status))))
+      .then((b) => new Promise((ok, fail) => { const pr = ac.decodeAudioData(b, ok, fail); if (pr && pr.then) pr.then(ok, fail); }))
+      .then((buf) => { this._sayCache.set(text, buf); play(buf); })
+      .catch(() => browser());
+  }
   // Voice dictation into the ask.sh or chat field, using the browser's own speech recognition.
   dictate(target) {
     if (this._rec) { try { this._rec.stop(); } catch (e) {} return; }
     const SR = typeof window !== 'undefined' && (window.SpeechRecognition || window.webkitSpeechRecognition);
     if (!SR) return;
+    this.audioCtx();
     const key = target === 'chat' ? 'chatQ' : 'askQ';
     const id = target === 'chat' ? 'c-chat-field' : 'c-ask-field';
     const base = String((this.state || {})[key] || '').trim();
@@ -2558,6 +2633,7 @@ class Component extends DCLogic {
       let v = ((base ? base + ' ' : '') + said.trim()).replace(/\s+/g, ' ');
       v = v.charAt(0).toUpperCase() + v.slice(1);
       this.setState({ [key]: v });
+      this._spokenQ = v;
       try { const f = document.getElementById(id); if (f) f.value = v; } catch (x) {}
     };
     rec.onerror = (e) => {
@@ -2786,6 +2862,9 @@ class Component extends DCLogic {
     const st = this.state || {};
     if (!q || st.askBusy) return;
     if (this._rec) { try { this._rec.abort(); } catch (e) {} this._rec = null; }
+    this.sayStop();
+    const spoken = !!this._spokenQ && this._spokenQ.trim().toLowerCase() === q.toLowerCase();
+    this._spokenQ = null;
     const shell = this.isShell(q);
     const log = (st.askLog || []).concat([{ q, pending: true, shell }]).slice(-8);
     this.setState(from === 'chat' ? { askLog: log, chatQ: '', askBusy: true } : { askLog: log, askQ: '', askBusy: true });
@@ -2797,6 +2876,7 @@ class Component extends DCLogic {
       l[l.length - 1] = Object.assign({}, l[l.length - 1], patch, { pending: false });
       this.setState({ askLog: l, askBusy: false });
       scroll();
+      if (spoken && patch && patch.answer && patch.mode !== 'error') setTimeout(() => this.say(l.length - 1), 50);
     };
     const cfg = (typeof window !== 'undefined' && window.CRAGA_ASK) || {};
     this.askIndex().then((index) => {
@@ -2919,7 +2999,7 @@ class Component extends DCLogic {
     const id = typeof step === 'string' ? step : ids[(cur + step + ids.length) % ids.length];
     this.setState({ rtab: id, rSeq: (st.rSeq || 0) + 1 });
   }
-  componentWillUnmount() { if (this._onSpy) { window.removeEventListener('scroll', this._onSpy, true); window.removeEventListener('resize', this._onSpy); ['wheel', 'touchstart', 'keydown'].forEach((t) => window.removeEventListener(t, this._onSpyUser)); document.removeEventListener('click', this._onSpyClick, true); } this._fxKey = null; this.destroyFx(); clearTimeout(this._rTo); if (this._rIo) this._rIo.disconnect(); if (this._rEl && this._rOn) Object.keys(this._rOn).forEach((k) => this._rEl.removeEventListener(k, this._rOn[k])); if (this._onAnchor) document.removeEventListener('click', this._onAnchor, true); if (this._onChatLink) document.removeEventListener('click', this._onChatLink); if (this._rec) { try { this._rec.abort(); } catch (e) {} } clearInterval(this._clockT); if (this._beforePrint) { window.removeEventListener('beforeprint', this._beforePrint); window.removeEventListener('afterprint', this._afterPrint); } if (this._tipKey) { document.removeEventListener('keydown', this._tipKey); document.removeEventListener('pointerdown', this._tipDown); } if (this._hdrRo) { try { this._hdrRo.disconnect(); } catch (e) {} } if (this._onKeys) document.removeEventListener('keydown', this._onKeys); if (this._onCopyLink) document.removeEventListener('click', this._onCopyLink, true); }
+  componentWillUnmount() { if (this._onSpy) { window.removeEventListener('scroll', this._onSpy, true); window.removeEventListener('resize', this._onSpy); ['wheel', 'touchstart', 'keydown'].forEach((t) => window.removeEventListener(t, this._onSpyUser)); document.removeEventListener('click', this._onSpyClick, true); } this._fxKey = null; this.destroyFx(); clearTimeout(this._rTo); if (this._rIo) this._rIo.disconnect(); if (this._rEl && this._rOn) Object.keys(this._rOn).forEach((k) => this._rEl.removeEventListener(k, this._rOn[k])); if (this._onAnchor) document.removeEventListener('click', this._onAnchor, true); if (this._onChatLink) document.removeEventListener('click', this._onChatLink); if (this._rec) { try { this._rec.abort(); } catch (e) {} } clearInterval(this._clockT); if (this._beforePrint) { window.removeEventListener('beforeprint', this._beforePrint); window.removeEventListener('afterprint', this._afterPrint); } if (this._tipKey) { document.removeEventListener('keydown', this._tipKey); document.removeEventListener('pointerdown', this._tipDown); } if (this._hdrRo) { try { this._hdrRo.disconnect(); } catch (e) {} } this.sayStop(); if (this._onKeys) document.removeEventListener('keydown', this._onKeys); if (this._onCopyLink) document.removeEventListener('click', this._onCopyLink, true); }
   fxKey() {
     const motion = this.props.motion ?? true;
     const theme = (this.state && this.state.theme) || this.props.theme || 'dark';
@@ -3111,7 +3191,7 @@ class Component extends DCLogic {
       if (last < t.length) out.push({ t: t.slice(last), plain: true });
       return out;
     };
-    const askLog = (askSt.askLog || []).map((e) => ({
+    const askLog = (askSt.askLog || []).map((e, i) => ({
       q: e.q,
       pending: !!e.pending,
       done: !e.pending,
@@ -3121,6 +3201,11 @@ class Component extends DCLogic {
       qline: e.shell ? e.q : './ask.sh "' + e.q + '"',
       canShare: !e.pending && !e.shell && (e.mode === 'ai' || e.mode === 'search'),
       shareLabel: askSt.sharedQ === e.q ? 'link copied' : 'copy link',
+      canSay: !e.pending && !e.shell && !!e.answer && e.mode !== 'error',
+      sayOn: askSt.sayIdx === i ? 'true' : 'false',
+      sayLabel: askSt.sayIdx === i ? (askSt.sayBusy ? 'loading…' : 'stop') : 'listen',
+      saySr: askSt.sayIdx === i ? (askSt.sayBusy ? ' the answer audio' : ' reading this answer') : ' to this answer',
+      sayGo: () => this.say(i),
       shareGo: () => {
         const url = location.origin + location.pathname + '?ask=' + encodeURIComponent(e.q);
         this.copyText(url).then(() => { this.setState({ sharedQ: e.q }); this.note('Link to this answer copied'); setTimeout(() => { if ((this.state || {}).sharedQ === e.q) this.setState({ sharedQ: null }); }, 2500); }).catch(() => {});

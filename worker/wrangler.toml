@@ -19,6 +19,12 @@ name = "HIT_LIMITER"
 namespace_id = "1002"
 simple = { limit = 30, period = 60 }
 
+# Reading answers aloud: 12 a minute per visitor.
+[[ratelimits]]
+name = "SPEAK_LIMITER"
+namespace_id = "1003"
+simple = { limit = 12, period = 60 }
+
 # Anonymous question log and visit counts (schema in schema.sql).
 [[d1_databases]]
 binding = "DB"

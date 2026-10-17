@@ -131,6 +131,54 @@ async function answer(env, q) {
   throw lastErr || new Error('no model answered');
 }
 
+// ---------- read answers aloud ----------
+// Deepgram Aura voices on Workers AI (natural pacing and intonation), British where available,
+// each falling back to the next; MeloTTS last. The page uses the browser's own voice if all fail.
+const VOICES = [
+  ['@cf/deepgram/aura-2-en', { speaker: 'draco', encoding: 'mp3' }],
+  ['@cf/deepgram/aura-1', { speaker: 'helios', encoding: 'mp3' }],
+  ['@cf/myshell-ai/melotts', { lang: 'en' }],
+];
+const MAX_SPEAK = 1000;
+// File names and addresses read as words, not "budget dot m d".
+export function speakable(text) {
+  return String(text || '').replace(/\s+/g, ' ').trim().slice(0, MAX_SPEAK)
+    .replace(/\bREADME\.md\b/gi, 'the README')
+    .replace(/\bfaq\.md\b/gi, 'the FAQ')
+    .replace(/\bcareer\.log\b/gi, 'the career log')
+    .replace(/\brecommendations\.txt\b/gi, 'the recommendations')
+    .replace(/\bai\/platform\.md\b/gi, 'the AI platform case study')
+    .replace(/\bget-in-touch\.md\b/gi, 'the contact section')
+    .replace(/\bthis-site\.md\b/gi, 'the case study about this site')
+    .replace(/\b([a-z][\w-]*)\.md\b/gi, (m, f) => 'the ' + f.replace(/-/g, ' ') + ' file')
+    .replace(/\bcv\.pdf\b/gi, 'the PDF CV')
+    .replace(/craga89@gmail\.com/gi, 'craga89 at gmail dot com')
+    .replace(/\bcraigthompson\.dev\b/gi, 'craigthompson dot dev')
+    .replace(/\bask\.sh\b/gi, 'ask');
+}
+const b64bytes = (b64) => { const bin = atob(b64); const out = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i); return out; };
+async function audioBytes(result) {
+  if (!result) return null;
+  if (result instanceof ArrayBuffer) return new Uint8Array(result);
+  if (result instanceof Uint8Array) return result;
+  if (typeof ReadableStream !== 'undefined' && result instanceof ReadableStream) return new Uint8Array(await new Response(result).arrayBuffer());
+  if (result instanceof Response) return result.ok ? new Uint8Array(await result.arrayBuffer()) : null;
+  if (typeof result.audio === 'string') return b64bytes(result.audio);
+  return null;
+}
+export async function speak(env, text) {
+  let lastErr = null;
+  for (const [model, opts] of VOICES) {
+    try {
+      const input = model.includes('melotts') ? { prompt: text, ...opts } : { text, ...opts };
+      const bytes = await audioBytes(await env.AI.run(model, input));
+      if (bytes && bytes.length > 200) return { bytes, model };
+      lastErr = new Error(model + ': no audio');
+    } catch (e) { lastErr = e; console.log('voice', model, 'failed:', e && e.message); }
+  }
+  throw lastErr || new Error('no voice');
+}
+
 function cors(origin) {
   return {
     'access-control-allow-origin': origin,
@@ -198,6 +246,24 @@ export default {
     if (url.pathname === '/hit') {
       if (request.method === 'POST' && okOrigin) await wait(hit(request, env, origin).catch((e) => console.log('hit failed:', e && e.message)));
       return new Response(null, { status: 204, headers: h });
+    }
+    if (url.pathname === '/speak') {
+      if (request.method === 'OPTIONS') return new Response(null, { status: okOrigin ? 204 : 403, headers: h });
+      if (request.method !== 'POST') return json({ error: 'method not allowed' }, 405, h);
+      if (!okOrigin) return json({ error: 'forbidden' }, 403, h);
+      if (env.SPEAK_LIMITER) {
+        const { success } = await env.SPEAK_LIMITER.limit({ key: request.headers.get('cf-connecting-ip') || 'anon' });
+        if (!success) return json({ error: 'slow down' }, 429, h);
+      }
+      let text = '';
+      try { text = speakable((await request.json()).text); } catch (e) { /* fall through */ }
+      if (!text) return json({ error: 'missing text' }, 400, h);
+      try {
+        const { bytes, model } = await speak(env, text);
+        return new Response(bytes, { status: 200, headers: { 'content-type': 'audio/mpeg', 'cache-control': 'no-store', 'x-voice': model.split('/').pop(), 'access-control-expose-headers': 'x-voice', ...h } });
+      } catch (e) {
+        return json({ error: 'unavailable' }, 503, h);
+      }
     }
     if (url.pathname !== '/ask') return json({ error: 'not found' }, 404, h);
     if (request.method === 'OPTIONS') return new Response(null, { status: okOrigin ? 204 : 403, headers: h });

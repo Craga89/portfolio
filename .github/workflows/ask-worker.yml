@@ -49,6 +49,10 @@ jobs:
               echo "::error title=$q::HTTP $code $(head -c 300 out.json 2>/dev/null)"; fail=1
             fi
           done
+          # Reading aloud: a natural voice, or at least one of the fallbacks.
+          code=$(curl -sS -m 60 -o speak.mp3 -D speak.h -w '%{http_code}' -X POST "${ASK_URL%/ask}/speak" -H 'origin: https://craigthompson.dev' -H 'content-type: application/json' -H 'x-craga-test: 1' --data '{"text":"Craig has led engineering teams for over twelve years. See budget.md."}' || echo 000)
+          voice=$(grep -i '^x-voice:' speak.h | tr -d '\r' | cut -d' ' -f2)
+          if [ "$code" = 200 ] && [ "$(stat -c %s speak.mp3)" -gt 1000 ]; then echo "::notice title=Read aloud::voice $voice, $(stat -c %s speak.mp3) bytes"; else echo "::error title=Read aloud::HTTP $code $(head -c 200 speak.mp3)"; fail=1; fi
           code=$(curl -sS -o /dev/null -w '%{http_code}' -X POST "$ASK_URL" -H 'origin: https://example.com' -H 'content-type: application/json' --data '{"q":"hi"}')
           if [ "$code" = 403 ]; then echo "::notice title=Other origins::refused (403)"; else echo "::error title=Other origins::expected 403, got $code"; fail=1; fi
           exit $fail
