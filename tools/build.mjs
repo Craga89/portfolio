@@ -39,10 +39,11 @@ function splitDesign(file) {
 }
 
 // Paths are relative so the same build works at craigthompson.dev/ and at craga89.github.io/portfolio/.
-const meta = (root) => `<meta name="viewport" content="width=device-width, initial-scale=1">${ROBOTS_META}
-<meta name="color-scheme" content="dark light">
+// The plain CV is always light, so it says so (no dark canvas flash while it loads).
+const meta = (root, lightOnly) => `<meta name="viewport" content="width=device-width, initial-scale=1">${ROBOTS_META}
+${lightOnly ? '<meta name="color-scheme" content="light">\n<meta name="theme-color" content="#F4F4F2">' : `<meta name="color-scheme" content="dark light">
 <meta name="theme-color" content="#16271F" media="(prefers-color-scheme: dark)">
-<meta name="theme-color" content="#EDF1EE" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#EDF1EE" media="(prefers-color-scheme: light)">`}
 <link rel="icon" href="${root}favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="${root}apple-touch-icon.png">`;
 
@@ -261,7 +262,12 @@ function buildHome(today) {
   var app = DCRuntime.mount({ root: '#app', template: '#dc-template', script: '#dc-component', props: { theme: saved || (light ? 'light' : 'dark') } });
   var set = app.c.setState;
   app.c.setState = function (p) {
-    if (p && typeof p === 'object' && 'theme' in p) { try { localStorage.setItem('theme', p.theme); } catch (e) {} }
+    if (p && typeof p === 'object' && 'theme' in p) {
+      try { localStorage.setItem('theme', p.theme); } catch (e) {}
+      var L = p.theme === 'light', h = document.documentElement;
+      h.classList.toggle('t-light', L); h.classList.toggle('t-dark', !L);
+      document.querySelectorAll('meta[name="theme-color"]').forEach(function (m) { m.content = L ? '#EDF1EE' : '#16271F'; });
+    }
     return set.apply(this, arguments);
   };
 })();
@@ -272,6 +278,12 @@ ${beacon(ASK.endpoint, true)}
   writeOut(appName, app);
   // Runs before first paint: applies a saved or system light theme to the prerendered (dark) markup.
   const themeNow = `<script>try{var r=document.querySelector('#app .c-root'),t=localStorage.getItem('theme');if(r&&(t?t==='light':matchMedia('(prefers-color-scheme: light)').matches))r.classList.add('c-light');if(r&&localStorage.getItem('motion')==='off')r.classList.add('still')}catch(e){}</script>`;
+  // Runs in <head>, before any of the page is painted: the saved (or system) theme goes on <html>
+  // straight away, so the canvas and body are the right colour even if the browser paints part of
+  // the long prerendered page before reaching the end of it, and the theme class lands on the app
+  // root the moment the parser creates it. themeNow (end of body) stays as a fallback.
+  const themeHead = `<style>html.t-light,html.t-light body{background:#EDF1EE!important;color-scheme:light}html.t-dark,html.t-dark body{background:#16271F!important;color-scheme:dark}</style>
+<script>try{(function(){var d=document.documentElement,t=localStorage.getItem('theme'),L=t?t==='light':matchMedia('(prefers-color-scheme: light)').matches,M=localStorage.getItem('motion')==='off';d.classList.add(L?'t-light':'t-dark');if(t)document.querySelectorAll('meta[name="theme-color"]').forEach(function(m){m.content=L?'#EDF1EE':'#16271F'});var o=new MutationObserver(function(){var r=document.querySelector('#app .c-root');if(!r)return;if(L)r.classList.add('c-light');if(M)r.classList.add('still');o.disconnect()});o.observe(d,{childList:true,subtree:true})})()}catch(e){}</script>`;
   const fonts = fontFaces('assets/fonts/', ['Big Shoulders Display', 'Public Sans', 'Red Hat Mono']);
   const head = seoHead(d.head.trim(), { title: HOME_TITLE, desc: HOME_DESC, url: SITE + '/', type: 'profile', today });
   return `<!doctype html>
@@ -279,6 +291,7 @@ ${beacon(ASK.endpoint, true)}
 <head>
 ${head}
 ${meta('')}
+${themeHead}
 ${preloadFont('assets/fonts/big-shoulders-display-latin-600.woff2')}
 ${preloadFont('assets/fonts/public-sans-latin-400.woff2')}
 ${preloadFont('assets/fonts/red-hat-mono-latin-400.woff2')}
@@ -324,7 +337,7 @@ function buildCV() {
 <html lang="en-GB">
 <head>
 ${head}
-${meta('../')}
+${meta('../', true)}
 <link rel="alternate" type="application/json" href="../cv.json" title="CV (JSON Resume)">
 ${inter ? preloadFont('../assets/fonts/inter-latin-400.woff2') + '\n<style>\n' + fontFaces('../assets/fonts/', ['Inter']) + '\n' + FALLBACKS + '\n</style>' : ''}
 ${helmet}
