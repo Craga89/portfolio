@@ -60,6 +60,8 @@ Every push to `main` deploys `site/` through `.github/workflows/pages.yml`.
 
 The Pages deploy (on every push, and daily) collects the latest CI results from their report branches into `site/live.json` (`tools/live.mjs`): Lighthouse scores (`lighthouse`), the WCAG suite (`accessibility`), the ask.sh answer tests with each answer (`evals`, from `.github/workflows/evals.yml`) and the open-source counts (`oss`, from `.github/workflows/oss-stats.yml`, weekly via the GitHub API). The page fetches it once it's idle and shows it in the sidebar, the `this-site.md` case study, the open-source section and "how ask.sh is tested"; until then (or offline, or locally) it shows static fallbacks. The service worker always fetches `live.json` from the network first.
 
+The open-source section has a heatmap of merged pull requests to other projects by year and quarter. `tools/oss-stats.mjs` writes the per-quarter `timeline` (count and repos); the build bakes the latest snapshot into the page (`window.CRAGA_OSS`) so it prerenders, and `live.json` replaces it when newer. It uses one blue ramp per theme (checked for contrast and colour-blind separation), hover tips per cell, and a "as a table" view for screen readers and print.
+
 ## Visits and questions (anonymous)
 
 - **Cloudflare Web Analytics** (cookieless) runs on the home page and CV, only on craigthompson.dev / craga.dev, and not for Do Not Track or Global Privacy Control. It loads on the first interaction (scroll, tap, key) or 6s after the page has loaded, so it never competes with the page for the network. The token is in `tools/build.mjs` (`CF_ANALYTICS_TOKEN`); the dashboard is Cloudflare → Analytics & Logs → Web Analytics.

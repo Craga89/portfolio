@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-17T22:05:25.628Z",
+ "generated": "2026-10-17T22:25:03.637Z",
  "passages": [
   {
    "id": "intro",
@@ -12,7 +12,7 @@
   {
    "id": "profile",
    "title": "Profile",
-   "text": "Craig Michael Thompson Full-stack engineer Newcastle upon Tyne, UK 23: 05 (UTC+1) 23:05 UTC+1 in Newcastle open to new roles. Contact: craga89@gmail.com, github.com/Craga89, linkedin.com/in/craigmichaelthompson.",
+   "text": "Craig Michael Thompson Full-stack engineer Newcastle upon Tyne, UK 23: 25 (UTC+1) 23:25 UTC+1 in Newcastle open to new roles. Contact: craga89@gmail.com, github.com/Craga89, linkedin.com/in/craigmichaelthompson.",
    "href": "#top",
    "kind": "link",
    "key": ""
@@ -260,7 +260,7 @@
   {
    "id": "oss",
    "title": "Open source",
-   "text": "# open-source/qtip2 qTip2 — pretty powerful tooltips Widely adopted jQuery plugin and a go-to tooltip library in its day: ~2k stars, 458 forks and 1,384 commits, built with extensive help from community contributors. Featured in Smashing jQuery (2011). open-source/micromouse Micromouse simulator Interactive maze-solving simulation using the classic flood-fill algorithm, with the Arduino code to run it. communicator/email-designer WYSIWYG Email Designer React drag-and-drop builder with a Node.js CSS-inlining service behind it, for a platform sending billions of emails. --merged 59 merged pull requests across 35 other projects since 2012, usually fixing something I hit in production. A selection: better-auth/better-auth Fixed SAML metadata so an organisation's default SSO provider works shuding/nextra Git worktree support for the docs framework buildkite/test-collector-javascript Path prefixes so Test Analytics works in monorepos swc-project/swc-node Made the require hook revertible Popmotion/popmotion IE11 compatibility fix for the animation library lerna/lerna Improved canary releases for the monorepo tool ianstormtaylor/slate Selection and node-lookup utilities for the rich-text editor tomkp/react-split-pane Custom pane class names and CSS order support robinweser/fela Clearer display names for themed React components shipshapecode/tether Positioning for elements inside iframes preactjs/preact Fixed handling of multiple camelCase CSS properties BlueSpire/Durandal Observable app titles and an optional view plugin for the SPA framework cdnjs/cdnjs · jsdelivr Published qTip2 releases to both public CDNs See them all on GitHub;",
+   "text": "# open-source/qtip2 qTip2 — pretty powerful tooltips Widely adopted jQuery plugin and a go-to tooltip library in its day: ~2k stars, 458 forks and 1,384 commits, built with extensive help from community contributors. Featured in Smashing jQuery (2011). open-source/micromouse Micromouse simulator Interactive maze-solving simulation using the classic flood-fill algorithm, with the Arduino code to run it. communicator/email-designer WYSIWYG Email Designer React drag-and-drop builder with a Node.js CSS-inlining service behind it, for a platform sending billions of emails. --merged 59 merged pull requests across 35 other projects since 2012, usually fixing something I hit in production. A selection: Merged pull requests to other projects, by quarter Q1 2012 Q1 · none 2013 Q1 · 1 merged: cdnjs/cdnjs 2014 Q1 · 4 merged: etodanik/veinjs, itsjavi/bootstrap-colorpicker 2015 Q1 · 3 merged: codesuki/react-d3-components, aurelia/skeleton-navigation, rniemeyer/knockout-delegatedEvents 2016 Q1 · 2 merged: preactjs/preact, jakubburkiewicz/uncss-brunch 2017 Q1 · 7 merged: communicator/dockerized-magento, camwest/react-slot-fill, robinweser/fela 2018 Q1 · 2 merged: communicator/magento-plugin 2019 Q1 · none 2020 Q1 · none 2021 Q1 · none 2022 Q1 · 1 merged: swc-project/swc-node 2023 Q1 · none 2024 Q1 · none 2025 Q1 · none 2026 Q1 · none Q2 2012 Q2 · none 2013 Q2 · none 2014 Q2 · 7 merged: BlueSpire/Durandal, dobtco/jquery-resizable-columns, giggio/npm-nuget 2015 Q2 · none 2016 Q2 · none 2017 Q2 · 3 merged: ianstormtaylor/slate 2018 Q2 · 1 merged: gregberge/recompact 2019 Q2 · none 2020 Q2 · none 2021 Q2 · none 2022 Q2 · 1 merged: buildkite/test-collector-javascript 2023 Q2 · none 2024 Q2 · none 2025 Q2 · none 2026 Q2 · 2 merged: shuding/nextra, better-auth/better-auth Q3 2012 Q3 · 1…",
    "href": "#oss",
    "kind": "link",
    "key": ""

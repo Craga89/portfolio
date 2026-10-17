@@ -2,6 +2,7 @@
 //   node tools/build.mjs            build + prerender (needs Playwright + Chromium)
 //   node tools/build.mjs --no-prerender
 import { readFileSync, writeFileSync, mkdirSync, copyFileSync, rmSync, existsSync, readdirSync } from 'node:fs';
+import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { dirname, join, extname } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -224,6 +225,11 @@ const portraitPicture = () => `<picture><source type="image/avif" srcset="assets
 
 // ---------- home page ----------
 const HOME = {};
+// The open-source counts from the weekly CI job (oss branch), baked in so the heatmap renders
+// without JavaScript; the page swaps in live.json's copy when it loads.
+const OSS_SNAPSHOT = (() => {
+  try { const d = JSON.parse(execFileSync('git', ['show', 'origin/oss:reports/oss.json'], { cwd: ROOT, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] })); return d && Array.isArray(d.timeline) ? d : null; } catch (e) { return null; }
+})();
 function buildHome(today) {
   const d = splitDesign('ThemeTyne.dc.html');
   let code = d.code;
@@ -314,7 +320,7 @@ ${FALLBACKS}
 </style>
 <script>if(location.hash.length>1)document.documentElement.classList.add('cv-all')</script>
 ${localFonts(d.helmet.trim())}
-<script>window.CRAGA_BUILD={sha:"__BUILD_SHA__",short:"__BUILD_SHORT__",date:"${today}",at:"__BUILD_AT__"}</script>
+${OSS_SNAPSHOT ? `<script>window.CRAGA_OSS=${JSON.stringify({ timeline: OSS_SNAPSHOT.timeline })}</script>\n` : ''}<script>window.CRAGA_BUILD={sha:"__BUILD_SHA__",short:"__BUILD_SHORT__",date:"${today}",at:"__BUILD_AT__"}</script>
 <script type="speculationrules">{"prerender":[{"source":"document","where":{"selector_matches":"a[href=\\"cv/\\"]"},"eagerness":"moderate"}]}</script>
 <script src="${appName}" defer></script>
 </head>
