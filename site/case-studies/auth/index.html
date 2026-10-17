@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Sign-in that enterprises trust and users don't notice · auth.md · Craig Michael Thompson</title>
+<meta name="description" content="I led the replacement of a legacy, multi-tenant sign-in system with a new auth framework, rolled out organisation by organisation behind a per-tenant…">
+<link rel="canonical" href="https://craigthompson.dev/case-studies/auth/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="craigthompson.dev">
+<meta property="og:locale" content="en_GB">
+<meta property="og:title" content="Sign-in that enterprises trust and users don't notice · auth.md">
+<meta property="og:description" content="I led the replacement of a legacy, multi-tenant sign-in system with a new auth framework, rolled out organisation by organisation behind a per-tenant…">
+<meta property="og:url" content="https://craigthompson.dev/case-studies/auth/">
+<meta property="og:image" content="https://craigthompson.dev/case-studies/auth/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Sign-in that enterprises trust and users don't notice. case-studies/auth.md, Craig Michael Thompson">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Sign-in that enterprises trust and users don't notice · auth.md">
+<meta name="twitter:description" content="I led the replacement of a legacy, multi-tenant sign-in system with a new auth framework, rolled out organisation by organisation behind a per-tenant…">
+<meta name="twitter:image" content="https://craigthompson.dev/case-studies/auth/og.png">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Sign-in that enterprises trust and users don't notice","name":"auth.md","description":"I led the replacement of a legacy, multi-tenant sign-in system with a new auth framework, rolled out organisation by organisation behind a per-tenant…","url":"https://craigthompson.dev/case-studies/auth/","image":"https://craigthompson.dev/case-studies/auth/og.png","inLanguage":"en-GB","dateModified":"2026-10-17","author":{"@type":"Person","@id":"https://craigthompson.dev/#person","name":"Craig Michael Thompson","url":"https://craigthompson.dev/"},"isPartOf":{"@type":"WebSite","name":"craigthompson.dev","url":"https://craigthompson.dev/"}}</script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="color-scheme" content="dark light">
+<meta name="theme-color" content="#16271F" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#EDF1EE" media="(prefers-color-scheme: light)">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../../apple-touch-icon.png">
+<style>@media screen{html.t-light,html.t-light body{background:#EDF1EE!important;color-scheme:light}html.t-dark,html.t-dark body{background:#16271F!important;color-scheme:dark}}</style>
+<script>try{(function(){var d=document.documentElement,t=localStorage.getItem('theme'),L=t?t==='light':matchMedia('(prefers-color-scheme: light)').matches,M=localStorage.getItem('motion')==='off';d.classList.add(L?'t-light':'t-dark');if(t)document.querySelectorAll('meta[name="theme-color"]').forEach(function(m){m.content=L?'#EDF1EE':'#16271F'});var o=new MutationObserver(function(){var r=document.querySelector('.c-root');if(!r)return;if(L)r.classList.add('c-light');if(M)r.classList.add('still');o.disconnect()});o.observe(d,{childList:true,subtree:true})})()}catch(e){}</script>
+<link rel="preload" href="../../assets/fonts/big-shoulders-display-latin-600.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../../assets/fonts/public-sans-latin-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../assets/pages.a6e824b85d.css">
+</head>
+<body>
+<div class="c-root" style="background: var(--bg); color: var(--text); min-height: 100vh; font-size: 16px; line-height: 1.7">
+<div class="sp">
+<header class="sp-top"><a class="sp-home" href="../../"><span class="c-dot" style="width: 9px; height: 9px; border-radius: 50%; background: var(--ok)"></span>craigthompson.dev</a>
+<div class="sp-tools"><button type="button" class="sp-b" id="sp-theme">theme</button><button type="button" class="sp-b" id="sp-motion" hidden>pause animations</button></div></header>
+<main class="sp-main">
+<p class="sp-crumb">$ cat <a href="../../?case=auth#case-studies">case-studies/</a>auth.md</p>
+<h1 class="c-sr">Sign-in that enterprises trust and users don't notice</h1>
+<div class="c-pop" style="border: 1px solid var(--line2); border-radius: 12px; background: var(--panel); padding: clamp(22px, 4vw, 40px); display: flex; flex-direction: column; gap: 32px">
+<div>
+<div style="font-size: 13px; color: var(--acc)">// authentication &amp; identity · 2024 → 2026</div>
+<h3 style="margin: 8px 0 10px; font-size: clamp(22px, 3vw, 30px); line-height: 1.25; color: var(--head)">Sign-in that enterprises trust and users don't notice</h3>
+<p style="margin: 0; color: var(--text3); max-width: 72ch">I led the replacement of a legacy, multi-tenant sign-in system with a new auth framework, rolled out organisation by organisation behind a per-tenant switch. Before that, we hardened the old one: expiring tokens, central signing and key rotation.</p>
+</div>
+
+<div>
+<div style="font-size: 13px; color: var(--mute); margin-bottom: 14px">Every sign-in, end to end</div>
+<ol aria-label="Sign-in flow" style="margin: 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 0">
+<li class="c-glow" style="flex: 0 1 auto; border: 1px solid var(--line3); border-radius: 10px; padding: 12px 14px; background: var(--panel); color: var(--text); animation-delay: 0s"><div style="font-weight: 700">sign-in request</div><div style="font-size: 12px; color: var(--mute)">from a tenant domain</div></li>
+<li aria-hidden="true" style="flex: 1 1 24px; min-width: 24px; height: 2px; position: relative; background: repeating-linear-gradient(90deg, var(--conn) 0 6px, transparent 6px 10px)"><span class="c-trav" style="position: absolute; top: -3px; width: 8px; height: 8px; border-radius: 50%; background: var(--acc); animation-delay: 0.4s"></span><span style="position: absolute; right: -3px; top: -9px; color: var(--conn); font-size: 12px">▶</span></li>
+<li class="c-glow" style="flex: 0 1 auto; border: 1px solid var(--line3); border-radius: 10px; padding: 12px 14px; background: var(--panel); color: var(--text); animation-delay: 0.9s"><div style="font-weight: 700">resolve organisation</div><div style="font-size: 12px; color: var(--mute)">from the host name</div></li>
+<li aria-hidden="true" style="flex: 1 1 24px; min-width: 24px; height: 2px; position: relative; background: repeating-linear-gradient(90deg, var(--conn) 0 6px, transparent 6px 10px)"><span class="c-trav" style="position: absolute; top: -3px; width: 8px; height: 8px; border-radius: 50%; background: var(--acc); animation-delay: 1.3s"></span><span style="position: absolute; right: -3px; top: -9px; color: var(--conn); font-size: 12px">▶</span></li>
+<li class="c-glow" style="flex: 0 1 auto; border: 1px solid var(--line3); border-radius: 10px; padding: 12px 14px; background: var(--panel); color: var(--text); animation-delay: 1.8s"><div style="font-weight: 700">choose a method</div><div style="margin-top: 6px; display: flex; flex-wrap: wrap; gap: 4px; font-size: 11px"><span style="border: 1px solid var(--line3); border-radius: 4px; padding: 1px 6px">SAML SSO</span><span style="border: 1px solid var(--line3); border-radius: 4px; padding: 1px 6px">magic link</span><span style="border: 1px solid var(--line3); border-radius: 4px; padding: 1px 6px">password</span></div></li>
+<li aria-hidden="true" style="flex: 1 1 24px; min-width: 24px; height: 2px; position: relative; background: repeating-linear-gradient(90deg, var(--conn) 0 6px, transparent 6px 10px)"><span class="c-trav" style="position: absolute; top: -3px; width: 8px; height: 8px; border-radius: 50%; background: var(--acc); animation-delay: 2.6s"></span><span style="position: absolute; right: -3px; top: -9px; color: var(--conn); font-size: 12px">▶</span></li>
+<li class="c-glow" style="flex: 0 1 auto; border: 1px solid var(--line3); border-radius: 10px; padding: 12px 14px; background: var(--panel); color: var(--text); animation-delay: 3.1s"><div style="font-weight: 700">2FA</div><div style="font-size: 12px; color: var(--mute)">enforced per org</div></li>
+<li aria-hidden="true" style="flex: 1 1 24px; min-width: 24px; height: 2px; position: relative; background: repeating-linear-gradient(90deg, var(--conn) 0 6px, transparent 6px 10px)"><span class="c-trav" style="position: absolute; top: -3px; width: 8px; height: 8px; border-radius: 50%; background: var(--acc); animation-delay: 3.6s"></span><span style="position: absolute; right: -3px; top: -9px; color: var(--conn); font-size: 12px">▶</span></li>
+<li class="c-glow" style="flex: 0 1 auto; border: 1px solid var(--line3); border-radius: 10px; padding: 12px 14px; background: var(--panel); color: var(--text); animation-delay: 4.1s"><div style="font-weight: 700">rate-limit check</div><div style="font-size: 12px; color: var(--mute)">per identity</div></li>
+<li aria-hidden="true" style="flex: 1 1 24px; min-width: 24px; height: 2px; position: relative; background: repeating-linear-gradient(90deg, var(--conn) 0 6px, transparent 6px 10px)"><span class="c-trav" style="position: absolute; top: -3px; width: 8px; height: 8px; border-radius: 50%; background: var(--acc); animation-delay: 4.6s"></span><span style="position: absolute; right: -3px; top: -9px; color: var(--conn); font-size: 12px">▶</span></li>
+<li class="c-glowg" style="flex: 0 1 auto; border: 1px solid var(--ok); border-radius: 10px; padding: 12px 14px; background: var(--ok-bg); color: var(--text); animation-delay: 5.1s"><div style="font-weight: 700">session + signed token</div><div style="font-size: 12px; color: var(--mute)">EdDSA · published keys</div></li>
+</ol>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px">
+<div style="border: 1px solid var(--line2); border-radius: 10px; padding: 20px">
+<div style="font-size: 13px; color: var(--acc); margin-bottom: 6px">rate limiting by identity, not just IP</div>
+<p style="margin: 0 0 16px; color: var(--text3); font-size: 15px">Separate buckets per user, email, token and IP, per organisation, so one noisy office network can't lock out everyone behind it.</p>
+<div aria-hidden="true" style="display: flex; gap: 18px; align-items: flex-end">
+<div style="display: flex; flex-direction: column; align-items: center; gap: 6px"><div style="position: relative; width: 34px; height: 64px; border: 1px solid var(--line3); border-radius: 6px; overflow: hidden"><span class="c-gx" style="position: absolute; left: 0; right: 0; bottom: 0; height: 62%; background: var(--acc); opacity: .85; transform-origin: bottom; animation-name: c-grow; animation-delay: 0s"></span></div><span style="font-size: 12px; color: var(--text3)">user</span></div>
+<div style="display: flex; flex-direction: column; align-items: center; gap: 6px"><div style="position: relative; width: 34px; height: 64px; border: 1px solid var(--line3); border-radius: 6px; overflow: hidden"><span class="c-gx" style="position: absolute; left: 0; right: 0; bottom: 0; height: 38%; background: var(--acc); opacity: .85; transform-origin: bottom; animation-name: c-grow; animation-delay: 0.15s"></span></div><span style="font-size: 12px; color: var(--text3)">email</span></div>
+<div style="display: flex; flex-direction: column; align-items: center; gap: 6px"><div style="position: relative; width: 34px; height: 64px; border: 1px solid var(--line3); border-radius: 6px; overflow: hidden"><span class="c-gx" style="position: absolute; left: 0; right: 0; bottom: 0; height: 20%; background: var(--acc); opacity: .85; transform-origin: bottom; animation-name: c-grow; animation-delay: 0.3s"></span></div><span style="font-size: 12px; color: var(--text3)">token</span></div>
+<div style="display: flex; flex-direction: column; align-items: center; gap: 6px"><div style="position: relative; width: 34px; height: 64px; border: 1px solid var(--line3); border-radius: 6px; overflow: hidden"><span class="c-gx" style="position: absolute; left: 0; right: 0; bottom: 0; height: 80%; background: var(--acc); opacity: .85; transform-origin: bottom; animation-name: c-grow; animation-delay: 0.45s"></span></div><span style="font-size: 12px; color: var(--text3)">IP</span></div>
+</div>
+</div>
+<div style="border: 1px solid var(--line2); border-radius: 10px; padding: 20px">
+<div style="font-size: 13px; color: var(--acc); margin-bottom: 6px">zero-downtime key rotation</div>
+<p style="margin: 0 0 16px; color: var(--text3); font-size: 15px">Verifiers accept old and new keys during an overlap window, so signing keys rotate without logging anyone out.</p>
+<div aria-hidden="true" style="display: flex; flex-direction: column; gap: 8px; font-size: 12px">
+<div style="display: flex; align-items: center; gap: 10px"><span style="flex: 0 0 6ch; color: var(--mute)">key v1</span><span style="flex: 1; height: 10px; position: relative"><span class="c-gx" style="position: absolute; left: 0; width: 65%; height: 10px; background: var(--bar0); border-radius: 4px"></span></span></div>
+<div style="display: flex; align-items: center; gap: 10px"><span style="flex: 0 0 6ch; color: var(--mute)">key v2</span><span style="flex: 1; height: 10px; position: relative"><span class="c-gx" style="position: absolute; left: 40%; width: 60%; height: 10px; background: var(--acc); border-radius: 4px; animation-delay: .4s"></span></span></div>
+<div style="display: flex; align-items: center; gap: 10px"><span style="flex: 0 0 6ch"></span><span style="flex: 1; position: relative; height: 16px"><span class="c-pop" style="position: absolute; left: 40%; width: 25%; border-top: 1px dashed var(--ok); padding-top: 2px; text-align: center; color: var(--ok-text); animation-delay: .9s">overlap</span></span></div>
+</div>
+</div>
+</div>
+
+<div>
+<div style="font-size: 13px; color: var(--mute); margin-bottom: 12px">How it evolved: legacy service → enterprise-grade sign-in</div>
+<div style="overflow-x: auto" tabindex="0" role="region" aria-label="Wide content, scrolls sideways"><div style="min-width: 640px; padding: 4px 0">
+<div style="position: relative">
+<span aria-hidden="true" style="position: absolute; left: 12px; right: 12px; top: 50%; height: 2px; margin-top: -1px"><span class="c-fill" style="display: block; height: 2px; width: 100%; background: var(--line3)"></span></span>
+<ol aria-label="identity evolution" style="position: relative; margin: 0; padding: 0; list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 10px">
+<li class="c-pop" style="animation-delay: 0.00s; position: relative; z-index: 1; flex: 0 1 auto; text-align: center; font-size: 12px; line-height: 1.35; padding: 5px 9px; border-radius: 6px; border: 1px solid var(--line3); background: var(--panel); color: var(--text3)"><span class="c-sr">started as: </span>legacy auth service</li>
+<li class="c-pop" style="animation-delay: 0.15s; position: relative; z-index: 1; flex: 0 1 auto; text-align: center; font-size: 12px; line-height: 1.35; padding: 5px 9px; border-radius: 6px; border: 1px solid var(--line3); background: var(--panel); color: var(--text3)"><span class="c-sr">then: </span>shared auth library</li>
+<li class="c-pop" style="animation-delay: 0.30s; position: relative; z-index: 1; flex: 0 1 auto; text-align: center; font-size: 12px; line-height: 1.35; padding: 5px 9px; border-radius: 6px; border: 1px solid var(--line3); background: var(--panel); color: var(--text3)"><span class="c-sr">then: </span>expiring, rotated tokens</li>
+<li class="c-pop" style="animation-delay: 0.45s; position: relative; z-index: 1; flex: 0 1 auto; text-align: center; font-size: 12px; line-height: 1.35; padding: 5px 9px; border-radius: 6px; border: 1px solid var(--acc); background: var(--acc-bg); color: var(--head); font-weight: 700"><span class="c-sr">today: </span>new auth framework</li>
+</ol>
+</div>
+</div></div>
+</div>
+
+<div style="border-left: 3px solid var(--ok); padding: 4px 0 4px 18px">
+<div style="font-size: 13px; color: var(--ok); margin-bottom: 8px"># in practice</div>
+<ul style="margin: 0; padding-left: 18px; color: var(--text); display: flex; flex-direction: column; gap: 6px">
+<li>Enterprise customers sign in through their own identity provider and can require 2FA for everyone.</li>
+<li>Sign-in links in emails still work after Slack or Outlook previews them.</li>
+<li>Tokens expire and keys rotate on a schedule, with no forced logouts.</li>
+<li>Services can verify tokens themselves against published keys, ready for service-to-service auth.</li>
+</ul>
+</div>
+</div>
+
+<nav class="sp-pn" aria-label="More case-studies/"><a href="../security/"><span>← previous</span><b>security.md</b></a><a class="next" href="../data/"><span>next →</span><b>data.md</b></a></nav>
+<section class="sp-more" aria-labelledby="sp-more-h"><h2 id="sp-more-h">$ ls case-studies/</h2><ul><li><a href="../monorepo/">monorepo.md</a></li><li><a href="../refactor/">refactor.md</a></li><li><a href="../ci-cd/">ci-cd.md</a></li><li><a href="../testing/">testing.md</a></li><li><a href="../accessibility/">accessibility.md</a></li><li><a href="../aws/">aws.md</a></li><li><a href="../security/">security.md</a></li><li><a href="../auth/" aria-current="page">auth.md</a></li><li><a href="../data/">data.md</a></li><li><a href="../cost/">cost.md</a></li><li><a href="../ai-platform/">ai/platform.md</a></li><li><a href="../this-site/">this-site.md</a></li></ul></section>
+<aside class="sp-cta" aria-label="About Craig"><p><b>Craig Michael Thompson</b>, Head of Engineering: hands-on, AI-first, from start-up to acquisition. Open to new roles.</p><div><a class="go" href="mailto:craga89@gmail.com">get in touch</a><a class="alt" href="../../?case=auth#case-studies">see it in the portfolio</a><a class="alt" href="../../cv/">CV</a></div></aside>
+</main>
+</div>
+</div>
+<script>(function(){var d=document.documentElement,r=document.querySelector('.c-root'),tb=document.getElementById('sp-theme'),mb=document.getElementById('sp-motion');
+function label(){var L=r.classList.contains('c-light');tb.textContent=L?'dark theme':'light theme';tb.setAttribute('aria-label',L?'Switch to dark theme':'Switch to light theme')}
+tb.addEventListener('click',function(){var L=!r.classList.contains('c-light');r.classList.toggle('c-light',L);d.classList.toggle('t-light',L);d.classList.toggle('t-dark',!L);try{localStorage.setItem('theme',L?'light':'dark')}catch(e){}label()});label();
+var loops=document.querySelector('.c-glow,.c-trav,.c-tick,.c-b1,.c-ping');var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+if(loops&&!reduce){mb.hidden=false;var ml=function(){var off=r.classList.contains('still');mb.textContent=off?'play animations':'pause animations'};mb.addEventListener('click',function(){var off=!r.classList.contains('still');r.classList.toggle('still',off);try{localStorage.setItem('motion',off?'off':'on')}catch(e){}ml()});ml()}})()</script>
+<script>(function () {
+  try {
+    if (navigator.globalPrivacyControl || navigator.doNotTrack === '1' || !navigator.sendBeacon) return;
+    var url = "https://craga-ask.craga89.workers.dev/hit", t0 = Date.now(), seen = {}, sent = false;
+    
+    var send = function () {
+      if (sent) return; sent = true;
+      var w = window.innerWidth;
+      navigator.sendBeacon(url, new Blob([JSON.stringify({ path: location.pathname, ref: document.referrer, device: w < 601 ? 'mobile' : w < 1025 ? 'tablet' : 'desktop', sections: Object.keys(seen), seconds: (Date.now() - t0) / 1000 })], { type: 'text/plain' }));
+    };
+    document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'hidden') send(); });
+    window.addEventListener('pagehide', send);
+  } catch (e) {}
+})();</script>
+<script>(function(){try{if(!/(^|\.)(craigthompson|craga)\.dev$/.test(location.hostname)||navigator.globalPrivacyControl||navigator.doNotTrack==='1')return;var go=function(){var s=document.createElement('script');s.defer=true;s.src='https://static.cloudflareinsights.com/beacon.min.js';s.setAttribute('data-cf-beacon','{"token":"3204254163b94619a6f630b47e82c749"}');document.head.appendChild(s)};var done=false,ev=['pointerdown','keydown','wheel','touchstart','scroll'],once=function(){if(done)return;done=true;ev.forEach(function(t){removeEventListener(t,once,true)});go()};ev.forEach(function(t){addEventListener(t,once,{capture:true,passive:true})});var later=function(){setTimeout(once,6000)};if(document.readyState==='complete')later();else addEventListener('load',later,{once:true})}catch(e){}})()</script>
+</body>
+</html>

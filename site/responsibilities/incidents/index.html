@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>When things break: a plan, not a panic · incidents.md · Craig Michael Thompson</title>
+<meta name="description" content="I set up and have maintained an on-call rota, using Jira Service Desk with Google Calendar integrations, along with a status page for outage updates. I've…">
+<link rel="canonical" href="https://craigthompson.dev/responsibilities/incidents/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="craigthompson.dev">
+<meta property="og:locale" content="en_GB">
+<meta property="og:title" content="When things break: a plan, not a panic · incidents.md">
+<meta property="og:description" content="I set up and have maintained an on-call rota, using Jira Service Desk with Google Calendar integrations, along with a status page for outage updates. I've…">
+<meta property="og:url" content="https://craigthompson.dev/responsibilities/incidents/">
+<meta property="og:image" content="https://craigthompson.dev/responsibilities/incidents/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="When things break: a plan, not a panic. responsibilities/incidents.md, Craig Michael Thompson">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="When things break: a plan, not a panic · incidents.md">
+<meta name="twitter:description" content="I set up and have maintained an on-call rota, using Jira Service Desk with Google Calendar integrations, along with a status page for outage updates. I've…">
+<meta name="twitter:image" content="https://craigthompson.dev/responsibilities/incidents/og.png">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"When things break: a plan, not a panic","name":"incidents.md","description":"I set up and have maintained an on-call rota, using Jira Service Desk with Google Calendar integrations, along with a status page for outage updates. I've…","url":"https://craigthompson.dev/responsibilities/incidents/","image":"https://craigthompson.dev/responsibilities/incidents/og.png","inLanguage":"en-GB","dateModified":"2026-10-17","author":{"@type":"Person","@id":"https://craigthompson.dev/#person","name":"Craig Michael Thompson","url":"https://craigthompson.dev/"},"isPartOf":{"@type":"WebSite","name":"craigthompson.dev","url":"https://craigthompson.dev/"}}</script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="color-scheme" content="dark light">
+<meta name="theme-color" content="#16271F" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#EDF1EE" media="(prefers-color-scheme: light)">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../../apple-touch-icon.png">
+<style>@media screen{html.t-light,html.t-light body{background:#EDF1EE!important;color-scheme:light}html.t-dark,html.t-dark body{background:#16271F!important;color-scheme:dark}}</style>
+<script>try{(function(){var d=document.documentElement,t=localStorage.getItem('theme'),L=t?t==='light':matchMedia('(prefers-color-scheme: light)').matches,M=localStorage.getItem('motion')==='off';d.classList.add(L?'t-light':'t-dark');if(t)document.querySelectorAll('meta[name="theme-color"]').forEach(function(m){m.content=L?'#EDF1EE':'#16271F'});var o=new MutationObserver(function(){var r=document.querySelector('.c-root');if(!r)return;if(L)r.classList.add('c-light');if(M)r.classList.add('still');o.disconnect()});o.observe(d,{childList:true,subtree:true})})()}catch(e){}</script>
+<link rel="preload" href="../../assets/fonts/big-shoulders-display-latin-600.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../../assets/fonts/public-sans-latin-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../assets/pages.a6e824b85d.css">
+</head>
+<body>
+<div class="c-root" style="background: var(--bg); color: var(--text); min-height: 100vh; font-size: 16px; line-height: 1.7">
+<div class="sp">
+<header class="sp-top"><a class="sp-home" href="../../"><span class="c-dot" style="width: 9px; height: 9px; border-radius: 50%; background: var(--ok)"></span>craigthompson.dev</a>
+<div class="sp-tools"><button type="button" class="sp-b" id="sp-theme">theme</button><button type="button" class="sp-b" id="sp-motion" hidden>pause animations</button></div></header>
+<main class="sp-main">
+<p class="sp-crumb">$ cat <a href="../../?resp=inc#responsibilities">responsibilities/</a>incidents.md</p>
+<h1 class="c-sr">When things break: a plan, not a panic</h1>
+<div class="c-rs c-pop">
+<div class="c-rs-top"><span style="color: var(--acc)">10 / 12 · incidents.md</span><span style="color: var(--dim)">organisation</span></div>
+<div class="c-rs-cols">
+<div>
+<div style="font-size: 13px; color: var(--mute)">// incidents &amp; reliability · on-call, outages, disaster recovery</div>
+<h3 class="c-rs-t">When things break: a plan, not a panic</h3>
+<p class="c-rs-s">I set up and have maintained an on-call rota, using Jira Service Desk with Google Calendar integrations, along with a status page for outage updates. I've led on incidents ranging from short-lived issues affecting specific clients to outages affecting everyone, and I've been directly involved in producing the business's disaster recovery process, from the technical estate to business-level comms and ownership.</p>
+<ul class="c-rs-pts"><li>It was always clear who was on call.</li><li>Customers could follow an outage on the status page rather than chasing for updates.</li><li>Each major outage left behind an explanation, a runbook and a list of fixes.</li><li>The business knew who owned what, and who told whom, if the worst happened.</li></ul>
+</div>
+<div>
+<div class="c-rs-n">24/7</div>
+<div style="font-size: 13px; color: var(--mute); margin-top: 6px">platform availability for enterprise customers</div>
+<div style="font-size: 12px; color: var(--dim); margin-top: 22px">// how an incident ran</div>
+<div class="c-rs-flow"><span class="" style="animation-delay: 150ms">on-call rota</span><span class="" style="animation-delay: 240ms">incident led</span><span class="" style="animation-delay: 330ms">status page updates</span><span class="" style="animation-delay: 420ms">post-mortem</span><span class="last" style="animation-delay: 510ms">runbook &amp; fixes</span></div>
+</div>
+</div>
+<details class="c-rs-more" open><summary><span style="color: var(--ok)">$ cat incidents.md</span> <span style="color: var(--dim)"># the full file</span></summary>
+<div class="c-rs-body">
+<div>
+<div style="font-size: 13px; color: var(--mute); margin-bottom: 12px">How an incident ran</div>
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 14px">
+<span class="c-pop" style="border: 1px solid var(--line3); border-radius: 6px; padding: 8px 12px; animation-delay: 0.10s">on-call rota</span><span aria-hidden="true" style="color: var(--acc)">→</span>
+<span class="c-pop" style="border: 1px solid var(--acc); background: var(--acc-bg); color: var(--head); border-radius: 6px; padding: 8px 12px; animation-delay: 0.25s">incident led</span><span aria-hidden="true" style="color: var(--acc)">→</span>
+<span class="c-pop" style="border: 1px solid var(--acc); background: var(--acc-bg); color: var(--head); border-radius: 6px; padding: 8px 12px; animation-delay: 0.40s">status page updates</span><span aria-hidden="true" style="color: var(--acc)">→</span>
+<span class="c-pop" style="border: 1px solid var(--line3); border-radius: 6px; padding: 8px 12px; animation-delay: 0.55s">post-mortem</span><span aria-hidden="true" style="color: var(--acc)">→</span>
+<span class="c-pop" style="border: 1px solid var(--ok); color: var(--head); border-radius: 6px; padding: 8px 12px; animation-delay: 0.70s">runbook &amp; actionable fixes</span>
+</div>
+</div>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr)); gap: 12px">
+<div class="c-pop" style="border: 1px solid var(--line2); border-radius: 10px; padding: 18px; animation-delay: 0.1s"><div style="font-weight: 700; color: var(--head); margin-bottom: 6px">On-call rota</div><div style="font-size: 14px; color: var(--text3)">Set up and maintained with Jira Service Desk and Google Calendar integrations, so it was always clear who was on call.</div></div>
+<div class="c-pop" style="border: 1px solid var(--line2); border-radius: 10px; padding: 18px; animation-delay: 0.2s"><div style="font-weight: 700; color: var(--head); margin-bottom: 6px">Status page</div><div style="font-size: 14px; color: var(--text3)">A status page for service outage updates.</div></div>
+<div class="c-pop" style="border: 1px solid var(--line2); border-radius: 10px; padding: 18px; animation-delay: 0.3s"><div style="font-weight: 700; color: var(--head); margin-bottom: 6px">Incident leadership</div><div style="font-size: 14px; color: var(--text3)">Led on incidents from temporary issues affecting specific clients to larger outages affecting everyone.</div></div>
+<div class="c-pop" style="border: 1px solid var(--line2); border-radius: 10px; padding: 18px; animation-delay: 0.4s"><div style="font-weight: 700; color: var(--head); margin-bottom: 6px">Outage suite</div><div style="font-size: 14px; color: var(--text3)">Helped produce in-depth write-ups of past outages, runbooks for similar problems, and recommended, actionable improvements to prevent them.</div></div>
+<div class="c-pop" style="border: 1px solid var(--line2); border-radius: 10px; padding: 18px; animation-delay: 0.5s"><div style="font-weight: 700; color: var(--head); margin-bottom: 6px">Disaster recovery</div><div style="font-size: 14px; color: var(--text3)">Directly involved in the business's disaster recovery process, covering the technical estate as well as comms and ownership.</div></div>
+</div>
+</div>
+</details>
+</div>
+
+<nav class="sp-pn" aria-label="More responsibilities/"><a href="../acquisition/"><span>← previous</span><b>acquisition.md</b></a><a class="next" href="../compliance/"><span>next →</span><b>compliance.md</b></a></nav>
+<section class="sp-more" aria-labelledby="sp-more-h"><h2 id="sp-more-h">$ ls responsibilities/</h2><ul><li><a href="../leadership/">leadership.md</a></li><li><a href="../hiring/">hiring.md</a></li><li><a href="../people/">people.md</a></li><li><a href="../process/">process.md</a></li><li><a href="../ai/">ai.md</a></li><li><a href="../product/">product.md</a></li><li><a href="../customers/">customers.md</a></li><li><a href="../budget/">budget.md</a></li><li><a href="../acquisition/">acquisition.md</a></li><li><a href="../incidents/" aria-current="page">incidents.md</a></li><li><a href="../compliance/">compliance.md</a></li><li><a href="../it/">it.md</a></li></ul></section>
+<aside class="sp-cta" aria-label="About Craig"><p><b>Craig Michael Thompson</b>, Head of Engineering: hands-on, AI-first, from start-up to acquisition. Open to new roles.</p><div><a class="go" href="mailto:craga89@gmail.com">get in touch</a><a class="alt" href="../../?resp=inc#responsibilities">see it in the portfolio</a><a class="alt" href="../../cv/">CV</a></div></aside>
+</main>
+</div>
+</div>
+<script>(function(){var d=document.documentElement,r=document.querySelector('.c-root'),tb=document.getElementById('sp-theme'),mb=document.getElementById('sp-motion');
+function label(){var L=r.classList.contains('c-light');tb.textContent=L?'dark theme':'light theme';tb.setAttribute('aria-label',L?'Switch to dark theme':'Switch to light theme')}
+tb.addEventListener('click',function(){var L=!r.classList.contains('c-light');r.classList.toggle('c-light',L);d.classList.toggle('t-light',L);d.classList.toggle('t-dark',!L);try{localStorage.setItem('theme',L?'light':'dark')}catch(e){}label()});label();
+var loops=document.querySelector('.c-glow,.c-trav,.c-tick,.c-b1,.c-ping');var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+if(loops&&!reduce){mb.hidden=false;var ml=function(){var off=r.classList.contains('still');mb.textContent=off?'play animations':'pause animations'};mb.addEventListener('click',function(){var off=!r.classList.contains('still');r.classList.toggle('still',off);try{localStorage.setItem('motion',off?'off':'on')}catch(e){}ml()});ml()}})()</script>
+<script>(function () {
+  try {
+    if (navigator.globalPrivacyControl || navigator.doNotTrack === '1' || !navigator.sendBeacon) return;
+    var url = "https://craga-ask.craga89.workers.dev/hit", t0 = Date.now(), seen = {}, sent = false;
+    
+    var send = function () {
+      if (sent) return; sent = true;
+      var w = window.innerWidth;
+      navigator.sendBeacon(url, new Blob([JSON.stringify({ path: location.pathname, ref: document.referrer, device: w < 601 ? 'mobile' : w < 1025 ? 'tablet' : 'desktop', sections: Object.keys(seen), seconds: (Date.now() - t0) / 1000 })], { type: 'text/plain' }));
+    };
+    document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'hidden') send(); });
+    window.addEventListener('pagehide', send);
+  } catch (e) {}
+})();</script>
+<script>(function(){try{if(!/(^|\.)(craigthompson|craga)\.dev$/.test(location.hostname)||navigator.globalPrivacyControl||navigator.doNotTrack==='1')return;var go=function(){var s=document.createElement('script');s.defer=true;s.src='https://static.cloudflareinsights.com/beacon.min.js';s.setAttribute('data-cf-beacon','{"token":"3204254163b94619a6f630b47e82c749"}');document.head.appendChild(s)};var done=false,ev=['pointerdown','keydown','wheel','touchstart','scroll'],once=function(){if(done)return;done=true;ev.forEach(function(t){removeEventListener(t,once,true)});go()};ev.forEach(function(t){addEventListener(t,once,{capture:true,passive:true})});var later=function(){setTimeout(once,6000)};if(document.readyState==='complete')later();else addEventListener('load',later,{once:true})}catch(e){}})()</script>
+</body>
+</html>

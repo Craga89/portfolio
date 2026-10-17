@@ -56,7 +56,7 @@ const HOME_DESC = 'Craig Michael Thompson: hands-on, AI-first Head of Engineerin
 const OG_DESC = "Hands-on, AI-first Head of Engineering and full-stack engineer. 20+ years' experience in software development and management, from start-up to acquisition.";
 const esc = (t) => String(t).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
 
-function social({ title, desc, url, type }) {
+function social({ title, desc, url, type, image, imageAlt }) {
   return [
     `<meta property="og:type" content="${type}">`,
     `<meta property="og:site_name" content="craigthompson.dev">`,
@@ -64,15 +64,15 @@ function social({ title, desc, url, type }) {
     `<meta property="og:title" content="${esc(title)}">`,
     `<meta property="og:description" content="${esc(desc)}">`,
     `<meta property="og:url" content="${url}">`,
-    `<meta property="og:image" content="${SITE}/og.png">`,
+    `<meta property="og:image" content="${image || SITE + '/og.png'}">`,
     `<meta property="og:image:width" content="1200">`,
     `<meta property="og:image:height" content="630">`,
-    `<meta property="og:image:alt" content="Craig Michael Thompson, Head of Engineering. craigthompson.dev">`,
+    `<meta property="og:image:alt" content="${esc(imageAlt || 'Craig Michael Thompson, Head of Engineering. craigthompson.dev')}">`,
     type === 'profile' ? `<meta property="profile:first_name" content="Craig">\n<meta property="profile:last_name" content="Thompson">` : '',
     `<meta name="twitter:card" content="summary_large_image">`,
     `<meta name="twitter:title" content="${esc(title)}">`,
     `<meta name="twitter:description" content="${esc(desc)}">`,
-    `<meta name="twitter:image" content="${SITE}/og.png">`,
+    `<meta name="twitter:image" content="${image || SITE + '/og.png'}">`,
   ].filter(Boolean).join('\n');
 }
 
@@ -223,6 +223,7 @@ const PORTRAIT_ALT = 'Illustrated caricature of Craig Michael Thompson at his ke
 const portraitPicture = () => `<picture><source type="image/avif" srcset="assets/img/portrait-96.avif 96w, assets/img/portrait-192.avif 192w, assets/img/portrait-352.avif 352w" sizes="(max-width: 370px) 68px, (max-width: 600px) 96px, 176px"><img src="assets/img/portrait-192.webp" srcset="assets/img/portrait-96.webp 96w, assets/img/portrait-192.webp 192w, assets/img/portrait-352.webp 352w" sizes="(max-width: 370px) 68px, (max-width: 600px) 96px, 176px" alt="${PORTRAIT_ALT}" width="512" height="512" fetchpriority="high" decoding="async"></picture>`;
 
 // ---------- home page ----------
+const HOME = {};
 function buildHome(today) {
   const d = splitDesign('ThemeTyne.dc.html');
   let code = d.code;
@@ -288,6 +289,9 @@ ${beacon(ASK.endpoint, true)}
   const themeHead = `<style>@media screen{html.t-light,html.t-light body{background:#EDF1EE!important;color-scheme:light}html.t-dark,html.t-dark body{background:#16271F!important;color-scheme:dark}}</style>
 <script>try{(function(){var d=document.documentElement,t=localStorage.getItem('theme'),L=t?t==='light':matchMedia('(prefers-color-scheme: light)').matches,M=localStorage.getItem('motion')==='off';d.classList.add(L?'t-light':'t-dark');if(t)document.querySelectorAll('meta[name="theme-color"]').forEach(function(m){m.content=L?'#EDF1EE':'#16271F'});var o=new MutationObserver(function(){var r=document.querySelector('#app .c-root');if(!r)return;if(L)r.classList.add('c-light');if(M)r.classList.add('still');o.disconnect()});o.observe(d,{childList:true,subtree:true})})()}catch(e){}</script>`;
   const fonts = fontFaces('assets/fonts/', ['Big Shoulders Display', 'Public Sans', 'Red Hat Mono']);
+  HOME.css = (localFonts(d.helmet.trim()).match(/<style>([\s\S]*?)<\/style>/) || [])[1] || '';
+  try { HOME.tips = JSON.parse((code.match(/const TIPS = (\{[\s\S]*?\});\n/) || [])[1] || '{}'); } catch (e) { HOME.tips = {}; }
+  HOME.themeHead = themeHead;
   const head = seoHead(d.head.trim(), { title: HOME_TITLE, desc: HOME_DESC, url: SITE + '/', type: 'profile', today });
   return `<!doctype html>
 <html lang="en-GB">
@@ -404,7 +408,7 @@ function writeOut(rel, content) {
 }
 
 // ---------- prerender ----------
-const TYPES = { '.html': 'text/html', '.js': 'text/javascript', '.json': 'application/json', '.webp': 'image/webp', '.avif': 'image/avif', '.png': 'image/png', '.woff2': 'font/woff2', '.svg': 'image/svg+xml', '.txt': 'text/plain', '.xml': 'application/xml' };
+const TYPES = { '.html': 'text/html', '.js': 'text/javascript', '.json': 'application/json', '.webp': 'image/webp', '.avif': 'image/avif', '.png': 'image/png', '.woff2': 'font/woff2', '.svg': 'image/svg+xml', '.css': 'text/css', '.txt': 'text/plain', '.xml': 'application/xml' };
 function serve(dir) {
   return new Promise((resolve) => {
     const srv = http.createServer((req, res) => {
@@ -528,6 +532,7 @@ async function prerender() {
     await page.waitForTimeout(150);
     const html = await page.$eval('#app', (el) => { const c = el.cloneNode(true); c.querySelectorAll('.c-chat, .c-mic, .v2-time').forEach((n) => n.remove()); return c.innerHTML; });
     const passages = await page.evaluate(extractPassages);
+    const panels = await page.evaluate(() => [...document.querySelectorAll('#responsibilities [role="tabpanel"][id^="rp-"], #case-studies .c-cs-panels [role="tabpanel"]')].map((p) => ({ kind: p.closest('#responsibilities') ? 'resp' : 'case', file: p.getAttribute('aria-label'), html: p.outerHTML })));
     const index = { generated: new Date().toISOString(), passages };
     writeFileSync(join(OUT, 'assets', 'ask-index.json'), JSON.stringify(index));
     mkdirSync(join(ROOT, 'worker'), { recursive: true });
@@ -536,6 +541,7 @@ async function prerender() {
     const file = join(OUT, 'index.html');
     writeFileSync(file, readFileSync(file, 'utf8').replace('<!--PRERENDER-->', html).replace('/*CIS*/', cis.join('\n')));
     await buildOgImage(browser);
+    await buildFilePages(browser, panels);
     await buildPdf(browser, port);
   } finally {
     await browser.close();
@@ -591,6 +597,168 @@ h1{margin:0;font:900 112px/0.88 BS;letter-spacing:.005em}
   const sharp = (await import('sharp')).default;
   const buf = await sharp(join(OUT, 'og.png')).png({ palette: true, quality: 90, effort: 10 }).toBuffer();
   writeFileSync(join(OUT, 'og.png'), buf);
+}
+
+// ---------- one page per case study and responsibility ----------
+// /case-studies/<file>/ and /responsibilities/<file>/: the same content as the tab on the home page,
+// as a static page with its own title, description and social preview, for sharing and search.
+const SLUG = (f) => f.replace(/\.md$/, '').replace(/\//g, '-');
+const SECTION = { case: { dir: 'case-studies', label: 'case-studies/', home: 'case', name: 'Case study' }, resp: { dir: 'responsibilities', label: 'responsibilities/', home: 'resp', name: 'Responsibility' } };
+const HOME_KEYS = { case: { 'monorepo.md': 'mono', 'refactor.md': 'refactor', 'ci-cd.md': 'ci', 'testing.md': 'test', 'accessibility.md': 'a11y', 'aws.md': 'aws', 'security.md': 'sec', 'auth.md': 'auth', 'data.md': 'data', 'cost.md': 'cost', 'ai/platform.md': 'ai', 'this-site.md': 'site' }, resp: { 'leadership.md': 'lead', 'hiring.md': 'hire', 'people.md': 'people', 'process.md': 'proc', 'ai.md': 'aiproc', 'product.md': 'prod', 'customers.md': 'cust', 'budget.md': 'bud', 'acquisition.md': 'acq', 'incidents.md': 'inc', 'compliance.md': 'comp', 'it.md': 'it' } };
+const strip = (h) => h.replace(/<[^>]+>/g, ' ').replace(/&amp;/g, '&').replace(/&nbsp;/g, ' ').replace(/&#39;|&rsquo;/g, "'").replace(/\s+/g, ' ').replace(/\s+([,.;:!?)])/g, '$1').trim();
+
+function cleanPanel(html, kind, where) {
+  const terms = new Map();
+  const tipFor = (text) => {
+    const t = text.toLowerCase();
+    for (const [k, [title, def]] of Object.entries(HOME.tips || {})) if (title.toLowerCase().includes(t) || t.includes(title.toLowerCase())) return [k, title, def];
+    return null;
+  };
+  let h = html
+    .replace(/\s+data-dc-[a-z]+="\d+"/g, '')
+    .replace(/<canvas[^>]*><\/canvas>/g, '')
+    .replace(/<button type="button" class="c-term"[^>]*>([\s\S]*?)<\/button>/g, (m, text) => { const tip = tipFor(strip(text)); if (tip) terms.set(tip[0], tip); return `<span class="c-term-s">${text}</span>`; })
+    .replace(/<a class="c-see" href="#(responsibilities|case-studies)"([^>]*)>([^<]+)<\/a>/g, (m, sec, rest, file) => `<a class="c-see" href="../../${sec}/${SLUG(file.trim())}/">${file}</a>`)
+    .replace(/<button type="button" class="c-dd">([\s\S]*?<span style="color: var\(--acc\)">([\w./-]+\.md) →<\/span>)<\/button>/g, (m, inner, file) => where[file] ? `<a class="c-dd" href="../../${where[file]}/${SLUG(file)}/">${inner}</a>` : `<div class="c-dd">${inner}</div>`)
+    .replace(/href="#c-tests"/g, 'href="../../#c-tests"')
+    // Live CI results only load on the home page: point there instead of showing placeholders.
+    .replace(/<div style="font-size: 13px; color: var\(--mute\); margin-bottom: 10px">Latest results<\/div>\s*<ul class="c-live"[\s\S]*?<\/ul>/, '<div style="font-size: 13px; color: var(--mute); margin-bottom: 10px">Latest results</div><p style="margin: 0; color: var(--text3)">The latest Lighthouse, WCAG and ask.sh test results are live on <a href="../../?case=site#case-studies">the home page</a>.</p>')
+    .replace(/<details class="c-rs-more"/g, '<details class="c-rs-more" open')
+    .replace(/^<div role="tabpanel"(?: id="[^"]*")? aria-label="[^"]*"/, '<div');
+  return { html: h, terms: [...terms.values()] };
+}
+
+const pageThemeHead = () => (HOME.themeHead || '').replace("document.querySelector('#app .c-root')", "document.querySelector('.c-root')");
+
+async function buildFilePages(browser, panels) {
+  const css = `${fontFaces('fonts/', ['Big Shoulders Display', 'Public Sans', 'Red Hat Mono'])}
+${FALLBACKS}
+${HOME.css}
+/* file pages */
+.sp{max-width:980px;margin:0 auto;padding:clamp(18px,4vw,40px) clamp(16px,4vw,40px) 72px}
+.sp-top{display:flex;align-items:center;justify-content:space-between;gap:10px 16px;flex-wrap:wrap;margin-bottom:clamp(20px,4vw,36px)}
+.sp-home{display:inline-flex;align-items:center;gap:8px;min-height:44px;font-family:var(--f-mono);font-weight:700;color:var(--head)!important;text-decoration:none}
+.sp-tools{display:flex;gap:8px;flex-wrap:wrap}
+.sp-b{all:unset;box-sizing:border-box;cursor:pointer;display:inline-flex;align-items:center;gap:6px;min-height:40px;padding:0 12px;border:1px solid var(--line3);border-radius:8px;font-size:13px;color:var(--text3)}
+.sp-b:hover{border-color:var(--acc);color:var(--head)}
+.sp-b:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.sp-crumb{margin:0 0 18px;font-family:var(--f-mono);font-size:clamp(15px,2vw,18px);color:var(--ok)}
+.sp-crumb a{color:inherit}
+.sp-main .c-rs{border:1px solid var(--line2);border-radius:12px;background:var(--panel)}
+.sp-main>div>.c-pop,.sp-main .c-pop{animation:none}
+.c-term-s{border-bottom:1px dotted currentColor}
+.sp-terms{margin-top:28px;border-top:1px dashed var(--line3);padding-top:16px}
+.sp-terms h2,.sp-more h2{margin:0 0 10px;font-family:var(--f-mono);font-size:14px;font-weight:500;color:var(--ok)}
+.sp-terms dl{margin:0;display:grid;gap:8px}
+.sp-terms dt{color:var(--head);font-weight:700}
+.sp-terms dd{margin:0 0 6px;color:var(--text3);font-size:14.5px}
+.sp-pn{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:28px}
+.sp-pn a{display:inline-flex;flex-direction:column;gap:2px;min-height:44px;padding:10px 14px;border:1px solid var(--line3);border-radius:8px;text-decoration:none!important;max-width:48%}
+.sp-pn a span{font-size:12px;color:var(--dim)}
+.sp-pn a b{font-family:var(--f-mono);font-weight:500;color:var(--acc)}
+.sp-pn .next{margin-left:auto;text-align:right}
+.sp-more{margin-top:36px}
+.sp-more ul{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:8px}
+.sp-more a{display:inline-flex;align-items:center;min-height:36px;padding:0 12px;border:1px solid var(--line3);border-radius:6px;font-family:var(--f-mono);font-size:13px;text-decoration:none!important;color:var(--text3)}
+.sp-more a[aria-current="page"]{border-color:var(--acc);color:var(--head);background:var(--acc-bg)}
+.sp-cta{margin-top:40px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:14px 20px;border:1px solid var(--acc);border-radius:12px;background:var(--acc-bg);padding:18px 20px}
+.sp-cta p{margin:0;color:var(--text2);max-width:52ch}
+.sp-cta p b{color:var(--head)}
+.sp-cta div{display:flex;flex-wrap:wrap;gap:10px}
+.sp-cta a{display:inline-flex;align-items:center;min-height:44px;padding:0 16px;border-radius:8px;font-weight:700;text-decoration:none!important}
+.sp-cta a.go{background:var(--acc);color:var(--bg)!important}
+.sp-cta a.alt{border:1px solid var(--line3);color:var(--head)!important}
+@media print{.sp-tools,.sp-more,.sp-pn,.sp-cta{display:none!important}}
+`;
+  const cssName = 'assets/pages.' + hash(css) + '.css';
+  writeOut(cssName, css);
+  const groups = { case: panels.filter((p) => p.kind === 'case'), resp: panels.filter((p) => p.kind === 'resp') };
+  const where = Object.fromEntries(panels.map((p) => [p.file, SECTION[p.kind].dir]));
+  const og = await browser.newPage({ viewport: { width: 1200, height: 630 }, deviceScaleFactor: 1 });
+  const font = (f) => 'data:font/woff2;base64,' + readFileSync(join(SRC, 'fonts', f)).toString('base64');
+  const sharp = (await import('sharp')).default;
+  const urls = [];
+  for (const kind of ['case', 'resp']) {
+    const list = groups[kind], S = SECTION[kind];
+    for (let i = 0; i < list.length; i++) {
+      const p = list[i], slug = SLUG(p.file), dir = `${S.dir}/${slug}/`;
+      const { html, terms } = cleanPanel(p.html, kind, where);
+      const h3 = strip((html.match(/<h3[^>]*>([\s\S]*?)<\/h3>/) || [])[1] || p.file);
+      const kicker = strip((html.match(/<div style="font-size: 13px; color: var\(--acc\)">([\s\S]*?)<\/div>/) || [])[1] || '');
+      const lead = strip((html.match(/<\/h3>\s*<p[^>]*>([\s\S]*?)<\/p>/) || [])[1] || '');
+      const desc = (lead.length > 158 ? lead.slice(0, 155).replace(/\s\S*$/, '') + '…' : lead) || `${h3}: ${S.name.toLowerCase()} from Craig Michael Thompson's portfolio.`;
+      const title = `${h3} · ${p.file} · Craig Michael Thompson`;
+      const url = `${SITE}/${dir}`;
+      const prev = list[(i - 1 + list.length) % list.length], next = list[(i + 1) % list.length];
+      const homeLink = `../../?${S.home}=${HOME_KEYS[kind][p.file]}#${S.dir}`;
+      // Social preview for this file.
+      await og.setContent(`<!doctype html><html><head><style>
+@font-face{font-family:BS;src:url(${font('big-shoulders-display-latin-600.woff2')});font-weight:100 900}
+@font-face{font-family:PS;src:url(${font('public-sans-latin-400.woff2')});font-weight:100 900}
+@font-face{font-family:RH;src:url(${font('red-hat-mono-latin-400.woff2')});font-weight:300 700}
+html,body{margin:0;width:1200px;height:630px;background:#16271F;color:#F6F8F4;overflow:hidden}
+.c{position:relative;box-sizing:border-box;width:1200px;height:630px;padding:68px 80px;display:flex;flex-direction:column;justify-content:space-between;background:radial-gradient(circle at 24px 24px,#47685A 3px,transparent 3.5px),radial-gradient(circle at calc(100% - 24px) 24px,#47685A 3px,transparent 3.5px),radial-gradient(circle at 24px calc(100% - 24px),#47685A 3px,transparent 3.5px),radial-gradient(circle at calc(100% - 24px) calc(100% - 24px),#47685A 3px,transparent 3.5px)}
+.cmd{font:500 30px RH;color:#B7D47A}.k{margin-top:14px;font:400 24px RH;color:#8EC3E6}
+h1{margin:0;font:900 96px/0.92 BS;letter-spacing:.005em;max-width:1000px}
+.ft{display:flex;justify-content:space-between;align-items:center;font:500 26px RH;color:#A7BFB2}.ft b{color:#F6F8F4}
+.arc{position:absolute;left:80px;right:80px;bottom:120px;height:220px;opacity:.10}
+</style></head><body><div class="c"><svg class="arc" viewBox="0 0 1040 200" preserveAspectRatio="none"><path d="M0 200 Q520 -60 1040 200" fill="none" stroke="#E7EEEA" stroke-width="4"/></svg>
+<div><div class="cmd">$ cat ${esc(S.label + p.file)}</div>${kicker ? `<div class="k">${esc(kicker)}</div>` : ''}</div>
+<h1>${esc(h3)}</h1>
+<div class="ft"><span>Craig Michael Thompson · Head of Engineering</span><b>craigthompson.dev</b></div></div></body></html>`);
+      await og.evaluate(() => document.fonts.ready);
+      const shot = await og.screenshot({ type: 'png' });
+      mkdirSync(join(OUT, dir), { recursive: true });
+      writeFileSync(join(OUT, dir, 'og.png'), await sharp(shot).png({ palette: true, quality: 90, effort: 10 }).toBuffer());
+      const ld = { '@context': 'https://schema.org', '@type': 'Article', headline: h3, name: p.file, description: desc, url, image: url + 'og.png', inLanguage: 'en-GB', dateModified: TODAY, author: { '@type': 'Person', '@id': SITE + '/#person', name: 'Craig Michael Thompson', url: SITE + '/' }, isPartOf: { '@type': 'WebSite', name: 'craigthompson.dev', url: SITE + '/' } };
+      const page = `<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>${esc(title)}</title>
+<meta name="description" content="${esc(desc)}">
+<link rel="canonical" href="${url}">
+${social({ title: `${h3} · ${p.file}`, desc, url, type: 'article', image: url + 'og.png', imageAlt: `${h3}. ${S.label}${p.file}, Craig Michael Thompson` })}
+<script type="application/ld+json">${JSON.stringify(ld)}</script>
+${meta('../../')}
+${pageThemeHead()}
+${preloadFont('../../assets/fonts/big-shoulders-display-latin-600.woff2')}
+${preloadFont('../../assets/fonts/public-sans-latin-400.woff2')}
+<link rel="stylesheet" href="../../${cssName}">
+</head>
+<body>
+<div class="c-root" style="background: var(--bg); color: var(--text); min-height: 100vh; font-size: 16px; line-height: 1.7">
+<div class="sp">
+<header class="sp-top"><a class="sp-home" href="../../"><span class="c-dot" style="width: 9px; height: 9px; border-radius: 50%; background: var(--ok)"></span>craigthompson.dev</a>
+<div class="sp-tools"><button type="button" class="sp-b" id="sp-theme">theme</button><button type="button" class="sp-b" id="sp-motion" hidden>pause animations</button></div></header>
+<main class="sp-main">
+<p class="sp-crumb">$ cat <a href="${homeLink}">${S.label}</a>${esc(p.file)}</p>
+<h1 class="c-sr">${esc(h3)}</h1>
+${html}
+${terms.length ? `<section class="sp-terms" aria-labelledby="sp-terms-h"><h2 id="sp-terms-h"># terms used</h2><dl>${terms.map(([, t, d]) => `<dt>${esc(t)}</dt><dd>${esc(d)}</dd>`).join('')}</dl></section>` : ''}
+<nav class="sp-pn" aria-label="More ${S.label}"><a href="../${SLUG(prev.file)}/"><span>← previous</span><b>${esc(prev.file)}</b></a><a class="next" href="../${SLUG(next.file)}/"><span>next →</span><b>${esc(next.file)}</b></a></nav>
+<section class="sp-more" aria-labelledby="sp-more-h"><h2 id="sp-more-h">$ ls ${S.label}</h2><ul>${list.map((x) => `<li><a href="../${SLUG(x.file)}/"${x === p ? ' aria-current="page"' : ''}>${esc(x.file)}</a></li>`).join('')}</ul></section>
+<aside class="sp-cta" aria-label="About Craig"><p><b>Craig Michael Thompson</b>, Head of Engineering: hands-on, AI-first, from start-up to acquisition. Open to new roles.</p><div><a class="go" href="mailto:craga89@gmail.com">get in touch</a><a class="alt" href="${homeLink}">see it in the portfolio</a><a class="alt" href="../../cv/">CV</a></div></aside>
+</main>
+</div>
+</div>
+<script>(function(){var d=document.documentElement,r=document.querySelector('.c-root'),tb=document.getElementById('sp-theme'),mb=document.getElementById('sp-motion');
+function label(){var L=r.classList.contains('c-light');tb.textContent=L?'dark theme':'light theme';tb.setAttribute('aria-label',L?'Switch to dark theme':'Switch to light theme')}
+tb.addEventListener('click',function(){var L=!r.classList.contains('c-light');r.classList.toggle('c-light',L);d.classList.toggle('t-light',L);d.classList.toggle('t-dark',!L);try{localStorage.setItem('theme',L?'light':'dark')}catch(e){}label()});label();
+var loops=document.querySelector('.c-glow,.c-trav,.c-tick,.c-b1,.c-ping');var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+if(loops&&!reduce){mb.hidden=false;var ml=function(){var off=r.classList.contains('still');mb.textContent=off?'play animations':'pause animations'};mb.addEventListener('click',function(){var off=!r.classList.contains('still');r.classList.toggle('still',off);try{localStorage.setItem('motion',off?'off':'on')}catch(e){}ml()});ml()}})()</script>
+${ASK.endpoint ? '<script>' + beacon(ASK.endpoint, false) + '</script>' : ''}
+${cfAnalytics}
+</body>
+</html>
+`;
+      writeFileSync(join(OUT, dir, 'index.html'), page);
+      urls.push(url);
+    }
+  }
+  await og.close();
+  HOME.pageUrls = urls;
+  console.log('file pages:', urls.length);
 }
 
 // The plain CV as a PDF, printed by Chromium with the page's own print styles.
@@ -738,6 +906,13 @@ await buildImages();
 await buildVcard();
 buildTextFiles();
 if (PRERENDER) await prerender();
+if (HOME.pageUrls) writeOut('sitemap.xml', `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<url><loc>https://${DOMAIN}/</loc><lastmod>${TODAY}</lastmod></url>
+<url><loc>https://${DOMAIN}/cv/</loc><lastmod>${TODAY}</lastmod></url>
+${HOME.pageUrls.map((u) => `<url><loc>${u}</loc><lastmod>${TODAY}</lastmod></url>`).join('\n')}
+</urlset>
+`);
 writeLivePlaceholder();
 buildServiceWorker(readdirSync(join(OUT, 'assets')).filter((f) => /^app\.[0-9a-f]+\.js$/.test(f)).map((f) => 'assets/' + f)[0]);
 console.log('built', OUT);

@@ -40,6 +40,9 @@ Every push to `main` deploys `site/` through `.github/workflows/pages.yml`.
 - **Section links:** the `#` beside each section heading copies a link to that section.
 - **Plain CV themes:** `/cv/` follows the same saved theme as the home page (or the system setting), has its own toggle, and always prints and exports light.
 - **Landing flash:** an in-page link briefly highlights where it lands (the section heading, or the item itself) once the scroll ends.
+- **File pages:** every case study and responsibility also builds as its own static page (`/case-studies/<file>/`, `/responsibilities/<file>/`) with its own title, description, JSON-LD, social preview image (`og.png`, rendered at build time) and sitemap entry, plus previous/next, the folder listing, a glossary of the jargon used, and a link back into the portfolio (`/?case=<id>#case-studies`, `/?resp=<id>#responsibilities`). The home page links to the open file's page under each carousel.
+- **Focus links:** `/?focus=leadership`, `platform`, `ai` or `frontend` adds a suggested reading order under the intro (and opens the most relevant tabs), for sending a tailored link. Also in the command palette. "show everything" removes it.
+- **Easter egg:** ↑↑↓↓←→←→BA, or `bridge` in ask.sh.
 - **Mobile menu:** below 600px wide (or on short landscape screens) the header is the site name, a get in touch button and a menu button. The menu is a `<details>`, so it opens without JavaScript; it lists every section (marking the current one), with search and the theme switch, and closes on a jump, Escape or a tap outside.
 - **Get in touch:** a contact section at the bottom (`#contact`, get-in-touch.md in the sidebar) that every get-in-touch button links to: email with a copy button, links, cv.pdf, contact card, and what roles and working pattern Craig is looking for.
 - **Transitions:** tab and file switches cross-fade with the View Transitions API; the chat panel, toggletips and dialogs ease in with `@starting-style`. All of it is skipped with reduced motion or "pause animations".
@@ -74,7 +77,7 @@ The Pages deploy (on every push, and daily) collects the latest CI results from 
 
 `npm run a11y` (`tools/a11y.mjs`) checks the built site against WCAG 2.2 AA:
 
-- axe-core (vendored in `tools/vendor/`, refreshed by `.github/workflows/vendor-axe.yml`) with every WCAG 2.0, 2.1 and 2.2 A/AA rule. It runs in both themes, at desktop and mobile widths, on every responsibilities and case-study tab, with the FAQ open, in stack search, in ask.sh and the chat with an answer, in the command palette and shortcuts dialog, and on the plain CV and 404 pages.
+- axe-core (vendored in `tools/vendor/`, refreshed by `.github/workflows/vendor-axe.yml`) with every WCAG 2.0, 2.1 and 2.2 A/AA rule. It runs in both themes, at desktop and mobile widths, on every responsibilities and case-study tab, with the FAQ open, in stack search, in ask.sh and the chat with an answer, in the command palette and shortcuts dialog, and on the plain CV, the 404 page and every file page.
 - Checks automated rule engines can't make: a keyboard-only walk through the whole page with a visible focus indicator at every stop (2.4.7), nothing focused hidden behind the sticky header or chat bar (2.4.11), reflow at 320px (1.4.10), text spacing (1.4.12), reduced motion and a pause control for the auto-playing tour (2.2.2, 2.3.3), and an off switch for single-key shortcuts (2.1.4).
 
 `.github/workflows/accessibility.yml` runs it after every Pages deploy and every Monday, saves the report to the `accessibility` branch (`reports/latest.txt`), and fails the run if anything doesn't pass. Pass `--url https://craigthompson.dev/` to test the live site instead.

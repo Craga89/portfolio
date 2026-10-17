@@ -529,6 +529,43 @@ a{color:var(--acc)!important;text-decoration:none!important}
 .c-test-a{font-size:13.5px;color:var(--text3);margin-left:1.7em}
 .c-tests-m{margin:0;font-size:12px;color:var(--dim)}
 .v2-qual{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:-4px}
+/* easter egg: ↑↑↓↓←→←→BA (or "bridge" in ask.sh) lights up the Tyne Bridge */
+.c-bridge{position:absolute;left:0;right:0;bottom:0;z-index:-1;width:100%;height:auto;aspect-ratio:1200/680;pointer-events:none;opacity:0;transition:opacity .6s ease;overflow:visible}
+.c-bridge path{fill:none;stroke:var(--acc);vector-effect:non-scaling-stroke;stroke-linecap:round}
+.c-br-a{stroke-width:3;stroke-dasharray:1;stroke-dashoffset:1;filter:drop-shadow(0 0 6px var(--acc))}
+.c-br-a2{stroke-width:2;opacity:.7}
+.c-br-h{stroke-width:1.5;stroke-dasharray:1;stroke-dashoffset:1;opacity:.8}
+.c-br-d{stroke-width:3;stroke-dasharray:1;stroke-dashoffset:1}
+.c-br-l{stroke:var(--acc-h);stroke-width:7;opacity:0;filter:drop-shadow(0 0 5px var(--acc-h))}
+.c-bridge-on .c-bridge{opacity:1}
+.c-bridge-on .c-br-a,.c-bridge-on .c-br-d{animation:c-br-draw 1.6s cubic-bezier(.4,0,.2,1) forwards}
+.c-bridge-on .c-br-a2{animation-delay:.25s}
+.c-bridge-on .c-br-h{animation:c-br-draw .5s ease-out forwards}
+.c-bridge-on .c-br-l{animation:c-br-twinkle 2.4s ease-in-out infinite}
+@keyframes c-br-draw{to{stroke-dashoffset:0}}
+@keyframes c-br-twinkle{0%{opacity:0}20%,70%{opacity:1}100%{opacity:.35}}
+.c-bridge-on.still .c-br-a,.c-bridge-on.still .c-br-d,.c-bridge-on.still .c-br-h{stroke-dashoffset:0}.c-bridge-on.still .c-br-l{opacity:1}
+@media (prefers-reduced-motion: reduce){.c-bridge-on .c-br-a,.c-bridge-on .c-br-d,.c-bridge-on .c-br-h{stroke-dashoffset:0}.c-bridge-on .c-br-l{opacity:1}}
+.c-toast{position:fixed;left:50%;bottom:76px;z-index:40;transform:translate(-50%,12px);max-width:calc(100vw - 32px);padding:10px 16px;border:1px solid var(--acc);border-radius:10px;background:var(--panel);color:var(--head);font-family:var(--f-mono,ui-monospace,monospace);font-size:13.5px;box-shadow:0 12px 30px -14px rgba(0,0,0,.6);opacity:0;visibility:hidden;transition:opacity .3s ease,transform .3s ease,visibility 0s linear .3s}
+.c-toast[data-show="true"]{opacity:1;visibility:visible;transform:translate(-50%,0);transition:opacity .3s ease,transform .3s ease}
+@media print{.c-bridge,.c-toast,.c-focus,.c-perma{display:none!important}}
+/* focus links: ?focus=leadership | platform | ai | frontend */
+.c-focus{margin-top:26px;border:1px solid var(--acc);border-radius:12px;background:var(--acc-bg);padding:16px 18px 18px}
+.c-focus-h{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:6px 12px}
+.c-focus-c{font-family:var(--f-mono,ui-monospace,monospace);font-size:14px;color:var(--ok)}
+.c-focus-x{all:unset;box-sizing:border-box;cursor:pointer;min-height:32px;display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--mute)}
+.c-focus-x:hover{color:var(--head);text-decoration:underline}
+.c-focus-x:focus-visible{outline:2px solid var(--acc);outline-offset:2px;border-radius:4px}
+.c-focus-p{margin:6px 0 12px;color:var(--text2);font-size:15px}
+.c-focus-l{margin:0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:8px;counter-reset:f}
+.c-focus-l a{counter-increment:f;display:flex;flex-direction:column;gap:2px;height:100%;box-sizing:border-box;padding:10px 12px 10px 38px;position:relative;border:1px solid var(--line3);border-radius:8px;background:var(--panel);text-decoration:none!important;transition:border-color .2s ease}
+.c-focus-l a::before{content:counter(f);position:absolute;left:12px;top:10px;font-family:var(--f-mono,ui-monospace,monospace);font-size:13px;color:var(--acc)}
+.c-focus-l a:hover{border-color:var(--acc)}
+.c-focus-f{font-family:var(--f-mono,ui-monospace,monospace);font-size:13.5px;color:var(--acc)}
+.c-focus-w{font-size:14px;color:var(--head)}
+/* each file on its own page */
+.c-perma{margin:12px 0 0;font-size:13px;text-align:right}
+.c-perma a{font-family:var(--f-mono,ui-monospace,monospace)}
 /* ---------- polish ---------- */
 /* typography: balanced headings, no lone last words, quotes that hang where supported */
 .c-root h1,.c-root h2,.c-root h3,.c-root .v2-st,.c-root .c-rs-t,.c-faq summary{text-wrap:balance}
@@ -687,6 +724,7 @@ html[data-vt-dir="prev"]::view-transition-new(c-rs),html[data-vt-dir="prev"]::vi
 </aside>
 <main id="top" class="v2-main">
 <section aria-label="Introduction" class="v2-intro">
+<svg class="c-bridge" viewBox="0 0 1200 320" preserveAspectRatio="none" aria-hidden="true" focusable="false"><path class="c-br-a" d="M0 300 Q600 -40 1200 300" pathLength="1"></path><path class="c-br-a c-br-a2" d="M60 300 Q600 10 1140 300" pathLength="1"></path><path class="c-br-h" style="animation-delay: 0.90s" d="M150 300 L150 220" pathLength="1"></path><path class="c-br-h" style="animation-delay: 1.02s" d="M300 300 L300 140" pathLength="1"></path><path class="c-br-h" style="animation-delay: 1.14s" d="M450 300 L450 95" pathLength="1"></path><path class="c-br-h" style="animation-delay: 1.26s" d="M600 300 L600 80" pathLength="1"></path><path class="c-br-h" style="animation-delay: 1.38s" d="M750 300 L750 95" pathLength="1"></path><path class="c-br-h" style="animation-delay: 1.50s" d="M900 300 L900 140" pathLength="1"></path><path class="c-br-h" style="animation-delay: 1.62s" d="M1050 300 L1050 220" pathLength="1"></path><path class="c-br-d" d="M0 300 H1200" pathLength="1"></path><path class="c-br-l" style="animation-delay: 1.60s" d="M75 260h0"></path><path class="c-br-l" style="animation-delay: 1.67s" d="M150 226h0"></path><path class="c-br-l" style="animation-delay: 1.74s" d="M225 196h0"></path><path class="c-br-l" style="animation-delay: 1.81s" d="M300 172h0"></path><path class="c-br-l" style="animation-delay: 1.88s" d="M375 154h0"></path><path class="c-br-l" style="animation-delay: 1.95s" d="M450 141h0"></path><path class="c-br-l" style="animation-delay: 2.02s" d="M525 133h0"></path><path class="c-br-l" style="animation-delay: 2.09s" d="M600 130h0"></path><path class="c-br-l" style="animation-delay: 2.16s" d="M675 133h0"></path><path class="c-br-l" style="animation-delay: 2.23s" d="M750 141h0"></path><path class="c-br-l" style="animation-delay: 2.30s" d="M825 154h0"></path><path class="c-br-l" style="animation-delay: 2.37s" d="M900 172h0"></path><path class="c-br-l" style="animation-delay: 2.44s" d="M975 196h0"></path><path class="c-br-l" style="animation-delay: 2.51s" d="M1050 226h0"></path><path class="c-br-l" style="animation-delay: 2.58s" d="M1125 260h0"></path></svg>
 <div class="v2-in">
 <div class="v2-lead">
 <p class="c-cmd" style="margin: 0 0 24px; font-size: clamp(16px, 2vw, 20px); font-weight: 500; color: var(--ok)">$ cat README.md <span style="color: var(--dim)"># intro</span></p>
@@ -698,6 +736,11 @@ html[data-vt-dir="prev"]::view-transition-new(c-rs),html[data-vt-dir="prev"]::vi
 <p>I've led engineering teams for 12+ years, <button type="button" class="v2-x" onClick="{{goHire}}">growing and developing</button> <span class="c-nb"><button type="button" class="v2-x" onClick="{{goLead}}">teams of 10+ engineers</button>,</span> both in-house and outsourced. I've set strategy, supported the people and steered the platform with them, from monorepos and build engines to AWS, authentication and AI tooling.</p>
 <p>I've <span class="c-nb"><button type="button" class="v2-x" onClick="{{goProd}}">reported directly to CEO and CTO level</button>,</span> turning the roadmap and technical direction into plain-English board updates. I've been part of <button type="button" class="v2-x" onClick="{{goComp}}">ISO 27001 and GDPR accreditation</button> and the annual audits.</p>
 </div>
+<sc-if value="{{focus.on}}" hint-placeholder-val="false"><div class="c-focus" role="region" aria-label="Suggested reading">
+<div class="c-focus-h"><span class="c-focus-c">$ ./readme --focus={{focus.key}}</span><button type="button" class="c-focus-x" onClick="{{focus.clear}}">show everything <span aria-hidden="true">×</span></button></div>
+<p class="c-focus-p">{{focus.intro}}</p>
+<ol class="c-focus-l"><sc-for list="{{focus.items}}" as="x" hint-placeholder-count="4"><li><a href="{{x.href}}" onClick="{{x.go}}"><span class="c-focus-f">{{x.file}}</span><span class="c-focus-w">{{x.why}}</span></a></li></sc-for></ol>
+</div></sc-if>
 <div class="v2-mcta">
 <a class="c-btn" href="#contact" style="display: inline-flex; align-items: center; min-height: 44px; padding: 0 18px; border-radius: 8px; background: var(--acc); color: var(--bg); font-weight: 700; text-decoration: none">./get-in-touch</a>
 <a class="v2-soc" href="mailto:craga89@gmail.com" title="craga89@gmail.com"><svg class="v2-ico" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="m22 7-10 6L2 7"></path></svg>email</a><button type="button" class="v2-copy" onClick="{{copyEmail}}" aria-label="Copy email address" title="{{copyTitle}}"><sc-if value="{{copied}}" hint-placeholder-val="false"><svg class="v2-ico" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7"></path></svg></sc-if><sc-if value="{{notCopied}}" hint-placeholder-val="true"><svg class="v2-ico" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg></sc-if></button><a class="v2-soc" href="https://github.com/Craga89"><svg class="v2-ico" viewBox="0 0 16 16" width="15" height="15" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path></svg>github</a><a class="v2-soc" href="https://www.linkedin.com/in/craigmichaelthompson/"><svg class="v2-ico" viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"></path></svg>linkedin</a><a class="v2-soc" href="/cv"><svg class="v2-ico" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><path d="M14 2v6h6"></path><path d="M16 13H8M16 17H8M10 9H8"></path></svg>plain CV</a><a class="v2-soc" href="cv.pdf" download="Craig-Michael-Thompson-CV.pdf"><svg class="v2-ico" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"></path><path d="m7 10 5 5 5-5"></path><path d="M5 21h14"></path></svg>cv.pdf</a><a class="v2-soc" href="craig-thompson.vcf" download="Craig-Michael-Thompson.vcf"><svg class="v2-ico" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="4"></circle><path d="M2 21a7 7 0 0 1 14 0"></path><path d="M19 8v6M16 11h6"></path></svg>add contact</a><sc-if value="{{shareOk}}" hint-placeholder-val="false"><button type="button" class="v2-share" onClick="{{shareGo}}"><svg class="v2-ico" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v13"></path><path d="m7 8 5-5 5 5"></path><path d="M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"></path></svg>share</button></sc-if><button type="button" class="v2-motion" onClick="{{toggleMotion}}"><svg class="v2-ico" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><sc-if value="{{motionOn}}" hint-placeholder-val="true"><path d="M9 5v14M15 5v14"></path></sc-if><sc-if value="{{motionOff}}" hint-placeholder-val="false"><path d="M8 5l11 7-11 7z"></path></sc-if></svg>{{motionText}}</button>
@@ -1344,6 +1387,7 @@ html[data-vt-dir="prev"]::view-transition-new(c-rs),html[data-vt-dir="prev"]::vi
 <button type="button" onClick="{{rNext}}" aria-label="Next file">next <span aria-hidden="true">→</span></button>
 </div>
 </div>
+<p class="c-perma"><a href="{{respPage.href}}">{{respPage.file}} on its own page <span aria-hidden="true">↗</span></a></p>
 </section>
 
 <section id="case-studies" class="c-rv" style="margin-top: clamp(72px, 10vw, 128px)">
@@ -1607,7 +1651,7 @@ html[data-vt-dir="prev"]::view-transition-new(c-rs),html[data-vt-dir="prev"]::vi
 <div>
 <div style="font-size: 13px; color: var(--mute); margin-bottom: 10px">What the suite checks</div>
 <ul style="margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr)); gap: 10px">
-<li style="border: 1px solid var(--line2); border-radius: 8px; padding: 12px 14px"><div style="font-size: 12px; color: var(--acc)">axe-core · WCAG 2.0–2.2 A/AA</div><div style="color: var(--head); font-weight: 700; margin: 2px 0 4px">Every automated rule, in every state</div><div style="font-size: 14px; color: var(--text3)">Both themes, desktop and mobile, every tab, open FAQs, search results, ask.sh, the chat and the search dialogs: 148 page states per run.</div></li>
+<li style="border: 1px solid var(--line2); border-radius: 8px; padding: 12px 14px"><div style="font-size: 12px; color: var(--acc)">axe-core · WCAG 2.0–2.2 A/AA</div><div style="color: var(--head); font-weight: 700; margin: 2px 0 4px">Every automated rule, in every state</div><div style="font-size: 14px; color: var(--text3)">Both themes, desktop and mobile, every tab, open FAQs, search results, ask.sh, the chat, the search dialogs and every file page: 244 page states per run.</div></li>
 <li style="border: 1px solid var(--line2); border-radius: 8px; padding: 12px 14px"><div style="font-size: 12px; color: var(--acc)">2.1.1 · 2.4.7</div><div style="color: var(--head); font-weight: 700; margin: 2px 0 4px">Keyboard only</div><div style="font-size: 14px; color: var(--text3)">A Tab-key walk through every focus stop, confirming each one shows a visible focus ring.</div></li>
 <li style="border: 1px solid var(--line2); border-radius: 8px; padding: 12px 14px"><div style="font-size: 12px; color: var(--acc)">2.4.11 · new in 2.2</div><div style="color: var(--head); font-weight: 700; margin: 2px 0 4px">Focus never hidden</div><div style="font-size: 14px; color: var(--text3)">Nothing focused can sit behind the sticky header or the chat bar.</div></li>
 <li style="border: 1px solid var(--line2); border-radius: 8px; padding: 12px 14px"><div style="font-size: 12px; color: var(--acc)">2.5.8 · new in 2.2</div><div style="color: var(--head); font-weight: 700; margin: 2px 0 4px">Targets you can hit</div><div style="font-size: 14px; color: var(--text3)">Controls are at least 24px, or spaced so a miss won't land on a neighbour.</div></li>
@@ -2022,7 +2066,7 @@ html[data-vt-dir="prev"]::view-transition-new(c-rs),html[data-vt-dir="prev"]::vi
 </div>
 </div>
 </div>
-
+<p class="c-perma"><a href="{{casePage.href}}">{{casePage.file}} on its own page <span aria-hidden="true">↗</span></a></p>
 </div>
 </div>
 </section>
@@ -2236,6 +2280,7 @@ html[data-vt-dir="prev"]::view-transition-new(c-rs),html[data-vt-dir="prev"]::vi
 <button type="button" class="c-keys-x" onClick="{{keysClose}}" aria-label="Close"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"></path></svg></button>
 </dialog>
 <span class="c-sr" role="status">{{srNote}}</span>
+<div class="c-toast" data-show="{{toast.show}}" aria-hidden="true">{{toast.text}}</div>
 <div class="c-chat" data-open="{{chatOpenAttr}}" data-hide="{{chatHide}}">
 <button type="button" class="c-chat-bar" onClick="{{chatToggle}}" aria-expanded="{{chatOpenAttr}}" aria-controls="c-chat-panel" title="{{chatBarTitle}}">
 <span class="c-chat-av"><img src="./portrait.webp" alt="" width="28" height="28" loading="lazy" decoding="async"><i aria-hidden="true"></i></span>
@@ -2270,6 +2315,15 @@ html[data-vt-dir="prev"]::view-transition-new(c-rs),html[data-vt-dir="prev"]::vi
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props='{"motion":{"editor":"boolean","default":true},"theme":{"editor":"enum","options":["dark","light"],"default":"dark"},"$preview":{"width":1440,"height":7600}}'>
 class Component extends DCLogic {
+  static CASES = [['mono', 'monorepo.md'], ['refactor', 'refactor.md'], ['ci', 'ci-cd.md'], ['test', 'testing.md'], ['a11y', 'accessibility.md'], ['aws', 'aws.md'], ['sec', 'security.md'], ['auth', 'auth.md'], ['data', 'data.md'], ['cost', 'cost.md'], ['ai', 'ai/platform.md'], ['site', 'this-site.md']];
+  static RESPS = [['lead', 'leadership.md'], ['hire', 'hiring.md'], ['people', 'people.md'], ['proc', 'process.md'], ['aiproc', 'ai.md'], ['prod', 'product.md'], ['cust', 'customers.md'], ['bud', 'budget.md'], ['acq', 'acquisition.md'], ['inc', 'incidents.md'], ['comp', 'compliance.md'], ['it', 'it.md']];
+  // Suggested reading orders for ?focus=… links: [kind, id, headline].
+  static FOCUS = {
+    leadership: { label: 'engineering leadership', tab: 'cost', rtab: 'lead', items: [['r', 'lead', 'Led the team, not just the platform'], ['r', 'hire', 'Building the team, from first interview to first deploy'], ['r', 'acq', 'From startup to acquisition'], ['r', 'bud', 'Every pound accounted for'], ['r', 'inc', 'When things break: a plan, not a panic'], ['c', 'cost', 'Measure first, then cut']] },
+    platform: { label: 'platform engineering', tab: 'mono', rtab: 'inc', items: [['c', 'mono', 'One codebase, kept modern without stopping delivery'], ['c', 'ci', 'Build only what changed, ship every merge'], ['c', 'aws', 'Nothing public but the CDN'], ['c', 'sec', 'Closing doors, not adding locks'], ['c', 'data', 'Making the flagship report fast at scale'], ['r', 'inc', 'When things break: a plan, not a panic']] },
+    ai: { label: 'AI-first engineering', tab: 'ai', rtab: 'aiproc', items: [['r', 'aiproc', 'From AI-assisted to AI-first, in a year'], ['c', 'ai', 'AI where it earns its keep'], ['c', 'site', 'This site, run like a production system'], ['c', 'test', 'A test suite that kept up with the platform']] },
+    frontend: { label: 'front end and accessibility', tab: 'a11y', rtab: 'lead', items: [['c', 'a11y', 'Accessible by default, checked on every deploy'], ['c', 'refactor', 'Keep the toolchain modern, one reviewed change at a time'], ['c', 'test', 'A test suite that kept up with the platform'], ['c', 'mono', 'One codebase, kept modern without stopping delivery']] }
+  };
   // Everything that can be known before the first render goes into the initial state, so mounting
   // doesn't set state and trigger a second full render straight away.
   constructor(props) {
@@ -2282,7 +2336,24 @@ class Component extends DCLogic {
     try { st.shareOk = typeof navigator.share === 'function' && window.isSecureContext; } catch (e) {}
     this._clock = this.clockNow();
     st.clockOn = !!this._clock;
+    // Deep links: ?case=<id> / ?resp=<id> open that file; ?focus=<view> adds a suggested reading order.
+    try {
+      const q = new URLSearchParams(location.search);
+      const F = Component.FOCUS, f = q.get('focus');
+      if (f && F[f]) { st.focus = f; st.tab = F[f].tab; st.rtab = F[f].rtab; st.rPlay = false; }
+      const c = q.get('case'), r = q.get('resp');
+      if (c && Component.CASES.some(([id]) => id === c)) st.tab = c;
+      if (r && Component.RESPS.some(([id]) => id === r)) { st.rtab = r; st.rPlay = false; }
+    } catch (e) {}
     this.state = st;
+  }
+  // Light up the Tyne Bridge for a few seconds (the easter egg).
+  lightBridge() {
+    clearTimeout(this._litT);
+    this.scrollToId('top');
+    this.setState({ lit: true, toast: 'The Tyne Bridge, lit up · opened 1928' });
+    this._litT = setTimeout(() => this.setState({ lit: false, toast: '' }), 9000);
+    try { console.log('%c🌉 ↑↑↓↓←→←→BA', 'font:600 14px ui-monospace,monospace;color:#8EC3E6'); } catch (e) {}
   }
   // Local time in Newcastle, with its UTC offset.
   clockNow() {
@@ -2335,7 +2406,7 @@ class Component extends DCLogic {
   }
   // Next / previous case study, in tab order.
   goCase(step) {
-    const ids = ['mono', 'refactor', 'ci', 'test', 'a11y', 'aws', 'sec', 'auth', 'data', 'cost', 'ai', 'site'];
+    const ids = Component.CASES.map(([id]) => id);
     const cur = Math.max(0, ids.indexOf((this.state || {}).tab || 'mono'));
     this.setState({ tab: ids[(cur + step + ids.length) % ids.length] });
   }
@@ -2376,9 +2447,14 @@ class Component extends DCLogic {
   bindKeys() {
     if (this._onKeys || typeof document === 'undefined') return;
     try { this._faqs = [...document.querySelectorAll('#faq details > summary')].map((n, i) => ({ q: n.textContent.trim(), i })); } catch (e) { this._faqs = []; }
+    const KONAMI = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+    let kpos = 0;
     this._onKeys = (e) => {
       const st = this.state || {};
       const k = e.key;
+      const kk = k && k.length === 1 ? k.toLowerCase() : k;
+      kpos = kk === KONAMI[kpos] ? kpos + 1 : (kk === KONAMI[0] ? 1 : 0);
+      if (kpos === KONAMI.length) { kpos = 0; this.lightBridge(); return; }
       if ((e.metaKey || e.ctrlKey) && !e.altKey && !e.shiftKey && (k === 'k' || k === 'K')) { e.preventDefault(); if (st.palOpen) this.palClose(); else this.palOpen(); return; }
       if (e.metaKey || e.ctrlKey || e.altKey || e.defaultPrevented || !st.keysOn) return;
       const t = e.target;
@@ -2748,7 +2824,7 @@ class Component extends DCLogic {
   }
   // A few shell commands in ask.sh, answered locally (no AI call).
   isShell(q) {
-    return /^(help|man( \S+)?|ls( \S+)?|whoami|pwd|date|clear|contact|cat \S+|echo .*|sudo( .*)?|exit)$/i.test(String(q).trim());
+    return /^(help|man( \S+)?|ls( \S+)?|whoami|pwd|date|clear|contact|cat \S+|echo .*|sudo( .*)?|exit|bridge|lights)$/i.test(String(q).trim());
   }
   askShell(raw, index) {
     const q = String(raw).trim();
@@ -2771,6 +2847,7 @@ class Component extends DCLogic {
     if (c === 'date') return { answer: london({ weekday: 'short', day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) + ' in Newcastle (Europe/London)' };
     if (c === 'contact') return { answer: 'email  craga89@gmail.com\ncard   contact.vcf\ncv     cv.pdf' };
     if (c === 'clear') return { clear: true };
+    if (c === 'bridge' || c === 'lights') { setTimeout(() => this.lightBridge(), 300); return { answer: 'Lighting up the Tyne Bridge. Scroll to the top if you missed it.' }; }
     if (c === 'echo') return { answer: arg };
     if (c === 'exit') return { answer: "There's no exit. The chat bar is always here if you need it." };
     if (c === 'sudo') return { answer: 'craig is not in the sudoers file. This incident will be reported to Craig, who would be glad to hear from you: craga89@gmail.com' };
@@ -2956,20 +3033,7 @@ class Component extends DCLogic {
     const light = theme === 'light';
     const tab = (this.state && this.state.tab) || 'mono';
     const rtab = (this.state && this.state.rtab) || 'lead';
-    const defs = [
-      ['mono', 'monorepo.md'],
-      ['refactor', 'refactor.md'],
-      ['ci', 'ci-cd.md'],
-      ['test', 'testing.md'],
-      ['a11y', 'accessibility.md'],
-      ['aws', 'aws.md'],
-      ['sec', 'security.md'],
-      ['auth', 'auth.md'],
-      ['data', 'data.md'],
-      ['cost', 'cost.md'],
-      ['ai', 'ai/platform.md'],
-      ['site', 'this-site.md']
-    ];
+    const defs = Component.CASES;
     const base = 'min-height: 44px; padding: 0 16px; border-radius: 8px; font: inherit; font-size: 14px; cursor: pointer; ';
     const tabs = defs.map(([id, label]) => {
       const on = id === tab;
@@ -2980,7 +3044,7 @@ class Component extends DCLogic {
         pick: () => this.vt(() => this.setState({ tab: id }))
       };
     });
-    const rdefs = [['lead', 'leadership.md'], ['hire', 'hiring.md'], ['people', 'people.md'], ['proc', 'process.md'], ['aiproc', 'ai.md'], ['prod', 'product.md'], ['cust', 'customers.md'], ['bud', 'budget.md'], ['acq', 'acquisition.md'], ['inc', 'incidents.md'], ['comp', 'compliance.md'], ['it', 'it.md']];
+    const rdefs = Component.RESPS;
     const rst = this.state || {};
     const rIdx = Math.max(0, rdefs.findIndex(([id]) => id === rtab));
     const rRun = !!rst.rRun;
@@ -3085,6 +3149,12 @@ class Component extends DCLogic {
     add(st0.motionOff ? '▶' : '‖', st0.motionOff ? 'Play animations' : 'Pause animations', 'action', toggleMotion, 'motion animation stop');
     if (st0.shareOk) add('↗', 'Share this page', 'action', shareGo, 'send');
     add('⌨', 'Keyboard shortcuts', 'action', () => setTimeout(() => this.keysOpen(), 0), 'keys help hotkeys');
+    Object.keys(Component.FOCUS).forEach((k) => add('→', 'Suggested reading: ' + Component.FOCUS[k].label, 'focus', () => {
+      const F = Component.FOCUS[k];
+      this.setState({ focus: k, tab: F.tab, rtab: F.rtab, rPlay: false });
+      try { const u = new URL(location.href); u.searchParams.set('focus', k); history.replaceState(null, '', u.pathname + u.search + u.hash); } catch (e) {}
+      this.scrollToId('top');
+    }, 'focus view ' + k));
     add('↗', 'GitHub profile', 'link', openUrl('https://github.com/Craga89'), 'craga89 code');
     add('↗', 'LinkedIn profile', 'link', openUrl('https://www.linkedin.com/in/craigmichaelthompson/'), 'linkedin');
     rdefs.forEach(([id, f]) => add('›', 'responsibilities/' + f, 'responsibility', () => { toResp(id)(); focusLater('#r-deck'); }));
@@ -3151,6 +3221,18 @@ class Component extends DCLogic {
       prs: os ? n(os.prs) : '59', repos: os ? n(os.repos) : '35', since: os && os.since ? os.since : '2012',
       qStars: os && os.qtip ? n(os.qtip.stars) : '~2k', qForks: os && os.qtip ? n(os.qtip.forks) : '458', qCommits: os && os.qtip ? n(os.qtip.commits) : '1,384'
     };
+    const slug = (f) => f.replace(/\.md$/, '').replace(/\//g, '-');
+    const caseFile = (defs.find(([id]) => id === tab) || defs[0])[1], respFile = (rdefs.find(([id]) => id === rtab) || rdefs[0])[1];
+    const casePage = { file: caseFile, href: 'case-studies/' + slug(caseFile) + '/' }, respPage = { file: respFile, href: 'responsibilities/' + slug(respFile) + '/' };
+    const FD = st0.focus && Component.FOCUS[st0.focus];
+    const focus = FD ? {
+      on: true, key: st0.focus, intro: 'A suggested reading order for ' + FD.label + '. Everything else is still here.',
+      items: FD.items.map(([k, id, why]) => {
+        const f = ((k === 'c' ? defs : rdefs).find(([x]) => x === id) || [])[1] || '';
+        return { file: (k === 'c' ? 'case-studies/' : 'responsibilities/') + f, why, href: k === 'c' ? '#case-studies' : '#responsibilities', go: k === 'c' ? toCase(id) : toResp(id) };
+      }),
+      clear: () => { this.setState({ focus: null }); try { const u = new URL(location.href); u.searchParams.delete('focus'); history.replaceState(null, '', u.pathname + u.search + u.hash); } catch (e) {} }
+    } : { on: false, items: [] };
     const ancIds = ['career', 'responsibilities', 'case-studies', 'stack', 'oss', 'recommendations', 'faq', 'ask', 'contact'];
     const ASK_SUGG = ['What roles is he looking for?', 'How has he used AI in engineering?', 'Has he owned a budget?', 'Has he been through an acquisition?'];
     const askSugg = ASK_SUGG.map((t) => ({ t, pick: () => this.askSubmit(t) }));
@@ -3182,6 +3264,7 @@ class Component extends DCLogic {
       keysClose: () => { const d = document.getElementById('c-keys'); if (d && d.open) d.close(); },
       anc: Object.fromEntries(ancIds.map((id) => [id, st0.ancDone === id ? 'true' : 'false'])),
       shareOk: !!st0.shareOk, shareGo,
+      casePage, respPage, focus,
       live, goSite: () => { this.setState({ tab: 'site' }); this.scrollToId('case-studies'); },
       openTests: (e) => { if (e && e.preventDefault) e.preventDefault(); const d = document.getElementById('c-tests'); if (d) d.open = true; this.scrollToId('c-tests'); },
       clockOn: !!askSt.clockOn,
@@ -3219,7 +3302,8 @@ class Component extends DCLogic {
       },
       chatGo: () => this.askSubmit((this.state || {}).chatQ, 'chat'),
       spy: { 'ask': ((this.state || {}).spy || 'top') === 'ask' ? 'true' : 'false', 'top': ((this.state || {}).spy || 'top') === 'top' ? 'true' : 'false', 'about': ((this.state || {}).spy || 'top') === 'about' ? 'true' : 'false', 'career': ((this.state || {}).spy || 'top') === 'career' ? 'true' : 'false', 'responsibilities': ((this.state || {}).spy || 'top') === 'responsibilities' ? 'true' : 'false', 'caseStudies': ((this.state || {}).spy || 'top') === 'case-studies' ? 'true' : 'false', 'stack': ((this.state || {}).spy || 'top') === 'stack' ? 'true' : 'false', 'oss': ((this.state || {}).spy || 'top') === 'oss' ? 'true' : 'false', 'recommendations': ((this.state || {}).spy || 'top') === 'recommendations' ? 'true' : 'false', 'faq': ((this.state || {}).spy || 'top') === 'faq' ? 'true' : 'false', 'contact': ((this.state || {}).spy || 'top') === 'contact' ? 'true' : 'false' },
-      rootClass: (motion && !(this.state || {}).motionOff ? 'c-root' : 'c-root still') + (light ? ' c-light' : ''),
+      rootClass: (motion && !(this.state || {}).motionOff ? 'c-root' : 'c-root still') + (light ? ' c-light' : '') + ((this.state || {}).lit ? ' c-bridge-on' : ''),
+      toast: { show: (this.state || {}).toast ? 'true' : 'false', text: (this.state || {}).toast || '' },
       sq: sqRaw, noSq: !sql, onSq: (e) => this.setState({ sq: e.target.value }), sqResults, sqSummary, sqEmpty: sqHits === 0,
       isLight: light,
       isDark: !light,

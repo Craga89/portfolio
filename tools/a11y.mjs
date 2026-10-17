@@ -20,7 +20,7 @@
 // Exits non-zero if anything fails.
 import { chromium } from 'playwright';
 import http from 'node:http';
-import { readFileSync, writeFileSync, existsSync } from 'node:fs';
+import { readFileSync, writeFileSync, existsSync, readdirSync } from 'node:fs';
 import { join, extname, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -34,7 +34,7 @@ let base = arg('--url');
 let srv = null;
 if (!base) {
   const OUT = join(ROOT, 'site');
-  const T = { '.html': 'text/html', '.js': 'text/javascript', '.json': 'application/json', '.webp': 'image/webp', '.avif': 'image/avif', '.png': 'image/png', '.woff2': 'font/woff2', '.svg': 'image/svg+xml' };
+  const T = { '.html': 'text/html', '.js': 'text/javascript', '.json': 'application/json', '.webp': 'image/webp', '.avif': 'image/avif', '.png': 'image/png', '.woff2': 'font/woff2', '.svg': 'image/svg+xml', '.css': 'text/css' };
   srv = http.createServer((q, r) => {
     let p = decodeURIComponent(q.url.split('?')[0]);
     if (p.endsWith('/')) p += 'index.html';
@@ -169,10 +169,12 @@ for (const [width, scheme] of [[1440, 'dark'], [1440, 'light'], [390, 'dark'], [
     await axe(page, `chat open ${tag}`, '.c-chat');
   }
   await ctx.close();
-  for (const path of ['cv/', 'this-page-does-not-exist']) {
+  const filePages = [];
+  for (const dir of ['case-studies', 'responsibilities']) { try { for (const f of readdirSync(join(ROOT, 'site', dir))) filePages.push(`${dir}/${f}/`); } catch (e) {} }
+  for (const path of ['cv/', 'this-page-does-not-exist', ...filePages]) {
     const o = await open(path, { width, scheme });
     await settle(o.page);
-    await axe(o.page, `${path === 'cv/' ? 'plain CV' : '404 page'} ${tag}`);
+    await axe(o.page, `${path === 'cv/' ? 'plain CV' : path.endsWith('/') ? path : '404 page'} ${tag}`);
     await o.ctx.close();
   }
 }

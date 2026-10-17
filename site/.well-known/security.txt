@@ -1,4 +1,4 @@
 Contact: mailto:craga89@gmail.com
-Expires: 2027-10-17T13:47:22Z
+Expires: 2027-10-17T17:57:30Z
 Preferred-Languages: en
 Canonical: https://craigthompson.dev/.well-known/security.txt
