@@ -1,0 +1,34 @@
+# Weekly: counts merged upstream pull requests and qTip2's stars, forks and commits,
+# and saves them to the `oss` branch (reports/oss.json). The Pages deploy publishes them in live.json.
+name: Open-source stats
+
+on:
+  schedule:
+    - cron: '11 5 * * 1' # Mondays, 05:11 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  stats:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - name: Count
+        run: node tools/oss-stats.mjs oss.json
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Save to the oss branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git switch --orphan oss-tmp
+          git rm -rq --cached . || true
+          mkdir -p reports && cp oss.json reports/oss.json
+          git add reports
+          git commit -qm "Open-source stats $(date -u +%F)"
+          git push -f origin oss-tmp:oss
