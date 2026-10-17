@@ -105,9 +105,10 @@ function seoHead(head, { title, desc, url, type, today }) {
 // Cookie-free visit count: one small beacon as the visitor leaves (page, referring site, device
 // class, sections seen, time on page). Skipped for Do Not Track / Global Privacy Control.
 // Cloudflare Web Analytics: cookieless page-view counts. Only on the live domains (not local or
-// preview builds), not for Do Not Track / Global Privacy Control, and loaded after the page has.
+// preview builds), not for Do Not Track / Global Privacy Control. It loads on the first interaction, or
+// 6s after the page has loaded, so it never competes with the page itself for the network.
 const CF_ANALYTICS_TOKEN = '3204254163b94619a6f630b47e82c749';
-const cfAnalytics = `<script>(function(){try{if(!/(^|\\.)(craigthompson|craga)\\.dev$/.test(location.hostname)||navigator.globalPrivacyControl||navigator.doNotTrack==='1')return;var go=function(){var s=document.createElement('script');s.defer=true;s.src='https://static.cloudflareinsights.com/beacon.min.js';s.setAttribute('data-cf-beacon','{"token":"${CF_ANALYTICS_TOKEN}"}');document.head.appendChild(s)};if(document.readyState==='complete')go();else addEventListener('load',go,{once:true})}catch(e){}})()</script>`;
+const cfAnalytics = `<script>(function(){try{if(!/(^|\\.)(craigthompson|craga)\\.dev$/.test(location.hostname)||navigator.globalPrivacyControl||navigator.doNotTrack==='1')return;var go=function(){var s=document.createElement('script');s.defer=true;s.src='https://static.cloudflareinsights.com/beacon.min.js';s.setAttribute('data-cf-beacon','{"token":"${CF_ANALYTICS_TOKEN}"}');document.head.appendChild(s)};var done=false,ev=['pointerdown','keydown','wheel','touchstart','scroll'],once=function(){if(done)return;done=true;ev.forEach(function(t){removeEventListener(t,once,true)});go()};ev.forEach(function(t){addEventListener(t,once,{capture:true,passive:true})});var later=function(){setTimeout(once,6000)};if(document.readyState==='complete')later();else addEventListener('load',later,{once:true})}catch(e){}})()</script>`;
 
 const beacon = (endpoint, sections) => !endpoint ? '' : `(function () {
   try {

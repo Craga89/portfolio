@@ -58,7 +58,7 @@ The Pages deploy (on every push, and daily) collects the latest CI results from 
 
 ## Visits and questions (anonymous)
 
-- **Cloudflare Web Analytics** (cookieless) runs on the home page and CV, only on craigthompson.dev / craga.dev, and not for Do Not Track or Global Privacy Control. It loads after the page. The token is in `tools/build.mjs` (`CF_ANALYTICS_TOKEN`); the dashboard is Cloudflare → Analytics & Logs → Web Analytics.
+- **Cloudflare Web Analytics** (cookieless) runs on the home page and CV, only on craigthompson.dev / craga.dev, and not for Do Not Track or Global Privacy Control. It loads on the first interaction (scroll, tap, key) or 6s after the page has loaded, so it never competes with the page for the network. The token is in `tools/build.mjs` (`CF_ANALYTICS_TOKEN`); the dashboard is Cloudflare → Analytics & Logs → Web Analytics.
 
 - The Worker keeps two tables in the D1 database `craga-ask` (schema in `worker/schema.sql`). `questions` holds each ask.sh question, whether it was answered, the model and the sources. `visits` holds one row per page view: path, referring site, country, device class, sections seen and seconds on the page. No IP addresses, cookies or user agents are stored. Bots, CI traffic (`x-craga-test: 1`) and Do Not Track / Global Privacy Control visitors are skipped. The page says so in ask.sh, the chat and the FAQ.
 - `.github/workflows/stats.yml` writes a weekly summary to its run page: visits, referrers, how far people read, devices, countries, and the questions ask.sh couldn't answer (FAQ candidates). You can also query the tables in the Cloudflare dashboard (D1 → craga-ask → Console).
