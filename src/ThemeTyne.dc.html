@@ -255,11 +255,26 @@ main a:not(.c-btn):hover{text-underline-offset:6px}
 @media (max-width:600px), (max-width:900px) and (max-height:599px){
   .v2-shell{grid-template-columns:minmax(0,1fr)}
   .v2-side{display:none}
-  .v2-mbar{display:flex;align-items:center;position:sticky;top:0;z-index:5;background:var(--hdr);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
-  .v2-mbar nav{flex:1;min-width:0;-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 28px),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 28px),transparent)}
-  .v2-mbar-cta{flex:none;display:inline-flex;align-items:center;min-height:34px;margin:0 12px 0 4px;padding:0 12px;border-radius:6px;background:var(--acc);color:var(--bg)!important;font-size:13.5px;font-weight:700;text-decoration:none!important;white-space:nowrap}
+  .v2-mbar{display:flex;align-items:center;gap:8px;position:sticky;top:0;z-index:20;min-height:56px;padding:0 8px 0 16px;background:var(--hdr);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+  .v2-mbrand{display:flex;align-items:center;gap:8px;min-height:44px;color:var(--head)!important;font-family:var(--f-mono,ui-monospace,monospace);font-size:14px;font-weight:700;text-decoration:none;white-space:nowrap}
+  .v2-menu>summary{list-style:none;display:grid;place-items:center;width:44px;height:44px;border-radius:8px;color:var(--head);cursor:pointer}
+  .v2-menu>summary::-webkit-details-marker{display:none}
+  .v2-menu>summary:hover{background:var(--panel2)}
+  .v2-menu .v2-menu-x,.v2-menu[open] .v2-menu-i{display:none}
+  .v2-menu[open] .v2-menu-x{display:block}
+  .v2-menu-p{position:absolute;left:0;right:0;top:100%;max-height:calc(100dvh - 56px);overflow-y:auto;overscroll-behavior:contain;padding:6px 16px 16px;background:var(--panel);border-bottom:1px solid var(--line2);box-shadow:0 18px 30px -18px rgba(0,0,0,.55)}
+  .v2-menu[open] .v2-menu-p{animation:c-pop .2s ease both}
+  .v2-menu-p ul{list-style:none;margin:0;padding:0;display:grid}
+  .v2-menu-p li a{display:flex;align-items:center;gap:10px;min-height:44px;padding:0 10px;border-radius:6px;border-left:2px solid transparent;font-family:var(--f-mono,ui-monospace,monospace);font-size:15px;color:var(--text3);text-decoration:none}
+  .v2-menu-p li a::before{content:'○';font-size:9px;color:var(--line3)}
+  .v2-menu-p li a[aria-current="true"]{background:var(--acc-bg);color:var(--head);border-left-color:var(--acc);font-weight:700}
+  .v2-menu-p li a[aria-current="true"]::before{content:'●';color:var(--acc)}
+  .v2-menu-tools{display:flex;gap:8px;margin-top:10px;padding-top:12px;border-top:1px solid var(--line2)}
+  .v2-menu-b{all:unset;box-sizing:border-box;cursor:pointer;flex:1;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;border:1px solid var(--line3);border-radius:8px;font-size:14px;color:var(--text2)}
+  .v2-menu-b:hover{border-color:var(--acc);color:var(--head)}
+  .v2-menu-b:focus-visible,.v2-menu>summary:focus-visible{outline:2px solid var(--acc);outline-offset:-2px}
+  .v2-mbar-cta{flex:none;display:inline-flex;align-items:center;min-height:34px;margin:0 2px 0 auto;padding:0 12px;border-radius:6px;background:var(--acc);color:var(--bg)!important;font-size:13.5px;font-weight:700;text-decoration:none!important;white-space:nowrap}
   .v2-mbar-cta:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
-  .v2-mbar nav{display:flex;align-items:center;gap:18px;padding:12px 16px;overflow-x:auto;font-size:14px;white-space:nowrap}
 }
 
 /* ---- theme layer ---- */
@@ -329,8 +344,6 @@ body:has(.c-light){background:#EDF1EE!important}
 @keyframes c-micp{0%,100%{box-shadow:0 0 0 0 color-mix(in srgb,var(--bad) 45%,transparent)}50%{box-shadow:0 0 0 7px color-mix(in srgb,var(--bad) 0%,transparent)}}
 /* accessibility: a visible focus ring on anything focusable that has no ring of its own */
 :where(.c-root) :where(a,button,summary,input,textarea,select,[tabindex]):focus-visible{outline:2px solid var(--acc);outline-offset:2px}
-.v2-mbar nav a:focus-visible{outline-offset:-2px;border-radius:3px}
-.v2-mbar nav a{scroll-margin-inline:16px}
 /* keep focused elements clear of the sticky header and the chat bar */
 html{scroll-padding-top:calc(var(--hdr-h,0px) + 12px);scroll-padding-bottom:72px}
 .c-ask-src a,.c-chat-src a{display:inline-block;padding:3px 0}
@@ -626,7 +639,7 @@ html:has(.c-light){scrollbar-color:#A8B8AD #EDF1EE}
 </helmet>
 <div class="{{rootClass}}" style="background: var(--bg); color: var(--text); min-height: 100vh; font-size: 16px; line-height: 1.7">
 
-<header id="c-hdr" class="v2-mbar"><nav aria-label="Sections"><a href="#top" style="display: flex; align-items: center; gap: 8px; color: var(--head); font-weight: 700"><span class="c-dot" style="width: 9px; height: 9px; border-radius: 50%; background: var(--ok)"></span>craigthompson.dev</a><a href="#career">career</a><a href="#responsibilities">roles</a><a href="#case-studies">case studies</a><a href="#stack">stack</a><a href="#oss">open source</a><a href="#recommendations">recommendations</a><a href="#faq">faq</a><a href="#ask">ask</a></nav><a class="v2-mbar-cta" href="#contact">get in touch</a></header>
+<header id="c-hdr" class="v2-mbar"><a class="v2-mbrand" href="#top"><span class="c-dot" style="width: 9px; height: 9px; border-radius: 50%; background: var(--ok)"></span>craigthompson.dev</a><a class="v2-mbar-cta" href="#contact">get in touch</a><details id="v2-menu" class="v2-menu"><summary aria-label="Menu" title="Menu"><svg class="v2-menu-i" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"></path></svg><svg class="v2-menu-x" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"></path></svg></summary><div class="v2-menu-p"><nav aria-label="Sections"><ul><li><a href="#top" aria-current="{{spy.top}}">README.md</a></li><li><a href="#career" aria-current="{{spy.career}}">career.log</a></li><li><a href="#responsibilities" aria-current="{{spy.responsibilities}}">responsibilities/</a></li><li><a href="#case-studies" aria-current="{{spy.caseStudies}}">case-studies/</a></li><li><a href="#stack" aria-current="{{spy.stack}}">stack/</a></li><li><a href="#oss" aria-current="{{spy.oss}}">open-source/</a></li><li><a href="#recommendations" aria-current="{{spy.recommendations}}">recommendations.txt</a></li><li><a href="#faq" aria-current="{{spy.faq}}">faq.md</a></li><li><a href="#ask" aria-current="{{spy.ask}}">ask.sh</a></li><li><a href="#contact" aria-current="{{spy.contact}}">get-in-touch.md</a></li></ul></nav><div class="v2-menu-tools"><button type="button" class="v2-menu-b" onClick="{{menuSearch}}" aria-haspopup="dialog"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>search</button><button type="button" class="v2-menu-b" onClick="{{toggleTheme}}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 3a9 9 0 0 0 0 18z" fill="currentColor"></path></svg>{{themeShort}}</button></div></div></details></header>
 
 <div class="v2-shell">
 <aside class="v2-side" aria-label="Site">
@@ -1584,7 +1597,7 @@ html:has(.c-light){scrollbar-color:#A8B8AD #EDF1EE}
 <div>
 <div style="font-size: 13px; color: var(--mute); margin-bottom: 10px">What the suite checks</div>
 <ul style="margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr)); gap: 10px">
-<li style="border: 1px solid var(--line2); border-radius: 8px; padding: 12px 14px"><div style="font-size: 12px; color: var(--acc)">axe-core · WCAG 2.0–2.2 A/AA</div><div style="color: var(--head); font-weight: 700; margin: 2px 0 4px">Every automated rule, in every state</div><div style="font-size: 14px; color: var(--text3)">Both themes, desktop and mobile, every tab, open FAQs, search results, ask.sh, the chat and the search dialogs: 146 page states per run.</div></li>
+<li style="border: 1px solid var(--line2); border-radius: 8px; padding: 12px 14px"><div style="font-size: 12px; color: var(--acc)">axe-core · WCAG 2.0–2.2 A/AA</div><div style="color: var(--head); font-weight: 700; margin: 2px 0 4px">Every automated rule, in every state</div><div style="font-size: 14px; color: var(--text3)">Both themes, desktop and mobile, every tab, open FAQs, search results, ask.sh, the chat and the search dialogs: 147 page states per run.</div></li>
 <li style="border: 1px solid var(--line2); border-radius: 8px; padding: 12px 14px"><div style="font-size: 12px; color: var(--acc)">2.1.1 · 2.4.7</div><div style="color: var(--head); font-weight: 700; margin: 2px 0 4px">Keyboard only</div><div style="font-size: 14px; color: var(--text3)">A Tab-key walk through every focus stop, confirming each one shows a visible focus ring.</div></li>
 <li style="border: 1px solid var(--line2); border-radius: 8px; padding: 12px 14px"><div style="font-size: 12px; color: var(--acc)">2.4.11 · new in 2.2</div><div style="color: var(--head); font-weight: 700; margin: 2px 0 4px">Focus never hidden</div><div style="font-size: 14px; color: var(--text3)">Nothing focused can sit behind the sticky header or the chat bar.</div></li>
 <li style="border: 1px solid var(--line2); border-radius: 8px; padding: 12px 14px"><div style="font-size: 12px; color: var(--acc)">2.5.8 · new in 2.2</div><div style="color: var(--head); font-weight: 700; margin: 2px 0 4px">Targets you can hit</div><div style="font-size: 14px; color: var(--text3)">Controls are at least 24px, or spaced so a miss won't land on a neighbour.</div></li>
@@ -2327,6 +2340,18 @@ class Component extends DCLogic {
       d.addEventListener('close', () => this.setState(id === 'c-pal' ? { palOpen: false } : { keysDlg: false }));
       d.addEventListener('click', (e) => { if (e.target === d) d.close(); });
     });
+    // Mobile menu (a <details>, so it works without JavaScript): close it after a jump, on Escape
+    // (focus back on the button), or on a tap outside it.
+    this._onMenu = (e) => {
+      const m = document.getElementById('v2-menu');
+      if (!m || !m.open) return;
+      if (e.type === 'keydown') { if (e.key === 'Escape') { m.open = false; const sm = m.querySelector('summary'); if (sm) sm.focus(); } return; }
+      const t = e.target;
+      if (t.closest && t.closest('.v2-menu-p a')) { setTimeout(() => { m.open = false; }, 0); return; }
+      if (!m.contains(t)) m.open = false;
+    };
+    document.addEventListener('click', this._onMenu, true);
+    document.addEventListener('keydown', this._onMenu);
     // Section heading links copy their address (and still jump there).
     this._onCopyLink = (e) => {
       const a = e.target && e.target.closest ? e.target.closest('a.c-anchor') : null;
@@ -3145,6 +3170,8 @@ class Component extends DCLogic {
       isLight: light,
       isDark: !light,
       themeLabel: light ? 'Switch to dark theme' : 'Switch to light theme',
+      themeShort: light ? 'dark theme' : 'light theme',
+      menuSearch: () => { const m = document.getElementById('v2-menu'); if (m) m.open = false; setTimeout(() => this.palOpen(), 0); },
       toggleTheme,
       tabs, rsegs, rKey, rCanPlay, rPaused: rPaused ? 'true' : 'false',
       rPlayLabel: rPaused ? '▶ play' : '❚❚ pause', rLive: rRun ? 'off' : 'polite',

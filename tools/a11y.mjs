@@ -121,6 +121,13 @@ for (const [width, scheme] of [[1440, 'dark'], [1440, 'light'], [390, 'dark'], [
     await axe(page, `toggletip open ${tag}`);
     await page.keyboard.press('Escape');
   }
+  // The mobile menu, open.
+  if (width <= 600) {
+    await page.evaluate(() => { scrollTo(0, 0); const m = document.getElementById('v2-menu'); if (m) m.open = true; });
+    await page.waitForTimeout(300);
+    await axe(page, `mobile menu open ${tag}`, '#c-hdr');
+    await page.evaluate(() => { const m = document.getElementById('v2-menu'); if (m) m.open = false; });
+  }
   // The command palette (Ctrl+K), unfiltered and filtered, and the keyboard shortcuts dialog.
   if (width > 600) {
     await page.keyboard.press('Control+k');

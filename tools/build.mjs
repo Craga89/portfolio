@@ -251,10 +251,6 @@ function buildHome(today) {
   try { saved = localStorage.getItem('theme'); } catch (e) {}
   var light = false;
   try { light = window.matchMedia('(prefers-color-scheme: light)').matches; } catch (e) {}
-  document.addEventListener('focusin', function (e) {
-    var a = e.target && e.target.closest && e.target.closest('.v2-mbar nav a');
-    if (a) try { a.scrollIntoView({ block: 'nearest', inline: 'nearest' }); } catch (x) {}
-  });
   // Offline support and instant repeat visits (https only, so local previews aren't cached).
   if ('serviceWorker' in navigator && location.protocol === 'https:') {
     window.addEventListener('load', function () { navigator.serviceWorker.register('sw.js').catch(function () {}); });

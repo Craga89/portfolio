@@ -40,6 +40,7 @@ Every push to `main` deploys `site/` through `.github/workflows/pages.yml`.
 - **Section links:** the `#` beside each section heading copies a link to that section.
 - **Plain CV themes:** `/cv/` follows the same saved theme as the home page (or the system setting), has its own toggle, and always prints and exports light.
 - **Landing flash:** an in-page link briefly highlights where it lands (the section heading, or the item itself) once the scroll ends.
+- **Mobile menu:** below 600px wide (or on short landscape screens) the header is the site name, a get in touch button and a menu button. The menu is a `<details>`, so it opens without JavaScript; it lists every section (marking the current one), with search and the theme switch, and closes on a jump, Escape or a tap outside.
 - **Get in touch:** a contact section at the bottom (`#contact`, get-in-touch.md in the sidebar) that every get-in-touch button links to: email with a copy button, links, cv.pdf, contact card, and what roles and working pattern Craig is looking for.
 - **Transitions:** tab and file switches cross-fade with the View Transitions API; the chat panel, toggletips and dialogs ease in with `@starting-style`. All of it is skipped with reduced motion or "pause animations".
 - **Instant CV:** speculation rules prerender `/cv/` when you hover its link (and the home page from the CV).
