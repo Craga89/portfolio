@@ -24,7 +24,7 @@ if (e && Array.isArray(e.cases)) {
   out.evals = { passed: e.passed, total: e.total, at: e.at, run: e.run || null, sha: e.sha || null, cases: e.cases.map((c) => ({ q: c.q, expect: c.expect || '', pass: !!c.pass, answer: String(c.answer || '').replace(/\s+/g, ' ').trim().slice(0, 420) })) };
 }
 const o = json('origin/oss:reports/oss.json');
-if (o && o.prs) out.oss = { prs: o.prs, repos: o.repos, since: o.since, qtip: o.qtip, at: o.at };
+if (o && o.prs) out.oss = { prs: o.prs, repos: o.repos, since: o.since, qtip: o.qtip, timeline: o.timeline || [], at: o.at };
 
 writeFileSync(process.argv[2] || 'live.json', JSON.stringify(out));
 const have = Object.keys(out).filter((k) => k !== 'at').join(', ') || '(nothing yet)';
