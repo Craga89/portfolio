@@ -599,6 +599,16 @@ html:has(.c-light){scrollbar-color:#A8B8AD #EDF1EE}
 ::view-transition-old(c-rs),::view-transition-old(c-cs){animation:c-vt-out .14s ease both}
 ::view-transition-new(c-rs),::view-transition-new(c-cs){animation:none}
 @keyframes c-vt-out{to{opacity:0}}
+@keyframes c-vt-out-l{to{opacity:0;transform:translateX(-28px)}}
+@keyframes c-vt-out-r{to{opacity:0;transform:translateX(28px)}}
+@keyframes c-vt-in-l{from{opacity:0;transform:translateX(-28px)}}
+@keyframes c-vt-in-r{from{opacity:0;transform:translateX(28px)}}
+html[data-vt-dir="next"]::view-transition-old(c-rs),html[data-vt-dir="next"]::view-transition-old(c-cs){animation:c-vt-out-l .16s ease-in both}
+html[data-vt-dir="next"]::view-transition-new(c-rs),html[data-vt-dir="next"]::view-transition-new(c-cs){animation:c-vt-in-r .26s cubic-bezier(.2,.8,.2,1) both}
+html[data-vt-dir="prev"]::view-transition-old(c-rs),html[data-vt-dir="prev"]::view-transition-old(c-cs){animation:c-vt-out-r .16s ease-in both}
+html[data-vt-dir="prev"]::view-transition-new(c-rs),html[data-vt-dir="prev"]::view-transition-new(c-cs){animation:c-vt-in-l .26s cubic-bezier(.2,.8,.2,1) both}
+/* touch: vertical scrolling stays with the browser, horizontal swipes go to the carousels */
+.c-deck-slides,.c-cs-panels{touch-action:pan-y pinch-zoom}
 /* things that appear ease in instead of popping */
 .c-chat{transition:transform .25s ease,width .2s ease}
 .c-chat-panel{transition:opacity .2s ease,transform .2s ease}
@@ -680,7 +690,7 @@ html:has(.c-light){scrollbar-color:#A8B8AD #EDF1EE}
 </style>
 <script>window.CRAGA_BUILD={sha:"__BUILD_SHA__",short:"__BUILD_SHORT__",date:"2026-10-17",at:"__BUILD_AT__"}</script>
 <script type="speculationrules">{"prerender":[{"source":"document","where":{"selector_matches":"a[href=\"cv/\"]"},"eagerness":"moderate"}]}</script>
-<script src="assets/app.b7b4325a4e.js" defer></script>
+<script src="assets/app.d0c6e24b56.js" defer></script>
 </head>
 <body>
 <div id="app"><div class="c-root" style="background: var(--bg); color: var(--text); min-height: 100vh; font-size: 16px; line-height: 1.7">

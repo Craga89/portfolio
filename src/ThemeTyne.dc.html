@@ -557,6 +557,16 @@ html:has(.c-light){scrollbar-color:#A8B8AD #EDF1EE}
 ::view-transition-old(c-rs),::view-transition-old(c-cs){animation:c-vt-out .14s ease both}
 ::view-transition-new(c-rs),::view-transition-new(c-cs){animation:none}
 @keyframes c-vt-out{to{opacity:0}}
+@keyframes c-vt-out-l{to{opacity:0;transform:translateX(-28px)}}
+@keyframes c-vt-out-r{to{opacity:0;transform:translateX(28px)}}
+@keyframes c-vt-in-l{from{opacity:0;transform:translateX(-28px)}}
+@keyframes c-vt-in-r{from{opacity:0;transform:translateX(28px)}}
+html[data-vt-dir="next"]::view-transition-old(c-rs),html[data-vt-dir="next"]::view-transition-old(c-cs){animation:c-vt-out-l .16s ease-in both}
+html[data-vt-dir="next"]::view-transition-new(c-rs),html[data-vt-dir="next"]::view-transition-new(c-cs){animation:c-vt-in-r .26s cubic-bezier(.2,.8,.2,1) both}
+html[data-vt-dir="prev"]::view-transition-old(c-rs),html[data-vt-dir="prev"]::view-transition-old(c-cs){animation:c-vt-out-r .16s ease-in both}
+html[data-vt-dir="prev"]::view-transition-new(c-rs),html[data-vt-dir="prev"]::view-transition-new(c-cs){animation:c-vt-in-l .26s cubic-bezier(.2,.8,.2,1) both}
+/* touch: vertical scrolling stays with the browser, horizontal swipes go to the carousels */
+.c-deck-slides,.c-cs-panels{touch-action:pan-y pinch-zoom}
 /* things that appear ease in instead of popping */
 .c-chat{transition:transform .25s ease,width .2s ease}
 .c-chat-panel{transition:opacity .2s ease,transform .2s ease}
@@ -2283,7 +2293,7 @@ class Component extends DCLogic {
       return { h: get('hour'), m: get('minute'), off, sr: get('hour') + ':' + get('minute') + ' ' + off };
     } catch (e) { return null; }
   }
-  componentDidMount() { this.mountFx(); this.trackHeader(); this.bindAnchors(); this.bindDeck(); this.bindSpy(); this.bindChat(); this.bindKeys(); }
+  componentDidMount() { this.mountFx(); this.trackHeader(); this.bindAnchors(); this.bindDeck(); this.bindSpy(); this.bindChat(); this.bindKeys(); this.bindSwipe(); }
   bindChat() {
     if (this._onChatLink || typeof document === 'undefined') return;
     this._onChatLink = (e) => {
@@ -2311,11 +2321,55 @@ class Component extends DCLogic {
     } catch (e) {}
   }
   // Cross-fade a tab or file switch with a view transition, where supported and motion is on.
-  vt(update) {
+  vt(update, dir) {
     let ok = typeof document !== 'undefined' && typeof document.startViewTransition === 'function' && (this.props.motion ?? true) && !(this.state || {}).motionOff;
     try { if (ok && window.matchMedia('(prefers-reduced-motion: reduce)').matches) ok = false; } catch (e) {}
     if (!ok) { update(); return; }
-    try { document.startViewTransition(() => { update(); return Promise.resolve().then(() => {}); }); } catch (e) { update(); }
+    // next / prev slide the panel sideways; anything else cross-fades.
+    const h = document.documentElement;
+    if (dir) h.setAttribute('data-vt-dir', dir); else h.removeAttribute('data-vt-dir');
+    try {
+      const t = document.startViewTransition(() => { update(); return Promise.resolve().then(() => {}); });
+      t.finished.finally(() => h.removeAttribute('data-vt-dir'));
+    } catch (e) { h.removeAttribute('data-vt-dir'); update(); }
+  }
+  // Next / previous case study, in tab order.
+  goCase(step) {
+    const ids = ['mono', 'refactor', 'ci', 'test', 'a11y', 'aws', 'sec', 'auth', 'data', 'cost', 'ai', 'site'];
+    const cur = Math.max(0, ids.indexOf((this.state || {}).tab || 'mono'));
+    this.setState({ tab: ids[(cur + step + ids.length) % ids.length] });
+  }
+  // Horizontal swipes on touch screens move the responsibilities tour and the case studies along.
+  // Vertical scrolling is left to the browser (touch-action: pan-y), and swipes that start in
+  // something that scrolls sideways (wide tables) scroll it instead.
+  bindSwipe() {
+    if (this._swipeOn || typeof document === 'undefined' || typeof PointerEvent === 'undefined') return;
+    this._swipeOn = true;
+    const scrollsX = (el, stop) => {
+      for (let n = el; n && n !== stop; n = n.parentElement) {
+        const ox = getComputedStyle(n).overflowX;
+        if ((ox === 'auto' || ox === 'scroll') && n.scrollWidth > n.clientWidth + 1) return true;
+      }
+      return false;
+    };
+    const attach = (el, go) => {
+      if (!el) return;
+      let x0 = 0, y0 = 0, t0 = 0, id = null;
+      el.addEventListener('pointerdown', (e) => {
+        if (e.pointerType !== 'touch' || scrollsX(e.target, el)) { id = null; return; }
+        id = e.pointerId; x0 = e.clientX; y0 = e.clientY; t0 = Date.now();
+      });
+      el.addEventListener('pointercancel', () => { id = null; });
+      el.addEventListener('pointerup', (e) => {
+        if (e.pointerId !== id) return;
+        id = null;
+        const dx = e.clientX - x0, dy = e.clientY - y0;
+        if (Math.abs(dx) < 48 || Math.abs(dx) < Math.abs(dy) * 1.5 || Date.now() - t0 > 900) return;
+        go(dx < 0 ? 1 : -1);
+      });
+    };
+    attach(document.querySelector('#r-deck .c-deck-slides'), (step) => this.vt(() => this.goResp(step), step > 0 ? 'next' : 'prev'));
+    attach(document.querySelector('#case-studies .c-cs-panels'), (step) => this.vt(() => this.goCase(step), step > 0 ? 'next' : 'prev'));
   }
   // Command palette (Ctrl/Cmd+K, or / and ? as single-key shortcuts that can be turned off),
   // copy-link anchors on section headings, and the native share sheet.
@@ -2942,8 +2996,8 @@ class Component extends DCLogic {
     const rPaused = rst.rPlay === false;
     const rKey = (e) => {
       if (e.target && e.target.tagName === 'SUMMARY' && e.key === ' ') return;
-      if (e.key === 'ArrowRight') { e.preventDefault(); this.vt(() => this.goResp(1)); }
-      if (e.key === 'ArrowLeft') { e.preventDefault(); this.vt(() => this.goResp(-1)); }
+      if (e.key === 'ArrowRight') { e.preventDefault(); this.vt(() => this.goResp(1), 'next'); }
+      if (e.key === 'ArrowLeft') { e.preventDefault(); this.vt(() => this.goResp(-1), 'prev'); }
     };
     const toResp = (id) => () => { this.setState({ rPlay: false }); this.goResp(id); this.scrollToId('responsibilities'); };
     const toCase = (id) => () => { this.setState({ tab: id }); this.scrollToId('case-studies'); };
@@ -3176,7 +3230,7 @@ class Component extends DCLogic {
       tabs, rsegs, rKey, rCanPlay, rPaused: rPaused ? 'true' : 'false',
       rPlayLabel: rPaused ? '▶ play' : '❚❚ pause', rLive: rRun ? 'off' : 'polite',
       rNextLabel: 'next: ' + rdefs[(rIdx + 1) % rdefs.length][1],
-      rPrev: () => this.vt(() => this.goResp(-1)), rNext: () => this.vt(() => this.goResp(1)),
+      rPrev: () => this.vt(() => this.goResp(-1), 'prev'), rNext: () => this.vt(() => this.goResp(1), 'next'),
       rToggle: () => this.setState({ rPlay: rPaused }), rHold: () => this.setState({ rPlay: false }),
       goAcq: toResp('acq'), goHire: toResp('hire'), goAi: toResp('aiproc'), goProd: toResp('prod'),
       tabMono: tab === 'mono',

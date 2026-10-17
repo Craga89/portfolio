@@ -43,6 +43,7 @@ Every push to `main` deploys `site/` through `.github/workflows/pages.yml`.
 - **Mobile menu:** below 600px wide (or on short landscape screens) the header is the site name, a get in touch button and a menu button. The menu is a `<details>`, so it opens without JavaScript; it lists every section (marking the current one), with search and the theme switch, and closes on a jump, Escape or a tap outside.
 - **Get in touch:** a contact section at the bottom (`#contact`, get-in-touch.md in the sidebar) that every get-in-touch button links to: email with a copy button, links, cv.pdf, contact card, and what roles and working pattern Craig is looking for.
 - **Transitions:** tab and file switches cross-fade with the View Transitions API; the chat panel, toggletips and dialogs ease in with `@starting-style`. All of it is skipped with reduced motion or "pause animations".
+- **Swipe:** on touch screens, swiping sideways on the responsibilities tour or a case study moves to the next or previous one (the buttons and tabs still work). Vertical scrolling is untouched, and wide tables inside still scroll sideways. Next/previous slide the panel in that direction.
 - **Instant CV:** speculation rules prerender `/cv/` when you hover its link (and the home page from the CV).
 - **Share:** on phones, a share link opens the native share sheet.
 - **Typography and modes:** balanced headings, `text-wrap: pretty` paragraphs, themed selection and scrollbars, tuned styles for Windows High Contrast (`forced-colors`) and `prefers-contrast: more`.
