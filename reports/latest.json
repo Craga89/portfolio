@@ -1,0 +1,16 @@
+{
+  "url": "http://127.0.0.1:46435/",
+  "at": "2026-10-17T22:33:29.093Z",
+  "axe": "4.14.0",
+  "standard": "WCAG 2.2 AA",
+  "axeRuns": 244,
+  "violations": [],
+  "failures": [],
+  "notes": [
+    "1440px dark: keyboard reached 135 focus stops",
+    "390px light: keyboard reached 120 focus stops",
+    "pause animations stops 4 looping animations",
+    "single-key shortcuts (/ and ?) can be turned off"
+  ],
+  "pass": true
+}

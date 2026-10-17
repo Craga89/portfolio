@@ -1,0 +1,8 @@
+WCAG 2.2 AA · http://127.0.0.1:46435/ · axe 4.14.0 · 244 axe runs
+axe: no violations
+keyboard, focus, reflow, text spacing, motion: all pass
+· 1440px dark: keyboard reached 135 focus stops
+· 390px light: keyboard reached 120 focus stops
+· pause animations stops 4 looping animations
+· single-key shortcuts (/ and ?) can be turned off
+PASS
