@@ -58,7 +58,10 @@
     if (this.pending || !this.mounted) return;
     this.pending = true;
     var self = this;
-    Promise.resolve().then(function () { self.pending = false; self.render(); });
+    var run = function () { self.pending = false; self.render(); };
+    // State set while mounting re-renders in its own task, so the first paint-ready work and
+    // that follow-up render don't add up to one long task.
+    if (this.mounting) setTimeout(run, 0); else Promise.resolve().then(run);
   };
 
   App.prototype.bindEvents = function () {
@@ -93,7 +96,12 @@
       for (var node = src.firstChild; node; node = node.nextSibling) {
         if (node.nodeType === 3) {
           var t = node.data;
-          out.appendChild(document.createTextNode(t.indexOf('{{') < 0 ? t : t.replace(HOLE, function (_, p) { return str(lookup(scope, p)); })));
+          t = t.indexOf('{{') < 0 ? t : t.replace(HOLE, function (_, p) { return str(lookup(scope, p)); });
+          // Match what the HTML parser makes of prerendered markup: no empty text nodes, and
+          // neighbouring text in one node. Otherwise hydration rewrites hundreds of nodes.
+          var prev = out.lastChild;
+          if (prev && prev.nodeType === 3) prev.data += t;
+          else if (t) out.appendChild(document.createTextNode(t));
         } else if (node.nodeType === 1) {
           var tag = node.localName;
           if (tag === 'sc-for') {
@@ -213,7 +221,8 @@
     patchChildren(this.root, holder);
     if (!this.mounted) {
       this.mounted = true;
-      if (c.componentDidMount) c.componentDidMount();
+      this.mounting = true;
+      try { if (c.componentDidMount) c.componentDidMount(); } finally { this.mounting = false; }
     } else if (c.componentDidUpdate) {
       c.componentDidUpdate();
     }

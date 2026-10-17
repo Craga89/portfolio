@@ -675,6 +675,12 @@ Canonical: ${SITE}/.well-known/security.txt
 
 // Service worker: network-first for pages (always fresh when online), cache-first for
 // content-hashed and static assets, everything available offline after the first visit.
+// live.json is written by the Pages deploy from CI results (tools/live.mjs). Locally there's an
+// empty one, so the page falls back to its static numbers without a 404.
+function writeLivePlaceholder() {
+  if (!existsSync(join(OUT, 'live.json'))) writeFileSync(join(OUT, 'live.json'), '{}');
+}
+
 function buildServiceWorker(appName) {
   const core = ['./', 'cv/', appName, 'assets/fonts/big-shoulders-display-latin-600.woff2', 'assets/fonts/public-sans-latin-400.woff2', 'assets/fonts/red-hat-mono-latin-400.woff2', 'assets/img/portrait-56.webp', 'favicon.svg'];
   const version = hash(core.join('|') + TODAY + readFileSync(join(OUT, 'index.html'), 'utf8').length);
@@ -728,5 +734,6 @@ await buildImages();
 await buildVcard();
 buildTextFiles();
 if (PRERENDER) await prerender();
+writeLivePlaceholder();
 buildServiceWorker(readdirSync(join(OUT, 'assets')).filter((f) => /^app\.[0-9a-f]+\.js$/.test(f)).map((f) => 'assets/' + f)[0]);
 console.log('built', OUT);

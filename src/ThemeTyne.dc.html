@@ -2247,6 +2247,29 @@ html:has(.c-light){scrollbar-color:#A8B8AD #EDF1EE}
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props='{"motion":{"editor":"boolean","default":true},"theme":{"editor":"enum","options":["dark","light"],"default":"dark"},"$preview":{"width":1440,"height":7600}}'>
 class Component extends DCLogic {
+  // Everything that can be known before the first render goes into the initial state, so mounting
+  // doesn't set state and trigger a second full render straight away.
+  constructor(props) {
+    super(props);
+    const st = { spy: 'top', rRun: false, keysOn: true };
+    try { st.micOk = !!(window.SpeechRecognition || window.webkitSpeechRecognition); } catch (e) {}
+    try { st.motionOff = localStorage.getItem('motion') === 'off'; } catch (e) {}
+    try { st.keysOn = localStorage.getItem('keys') !== 'off'; } catch (e) {}
+    try { st.palMac = /mac|iphone|ipad/i.test((navigator.userAgentData && navigator.userAgentData.platform) || navigator.platform || ''); } catch (e) {}
+    try { st.shareOk = typeof navigator.share === 'function' && window.isSecureContext; } catch (e) {}
+    this._clock = this.clockNow();
+    st.clockOn = !!this._clock;
+    this.state = st;
+  }
+  // Local time in Newcastle, with its UTC offset.
+  clockNow() {
+    try {
+      const parts = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/London', hour: '2-digit', minute: '2-digit', hourCycle: 'h23', timeZoneName: 'shortOffset' }).formatToParts(new Date());
+      const get = (t) => (parts.find((x) => x.type === t) || {}).value || '';
+      const off = 'UTC' + (get('timeZoneName').replace(/^GMT/, '') || '+0');
+      return { h: get('hour'), m: get('minute'), off, sr: get('hour') + ':' + get('minute') + ' ' + off };
+    } catch (e) { return null; }
+  }
   componentDidMount() { this.mountFx(); this.trackHeader(); this.bindAnchors(); this.bindDeck(); this.bindSpy(); this.bindChat(); this.bindKeys(); }
   bindChat() {
     if (this._onChatLink || typeof document === 'undefined') return;
@@ -2255,21 +2278,10 @@ class Component extends DCLogic {
       if (a && window.innerWidth <= 900) setTimeout(() => this.setState({ chatOpen: false }), 0);
     };
     document.addEventListener('click', this._onChatLink);
-    try { if (window.SpeechRecognition || window.webkitSpeechRecognition) this.setState({ micOk: true }); } catch (e) {}
-    // Local time in Newcastle: render once, then update the text in place each minute.
-    const fmt = () => {
-      try {
-        const parts = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/London', hour: '2-digit', minute: '2-digit', hourCycle: 'h23', timeZoneName: 'shortOffset' }).formatToParts(new Date());
-        const get = (t) => (parts.find((x) => x.type === t) || {}).value || '';
-        const off = 'UTC' + (get('timeZoneName').replace(/^GMT/, '') || '+0');
-        return { h: get('hour'), m: get('minute'), off, sr: get('hour') + ':' + get('minute') + ' ' + off };
-      } catch (e) { return null; }
-    };
-    this._clock = fmt();
-    if (this._clock) this.setState({ clockOn: true });
+    // Local time in Newcastle: rendered with the page, then updated in place.
+    const fmt = () => this.clockNow();
     const put = (sel, v) => document.querySelectorAll(sel).forEach((n) => { if (n.textContent !== v) n.textContent = v; });
     this._clockT = setInterval(() => { const c = fmt(); if (!c) return; this._clock = c; put('.v2-hh', c.h); put('.v2-mm', c.m); put('.v2-off', '(' + c.off + ')'); put('.v2-time-sr', c.sr); }, 15000);
-    try { if (localStorage.getItem('motion') === 'off') this.setState({ motionOff: true }); } catch (e) {}
     // Printing: render every section and open every disclosure, then restore.
     this._beforePrint = () => {
       document.documentElement.classList.add('cv-all');
@@ -2296,12 +2308,7 @@ class Component extends DCLogic {
   // copy-link anchors on section headings, and the native share sheet.
   bindKeys() {
     if (this._onKeys || typeof document === 'undefined') return;
-    let mac = false, keysOn = true, shareOk = false;
-    try { mac = /mac|iphone|ipad/i.test((navigator.userAgentData && navigator.userAgentData.platform) || navigator.platform || ''); } catch (e) {}
-    try { keysOn = localStorage.getItem('keys') !== 'off'; } catch (e) {}
-    try { shareOk = typeof navigator.share === 'function' && window.isSecureContext; } catch (e) {}
     try { this._faqs = [...document.querySelectorAll('#faq details > summary')].map((n, i) => ({ q: n.textContent.trim(), i })); } catch (e) { this._faqs = []; }
-    this.setState({ palMac: mac, keysOn, shareOk });
     this._onKeys = (e) => {
       const st = this.state || {};
       const k = e.key;
@@ -2341,8 +2348,13 @@ class Component extends DCLogic {
       this._liveLoading = true;
       fetch('live.json', { cache: 'no-cache' }).then((r) => (r.ok ? r.json() : null)).then((d) => { if (d && typeof d === 'object') this.setState({ live: d }); }).catch(() => {});
     };
-    const idle = () => (window.requestIdleCallback ? requestIdleCallback(loadLive, { timeout: 4000 }) : setTimeout(loadLive, 1500));
-    if (document.readyState === 'complete') idle(); else window.addEventListener('load', idle, { once: true });
+    // Wait until it's needed: the sections that show it come near, or the visitor does anything.
+    const go = () => { loadLive(); if (this._liveIo) this._liveIo.disconnect(); ['pointerdown', 'keydown', 'wheel', 'touchstart'].forEach((t) => window.removeEventListener(t, go, true)); };
+    ['pointerdown', 'keydown', 'wheel', 'touchstart'].forEach((t) => window.addEventListener(t, go, { capture: true, passive: true }));
+    try {
+      this._liveIo = new IntersectionObserver((es) => { if (es.some((x) => x.isIntersecting)) go(); }, { rootMargin: '600px 0px' });
+      ['case-studies', 'oss', 'ask'].forEach((id) => { const el = document.getElementById(id); if (el) this._liveIo.observe(el); });
+    } catch (e) { setTimeout(go, 3000); }
   }
   palOpen() {
     const d = document.getElementById('c-pal');
@@ -2521,7 +2533,7 @@ class Component extends DCLogic {
     window.addEventListener('resize', this._onSpy);
     ['wheel', 'touchstart', 'keydown'].forEach((t) => window.addEventListener(t, this._onSpyUser, { passive: true }));
     document.addEventListener('click', this._onSpyClick, true);
-    pick();
+    requestAnimationFrame(pick);
   }
 
   bindDeck() {
