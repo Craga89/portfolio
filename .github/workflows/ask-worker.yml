@@ -5,7 +5,7 @@ name: Deploy ask.sh worker
 on:
   push:
     branches: [main]
-    paths: ['worker/**', 'tools/ask-evals.mjs', '.github/workflows/ask-worker.yml']
+    paths: ['worker/**', '.github/workflows/ask-worker.yml']
   workflow_dispatch:
 
 concurrency:
@@ -52,12 +52,5 @@ jobs:
           code=$(curl -sS -o /dev/null -w '%{http_code}' -X POST "$ASK_URL" -H 'origin: https://example.com' -H 'content-type: application/json' --data '{"q":"hi"}')
           if [ "$code" = 403 ]; then echo "::notice title=Other origins::refused (403)"; else echo "::error title=Other origins::expected 403, got $code"; fail=1; fi
           exit $fail
-        env:
-          ASK_URL: https://craga-ask.craga89.workers.dev/ask
-      - name: Answer tests (evals)
-        if: env.HAS_TOKEN == 'true'
-        run: |
-          sleep 60 # let the smoke test's requests leave the rate-limit window
-          node tools/ask-evals.mjs "$ASK_URL"
         env:
           ASK_URL: https://craga-ask.craga89.workers.dev/ask

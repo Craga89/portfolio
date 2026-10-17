@@ -74,6 +74,8 @@ jobs:
           mkdir -p reports && cp out/summary.json reports/summary.json
           for f in out/mobile-2.json out/desktop-2.json; do [ -f "$f" ] && cp "$f" reports/; done
           echo "$sha" > reports/commit.txt
+          echo "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" > reports/run.txt
+          date -u +%FT%TZ > reports/at.txt
           git add reports
           git commit -qm "Lighthouse for $sha"
           git push -f origin lh-tmp:lighthouse

@@ -65,6 +65,8 @@ jobs:
           git rm -rq --cached . || true
           mkdir -p reports && cp a11y.json reports/latest.json && cp a11y.txt reports/latest.txt
           echo "$sha" > reports/commit.txt
+          echo "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" > reports/run.txt
+          date -u +%FT%TZ > reports/at.txt
           git add reports
           git commit -qm "WCAG 2.2 AA report for $sha"
           git push -f origin a11y-tmp:accessibility

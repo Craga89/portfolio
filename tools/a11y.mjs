@@ -148,6 +148,10 @@ for (const [width, scheme] of [[1440, 'dark'], [1440, 'light'], [390, 'dark'], [
   await page.locator('#c-ask-field').press('Enter');
   await page.waitForTimeout(500);
   await axe(page, `ask.sh answered ${tag}`, '#ask');
+  // How ask.sh is tested, open.
+  await page.evaluate(() => { const d = document.getElementById('c-tests'); if (d) d.open = true; });
+  await page.waitForTimeout(100);
+  await axe(page, `ask.sh tests open ${tag}`, '#c-tests');
   // The chat window, open with that conversation.
   await page.evaluate(() => scrollTo(0, 0));
   await page.waitForTimeout(150);

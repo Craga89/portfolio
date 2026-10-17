@@ -1,0 +1,57 @@
+# ask.sh answer tests (worker/evals.json): after every Worker deploy, weekly and on demand.
+# Results go to the `evals` branch (reports/latest.json); the Pages deploy publishes them in
+# live.json, and the site shows them under "how ask.sh is tested". Fails if any answer is wrong.
+name: ask.sh answer tests
+
+on:
+  workflow_run:
+    workflows: [Deploy ask.sh worker]
+    types: [completed]
+  schedule:
+    - cron: '23 5 * * 1' # Mondays, 05:23 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: evals
+  cancel-in-progress: true
+
+jobs:
+  evals:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - name: Run the answer tests
+        id: run
+        continue-on-error: true
+        run: |
+          sleep 60 # a fresh deploy's smoke test shares the per-visitor rate limit
+          node tools/ask-evals.mjs https://craga-ask.craga89.workers.dev/ask --out evals.json
+      - name: Save to the evals branch
+        if: always()
+        run: |
+          [ -f evals.json ] || exit 0
+          node -e '
+            const fs = require("fs"), r = JSON.parse(fs.readFileSync("evals.json", "utf8"));
+            r.run = process.env.RUN_URL; r.sha = process.env.SHA;
+            fs.writeFileSync("evals.json", JSON.stringify(r, null, 2));'
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git switch --orphan evals-tmp
+          git rm -rq --cached . || true
+          mkdir -p reports && cp evals.json reports/latest.json
+          git add reports
+          git commit -qm "ask.sh answer tests for $SHA"
+          git push -f origin evals-tmp:evals
+        env:
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          SHA: ${{ github.event.workflow_run.head_sha || github.sha }}
+      - name: Fail if any answer was wrong
+        if: steps.run.outcome != 'success'
+        run: exit 1

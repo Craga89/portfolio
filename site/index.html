@@ -53,10 +53,10 @@
 .v2-main>section.c-rv{content-visibility:auto;contain-intrinsic-size:auto var(--cis,1000px);overflow-clip-margin:12px}
 .cv-all .v2-main>section.c-rv{content-visibility:visible}
 @media print{.v2-main>section.c-rv{content-visibility:visible}}
-@media (max-width:600px){#career{--cis:2661px}#responsibilities{--cis:1617px}#case-studies{--cis:1558px}#stack{--cis:2458px}#oss{--cis:2440px}#recommendations{--cis:1018px}section[aria-labelledby="c-awards"]{--cis:318px}#faq{--cis:1456px}#ask{--cis:539px}#contact{--cis:820px}}
-@media (min-width:601px) and (max-width:900px){#career{--cis:2009px}#responsibilities{--cis:1373px}#case-studies{--cis:1342px}#stack{--cis:2232px}#oss{--cis:2015px}#recommendations{--cis:757px}section[aria-labelledby="c-awards"]{--cis:318px}#faq{--cis:1452px}#ask{--cis:424px}#contact{--cis:714px}}
-@media (min-width:901px) and (max-width:1400px){#career{--cis:1516px}#responsibilities{--cis:1011px}#case-studies{--cis:1012px}#stack{--cis:1185px}#oss{--cis:1470px}#recommendations{--cis:451px}section[aria-labelledby="c-awards"]{--cis:172px}#faq{--cis:1458px}#ask{--cis:362px}#contact{--cis:455px}}
-@media (min-width:1401px){#career{--cis:1516px}#responsibilities{--cis:927px}#case-studies{--cis:958px}#stack{--cis:1094px}#oss{--cis:1292px}#recommendations{--cis:396px}section[aria-labelledby="c-awards"]{--cis:172px}#faq{--cis:801px}#ask{--cis:318px}#contact{--cis:405px}}
+@media (max-width:600px){#career{--cis:2661px}#responsibilities{--cis:1617px}#case-studies{--cis:1558px}#stack{--cis:2458px}#oss{--cis:2440px}#recommendations{--cis:1018px}section[aria-labelledby="c-awards"]{--cis:318px}#faq{--cis:1456px}#ask{--cis:611px}#contact{--cis:820px}}
+@media (min-width:601px) and (max-width:900px){#career{--cis:2009px}#responsibilities{--cis:1373px}#case-studies{--cis:1342px}#stack{--cis:2232px}#oss{--cis:2015px}#recommendations{--cis:757px}section[aria-labelledby="c-awards"]{--cis:318px}#faq{--cis:1452px}#ask{--cis:493px}#contact{--cis:714px}}
+@media (min-width:901px) and (max-width:1400px){#career{--cis:1516px}#responsibilities{--cis:1011px}#case-studies{--cis:1012px}#stack{--cis:1185px}#oss{--cis:1470px}#recommendations{--cis:451px}section[aria-labelledby="c-awards"]{--cis:172px}#faq{--cis:1458px}#ask{--cis:431px}#contact{--cis:455px}}
+@media (min-width:1401px){#career{--cis:1516px}#responsibilities{--cis:927px}#case-studies{--cis:958px}#stack{--cis:1094px}#oss{--cis:1292px}#recommendations{--cis:396px}section[aria-labelledby="c-awards"]{--cis:172px}#faq{--cis:801px}#ask{--cis:387px}#contact{--cis:405px}}
 </style>
 <script>if(location.hash.length>1)document.documentElement.classList.add('cv-all')</script>
 
@@ -526,6 +526,38 @@ a{color:var(--acc)!important;text-decoration:none!important}
 /* where an in-page link lands flashes briefly */
 @keyframes c-flash{0%,15%{background-color:color-mix(in srgb,var(--acc) 26%,transparent);box-shadow:0 0 0 8px color-mix(in srgb,var(--acc) 26%,transparent)}100%{background-color:transparent;box-shadow:0 0 0 8px transparent}}
 .c-flash{animation:c-flash 1.4s ease-out both;border-radius:4px}
+/* this-site.md: live CI results, how a visit works, the gates */
+.c-live{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:10px}
+.c-live li{border:1px solid var(--line2);border-radius:8px;padding:12px 14px}
+.c-live-k{font-size:12px;color:var(--acc)}
+.c-live-v{margin:4px 0 2px;font-family:var(--f-mono,ui-monospace,monospace);font-size:18px;line-height:1.45;font-weight:700;color:var(--head);white-space:pre-wrap}
+.c-live-s{font-size:13px;color:var(--text3)}
+.c-live-m{margin-top:6px;font-size:12px;color:var(--dim)}
+.c-arch{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.c-arch li{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.c-arch-k{flex:0 0 72px;font-family:var(--f-mono,ui-monospace,monospace);font-size:12.5px;color:var(--dim)}
+.c-arch-c{display:inline-flex;flex-direction:column;border:1px solid var(--line3);border-radius:8px;padding:7px 12px;background:var(--panel2);max-width:340px}
+.c-arch-c b{color:var(--head);font-size:14.5px}
+.c-arch-c small{font-size:12.5px;color:var(--mute);line-height:1.4}
+.c-arch-a{color:var(--acc);font-family:var(--f-mono,ui-monospace,monospace)}
+@media (max-width:640px){.c-arch-k{flex-basis:100%}}
+.c-gates{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.c-gates li{display:grid;grid-template-columns:72px minmax(0,1fr);gap:12px;align-items:baseline;font-size:14.5px;color:var(--text2)}
+.c-gate-k{font-family:var(--f-mono,ui-monospace,monospace);font-size:12.5px;color:var(--ok);border:1px solid var(--ok);border-radius:4px;padding:1px 6px;text-align:center}
+/* ask.sh --test */
+.c-tests{margin-top:18px}
+.c-tests>summary{font-family:var(--f-mono,ui-monospace,monospace)}
+.c-tests-n{margin-left:auto;padding-left:12px;font-size:12.5px;color:var(--ok)}
+.c-tests-b>p{margin:0 0 14px;color:var(--text3);font-size:14.5px;max-width:72ch}
+.c-tests-l{list-style:none;margin:0 0 10px;padding:0;display:grid;gap:10px}
+.c-test{border:1px solid var(--line2);border-radius:8px;padding:10px 14px;background:var(--panel)}
+.c-test-q{display:flex;gap:8px;color:var(--head);font-weight:700;font-size:14.5px}
+.c-test-r{flex:none;width:1.2em;color:var(--ok)}
+.c-test-r[data-pass="false"]{color:var(--bad)}
+.c-test-e{font-size:12.5px;color:var(--acc);margin:2px 0 4px 1.7em}
+.c-test-a{font-size:13.5px;color:var(--text3);margin-left:1.7em}
+.c-tests-m{margin:0;font-size:12px;color:var(--dim)}
+.v2-qual{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:-4px}
 /* ---------- polish ---------- */
 /* typography: balanced headings, no lone last words, quotes that hang where supported */
 .c-root h1,.c-root h2,.c-root h3,.c-root .v2-st,.c-root .c-rs-t,.c-faq summary{text-wrap:balance}
@@ -635,7 +667,7 @@ html:has(.c-light){scrollbar-color:#A8B8AD #EDF1EE}
 </style>
 <script>window.CRAGA_BUILD={sha:"__BUILD_SHA__",short:"__BUILD_SHORT__",date:"2026-10-17",at:"__BUILD_AT__"}</script>
 <script type="speculationrules">{"prerender":[{"source":"document","where":{"selector_matches":"a[href=\"cv/\"]"},"eagerness":"moderate"}]}</script>
-<script src="assets/app.7e13adf003.js" defer></script>
+<script src="assets/app.b36371e02c.js" defer></script>
 </head>
 <body>
 <div id="app"><div class="c-root" style="background: var(--bg); color: var(--text); min-height: 100vh; font-size: 16px; line-height: 1.7">
@@ -670,6 +702,7 @@ html:has(.c-light){scrollbar-color:#A8B8AD #EDF1EE}
 <div style="display: flex; flex-wrap: wrap; gap: 6px 14px"><a class="v2-soc" href="mailto:craga89@gmail.com" title="craga89@gmail.com"><svg class="v2-ico" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="m22 7-10 6L2 7"></path></svg>email</a><button type="button" class="v2-copy" aria-label="Copy email address" title="Copy email address" data-dc-click="2"><svg class="v2-ico" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg></button><a class="v2-soc" href="https://github.com/Craga89"><svg class="v2-ico" viewBox="0 0 16 16" width="15" height="15" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path></svg>github</a><a class="v2-soc" href="https://www.linkedin.com/in/craigmichaelthompson/"><svg class="v2-ico" viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"></path></svg>linkedin</a><a class="v2-soc" href="cv/"><svg class="v2-ico" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><path d="M14 2v6h6"></path><path d="M16 13H8M16 17H8M10 9H8"></path></svg>plain CV</a><a class="v2-soc" href="cv.pdf" download="Craig-Michael-Thompson-CV.pdf"><svg class="v2-ico" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"></path><path d="m7 10 5 5 5-5"></path><path d="M5 21h14"></path></svg>cv.pdf</a><a class="v2-soc" href="craig-thompson.vcf" download="Craig-Michael-Thompson.vcf"><svg class="v2-ico" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="4"></circle><path d="M2 21a7 7 0 0 1 14 0"></path><path d="M19 8v6M16 11h6"></path></svg>add contact</a></div>
 <button type="button" class="v2-motion" data-dc-click="3"><svg class="v2-ico" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5v14M15 5v14"></path></svg>pause animations</button>
 <a class="v2-ver" href="https://github.com/Craga89/portfolio/commit/__BUILD_SHA__" title="Built from commit __BUILD_SHORT__, 17 Oct 2026">main@__BUILD_SHORT__ · just now</a>
+<a class="v2-ver v2-qual" href="#case-studies" title="Latest CI results, in this-site.md" data-dc-click="4">CI checks · this-site.md</a>
 </div>
 </div>
 </aside>
@@ -680,15 +713,15 @@ html:has(.c-light){scrollbar-color:#A8B8AD #EDF1EE}
 <p class="c-cmd" style="margin: 0 0 24px; font-size: clamp(16px, 2vw, 20px); font-weight: 500; color: var(--ok)">$ cat README.md <span style="color: var(--dim)"># intro</span></p>
 <div class="v2-name"><figure class="v2-ph"><picture><source type="image/avif" srcset="assets/img/portrait-96.avif 96w, assets/img/portrait-192.avif 192w, assets/img/portrait-352.avif 352w" sizes="(max-width: 370px) 68px, (max-width: 600px) 96px, 176px"><img src="assets/img/portrait-192.webp" srcset="assets/img/portrait-96.webp 96w, assets/img/portrait-192.webp 192w, assets/img/portrait-352.webp 352w" sizes="(max-width: 370px) 68px, (max-width: 600px) 96px, 176px" alt="Illustrated caricature of Craig Michael Thompson at his keyboard, with his dog on his shoulder" width="512" height="512" fetchpriority="high" decoding="async"></picture></figure><h1>Craig Michael Thompson</h1></div>
 <p class="v2-print"><a href="mailto:craga89@gmail.com">craga89@gmail.com</a> · <a href="https://craigthompson.dev/">craigthompson.dev</a> · github.com/Craga89 · linkedin.com/in/craigmichaelthompson · Newcastle upon Tyne, UK<br>The short CV is at craigthompson.dev/cv.</p>
-<p class="v2-st">20+ years' experience in software development and management, from start-up to <span class="c-nb"><button type="button" class="v2-x" data-dc-click="4">acquisition</button>.</span></p>
+<p class="v2-st">20+ years' experience in software development and management, from start-up to <span class="c-nb"><button type="button" class="v2-x" data-dc-click="5">acquisition</button>.</span></p>
 <div id="about" class="v2-about">
-<p>I'm a hands-on, full-stack engineer across UI, back end, infrastructure and AI, with extensive engineering leadership experience. I led an engineering department to <span class="c-nb"><button type="button" class="v2-x" data-dc-click="5">AI-first development</button>,</span> where most code is now generated by AI, then reviewed by AI and people. Problem solving is what I do best, whether the problem sits in the code, the platform or the team.</p>
-<p>I've led engineering teams for 12+ years, <button type="button" class="v2-x" data-dc-click="6">growing and developing</button> <span class="c-nb"><button type="button" class="v2-x" data-dc-click="7">teams of 10+ engineers</button>,</span> both in-house and outsourced. I've set strategy, supported the people and steered the platform with them, from monorepos and build engines to AWS, authentication and AI tooling.</p>
-<p>I've <span class="c-nb"><button type="button" class="v2-x" data-dc-click="8">reported directly to CEO and CTO level</button>,</span> turning the roadmap and technical direction into plain-English board updates. I've been part of <button type="button" class="v2-x" data-dc-click="9">ISO 27001 and GDPR accreditation</button> and the annual audits.</p>
+<p>I'm a hands-on, full-stack engineer across UI, back end, infrastructure and AI, with extensive engineering leadership experience. I led an engineering department to <span class="c-nb"><button type="button" class="v2-x" data-dc-click="6">AI-first development</button>,</span> where most code is now generated by AI, then reviewed by AI and people. Problem solving is what I do best, whether the problem sits in the code, the platform or the team.</p>
+<p>I've led engineering teams for 12+ years, <button type="button" class="v2-x" data-dc-click="7">growing and developing</button> <span class="c-nb"><button type="button" class="v2-x" data-dc-click="8">teams of 10+ engineers</button>,</span> both in-house and outsourced. I've set strategy, supported the people and steered the platform with them, from monorepos and build engines to AWS, authentication and AI tooling.</p>
+<p>I've <span class="c-nb"><button type="button" class="v2-x" data-dc-click="9">reported directly to CEO and CTO level</button>,</span> turning the roadmap and technical direction into plain-English board updates. I've been part of <button type="button" class="v2-x" data-dc-click="10">ISO 27001 and GDPR accreditation</button> and the annual audits.</p>
 </div>
 <div class="v2-mcta">
 <a class="c-btn" href="#contact" style="display: inline-flex; align-items: center; min-height: 44px; padding: 0 18px; border-radius: 8px; background: var(--acc); color: var(--bg); font-weight: 700; text-decoration: none">./get-in-touch</a>
-<a class="v2-soc" href="mailto:craga89@gmail.com" title="craga89@gmail.com"><svg class="v2-ico" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="m22 7-10 6L2 7"></path></svg>email</a><button type="button" class="v2-copy" aria-label="Copy email address" title="Copy email address" data-dc-click="10"><svg class="v2-ico" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg></button><a class="v2-soc" href="https://github.com/Craga89"><svg class="v2-ico" viewBox="0 0 16 16" width="15" height="15" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path></svg>github</a><a class="v2-soc" href="https://www.linkedin.com/in/craigmichaelthompson/"><svg class="v2-ico" viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"></path></svg>linkedin</a><a class="v2-soc" href="cv/"><svg class="v2-ico" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><path d="M14 2v6h6"></path><path d="M16 13H8M16 17H8M10 9H8"></path></svg>plain CV</a><a class="v2-soc" href="cv.pdf" download="Craig-Michael-Thompson-CV.pdf"><svg class="v2-ico" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"></path><path d="m7 10 5 5 5-5"></path><path d="M5 21h14"></path></svg>cv.pdf</a><a class="v2-soc" href="craig-thompson.vcf" download="Craig-Michael-Thompson.vcf"><svg class="v2-ico" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="4"></circle><path d="M2 21a7 7 0 0 1 14 0"></path><path d="M19 8v6M16 11h6"></path></svg>add contact</a><button type="button" class="v2-motion" data-dc-click="11"><svg class="v2-ico" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5v14M15 5v14"></path></svg>pause animations</button>
+<a class="v2-soc" href="mailto:craga89@gmail.com" title="craga89@gmail.com"><svg class="v2-ico" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="m22 7-10 6L2 7"></path></svg>email</a><button type="button" class="v2-copy" aria-label="Copy email address" title="Copy email address" data-dc-click="11"><svg class="v2-ico" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg></button><a class="v2-soc" href="https://github.com/Craga89"><svg class="v2-ico" viewBox="0 0 16 16" width="15" height="15" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path></svg>github</a><a class="v2-soc" href="https://www.linkedin.com/in/craigmichaelthompson/"><svg class="v2-ico" viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"></path></svg>linkedin</a><a class="v2-soc" href="cv/"><svg class="v2-ico" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><path d="M14 2v6h6"></path><path d="M16 13H8M16 17H8M10 9H8"></path></svg>plain CV</a><a class="v2-soc" href="cv.pdf" download="Craig-Michael-Thompson-CV.pdf"><svg class="v2-ico" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"></path><path d="m7 10 5 5 5-5"></path><path d="M5 21h14"></path></svg>cv.pdf</a><a class="v2-soc" href="craig-thompson.vcf" download="Craig-Michael-Thompson.vcf"><svg class="v2-ico" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="4"></circle><path d="M2 21a7 7 0 0 1 14 0"></path><path d="M19 8v6M16 11h6"></path></svg>add contact</a><button type="button" class="v2-motion" data-dc-click="12"><svg class="v2-ico" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5v14M15 5v14"></path></svg>pause animations</button>
 </div>
 </div>
 </div>
@@ -715,11 +748,11 @@ html:has(.c-light){scrollbar-color:#A8B8AD #EDF1EE}
 <span style="font-size: 14px; color: var(--mute)">Dec 2018 — present (8 years)</span>
 </div>
 <h3 class="c-role" style="margin: 6px 0 10px; font-size: clamp(20px, 2.6vw, 26px); color: var(--head)">Head of Engineering · Hive HR</h3>
-<p style="margin: 0 0 18px; color: var(--text2); max-width: 80ch">Led engineering for a <button type="button" class="c-term" popovertarget="c-tip" popovertargetaction="show" aria-controls="c-tip" aria-expanded="false" style="" data-dc-click="12">multi-tenant</button> B2B SaaS platform that runs 24/7 for enterprise, mid-market and SME customers, with a cross-functional team of up to 12 engineers.</p>
+<p style="margin: 0 0 18px; color: var(--text2); max-width: 80ch">Led engineering for a <button type="button" class="c-term" popovertarget="c-tip" popovertargetaction="show" aria-controls="c-tip" aria-expanded="false" style="" data-dc-click="13">multi-tenant</button> B2B SaaS platform that runs 24/7 for enterprise, mid-market and SME customers, with a cross-functional team of up to 12 engineers.</p>
 <ol style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 14px; max-width: 86ch">
-<li style="display: flex; gap: 14px"><span aria-hidden="true" style="color: var(--dim); flex: none">├─</span><div><span style="color: var(--acc); font-weight: 700">2019–21 · Founding &amp; foundations.</span> <span style="color: var(--text2)">Led the consolidation of ~18 repositories into one TypeScript monorepo, with history intact, and set up its <span class="c-nb"><button type="button" class="c-term" popovertarget="c-tip" popovertargetaction="show" aria-controls="c-tip" aria-expanded="false" style="" data-dc-click="13">CI/CD</button>,</span> Docker and local dev. Started the React design system and led front-end work on the core product.</span></div></li>
-<li style="display: flex; gap: 14px"><span aria-hidden="true" style="color: var(--dim); flex: none">├─</span><div><span style="color: var(--acc); font-weight: 700">2021–24 · Platform ownership.</span> <span style="color: var(--text2)">Moved CI to self-hosted Buildkite as code, driven by an in-house TypeScript build engine. Helped take the company to <span class="c-nb"><button type="button" class="c-term" popovertarget="c-tip" popovertargetaction="show" aria-controls="c-tip" aria-expanded="false" style="" data-dc-click="14">continuous deployment</button>,</span> led repo-wide toolchain migrations and hardened AWS access.</span></div></li>
-<li style="display: flex; gap: 14px"><span aria-hidden="true" style="color: var(--dim); flex: none">├─</span><div><span style="color: var(--acc); font-weight: 700">2024–26 · Architecture, security &amp; AI.</span> <span style="color: var(--text2)">Led the move to <button type="button" class="c-term" popovertarget="c-tip" popovertargetaction="show" aria-controls="c-tip" aria-expanded="false" style="" data-dc-click="15">Fargate</button> and an edge behind <button type="button" class="c-term" popovertarget="c-tip" popovertargetaction="show" aria-controls="c-tip" aria-expanded="false" style="" data-dc-click="16">CloudFront</button> and <span class="c-nb"><button type="button" class="c-term" popovertarget="c-tip" popovertargetaction="show" aria-controls="c-tip" aria-expanded="false" style="" data-dc-click="17">WAF</button>,</span> the replacement of our authentication system and an evidence-led push on AWS costs, and helped start an AI agent service.</span></div></li>
+<li style="display: flex; gap: 14px"><span aria-hidden="true" style="color: var(--dim); flex: none">├─</span><div><span style="color: var(--acc); font-weight: 700">2019–21 · Founding &amp; foundations.</span> <span style="color: var(--text2)">Led the consolidation of ~18 repositories into one TypeScript monorepo, with history intact, and set up its <span class="c-nb"><button type="button" class="c-term" popovertarget="c-tip" popovertargetaction="show" aria-controls="c-tip" aria-expanded="false" style="" data-dc-click="14">CI/CD</button>,</span> Docker and local dev. Started the React design system and led front-end work on the core product.</span></div></li>
+<li style="display: flex; gap: 14px"><span aria-hidden="true" style="color: var(--dim); flex: none">├─</span><div><span style="color: var(--acc); font-weight: 700">2021–24 · Platform ownership.</span> <span style="color: var(--text2)">Moved CI to self-hosted Buildkite as code, driven by an in-house TypeScript build engine. Helped take the company to <span class="c-nb"><button type="button" class="c-term" popovertarget="c-tip" popovertargetaction="show" aria-controls="c-tip" aria-expanded="false" style="" data-dc-click="15">continuous deployment</button>,</span> led repo-wide toolchain migrations and hardened AWS access.</span></div></li>
+<li style="display: flex; gap: 14px"><span aria-hidden="true" style="color: var(--dim); flex: none">├─</span><div><span style="color: var(--acc); font-weight: 700">2024–26 · Architecture, security &amp; AI.</span> <span style="color: var(--text2)">Led the move to <button type="button" class="c-term" popovertarget="c-tip" popovertargetaction="show" aria-controls="c-tip" aria-expanded="false" style="" data-dc-click="16">Fargate</button> and an edge behind <button type="button" class="c-term" popovertarget="c-tip" popovertargetaction="show" aria-controls="c-tip" aria-expanded="false" style="" data-dc-click="17">CloudFront</button> and <span class="c-nb"><button type="button" class="c-term" popovertarget="c-tip" popovertargetaction="show" aria-controls="c-tip" aria-expanded="false" style="" data-dc-click="18">WAF</button>,</span> the replacement of our authentication system and an evidence-led push on AWS costs, and helped start an AI agent service.</span></div></li>
 <li style="display: flex; gap: 14px"><span aria-hidden="true" style="color: var(--dim); flex: none">└─</span><div><span style="color: var(--acc); font-weight: 700">2026 · Acquisition by WorkBuzz.</span> <span style="color: var(--text2)">Saw the company through from startup to its acquisition, providing technical leadership along the way and representing engineering right through due diligence.</span></div></li>
 </ol>
 </article>
@@ -757,32 +790,32 @@ html:has(.c-light){scrollbar-color:#A8B8AD #EDF1EE}
 <div class="c-hrow" style="margin: 0 0 8px"><h2 class="c-cmd" style="margin: 0; font-size: clamp(16px, 2vw, 20px); font-weight: 500; color: var(--ok)">$ ls ./responsibilities <span style="color: var(--dim)"># roles &amp; responsibilities</span></h2><a class="c-anchor" href="#responsibilities" data-done="false" data-file="responsibilities/" aria-label="Copy link to responsibilities/" title="Copy link to this section">#</a></div>
 <p style="margin: 0 0 24px; color: var(--mute); font-size: 14px; max-width: 72ch">The responsibilities I've held beyond the code, and the impact they had: leading and growing the team, hiring, working with product and customers, incidents, budgets, ways of working and the move to AI-first engineering, seeing a startup through to acquisition, compliance and internal IT. It plays through each file on its own and holds while you hover or read. Jump to any file, or open its full detail.</p>
 
-<div class="c-deck" id="r-deck" tabindex="0" role="region" aria-roledescription="carousel" aria-label="Responsibilities tour" data-dc-keydown="18">
+<div class="c-deck" id="r-deck" tabindex="0" role="region" aria-roledescription="carousel" aria-label="Responsibilities tour" data-dc-keydown="19">
 <div class="c-deck-prog" role="tablist" aria-label="Responsibilities">
 
-<button type="button" role="tab" class="c-seg" aria-selected="true" aria-controls="rp-lead" aria-label="leadership.md" title="leadership.md" data-dc-click="19"><span class="c-seg-bar"><i style="width: 100%;"></i></span><span class="c-seg-l">leadership</span></button>
+<button type="button" role="tab" class="c-seg" aria-selected="true" aria-controls="rp-lead" aria-label="leadership.md" title="leadership.md" data-dc-click="20"><span class="c-seg-bar"><i style="width: 100%;"></i></span><span class="c-seg-l">leadership</span></button>
 
-<button type="button" role="tab" class="c-seg" aria-selected="false" aria-controls="rp-hire" aria-label="hiring.md" title="hiring.md" data-dc-click="20"><span class="c-seg-bar"><i style="width: 0;"></i></span><span class="c-seg-l">hiring</span></button>
+<button type="button" role="tab" class="c-seg" aria-selected="false" aria-controls="rp-hire" aria-label="hiring.md" title="hiring.md" data-dc-click="21"><span class="c-seg-bar"><i style="width: 0;"></i></span><span class="c-seg-l">hiring</span></button>
 
-<button type="button" role="tab" class="c-seg" aria-selected="false" aria-controls="rp-people" aria-label="people.md" title="people.md" data-dc-click="21"><span class="c-seg-bar"><i style="width: 0;"></i></span><span class="c-seg-l">people</span></button>
+<button type="button" role="tab" class="c-seg" aria-selected="false" aria-controls="rp-people" aria-label="people.md" title="people.md" data-dc-click="22"><span class="c-seg-bar"><i style="width: 0;"></i></span><span class="c-seg-l">people</span></button>
 
-<button type="button" role="tab" class="c-seg" aria-selected="false" aria-controls="rp-proc" aria-label="process.md" title="process.md" data-dc-click="22"><span class="c-seg-bar"><i style="width: 0;"></i></span><span class="c-seg-l">process</span></button>
+<button type="button" role="tab" class="c-seg" aria-selected="false" aria-controls="rp-proc" aria-label="process.md" title="process.md" data-dc-click="23"><span class="c-seg-bar"><i style="width: 0;"></i></span><span class="c-seg-l">process</span></button>
 
-<button type="button" role="tab" class="c-seg" aria-selected="false" aria-controls="rp-aiproc" aria-label="ai.md" title="ai.md" data-dc-click="23"><span class="c-seg-bar"><i style="width: 0;"></i></span><span class="c-seg-l">ai</span></button>
+<button type="button" role="tab" class="c-seg" aria-selected="false" aria-controls="rp-aiproc" aria-label="ai.md" title="ai.md" data-dc-click="24"><span class="c-seg-bar"><i style="width: 0;"></i></span><span class="c-seg-l">ai</span></button>
 
-<button type="button" role="tab" class="c-seg" aria-selected="false" aria-controls="rp-prod" aria-label="product.md" title="product.md" data-dc-click="24"><span class="c-seg-bar"><i style="width: 0;"></i></span><span class="c-seg-l">product</span></button>
+<button type="button" role="tab" class="c-seg" aria-selected="false" aria-controls="rp-prod" aria-label="product.md" title="product.md" data-dc-click="25"><span class="c-seg-bar"><i style="width: 0;"></i></span><span class="c-seg-l">product</span></button>
 
-<button type="button" role="tab" class="c-seg" aria-selected="false" aria-controls="rp-cust" aria-label="customers.md" title="customers.md" data-dc-click="25"><span class="c-seg-bar"><i style="width: 0;"></i></span><span class="c-seg-l">customers</span></button>
+<button type="button" role="tab" class="c-seg" aria-selected="false" aria-controls="rp-cust" aria-label="customers.md" title="customers.md" data-dc-click="26"><span class="c-seg-bar"><i style="width: 0;"></i></span><span class="c-seg-l">customers</span></button>
 
-<button type="button" role="tab" class="c-seg" aria-selected="false" aria-controls="rp-bud" aria-label="budget.md" title="budget.md" data-dc-click="26"><span class="c-seg-bar"><i style="width: 0;"></i></span><span class="c-seg-l">budget</span></button>
+<button type="button" role="tab" class="c-seg" aria-selected="false" aria-controls="rp-bud" aria-label="budget.md" title="budget.md" data-dc-click="27"><span class="c-seg-bar"><i style="width: 0;"></i></span><span class="c-seg-l">budget</span></button>
 
-<button type="button" role="tab" class="c-seg" aria-selected="false" aria-controls="rp-acq" aria-label="acquisition.md" title="acquisition.md" data-dc-click="27"><span class="c-seg-bar"><i style="width: 0;"></i></span><span class="c-seg-l">acquisition</span></button>
+<button type="button" role="tab" class="c-seg" aria-selected="false" aria-controls="rp-acq" aria-label="acquisition.md" title="acquisition.md" data-dc-click="28"><span class="c-seg-bar"><i style="width: 0;"></i></span><span class="c-seg-l">acquisition</span></button>
 
-<button type="button" role="tab" class="c-seg" aria-selected="false" aria-controls="rp-inc" aria-label="incidents.md" title="incidents.md" data-dc-click="28"><span class="c-seg-bar"><i style="width: 0;"></i></span><span class="c-seg-l">incidents</span></button>
+<button type="button" role="tab" class="c-seg" aria-selected="false" aria-controls="rp-inc" aria-label="incidents.md" title="incidents.md" data-dc-click="29"><span class="c-seg-bar"><i style="width: 0;"></i></span><span class="c-seg-l">incidents</span></button>
 
-<button type="button" role="tab" class="c-seg" aria-selected="false" aria-controls="rp-comp" aria-label="compliance.md" title="compliance.md" data-dc-click="29"><span class="c-seg-bar"><i style="width: 0;"></i></span><span class="c-seg-l">compliance</span></button>
+<button type="button" role="tab" class="c-seg" aria-selected="false" aria-controls="rp-comp" aria-label="compliance.md" title="compliance.md" data-dc-click="30"><span class="c-seg-bar"><i style="width: 0;"></i></span><span class="c-seg-l">compliance</span></button>
 
-<button type="button" role="tab" class="c-seg" aria-selected="false" aria-controls="rp-it" aria-label="it.md" title="it.md" data-dc-click="30"><span class="c-seg-bar"><i style="width: 0;"></i></span><span class="c-seg-l">it</span></button>
+<button type="button" role="tab" class="c-seg" aria-selected="false" aria-controls="rp-it" aria-label="it.md" title="it.md" data-dc-click="31"><span class="c-seg-bar"><i style="width: 0;"></i></span><span class="c-seg-l">it</span></button>
 
 </div>
 <div class="c-deck-slides" aria-live="polite">
@@ -804,7 +837,7 @@ html:has(.c-light){scrollbar-color:#A8B8AD #EDF1EE}
 <div class="c-rs-flow"><span class="" style="animation-delay: 150ms">strategy &amp; roadmap</span><span class="" style="animation-delay: 240ms">people</span><span class="" style="animation-delay: 330ms">outsourced teams</span><span class="" style="animation-delay: 420ms">delivery</span><span class="" style="animation-delay: 510ms">incidents</span><span class="" style="animation-delay: 600ms">stakeholders</span></div>
 </div>
 </div>
-<details class="c-rs-more"><summary data-dc-click="31"><span style="color: var(--ok)">$ cat leadership.md</span> <span style="color: var(--dim)"># the full file</span></summary>
+<details class="c-rs-more"><summary data-dc-click="32"><span style="color: var(--ok)">$ cat leadership.md</span> <span style="color: var(--dim)"># the full file</span></summary>
 <div class="c-rs-body">
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px">
 <div class="c-pop" style="border: 1px solid var(--line2); border-radius: 10px; padding: 18px; animation-delay: .1s"><div style="font-size: 30px; font-weight: 800; color: var(--head); line-height: 1.1">12</div><div style="color: var(--mute); font-size: 14px; margin-top: 4px">engineers in the team at its largest</div></div>
@@ -820,8 +853,8 @@ html:has(.c-light){scrollbar-color:#A8B8AD #EDF1EE}
 <div class="c-pop" style="border: 1px solid var(--line2); border-radius: 10px; padding: 18px; animation-delay: .25s"><div style="font-weight: 700; color: var(--head); margin-bottom: 6px">Outsourced &amp; distributed teams</div><div style="font-size: 14px; color: var(--text3)">Worked directly with an outsourcing firm in India to bolster in-house capacity, onboarding 5+ Software Engineers and Automation Test Engineers into the team, many of whom stayed for 2+ years.</div></div>
 <div class="c-pop" style="border: 1px solid var(--line2); border-radius: 10px; padding: 18px; animation-delay: .3s"><div style="font-weight: 700; color: var(--head); margin-bottom: 6px">Delivery</div><div style="font-size: 14px; color: var(--text3)">Took the team to continuous delivery with daily releases, and led the build, test and deploy tooling that kept it shipping.</div></div>
 <div class="c-pop" style="border: 1px solid var(--line2); border-radius: 10px; padding: 18px; animation-delay: .4s"><div style="font-weight: 700; color: var(--head); margin-bottom: 6px">Incidents</div><div style="font-size: 14px; color: var(--text3)">Ran blameless post-mortems, with runbooks and tooling as the fix rather than blame.</div></div>
-<div class="c-pop" style="border: 1px solid var(--line2); border-radius: 10px; padding: 18px; animation-delay: .5s"><div style="font-weight: 700; color: var(--head); margin-bottom: 6px">Security &amp; compliance</div><div style="font-size: 14px; color: var(--text3)">Was the technical lead for GDPR and ISO 27001 work and the yearly penetration test. See <a class="c-see" href="#responsibilities" data-dc-click="32">compliance.md</a>.</div></div>
-<div class="c-pop" style="border: 1px solid var(--line2); border-radius: 10px; padding: 18px; animation-delay: .55s"><div style="font-weight: 700; color: var(--head); margin-bottom: 6px">Internal IT</div><div style="font-size: 14px; color: var(--text3)">Have been the point person for IT: hardware, Google Workspace, device management and a service desk for the whole company. See <a class="c-see" href="#responsibilities" data-dc-click="33">it.md</a>.</div></div>
+<div class="c-pop" style="border: 1px solid var(--line2); border-radius: 10px; padding: 18px; animation-delay: .5s"><div style="font-weight: 700; color: var(--head); margin-bottom: 6px">Security &amp; compliance</div><div style="font-size: 14px; color: var(--text3)">Was the technical lead for GDPR and ISO 27001 work and the yearly penetration test. See <a class="c-see" href="#responsibilities" data-dc-click="33">compliance.md</a>.</div></div>
+<div class="c-pop" style="border: 1px solid var(--line2); border-radius: 10px; padding: 18px; animation-delay: .55s"><div style="font-weight: 700; color: var(--head); margin-bottom: 6px">Internal IT</div><div style="font-size: 14px; color: var(--text3)">Have been the point person for IT: hardware, Google Workspace, device management and a service desk for the whole company. See <a class="c-see" href="#responsibilities" data-dc-click="34">it.md</a>.</div></div>
 <div class="c-pop" style="border: 1px solid var(--line2); border-radius: 10px; padding: 18px; animation-delay: .6s"><div style="font-weight: 700; color: var(--head); margin-bottom: 6px">Stakeholders</div><div style="font-size: 14px; color: var(--text3)">Explained technical trade-offs to CEOs and directors in their terms, not engineering's.</div></div>
 </div>
 </div>
@@ -847,7 +880,7 @@ html:has(.c-light){scrollbar-color:#A8B8AD #EDF1EE}
 <div class="c-rs-flow"><span class="" style="animation-delay: 150ms">people-led onboarding workflows</span><span class="last" style="animation-delay: 240ms">largely self-driven, from AI-explained docs</span></div>
 </div>
 </div>
-<details class="c-rs-more"><summary data-dc-click="34"><span style="color: var(--ok)">$ cat hiring.md</span> <span style="color: var(--dim)"># the full file</span></summary>
+<details class="c-rs-more"><summary data-dc-click="35"><span style="color: var(--ok)">$ cat hiring.md</span> <span style="color: var(--dim)"># the full file</span></summary>
 <div class="c-rs-body">
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px">
 <div class="c-pop" style="border: 1px solid var(--line2); border-radius: 10px; padding: 18px; animation-delay: 0.1s"><div style="font-size: 30px; font-weight: 800; color: var(--head); line-height: 1.1">10+</div><div style="color: var(--mute); font-size: 14px; margin-top: 4px">engineers hired, in-house and outsourced</div></div>
@@ -887,7 +920,7 @@ html:has(.c-light){scrollbar-color:#A8B8AD #EDF1EE}
 <div class="c-rs-flow"><span class="" style="animation-delay: 150ms">1:1s</span><span class="" style="animation-delay: 240ms">objectives</span><span class="" style="animation-delay: 330ms">KPIs</span><span class="" style="animation-delay: 420ms">department updates</span><span class="last" style="animation-delay: 510ms">board updates</span></div>
 </div>
 </div>
-<details class="c-rs-more"><summary data-dc-click="35"><span style="color: var(--ok)">$ cat people.md</span> <span style="color: var(--dim)"># the full file</span></summary>
+<details class="c-rs-more"><summary data-dc-click="36"><span style="color: var(--ok)">$ cat people.md</span> <span style="color: var(--dim)"># the full file</span></summary>
 <div class="c-rs-body">
 <div>
 <div style="font-size: 13px; color: var(--mute); margin-bottom: 12px">One engineer's path on my team</div>
@@ -935,7 +968,7 @@ html:has(.c-light){scrollbar-color:#A8B8AD #EDF1EE}
 <div class="c-rs-flow"><span class="" style="animation-delay: 150ms">Scrum</span><span class="" style="animation-delay: 240ms">Kanban</span><span class="" style="animation-delay: 330ms">project-based</span><span class="last" style="animation-delay: 420ms">AI-driven workflows</span></div>
 </div>
 </div>
-<details class="c-rs-more"><summary data-dc-click="36"><span style="color: var(--ok)">$ cat process.md</span> <span style="color: var(--dim)"># the full file</span></summary>
+<details class="c-rs-more"><summary data-dc-click="37"><span style="color: var(--ok)">$ cat process.md</span> <span style="color: var(--dim)"># the full file</span></summary>
 <div class="c-rs-body">
 <div>
 <div style="font-size: 13px; color: var(--mute); margin-bottom: 12px">Ways of working</div>
@@ -991,7 +1024,7 @@ html:has(.c-light){scrollbar-color:#A8B8AD #EDF1EE}
 <div class="c-rs-flow"><span class="" style="animation-delay: 150ms">task</span><span class="" style="animation-delay: 240ms">AI generates the code</span><span class="" style="animation-delay: 330ms">in-repo guidelines</span><span class="" style="animation-delay: 420ms">AI review + risk rating</span><span class="" style="animation-delay: 510ms">human review</span><span class="last" style="animation-delay: 600ms">merged</span></div>
 </div>
 </div>
-<details class="c-rs-more"><summary data-dc-click="37"><span style="color: var(--ok)">$ cat ai.md</span> <span style="color: var(--dim)"># the full file</span></summary>
+<details class="c-rs-more"><summary data-dc-click="38"><span style="color: var(--ok)">$ cat ai.md</span> <span style="color: var(--dim)"># the full file</span></summary>
 <div class="c-rs-body">
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px">
 <div class="c-pop" style="border: 1px solid var(--line2); border-radius: 10px; padding: 18px; animation-delay: 0.1s"><div style="font-size: 26px; font-weight: 800; color: var(--head); line-height: 1.15">~12 months</div><div style="color: var(--mute); font-size: 14px; margin-top: 4px">since AI-assisted development was introduced</div></div>
@@ -1030,8 +1063,8 @@ html:has(.c-light){scrollbar-color:#A8B8AD #EDF1EE}
 <div class="c-pop" style="border: 1px solid var(--line2); border-radius: 10px; padding: 18px; animation-delay: .1s"><div style="font-weight: 700; color: var(--head); margin-bottom: 6px">Guidelines as code</div><div style="font-size: 14px; color: var(--text3)">Style and coding guidelines, and the Secure Development Policy, kept in the repo and an AI-readable docs site that both engineers and models work from.</div></div>
 <div class="c-pop" style="border: 1px solid var(--line2); border-radius: 10px; padding: 18px; animation-delay: .2s"><div style="font-weight: 700; color: var(--head); margin-bottom: 6px">Advisory risk rating</div><div style="font-size: 14px; color: var(--text3)">Claude rates every pull request green, amber or red, so human reviewers know where to spend their attention.</div></div>
 <div class="c-pop" style="border: 1px solid var(--line2); border-radius: 10px; padding: 18px; animation-delay: .3s"><div style="font-weight: 700; color: var(--head); margin-bottom: 6px">Infrastructure summaries</div><div style="font-size: 14px; color: var(--text3)">Terraform plans get an AI summary posted as a GitHub check before anyone approves them.</div></div>
-<div class="c-pop" style="border: 1px solid var(--line2); border-radius: 10px; padding: 18px; animation-delay: .4s"><div style="font-weight: 700; color: var(--head); margin-bottom: 6px">AI-driven onboarding</div><div style="font-size: 14px; color: var(--text3)">New starters onboard largely by themselves from documentation produced and explained by AI. See <a class="c-see" href="#responsibilities" data-dc-click="38">hiring.md</a>.</div></div>
-<div class="c-pop" style="border: 1px solid var(--line2); border-radius: 10px; padding: 18px; animation-delay: .5s"><div style="font-weight: 700; color: var(--head); margin-bottom: 6px">New roles</div><div style="font-size: 14px; color: var(--text3)">Job roles updated for AI-first work, including a new AI Engineer role, then hired for it. See <a class="c-see" href="#responsibilities" data-dc-click="39">people.md</a>.</div></div>
+<div class="c-pop" style="border: 1px solid var(--line2); border-radius: 10px; padding: 18px; animation-delay: .4s"><div style="font-weight: 700; color: var(--head); margin-bottom: 6px">AI-driven onboarding</div><div style="font-size: 14px; color: var(--text3)">New starters onboard largely by themselves from documentation produced and explained by AI. See <a class="c-see" href="#responsibilities" data-dc-click="39">hiring.md</a>.</div></div>
+<div class="c-pop" style="border: 1px solid var(--line2); border-radius: 10px; padding: 18px; animation-delay: .5s"><div style="font-weight: 700; color: var(--head); margin-bottom: 6px">New roles</div><div style="font-size: 14px; color: var(--text3)">Job roles updated for AI-first work, including a new AI Engineer role, then hired for it. See <a class="c-see" href="#responsibilities" data-dc-click="40">people.md</a>.</div></div>
 </div>
 <div>
 <div style="font-size: 13px; color: var(--mute); margin-bottom: 12px">20+ Claude Code skills encoding team workflows, including</div>
@@ -1061,7 +1094,7 @@ html:has(.c-light){scrollbar-color:#A8B8AD #EDF1EE}
 <div class="c-rs-flow"><span class="" style="animation-delay: 150ms">roadmap &amp; technical direction</span><span class="" style="animation-delay: 240ms">why it matters, in plain terms</span><span class="" style="animation-delay: 330ms">CEO &amp; CTO updates</span><span class="last" style="animation-delay: 420ms">board material</span></div>
 </div>
 </div>
-<details class="c-rs-more"><summary data-dc-click="40"><span style="color: var(--ok)">$ cat product.md</span> <span style="color: var(--dim)"># the full file</span></summary>
+<details class="c-rs-more"><summary data-dc-click="41"><span style="color: var(--ok)">$ cat product.md</span> <span style="color: var(--dim)"># the full file</span></summary>
 <div class="c-rs-body">
 <div>
 <div style="font-size: 13px; color: var(--mute); margin-bottom: 12px">From technical direction to the board</div>
@@ -1100,7 +1133,7 @@ html:has(.c-light){scrollbar-color:#A8B8AD #EDF1EE}
 <div class="c-rs-flow"><span class="" style="animation-delay: 150ms">sales calls</span><span class="" style="animation-delay: 240ms">security questionnaires</span><span class="" style="animation-delay: 330ms">due-diligence calls</span><span class="" style="animation-delay: 420ms">customer calls &amp; outages</span><span class="last" style="animation-delay: 510ms">escalations</span></div>
 </div>
 </div>
-<details class="c-rs-more"><summary data-dc-click="41"><span style="color: var(--ok)">$ cat customers.md</span> <span style="color: var(--dim)"># the full file</span></summary>
+<details class="c-rs-more"><summary data-dc-click="42"><span style="color: var(--ok)">$ cat customers.md</span> <span style="color: var(--dim)"># the full file</span></summary>
 <div class="c-rs-body">
 <div>
 <div style="font-size: 13px; color: var(--mute); margin-bottom: 12px">Where I joined the conversation</div>
@@ -1114,7 +1147,7 @@ html:has(.c-light){scrollbar-color:#A8B8AD #EDF1EE}
 </div>
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr)); gap: 12px">
 <div class="c-pop" style="border: 1px solid var(--line2); border-radius: 10px; padding: 18px; animation-delay: 0.1s"><div style="font-weight: 700; color: var(--head); margin-bottom: 6px">Security questionnaires</div><div style="font-size: 14px; color: var(--text3)">Answered security questions and helped produce a standard Q&amp;A set reused for questionnaires and due diligence.</div></div>
-<div class="c-pop" style="border: 1px solid var(--line2); border-radius: 10px; padding: 18px; animation-delay: 0.2s"><div style="font-weight: 700; color: var(--head); margin-bottom: 6px">SSO &amp; SAML onboarding</div><div style="font-size: 14px; color: var(--text3)">Onboarded customers onto SSO as part of rebuilding the platform's authentication. See <a class="c-see" href="#case-studies" data-dc-click="42">auth.md</a>.</div></div>
+<div class="c-pop" style="border: 1px solid var(--line2); border-radius: 10px; padding: 18px; animation-delay: 0.2s"><div style="font-weight: 700; color: var(--head); margin-bottom: 6px">SSO &amp; SAML onboarding</div><div style="font-size: 14px; color: var(--text3)">Onboarded customers onto SSO as part of rebuilding the platform's authentication. See <a class="c-see" href="#case-studies" data-dc-click="43">auth.md</a>.</div></div>
 <div class="c-pop" style="border: 1px solid var(--line2); border-radius: 10px; padding: 18px; animation-delay: 0.3s"><div style="font-weight: 700; color: var(--head); margin-bottom: 6px">Data residency</div><div style="font-size: 14px; color: var(--text3)">Handled data residency questions extensively, for the platform itself and the third-party tools it relies on.</div></div>
 <div class="c-pop" style="border: 1px solid var(--line2); border-radius: 10px; padding: 18px; animation-delay: 0.4s"><div style="font-weight: 700; color: var(--head); margin-bottom: 6px">Uptime &amp; outages</div><div style="font-size: 14px; color: var(--text3)">Serviced uptime commitments and gave customers updates during downtime incidents.</div></div>
 <div class="c-pop" style="border: 1px solid var(--line2); border-radius: 10px; padding: 18px; animation-delay: 0.5s"><div style="font-weight: 700; color: var(--head); margin-bottom: 6px">Escalations</div><div style="font-size: 14px; color: var(--text3)">The primary escalation point for most major customer issues, alongside my Deputy.</div></div>
@@ -1141,7 +1174,7 @@ html:has(.c-light){scrollbar-color:#A8B8AD #EDF1EE}
 <div class="c-rs-flow"><span class="" style="animation-delay: 150ms">budget owned</span><span class="" style="animation-delay: 240ms">anomaly detection everywhere</span><span class="" style="animation-delay: 330ms">evidence-led cuts</span><span class="" style="animation-delay: 420ms">contracts renegotiated</span><span class="last" style="animation-delay: 510ms">tools consolidated</span></div>
 </div>
 </div>
-<details class="c-rs-more"><summary data-dc-click="43"><span style="color: var(--ok)">$ cat budget.md</span> <span style="color: var(--dim)"># the full file</span></summary>
+<details class="c-rs-more"><summary data-dc-click="44"><span style="color: var(--ok)">$ cat budget.md</span> <span style="color: var(--dim)"># the full file</span></summary>
 <div class="c-rs-body">
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px">
 <div class="c-pop" style="border: 1px solid var(--line2); border-radius: 10px; padding: 18px; animation-delay: 0.1s"><div style="font-size: 26px; font-weight: 800; color: var(--head); line-height: 1.15">Owned</div><div style="color: var(--mute); font-size: 14px; margin-top: 4px">a substantial monthly AWS budget, across production, staging and dev</div></div>
@@ -1187,7 +1220,7 @@ html:has(.c-light){scrollbar-color:#A8B8AD #EDF1EE}
 <div class="c-rs-flow"><span class="" style="animation-delay: 150ms">startup</span><span class="" style="animation-delay: 240ms">foundations</span><span class="" style="animation-delay: 330ms">scale</span><span class="" style="animation-delay: 420ms">enterprise-ready</span><span class="" style="animation-delay: 510ms">due diligence</span><span class="last" style="animation-delay: 600ms">acquired</span></div>
 </div>
 </div>
-<details class="c-rs-more"><summary data-dc-click="44"><span style="color: var(--ok)">$ cat acquisition.md</span> <span style="color: var(--dim)"># the full file</span></summary>
+<details class="c-rs-more"><summary data-dc-click="45"><span style="color: var(--ok)">$ cat acquisition.md</span> <span style="color: var(--dim)"># the full file</span></summary>
 <div class="c-rs-body">
 <div>
 <div style="font-size: 13px; color: var(--mute); margin-bottom: 12px">The journey</div>
@@ -1206,12 +1239,12 @@ html:has(.c-light){scrollbar-color:#A8B8AD #EDF1EE}
 <div>
 <div style="font-size: 13px; color: var(--mute); margin-bottom: 12px">What technical due diligence examines, and the work behind each answer</div>
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 10px">
-<button type="button" class="c-dd" data-dc-click="45"><span>Architecture &amp; scalability</span><span style="color: var(--acc)">aws.md →</span></button>
-<button type="button" class="c-dd" data-dc-click="46"><span>Security</span><span style="color: var(--acc)">security.md →</span></button>
-<button type="button" class="c-dd" data-dc-click="47"><span>Compliance</span><span style="color: var(--acc)">compliance.md →</span></button>
-<button type="button" class="c-dd" data-dc-click="48"><span>Code quality &amp; maintainability</span><span style="color: var(--acc)">refactor.md →</span></button>
-<button type="button" class="c-dd" data-dc-click="49"><span>Delivery &amp; release process</span><span style="color: var(--acc)">ci-cd.md →</span></button>
-<button type="button" class="c-dd" data-dc-click="50"><span>Team &amp; leadership</span><span style="color: var(--acc)">leadership.md →</span></button>
+<button type="button" class="c-dd" data-dc-click="46"><span>Architecture &amp; scalability</span><span style="color: var(--acc)">aws.md →</span></button>
+<button type="button" class="c-dd" data-dc-click="47"><span>Security</span><span style="color: var(--acc)">security.md →</span></button>
+<button type="button" class="c-dd" data-dc-click="48"><span>Compliance</span><span style="color: var(--acc)">compliance.md →</span></button>
+<button type="button" class="c-dd" data-dc-click="49"><span>Code quality &amp; maintainability</span><span style="color: var(--acc)">refactor.md →</span></button>
+<button type="button" class="c-dd" data-dc-click="50"><span>Delivery &amp; release process</span><span style="color: var(--acc)">ci-cd.md →</span></button>
+<button type="button" class="c-dd" data-dc-click="51"><span>Team &amp; leadership</span><span style="color: var(--acc)">leadership.md →</span></button>
 </div>
 </div>
 </div>
@@ -1236,7 +1269,7 @@ html:has(.c-light){scrollbar-color:#A8B8AD #EDF1EE}
 <div class="c-rs-flow"><span class="" style="animation-delay: 150ms">on-call rota</span><span class="" style="animation-delay: 240ms">incident led</span><span class="" style="animation-delay: 330ms">status page updates</span><span class="" style="animation-delay: 420ms">post-mortem</span><span class="last" style="animation-delay: 510ms">runbook &amp; fixes</span></div>
 </div>
 </div>
-<details class="c-rs-more"><summary data-dc-click="51"><span style="color: var(--ok)">$ cat incidents.md</span> <span style="color: var(--dim)"># the full file</span></summary>
+<details class="c-rs-more"><summary data-dc-click="52"><span style="color: var(--ok)">$ cat incidents.md</span> <span style="color: var(--dim)"># the full file</span></summary>
 <div class="c-rs-body">
 <div>
 <div style="font-size: 13px; color: var(--mute); margin-bottom: 12px">How an incident ran</div>
@@ -1277,7 +1310,7 @@ html:has(.c-light){scrollbar-color:#A8B8AD #EDF1EE}
 <div class="c-rs-flow"><span class="" style="animation-delay: 150ms">GDPR &amp; ISO 27001 controls</span><span class="" style="animation-delay: 240ms">annual audit</span><span class="" style="animation-delay: 330ms">yearly pen test</span><span class="last" style="animation-delay: 420ms">findings fixed &amp; tracked ↻</span></div>
 </div>
 </div>
-<details class="c-rs-more"><summary data-dc-click="52"><span style="color: var(--ok)">$ cat compliance.md</span> <span style="color: var(--dim)"># the full file</span></summary>
+<details class="c-rs-more"><summary data-dc-click="53"><span style="color: var(--ok)">$ cat compliance.md</span> <span style="color: var(--dim)"># the full file</span></summary>
 <div class="c-rs-body">
 <div>
 <div style="font-size: 13px; color: var(--mute); margin-bottom: 12px">The yearly cycle</div>
@@ -1292,7 +1325,7 @@ html:has(.c-light){scrollbar-color:#A8B8AD #EDF1EE}
 <div class="c-pop" style="border: 1px solid var(--line2); border-radius: 10px; padding: 18px; animation-delay: .1s"><div style="font-weight: 700; color: var(--head); margin-bottom: 6px">GDPR</div><div style="font-size: 14px; color: var(--text3)">Was part of the accreditation work, handling the technical queries alongside the InfoSec Manager.</div></div>
 <div class="c-pop" style="border: 1px solid var(--line2); border-radius: 10px; padding: 18px; animation-delay: .2s"><div style="font-weight: 700; color: var(--head); margin-bottom: 6px">ISO 27001</div><div style="font-size: 14px; color: var(--text3)">Was part of the accreditation and the annual audits, as the engineering contact for the InfoSec Manager.</div></div>
 <div class="c-pop" style="border: 1px solid var(--line2); border-radius: 10px; padding: 18px; animation-delay: .3s"><div style="font-weight: 700; color: var(--head); margin-bottom: 6px">Penetration testing</div><div style="font-size: 14px; color: var(--text3)">Arranged the yearly test with external vendors and liaised with them so it could be carried out, with findings then fixed in code.</div></div>
-<div class="c-pop" style="border: 1px solid var(--line2); border-radius: 10px; padding: 18px; animation-delay: .4s"><div style="font-weight: 700; color: var(--head); margin-bottom: 6px">Device compliance</div><div style="font-size: 14px; color: var(--text3)">Oversaw the <button type="button" class="c-term" popovertarget="c-tip" popovertargetaction="show" aria-controls="c-tip" aria-expanded="false" style="" data-dc-click="53">MDM</button> that provisions every Mac and enforces central InfoSec and compliance policies. See <a class="c-see" href="#responsibilities" data-dc-click="54">it.md</a>.</div></div>
+<div class="c-pop" style="border: 1px solid var(--line2); border-radius: 10px; padding: 18px; animation-delay: .4s"><div style="font-weight: 700; color: var(--head); margin-bottom: 6px">Device compliance</div><div style="font-size: 14px; color: var(--text3)">Oversaw the <button type="button" class="c-term" popovertarget="c-tip" popovertargetaction="show" aria-controls="c-tip" aria-expanded="false" style="" data-dc-click="54">MDM</button> that provisions every Mac and enforces central InfoSec and compliance policies. See <a class="c-see" href="#responsibilities" data-dc-click="55">it.md</a>.</div></div>
 </div>
 </div>
 </details>
@@ -1316,7 +1349,7 @@ html:has(.c-light){scrollbar-color:#A8B8AD #EDF1EE}
 <div class="c-rs-flow"><span class="" style="animation-delay: 150ms">request raised</span><span class="" style="animation-delay: 240ms">service desk</span><span class="" style="animation-delay: 330ms">assigned across the team</span><span class="last" style="animation-delay: 420ms">resolved</span></div>
 </div>
 </div>
-<details class="c-rs-more"><summary data-dc-click="55"><span style="color: var(--ok)">$ cat it.md</span> <span style="color: var(--dim)"># the full file</span></summary>
+<details class="c-rs-more"><summary data-dc-click="56"><span style="color: var(--ok)">$ cat it.md</span> <span style="color: var(--dim)"># the full file</span></summary>
 <div class="c-rs-body">
 <div>
 <div style="font-size: 13px; color: var(--mute); margin-bottom: 12px">A new Mac, ready to work</div>
@@ -1349,9 +1382,9 @@ html:has(.c-light){scrollbar-color:#A8B8AD #EDF1EE}
 
 </div>
 <div class="c-deck-ctl">
-<button type="button" aria-label="Prev file" data-dc-click="56"><span aria-hidden="true">←</span> prev</button>
+<button type="button" aria-label="Prev file" data-dc-click="57"><span aria-hidden="true">←</span> prev</button>
 <span style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap; justify-content: center"><span style="color: var(--dim)">next: hiring.md</span></span>
-<button type="button" aria-label="Next file" data-dc-click="57">next <span aria-hidden="true">→</span></button>
+<button type="button" aria-label="Next file" data-dc-click="58">next <span aria-hidden="true">→</span></button>
 </div>
 </div>
 </section>
@@ -1363,27 +1396,29 @@ html:has(.c-light){scrollbar-color:#A8B8AD #EDF1EE}
 <div class="c-cs">
 <div role="tablist" aria-label="Case studies" aria-orientation="vertical" class="c-cs-tabs">
 
-<button type="button" role="tab" class="c-tab" aria-selected="true" style="min-height: 44px; padding: 0 16px; border-radius: 8px; font: inherit; font-size: 14px; cursor: pointer; background: var(--acc); color: var(--bg); border: 1px solid var(--acc); font-weight: 700;" data-dc-click="58">monorepo.md</button>
+<button type="button" role="tab" class="c-tab" aria-selected="true" style="min-height: 44px; padding: 0 16px; border-radius: 8px; font: inherit; font-size: 14px; cursor: pointer; background: var(--acc); color: var(--bg); border: 1px solid var(--acc); font-weight: 700;" data-dc-click="59">monorepo.md</button>
 
-<button type="button" role="tab" class="c-tab" aria-selected="false" style="min-height: 44px; padding: 0 16px; border-radius: 8px; font: inherit; font-size: 14px; cursor: pointer; background: transparent; color: var(--text3); border: 1px solid var(--line3);" data-dc-click="59">refactor.md</button>
+<button type="button" role="tab" class="c-tab" aria-selected="false" style="min-height: 44px; padding: 0 16px; border-radius: 8px; font: inherit; font-size: 14px; cursor: pointer; background: transparent; color: var(--text3); border: 1px solid var(--line3);" data-dc-click="60">refactor.md</button>
 
-<button type="button" role="tab" class="c-tab" aria-selected="false" style="min-height: 44px; padding: 0 16px; border-radius: 8px; font: inherit; font-size: 14px; cursor: pointer; background: transparent; color: var(--text3); border: 1px solid var(--line3);" data-dc-click="60">ci-cd.md</button>
+<button type="button" role="tab" class="c-tab" aria-selected="false" style="min-height: 44px; padding: 0 16px; border-radius: 8px; font: inherit; font-size: 14px; cursor: pointer; background: transparent; color: var(--text3); border: 1px solid var(--line3);" data-dc-click="61">ci-cd.md</button>
 
-<button type="button" role="tab" class="c-tab" aria-selected="false" style="min-height: 44px; padding: 0 16px; border-radius: 8px; font: inherit; font-size: 14px; cursor: pointer; background: transparent; color: var(--text3); border: 1px solid var(--line3);" data-dc-click="61">testing.md</button>
+<button type="button" role="tab" class="c-tab" aria-selected="false" style="min-height: 44px; padding: 0 16px; border-radius: 8px; font: inherit; font-size: 14px; cursor: pointer; background: transparent; color: var(--text3); border: 1px solid var(--line3);" data-dc-click="62">testing.md</button>
 
-<button type="button" role="tab" class="c-tab" aria-selected="false" style="min-height: 44px; padding: 0 16px; border-radius: 8px; font: inherit; font-size: 14px; cursor: pointer; background: transparent; color: var(--text3); border: 1px solid var(--line3);" data-dc-click="62">accessibility.md</button>
+<button type="button" role="tab" class="c-tab" aria-selected="false" style="min-height: 44px; padding: 0 16px; border-radius: 8px; font: inherit; font-size: 14px; cursor: pointer; background: transparent; color: var(--text3); border: 1px solid var(--line3);" data-dc-click="63">accessibility.md</button>
 
-<button type="button" role="tab" class="c-tab" aria-selected="false" style="min-height: 44px; padding: 0 16px; border-radius: 8px; font: inherit; font-size: 14px; cursor: pointer; background: transparent; color: var(--text3); border: 1px solid var(--line3);" data-dc-click="63">aws.md</button>
+<button type="button" role="tab" class="c-tab" aria-selected="false" style="min-height: 44px; padding: 0 16px; border-radius: 8px; font: inherit; font-size: 14px; cursor: pointer; background: transparent; color: var(--text3); border: 1px solid var(--line3);" data-dc-click="64">aws.md</button>
 
-<button type="button" role="tab" class="c-tab" aria-selected="false" style="min-height: 44px; padding: 0 16px; border-radius: 8px; font: inherit; font-size: 14px; cursor: pointer; background: transparent; color: var(--text3); border: 1px solid var(--line3);" data-dc-click="64">security.md</button>
+<button type="button" role="tab" class="c-tab" aria-selected="false" style="min-height: 44px; padding: 0 16px; border-radius: 8px; font: inherit; font-size: 14px; cursor: pointer; background: transparent; color: var(--text3); border: 1px solid var(--line3);" data-dc-click="65">security.md</button>
 
-<button type="button" role="tab" class="c-tab" aria-selected="false" style="min-height: 44px; padding: 0 16px; border-radius: 8px; font: inherit; font-size: 14px; cursor: pointer; background: transparent; color: var(--text3); border: 1px solid var(--line3);" data-dc-click="65">auth.md</button>
+<button type="button" role="tab" class="c-tab" aria-selected="false" style="min-height: 44px; padding: 0 16px; border-radius: 8px; font: inherit; font-size: 14px; cursor: pointer; background: transparent; color: var(--text3); border: 1px solid var(--line3);" data-dc-click="66">auth.md</button>
 
-<button type="button" role="tab" class="c-tab" aria-selected="false" style="min-height: 44px; padding: 0 16px; border-radius: 8px; font: inherit; font-size: 14px; cursor: pointer; background: transparent; color: var(--text3); border: 1px solid var(--line3);" data-dc-click="66">data.md</button>
+<button type="button" role="tab" class="c-tab" aria-selected="false" style="min-height: 44px; padding: 0 16px; border-radius: 8px; font: inherit; font-size: 14px; cursor: pointer; background: transparent; color: var(--text3); border: 1px solid var(--line3);" data-dc-click="67">data.md</button>
 
-<button type="button" role="tab" class="c-tab" aria-selected="false" style="min-height: 44px; padding: 0 16px; border-radius: 8px; font: inherit; font-size: 14px; cursor: pointer; background: transparent; color: var(--text3); border: 1px solid var(--line3);" data-dc-click="67">cost.md</button>
+<button type="button" role="tab" class="c-tab" aria-selected="false" style="min-height: 44px; padding: 0 16px; border-radius: 8px; font: inherit; font-size: 14px; cursor: pointer; background: transparent; color: var(--text3); border: 1px solid var(--line3);" data-dc-click="68">cost.md</button>
 
-<button type="button" role="tab" class="c-tab" aria-selected="false" style="min-height: 44px; padding: 0 16px; border-radius: 8px; font: inherit; font-size: 14px; cursor: pointer; background: transparent; color: var(--text3); border: 1px solid var(--line3);" data-dc-click="68">ai/platform.md</button>
+<button type="button" role="tab" class="c-tab" aria-selected="false" style="min-height: 44px; padding: 0 16px; border-radius: 8px; font: inherit; font-size: 14px; cursor: pointer; background: transparent; color: var(--text3); border: 1px solid var(--line3);" data-dc-click="69">ai/platform.md</button>
+
+<button type="button" role="tab" class="c-tab" aria-selected="false" style="min-height: 44px; padding: 0 16px; border-radius: 8px; font: inherit; font-size: 14px; cursor: pointer; background: transparent; color: var(--text3); border: 1px solid var(--line3);" data-dc-click="70">this-site.md</button>
 
 </div>
 <div class="c-cs-panels" style="min-width: 0">
@@ -1450,7 +1485,7 @@ html:has(.c-light){scrollbar-color:#A8B8AD #EDF1EE}
 <div>
 <div style="font-size: 13px; color: var(--acc)">// refactors &amp; tooling migrations</div>
 <h3 style="margin: 8px 0 10px; font-size: clamp(22px, 3vw, 30px); line-height: 1.25; color: var(--head)">Keep the toolchain modern, one reviewed change at a time</h3>
-<p style="margin: 0; color: var(--text3); max-width: 72ch">Tooling ages fast. Rather than letting it drift, I've led a steady run of repo-wide migrations: linting, packages, bundling, types, runtime and the compiler itself. Each one was scripted with a <button type="button" class="c-term" popovertarget="c-tip" popovertargetaction="show" aria-controls="c-tip" aria-expanded="false" style="" data-dc-click="69">codemod</button> and landed as a single reviewed change, so there was never a long-lived branch or a half-migrated codebase.</p>
+<p style="margin: 0; color: var(--text3); max-width: 72ch">Tooling ages fast. Rather than letting it drift, I've led a steady run of repo-wide migrations: linting, packages, bundling, types, runtime and the compiler itself. Each one was scripted with a <button type="button" class="c-term" popovertarget="c-tip" popovertargetaction="show" aria-controls="c-tip" aria-expanded="false" style="" data-dc-click="71">codemod</button> and landed as a single reviewed change, so there was never a long-lived branch or a half-migrated codebase.</p>
 </div>
 
 <div>
@@ -1637,7 +1672,7 @@ html:has(.c-light){scrollbar-color:#A8B8AD #EDF1EE}
 <div>
 <div style="font-size: 13px; color: var(--mute); margin-bottom: 10px">What the suite checks</div>
 <ul style="margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr)); gap: 10px">
-<li style="border: 1px solid var(--line2); border-radius: 8px; padding: 12px 14px"><div style="font-size: 12px; color: var(--acc)">axe-core · WCAG 2.0–2.2 A/AA</div><div style="color: var(--head); font-weight: 700; margin: 2px 0 4px">Every automated rule, in every state</div><div style="font-size: 14px; color: var(--text3)">Both themes, desktop and mobile, every tab, open FAQs, search results, ask.sh, the chat and the search dialogs: 138 page states per run.</div></li>
+<li style="border: 1px solid var(--line2); border-radius: 8px; padding: 12px 14px"><div style="font-size: 12px; color: var(--acc)">axe-core · WCAG 2.0–2.2 A/AA</div><div style="color: var(--head); font-weight: 700; margin: 2px 0 4px">Every automated rule, in every state</div><div style="font-size: 14px; color: var(--text3)">Both themes, desktop and mobile, every tab, open FAQs, search results, ask.sh, the chat and the search dialogs: 146 page states per run.</div></li>
 <li style="border: 1px solid var(--line2); border-radius: 8px; padding: 12px 14px"><div style="font-size: 12px; color: var(--acc)">2.1.1 · 2.4.7</div><div style="color: var(--head); font-weight: 700; margin: 2px 0 4px">Keyboard only</div><div style="font-size: 14px; color: var(--text3)">A Tab-key walk through every focus stop, confirming each one shows a visible focus ring.</div></li>
 <li style="border: 1px solid var(--line2); border-radius: 8px; padding: 12px 14px"><div style="font-size: 12px; color: var(--acc)">2.4.11 · new in 2.2</div><div style="color: var(--head); font-weight: 700; margin: 2px 0 4px">Focus never hidden</div><div style="font-size: 14px; color: var(--text3)">Nothing focused can sit behind the sticky header or the chat bar.</div></li>
 <li style="border: 1px solid var(--line2); border-radius: 8px; padding: 12px 14px"><div style="font-size: 12px; color: var(--acc)">2.5.8 · new in 2.2</div><div style="color: var(--head); font-weight: 700; margin: 2px 0 4px">Targets you can hit</div><div style="font-size: 14px; color: var(--text3)">Controls are at least 24px, or spaced so a miss won't land on a neighbour.</div></li>
@@ -1673,7 +1708,7 @@ html:has(.c-light){scrollbar-color:#A8B8AD #EDF1EE}
 <div>
 <div style="font-size: 13px; color: var(--acc)">// aws architecture · 2021 → 2026</div>
 <h3 style="margin: 8px 0 10px; font-size: clamp(22px, 3vw, 30px); line-height: 1.25; color: var(--head)">Nothing public but the CDN</h3>
-<p style="margin: 0; color: var(--text3); max-width: 72ch">I led the platform's move from containers on EC2 hosts behind a public load balancer to Fargate tasks that talk over <span class="c-nb"><button type="button" class="c-term" popovertarget="c-tip" popovertargetaction="show" aria-controls="c-tip" aria-expanded="false" style="" data-dc-click="70">ECS Service Connect</button>,</span> with all customer traffic entering through CloudFront and WAF. Each step shipped without a big-bang cutover.</p>
+<p style="margin: 0; color: var(--text3); max-width: 72ch">I led the platform's move from containers on EC2 hosts behind a public load balancer to Fargate tasks that talk over <span class="c-nb"><button type="button" class="c-term" popovertarget="c-tip" popovertargetaction="show" aria-controls="c-tip" aria-expanded="false" style="" data-dc-click="72">ECS Service Connect</button>,</span> with all customer traffic entering through CloudFront and WAF. Each step shipped without a big-bang cutover.</p>
 </div>
 
 <div style="display: flex; flex-wrap: wrap; gap: 24px">
@@ -1956,7 +1991,7 @@ html:has(.c-light){scrollbar-color:#A8B8AD #EDF1EE}
 <div>
 <div style="font-size: 13px; color: var(--acc)">// ai platform · mastra + bedrock · 2024 → 2026</div>
 <h3 style="margin: 8px 0 10px; font-size: clamp(22px, 3vw, 30px); line-height: 1.25; color: var(--head)">AI where it earns its keep</h3>
-<p style="margin: 0; color: var(--text3); max-width: 72ch">I helped introduce AI into the product: an agent service built with <span class="c-nb"><button type="button" class="c-term" popovertarget="c-tip" popovertargetaction="show" aria-controls="c-tip" aria-expanded="false" style="" data-dc-click="71">Mastra</button>,</span> running models through <button type="button" class="c-term" popovertarget="c-tip" popovertargetaction="show" aria-controls="c-tip" aria-expanded="false" style="" data-dc-click="72">Amazon Bedrock</button> in its own isolated AWS account, with an <button type="button" class="c-term" popovertarget="c-tip" popovertargetaction="show" aria-controls="c-tip" aria-expanded="false" style="" data-dc-click="73">eval suite</button> that runs in CI.</p>
+<p style="margin: 0; color: var(--text3); max-width: 72ch">I helped introduce AI into the product: an agent service built with <span class="c-nb"><button type="button" class="c-term" popovertarget="c-tip" popovertargetaction="show" aria-controls="c-tip" aria-expanded="false" style="" data-dc-click="73">Mastra</button>,</span> running models through <button type="button" class="c-term" popovertarget="c-tip" popovertargetaction="show" aria-controls="c-tip" aria-expanded="false" style="" data-dc-click="74">Amazon Bedrock</button> in its own isolated AWS account, with an <button type="button" class="c-term" popovertarget="c-tip" popovertargetaction="show" aria-controls="c-tip" aria-expanded="false" style="" data-dc-click="75">eval suite</button> that runs in CI.</p>
 </div>
 
 <div>
@@ -2004,6 +2039,55 @@ html:has(.c-light){scrollbar-color:#A8B8AD #EDF1EE}
 </div>
 </div>
 
+<div style="display: none;">
+<div role="tabpanel" aria-label="this-site.md" class="c-pop" style="border: 1px solid var(--line2); border-radius: 12px; background: var(--panel); padding: clamp(22px, 4vw, 40px); display: flex; flex-direction: column; gap: 32px">
+<div>
+<div style="font-size: 13px; color: var(--acc)">// this site · craigthompson.dev · <a href="https://github.com/Craga89/portfolio">github.com/Craga89/portfolio</a></div>
+<h3 style="margin: 8px 0 10px; font-size: clamp(22px, 3vw, 30px); line-height: 1.25; color: var(--head)">This site, run like a production system</h3>
+<p style="margin: 0; color: var(--text3); max-width: 72ch">It's a small site, but it's built and run the way I'd run a product. Everything lives in one public repository, every change goes through automated quality gates, and the AI feature has tests of its own. The results below come live from the latest CI runs.</p>
+</div>
+
+<div>
+<div style="font-size: 13px; color: var(--mute); margin-bottom: 10px">Latest results</div>
+<ul class="c-live" aria-label="Latest CI results">
+<li><div class="c-live-k">Lighthouse</div><div class="c-live-v">loads on the live site</div><div class="c-live-s">performance, accessibility and best practices, mobile and desktop</div><div class="c-live-m">from the latest CI run</div></li>
+<li><div class="c-live-k">WCAG 2.2 AA suite</div><div class="c-live-v">loads on the live site</div><div class="c-live-s">axe-core in every page state, plus keyboard, focus, reflow and motion checks</div><div class="c-live-m">from the latest CI run</div></li>
+<li><div class="c-live-k">ask.sh answer tests</div><div class="c-live-v">loads on the live site</div><div class="c-live-s">right facts, nothing invented, no prompt injection</div><div class="c-live-m">from the latest CI run · <a href="#c-tests" data-dc-click="76">see the tests</a></div></li>
+</ul>
+</div>
+
+<div>
+<div style="font-size: 13px; color: var(--mute); margin-bottom: 10px">How a visit works</div>
+<ul class="c-arch" aria-label="How a visit works">
+<li><span class="c-arch-k">the page</span><span class="c-arch-c"><b>Browser</b></span><span class="c-arch-a" aria-hidden="true">→</span><span class="c-arch-c"><b>GitHub Pages</b><small>static, prerendered, works offline</small></span></li>
+<li><span class="c-arch-k">ask.sh</span><span class="c-arch-c"><b>Browser</b></span><span class="c-arch-a" aria-hidden="true">→</span><span class="c-arch-c"><b>Cloudflare Worker</b><small>rate-limited per visitor</small></span><span class="c-arch-a" aria-hidden="true">→</span><span class="c-arch-c"><b>Workers AI</b><small>three models, each a fallback for the one before; answers only from this site</small></span></li>
+<li><span class="c-arch-k">counts</span><span class="c-arch-c"><b>Browser</b></span><span class="c-arch-a" aria-hidden="true">→</span><span class="c-arch-c"><b>Cloudflare Worker</b></span><span class="c-arch-a" aria-hidden="true">→</span><span class="c-arch-c"><b>D1</b><small>anonymous question log and visit counts</small></span></li>
+</ul>
+</div>
+
+<div>
+<div style="font-size: 13px; color: var(--mute); margin-bottom: 10px">What every change goes through</div>
+<ol class="c-gates" aria-label="Quality gates">
+<li><span class="c-gate-k">build</span><span>prerender the page, self-host fonts, resize images, print cv.pdf, write the contact card and the ask.sh index</span></li>
+<li><span class="c-gate-k">deploy</span><span>GitHub Pages on every merge to main, stamped with the commit</span></li>
+<li><span class="c-gate-k">check</span><span>WCAG 2.2 AA suite, Lighthouse thresholds and a screenshot comparison against approved baselines</span></li>
+<li><span class="c-gate-k">worker</span><span>unit tests, deploy, a smoke test, then the ask.sh answer tests</span></li>
+<li><span class="c-gate-k">weekly</span><span>every check again, plus a dead-link check, visit and question stats, and the open-source counts</span></li>
+</ol>
+</div>
+
+<div style="border-left: 3px solid var(--ok); padding: 4px 0 4px 18px">
+<div style="font-size: 13px; color: var(--ok); margin-bottom: 8px"># in practice</div>
+<ul style="margin: 0; padding-left: 18px; color: var(--text); display: flex; flex-direction: column; gap: 6px">
+<li>The same gates I'd put on a product: a change that hurts accessibility, performance or the visuals fails its check.</li>
+<li>The AI feature is tested like any other code, for the right facts, invented ones and prompt injection.</li>
+<li>Anonymous counts instead of tracking: no cookies, no IP addresses, nothing that identifies a visitor.</li>
+<li>It runs on the free tiers of GitHub Pages and Cloudflare.</li>
+</ul>
+</div>
+</div>
+</div>
+
 </div>
 </div>
 </section>
@@ -2014,7 +2098,7 @@ html:has(.c-light){scrollbar-color:#A8B8AD #EDF1EE}
 <div style="border: 1px solid var(--line2); border-radius: 12px; background: var(--panel); overflow: hidden">
 <div style="display: flex; align-items: center; gap: 10px; padding: 6px 16px; border-bottom: 1px solid var(--line2); background: var(--panel2)">
 <span aria-hidden="true" style="color: var(--ok)">$ grep -ri</span>
-<input class="c-sq-in" type="text" autocomplete="off" spellcheck="false" aria-label="Search the stack" placeholder="try aws, test, type, ai…" value="" data-dc-input="74">
+<input class="c-sq-in" type="text" autocomplete="off" spellcheck="false" aria-label="Search the stack" placeholder="try aws, test, type, ai…" value="" data-dc-input="77">
 <span class="c-cursor" aria-hidden="true"></span>
 </div>
 <div style="padding: 16px 16px 20px" aria-live="polite">
@@ -2167,17 +2251,17 @@ html:has(.c-light){scrollbar-color:#A8B8AD #EDF1EE}
 <details class="c-faq"><summary>Where are you based?</summary><p>Newcastle upon Tyne, UK.</p></details>
 <details class="c-faq"><summary>What's your notice period?</summary><p>Three months.</p></details>
 <details class="c-faq"><summary>How big a team have you led?</summary><p>Up to 12 engineers as Head of Engineering, and before that a Scrum team of junior-to-mid engineers as a Technical Lead.</p></details>
-<details class="c-faq"><summary>Have you hired and grown engineers?</summary><p>Yes. I've hired 10+ engineers, through an interview process I designed with the CTO and Deputy Head. Many of the people I've led have been promoted, including one from Software Engineer to my Deputy Head of Engineering. See <a class="c-see" href="#responsibilities" data-dc-click="75">hiring.md</a> and <a class="c-see" href="#responsibilities" data-dc-click="76">people.md</a>.</p></details>
-<details class="c-faq"><summary>Have you worked with customers and the board?</summary><p>Yes. I've joined sales, customer and due-diligence calls as the technical expert, been the primary escalation point for major customer issues alongside my Deputy, and reported to the CEO and CTO with board material in plain terms. See <a class="c-see" href="#responsibilities" data-dc-click="77">customers.md</a> and <a class="c-see" href="#responsibilities" data-dc-click="78">product.md</a>.</p></details>
-<details class="c-faq"><summary>How do you use AI in engineering?</summary><p>Over the past year I've led an engineering department from introducing AI-assisted development to a point where the vast majority of code is AI-generated, then reviewed by AI alongside human reviewers against style and coding guidelines iterated on in the repo. See <a class="c-see" href="#responsibilities" data-dc-click="79">ai.md</a>.</p></details>
-<details class="c-faq"><summary>Have you owned a budget?</summary><p>Yes. I've owned the substantial monthly AWS budget for a SaaS platform, and managed the platform's technical suppliers and the wider IT suppliers, negotiating renewals and contracts. See <a class="c-see" href="#responsibilities" data-dc-click="80">budget.md</a>.</p></details>
-<details class="c-faq"><summary>Have you led incidents and on-call?</summary><p>Yes. I set up the on-call rota and status page, led on incidents from single-client issues to full outages, and helped produce the business's disaster recovery process. See <a class="c-see" href="#responsibilities" data-dc-click="81">incidents.md</a>.</p></details>
-<details class="c-faq"><summary>Do you cover internal IT too?</summary><p>Yes. I've been the point person for IT: the hardware estate, Google Workspace, the MDM that provisions and secures the Mac estate, and an IT service desk I set up for everyone. See <a class="c-see" href="#responsibilities" data-dc-click="82">it.md</a>.</p></details>
+<details class="c-faq"><summary>Have you hired and grown engineers?</summary><p>Yes. I've hired 10+ engineers, through an interview process I designed with the CTO and Deputy Head. Many of the people I've led have been promoted, including one from Software Engineer to my Deputy Head of Engineering. See <a class="c-see" href="#responsibilities" data-dc-click="78">hiring.md</a> and <a class="c-see" href="#responsibilities" data-dc-click="79">people.md</a>.</p></details>
+<details class="c-faq"><summary>Have you worked with customers and the board?</summary><p>Yes. I've joined sales, customer and due-diligence calls as the technical expert, been the primary escalation point for major customer issues alongside my Deputy, and reported to the CEO and CTO with board material in plain terms. See <a class="c-see" href="#responsibilities" data-dc-click="80">customers.md</a> and <a class="c-see" href="#responsibilities" data-dc-click="81">product.md</a>.</p></details>
+<details class="c-faq"><summary>How do you use AI in engineering?</summary><p>Over the past year I've led an engineering department from introducing AI-assisted development to a point where the vast majority of code is AI-generated, then reviewed by AI alongside human reviewers against style and coding guidelines iterated on in the repo. See <a class="c-see" href="#responsibilities" data-dc-click="82">ai.md</a>.</p></details>
+<details class="c-faq"><summary>Have you owned a budget?</summary><p>Yes. I've owned the substantial monthly AWS budget for a SaaS platform, and managed the platform's technical suppliers and the wider IT suppliers, negotiating renewals and contracts. See <a class="c-see" href="#responsibilities" data-dc-click="83">budget.md</a>.</p></details>
+<details class="c-faq"><summary>Have you led incidents and on-call?</summary><p>Yes. I set up the on-call rota and status page, led on incidents from single-client issues to full outages, and helped produce the business's disaster recovery process. See <a class="c-see" href="#responsibilities" data-dc-click="84">incidents.md</a>.</p></details>
+<details class="c-faq"><summary>Do you cover internal IT too?</summary><p>Yes. I've been the point person for IT: the hardware estate, Google Workspace, the MDM that provisions and secures the Mac estate, and an IT service desk I set up for everyone. See <a class="c-see" href="#responsibilities" data-dc-click="85">it.md</a>.</p></details>
 <details class="c-faq"><summary>Have you worked with outsourced or offshore teams?</summary><p>Yes. As Head of Engineering I worked directly with an outsourcing firm in India, onboarding 5+ Software Engineers and Automation Test Engineers to bolster the in-house team. Many of them stayed for 2+ years.</p></details>
-<details class="c-faq"><summary>Have you been through an acquisition?</summary><p>Yes. I've led engineering from startup through to acquisition, and represented engineering right through due diligence. See <a class="c-see" href="#responsibilities" data-dc-click="83">acquisition.md</a>.</p></details>
+<details class="c-faq"><summary>Have you been through an acquisition?</summary><p>Yes. I've led engineering from startup through to acquisition, and represented engineering right through due diligence. See <a class="c-see" href="#responsibilities" data-dc-click="86">acquisition.md</a>.</p></details>
 <details class="c-faq"><summary>Are you still hands-on?</summary><p>Yes. Alongside setting strategy and leading the team, I've remained a skilled, hands-on engineer and upskilled in AI-assisted development along the way. Several of the upstream pull requests on this page are recent.</p></details>
 <details class="c-faq"><summary>What industries have you worked in?</summary><p>Mostly B2B SaaS for enterprise, mid-market and SME customers, including Hive HR's employee engagement platform and an email marketing platform sending billions of emails, plus consulting for clients worldwide.</p></details>
-<details class="c-faq"><summary>Do you have compliance experience?</summary><p>Yes: GDPR and ISO 27001 accreditation, the annual audits, and arranging the yearly penetration test. See <a class="c-see" href="#responsibilities" data-dc-click="84">compliance.md</a>.</p></details>
+<details class="c-faq"><summary>Do you have compliance experience?</summary><p>Yes: GDPR and ISO 27001 accreditation, the annual audits, and arranging the yearly penetration test. See <a class="c-see" href="#responsibilities" data-dc-click="87">compliance.md</a>.</p></details>
 <details class="c-faq"><summary>Which clouds do you know?</summary><p>Primarily AWS, with some GCP and more limited exposure to Azure.</p></details>
 <details class="c-faq"><summary>Can I get a copy of your CV?</summary><p>Yes. There's a plain version at <a href="cv/">craigthompson.dev/cv</a>, also as a <a href="cv.pdf" download="Craig-Michael-Thompson-CV.pdf">PDF</a> and as <a href="cv.json">JSON Resume</a>, or email me and I'll send it.</p></details>
 <details class="c-faq"><summary>Do you track visitors?</summary><p>No cookies, and nothing that identifies you. The site counts visits (the page, the country, the site you came from and which sections you saw) and keeps ask.sh questions anonymously, so I can see what's useful and fill any gaps. It respects Do Not Track and Global Privacy Control.</p></details>
@@ -2192,14 +2276,22 @@ html:has(.c-light){scrollbar-color:#A8B8AD #EDF1EE}
 <p class="c-ask-hint">Pick a question below or type your own. Type <code>help</code> for commands.</p>
 
 </div>
-<div class="c-ask-sugg"><button type="button" class="c-ask-chip" data-dc-click="85">What roles is he looking for?</button><button type="button" class="c-ask-chip" data-dc-click="86">How has he used AI in engineering?</button><button type="button" class="c-ask-chip" data-dc-click="87">Has he owned a budget?</button><button type="button" class="c-ask-chip" data-dc-click="88">Has he been through an acquisition?</button></div>
+<div class="c-ask-sugg"><button type="button" class="c-ask-chip" data-dc-click="88">What roles is he looking for?</button><button type="button" class="c-ask-chip" data-dc-click="89">How has he used AI in engineering?</button><button type="button" class="c-ask-chip" data-dc-click="90">Has he owned a budget?</button><button type="button" class="c-ask-chip" data-dc-click="91">Has he been through an acquisition?</button></div>
 <div class="c-ask-in">
 <label class="c-ask-p" for="c-ask-field">$ ./ask.sh</label>
-<input id="c-ask-field" class="c-ask-field" type="text" maxlength="300" autocomplete="off" spellcheck="false" placeholder="e.g. has he led on-call and incidents?" value="" data-dc-input="89" data-dc-keydown="90">
+<input id="c-ask-field" class="c-ask-field" type="text" maxlength="300" autocomplete="off" spellcheck="false" placeholder="e.g. has he led on-call and incidents?" value="" data-dc-input="92" data-dc-keydown="93">
 
-<button type="button" class="c-ask-go" data-dc-click="92">ask ↵</button>
+<button type="button" class="c-ask-go" data-dc-click="95">ask ↵</button>
 </div>
 </div>
+<details id="c-tests" class="c-rs-more c-tests">
+<summary><span style="color: var(--ok)">$ ./ask.sh --test</span> <span style="color: var(--dim)"># how answers are checked</span><span class="c-tests-n"></span></summary>
+<div class="c-tests-b">
+<p>After every change to the Worker, and every week, a script asks ask.sh these questions and checks each answer: the right facts, nothing invented, and no response to instructions slipped into a question. One wrong answer fails the run. The tests are <a href="https://github.com/Craga89/portfolio/blob/main/worker/evals.json">in the repo</a>.</p>
+
+<p class="c-tests-m">The latest results load from CI on the live site.</p>
+</div>
+</details>
 </section>
 <section id="contact" class="c-rv" style="margin-top: clamp(72px, 10vw, 128px)">
 <div class="c-hrow" style="margin: 0 0 12px"><h2 class="c-cmd" style="margin: 0; font-size: clamp(16px, 2vw, 20px); font-weight: 500; color: var(--ok)">$ cat get-in-touch.md <span style="color: var(--dim)"># contact</span></h2><a class="c-anchor" href="#contact" data-done="false" data-file="get-in-touch.md" aria-label="Copy link to get-in-touch.md" title="Copy link to this section">#</a></div>
@@ -2209,7 +2301,7 @@ html:has(.c-light){scrollbar-color:#A8B8AD #EDF1EE}
 <p class="c-contact-p">I'm open to hands-on technical leadership roles. If you're hiring, or want to talk about anything on this site, email me.</p>
 <div class="c-contact-cta">
 <a class="c-btn c-contact-go" href="mailto:craga89@gmail.com"><svg class="v2-ico" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="m22 7-10 6L2 7"></path></svg>craga89@gmail.com</a>
-<button type="button" class="c-contact-copy" data-dc-click="93"><svg class="v2-ico" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg>copy address</button>
+<button type="button" class="c-contact-copy" data-dc-click="96"><svg class="v2-ico" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg>copy address</button>
 </div>
 <ul class="c-contact-links">
 <li><a href="https://www.linkedin.com/in/craigmichaelthompson/"><svg class="v2-ico" viewBox="0 0 24 24" width="15" height="15" fill="currentColor" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"></path></svg>linkedin</a></li>
@@ -2231,7 +2323,7 @@ html:has(.c-light){scrollbar-color:#A8B8AD #EDF1EE}
 <div id="c-tip" class="c-tip" popover="auto" style=""><b></b></div>
 <dialog id="c-pal" class="c-pal" aria-labelledby="c-pal-t">
 <h2 id="c-pal-t" class="c-sr">Search and jump</h2>
-<div class="c-pal-in"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg><input id="c-pal-field" class="c-pal-field" type="text" role="combobox" aria-expanded="true" aria-controls="c-pal-list" aria-autocomplete="list" aria-label="Search sections, files and actions" autocomplete="off" spellcheck="false" placeholder="Jump to a section or file, or ask a question…" value="" data-dc-input="94" data-dc-keydown="95"></div>
+<div class="c-pal-in"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg><input id="c-pal-field" class="c-pal-field" type="text" role="combobox" aria-expanded="true" aria-controls="c-pal-list" aria-autocomplete="list" aria-label="Search sections, files and actions" autocomplete="off" spellcheck="false" placeholder="Jump to a section or file, or ask a question…" value="" data-dc-input="97" data-dc-keydown="98"></div>
 <ul id="c-pal-list" class="c-pal-list" role="listbox" aria-label="Results">
 
 </ul>
@@ -2248,10 +2340,10 @@ html:has(.c-light){scrollbar-color:#A8B8AD #EDF1EE}
 <dt><kbd>←</kbd> <kbd>→</kbd></dt><dd>Previous and next file in the responsibilities tour</dd>
 <dt><kbd>esc</kbd></dt><dd>Close a dialog, the chat or a definition</dd>
 </dl>
-<label><input type="checkbox" checked="" data-dc-input="96" value=""> Single-key shortcuts (<kbd>/</kbd> and <kbd>?</kbd>)</label>
+<label><input type="checkbox" checked="" data-dc-input="99" value=""> Single-key shortcuts (<kbd>/</kbd> and <kbd>?</kbd>)</label>
 <p>Turn these off if they clash with your screen reader or speech software. The setting is saved in this browser.</p>
 </div>
-<button type="button" class="c-keys-x" aria-label="Close" data-dc-click="97"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"></path></svg></button>
+<button type="button" class="c-keys-x" aria-label="Close" data-dc-click="100"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"></path></svg></button>
 </dialog>
 <span class="c-sr" role="status"></span>
 

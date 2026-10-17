@@ -7,7 +7,7 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
-const endpoint = process.argv[2] || JSON.parse(readFileSync(join(ROOT, 'ask.config.json'), 'utf8')).endpoint;
+const endpoint = (process.argv[2] && !process.argv[2].startsWith('--') ? process.argv[2] : '') || JSON.parse(readFileSync(join(ROOT, 'ask.config.json'), 'utf8')).endpoint;
 const { cases } = JSON.parse(readFileSync(join(ROOT, 'worker', 'evals.json'), 'utf8'));
 const ORIGIN = 'https://craigthompson.dev';
 
@@ -45,7 +45,7 @@ for (const c of cases) {
   }
   const pass = !problems.length;
   if (!pass) failed++;
-  rows.push({ q: c.q, pass, problems, answer: d && d.answer, model: d && d.model });
+  rows.push({ q: c.q, expect: c.expect || '', pass, problems, answer: d && d.answer, sources: (d && d.sources) || [], model: d && d.model });
   console.log(`${pass ? 'PASS' : 'FAIL'} ${c.q}${pass ? '' : '  → ' + problems.join('; ')}`);
   if (!pass && d) console.log('     ' + String(d.answer).replace(/\n/g, ' ').slice(0, 300));
   if (process.env.GITHUB_ACTIONS) {
@@ -59,4 +59,10 @@ if (process.env.GITHUB_STEP_SUMMARY) {
   appendFileSync(process.env.GITHUB_STEP_SUMMARY, `## ask.sh evals: ${cases.length - failed}/${cases.length} pass\n\n| | question | notes |\n|---|---|---|\n` + rows.map((r) => `| ${r.pass ? '✅' : '❌'} | ${r.q} | ${r.pass ? '' : r.problems.join('; ')} |`).join('\n') + '\n');
 }
 console.log(`${cases.length - failed}/${cases.length} pass`);
+// --out file.json: the full results, for the site's "how ask.sh is tested" panel.
+const outAt = process.argv.indexOf('--out');
+if (outAt > 0 && process.argv[outAt + 1]) {
+  const { writeFileSync } = await import('node:fs');
+  writeFileSync(process.argv[outAt + 1], JSON.stringify({ at: new Date().toISOString(), total: cases.length, passed: cases.length - failed, cases: rows }, null, 2));
+}
 process.exit(failed ? 1 : 0);

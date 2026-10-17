@@ -484,6 +484,38 @@ a{color:var(--acc)!important;text-decoration:none!important}
 /* where an in-page link lands flashes briefly */
 @keyframes c-flash{0%,15%{background-color:color-mix(in srgb,var(--acc) 26%,transparent);box-shadow:0 0 0 8px color-mix(in srgb,var(--acc) 26%,transparent)}100%{background-color:transparent;box-shadow:0 0 0 8px transparent}}
 .c-flash{animation:c-flash 1.4s ease-out both;border-radius:4px}
+/* this-site.md: live CI results, how a visit works, the gates */
+.c-live{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:10px}
+.c-live li{border:1px solid var(--line2);border-radius:8px;padding:12px 14px}
+.c-live-k{font-size:12px;color:var(--acc)}
+.c-live-v{margin:4px 0 2px;font-family:var(--f-mono,ui-monospace,monospace);font-size:18px;line-height:1.45;font-weight:700;color:var(--head);white-space:pre-wrap}
+.c-live-s{font-size:13px;color:var(--text3)}
+.c-live-m{margin-top:6px;font-size:12px;color:var(--dim)}
+.c-arch{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.c-arch li{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.c-arch-k{flex:0 0 72px;font-family:var(--f-mono,ui-monospace,monospace);font-size:12.5px;color:var(--dim)}
+.c-arch-c{display:inline-flex;flex-direction:column;border:1px solid var(--line3);border-radius:8px;padding:7px 12px;background:var(--panel2);max-width:340px}
+.c-arch-c b{color:var(--head);font-size:14.5px}
+.c-arch-c small{font-size:12.5px;color:var(--mute);line-height:1.4}
+.c-arch-a{color:var(--acc);font-family:var(--f-mono,ui-monospace,monospace)}
+@media (max-width:640px){.c-arch-k{flex-basis:100%}}
+.c-gates{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.c-gates li{display:grid;grid-template-columns:72px minmax(0,1fr);gap:12px;align-items:baseline;font-size:14.5px;color:var(--text2)}
+.c-gate-k{font-family:var(--f-mono,ui-monospace,monospace);font-size:12.5px;color:var(--ok);border:1px solid var(--ok);border-radius:4px;padding:1px 6px;text-align:center}
+/* ask.sh --test */
+.c-tests{margin-top:18px}
+.c-tests>summary{font-family:var(--f-mono,ui-monospace,monospace)}
+.c-tests-n{margin-left:auto;padding-left:12px;font-size:12.5px;color:var(--ok)}
+.c-tests-b>p{margin:0 0 14px;color:var(--text3);font-size:14.5px;max-width:72ch}
+.c-tests-l{list-style:none;margin:0 0 10px;padding:0;display:grid;gap:10px}
+.c-test{border:1px solid var(--line2);border-radius:8px;padding:10px 14px;background:var(--panel)}
+.c-test-q{display:flex;gap:8px;color:var(--head);font-weight:700;font-size:14.5px}
+.c-test-r{flex:none;width:1.2em;color:var(--ok)}
+.c-test-r[data-pass="false"]{color:var(--bad)}
+.c-test-e{font-size:12.5px;color:var(--acc);margin:2px 0 4px 1.7em}
+.c-test-a{font-size:13.5px;color:var(--text3);margin-left:1.7em}
+.c-tests-m{margin:0;font-size:12px;color:var(--dim)}
+.v2-qual{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:-4px}
 /* ---------- polish ---------- */
 /* typography: balanced headings, no lone last words, quotes that hang where supported */
 .c-root h1,.c-root h2,.c-root h3,.c-root .v2-st,.c-root .c-rs-t,.c-faq summary{text-wrap:balance}
@@ -626,6 +658,7 @@ html:has(.c-light){scrollbar-color:#A8B8AD #EDF1EE}
 <div style="display: flex; flex-wrap: wrap; gap: 6px 14px"><a class="v2-soc" href="mailto:craga89@gmail.com" title="craga89@gmail.com"><svg class="v2-ico" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="m22 7-10 6L2 7"></path></svg>email</a><button type="button" class="v2-copy" onClick="{{copyEmail}}" aria-label="Copy email address" title="{{copyTitle}}"><sc-if value="{{copied}}" hint-placeholder-val="false"><svg class="v2-ico" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7"></path></svg></sc-if><sc-if value="{{notCopied}}" hint-placeholder-val="true"><svg class="v2-ico" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg></sc-if></button><a class="v2-soc" href="https://github.com/Craga89"><svg class="v2-ico" viewBox="0 0 16 16" width="15" height="15" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path></svg>github</a><a class="v2-soc" href="https://www.linkedin.com/in/craigmichaelthompson/"><svg class="v2-ico" viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"></path></svg>linkedin</a><a class="v2-soc" href="/cv"><svg class="v2-ico" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><path d="M14 2v6h6"></path><path d="M16 13H8M16 17H8M10 9H8"></path></svg>plain CV</a><a class="v2-soc" href="cv.pdf" download="Craig-Michael-Thompson-CV.pdf"><svg class="v2-ico" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"></path><path d="m7 10 5 5 5-5"></path><path d="M5 21h14"></path></svg>cv.pdf</a><a class="v2-soc" href="craig-thompson.vcf" download="Craig-Michael-Thompson.vcf"><svg class="v2-ico" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="4"></circle><path d="M2 21a7 7 0 0 1 14 0"></path><path d="M19 8v6M16 11h6"></path></svg>add contact</a></div>
 <button type="button" class="v2-motion" onClick="{{toggleMotion}}"><svg class="v2-ico" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><sc-if value="{{motionOn}}" hint-placeholder-val="true"><path d="M9 5v14M15 5v14"></path></sc-if><sc-if value="{{motionOff}}" hint-placeholder-val="false"><path d="M8 5l11 7-11 7z"></path></sc-if></svg>{{motionText}}</button>
 <sc-if value="{{build.show}}" hint-placeholder-val="false"><a class="v2-ver" href="{{build.href}}" title="{{build.title}}">{{build.label}}</a></sc-if>
+<a class="v2-ver v2-qual" href="#case-studies" onClick="{{goSite}}" title="Latest CI results, in this-site.md">{{live.sideLine}}</a>
 </div>
 </div>
 </aside>
@@ -1551,7 +1584,7 @@ html:has(.c-light){scrollbar-color:#A8B8AD #EDF1EE}
 <div>
 <div style="font-size: 13px; color: var(--mute); margin-bottom: 10px">What the suite checks</div>
 <ul style="margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr)); gap: 10px">
-<li style="border: 1px solid var(--line2); border-radius: 8px; padding: 12px 14px"><div style="font-size: 12px; color: var(--acc)">axe-core · WCAG 2.0–2.2 A/AA</div><div style="color: var(--head); font-weight: 700; margin: 2px 0 4px">Every automated rule, in every state</div><div style="font-size: 14px; color: var(--text3)">Both themes, desktop and mobile, every tab, open FAQs, search results, ask.sh, the chat and the search dialogs: 138 page states per run.</div></li>
+<li style="border: 1px solid var(--line2); border-radius: 8px; padding: 12px 14px"><div style="font-size: 12px; color: var(--acc)">axe-core · WCAG 2.0–2.2 A/AA</div><div style="color: var(--head); font-weight: 700; margin: 2px 0 4px">Every automated rule, in every state</div><div style="font-size: 14px; color: var(--text3)">Both themes, desktop and mobile, every tab, open FAQs, search results, ask.sh, the chat and the search dialogs: 146 page states per run.</div></li>
 <li style="border: 1px solid var(--line2); border-radius: 8px; padding: 12px 14px"><div style="font-size: 12px; color: var(--acc)">2.1.1 · 2.4.7</div><div style="color: var(--head); font-weight: 700; margin: 2px 0 4px">Keyboard only</div><div style="font-size: 14px; color: var(--text3)">A Tab-key walk through every focus stop, confirming each one shows a visible focus ring.</div></li>
 <li style="border: 1px solid var(--line2); border-radius: 8px; padding: 12px 14px"><div style="font-size: 12px; color: var(--acc)">2.4.11 · new in 2.2</div><div style="color: var(--head); font-weight: 700; margin: 2px 0 4px">Focus never hidden</div><div style="font-size: 14px; color: var(--text3)">Nothing focused can sit behind the sticky header or the chat bar.</div></li>
 <li style="border: 1px solid var(--line2); border-radius: 8px; padding: 12px 14px"><div style="font-size: 12px; color: var(--acc)">2.5.8 · new in 2.2</div><div style="color: var(--head); font-weight: 700; margin: 2px 0 4px">Targets you can hit</div><div style="font-size: 14px; color: var(--text3)">Controls are at least 24px, or spaced so a miss won't land on a neighbour.</div></li>
@@ -1918,6 +1951,55 @@ html:has(.c-light){scrollbar-color:#A8B8AD #EDF1EE}
 </div>
 </div>
 
+<div style="{{vSite}}">
+<div role="tabpanel" aria-label="this-site.md" class="c-pop" style="border: 1px solid var(--line2); border-radius: 12px; background: var(--panel); padding: clamp(22px, 4vw, 40px); display: flex; flex-direction: column; gap: 32px">
+<div>
+<div style="font-size: 13px; color: var(--acc)">// this site · craigthompson.dev · <a href="https://github.com/Craga89/portfolio">github.com/Craga89/portfolio</a></div>
+<h3 style="margin: 8px 0 10px; font-size: clamp(22px, 3vw, 30px); line-height: 1.25; color: var(--head)">This site, run like a production system</h3>
+<p style="margin: 0; color: var(--text3); max-width: 72ch">It's a small site, but it's built and run the way I'd run a product. Everything lives in one public repository, every change goes through automated quality gates, and the AI feature has tests of its own. The results below come live from the latest CI runs.</p>
+</div>
+
+<div>
+<div style="font-size: 13px; color: var(--mute); margin-bottom: 10px">Latest results</div>
+<ul class="c-live" aria-label="Latest CI results">
+<li><div class="c-live-k">Lighthouse</div><div class="c-live-v">{{live.lhLine}}</div><div class="c-live-s">{{live.lhSub}}</div><div class="c-live-m">{{live.lhMeta}}<sc-if value="{{live.lhRun}}" hint-placeholder-val="false"> · <a href="{{live.lhRun}}">view run</a></sc-if></div></li>
+<li><div class="c-live-k">WCAG 2.2 AA suite</div><div class="c-live-v">{{live.a11yLine}}</div><div class="c-live-s">{{live.a11ySub}}</div><div class="c-live-m">{{live.a11yMeta}}<sc-if value="{{live.a11yRun}}" hint-placeholder-val="false"> · <a href="{{live.a11yRun}}">view run</a></sc-if></div></li>
+<li><div class="c-live-k">ask.sh answer tests</div><div class="c-live-v">{{live.evLine}}</div><div class="c-live-s">right facts, nothing invented, no prompt injection</div><div class="c-live-m">{{live.evMeta}} · <a href="#c-tests" onClick="{{openTests}}">see the tests</a></div></li>
+</ul>
+</div>
+
+<div>
+<div style="font-size: 13px; color: var(--mute); margin-bottom: 10px">How a visit works</div>
+<ul class="c-arch" aria-label="How a visit works">
+<li><span class="c-arch-k">the page</span><span class="c-arch-c"><b>Browser</b></span><span class="c-arch-a" aria-hidden="true">→</span><span class="c-arch-c"><b>GitHub Pages</b><small>static, prerendered, works offline</small></span></li>
+<li><span class="c-arch-k">ask.sh</span><span class="c-arch-c"><b>Browser</b></span><span class="c-arch-a" aria-hidden="true">→</span><span class="c-arch-c"><b>Cloudflare Worker</b><small>rate-limited per visitor</small></span><span class="c-arch-a" aria-hidden="true">→</span><span class="c-arch-c"><b>Workers AI</b><small>three models, each a fallback for the one before; answers only from this site</small></span></li>
+<li><span class="c-arch-k">counts</span><span class="c-arch-c"><b>Browser</b></span><span class="c-arch-a" aria-hidden="true">→</span><span class="c-arch-c"><b>Cloudflare Worker</b></span><span class="c-arch-a" aria-hidden="true">→</span><span class="c-arch-c"><b>D1</b><small>anonymous question log and visit counts</small></span></li>
+</ul>
+</div>
+
+<div>
+<div style="font-size: 13px; color: var(--mute); margin-bottom: 10px">What every change goes through</div>
+<ol class="c-gates" aria-label="Quality gates">
+<li><span class="c-gate-k">build</span><span>prerender the page, self-host fonts, resize images, print cv.pdf, write the contact card and the ask.sh index</span></li>
+<li><span class="c-gate-k">deploy</span><span>GitHub Pages on every merge to main, stamped with the commit</span></li>
+<li><span class="c-gate-k">check</span><span>WCAG 2.2 AA suite, Lighthouse thresholds and a screenshot comparison against approved baselines</span></li>
+<li><span class="c-gate-k">worker</span><span>unit tests, deploy, a smoke test, then the ask.sh answer tests</span></li>
+<li><span class="c-gate-k">weekly</span><span>every check again, plus a dead-link check, visit and question stats, and the open-source counts</span></li>
+</ol>
+</div>
+
+<div style="border-left: 3px solid var(--ok); padding: 4px 0 4px 18px">
+<div style="font-size: 13px; color: var(--ok); margin-bottom: 8px"># in practice</div>
+<ul style="margin: 0; padding-left: 18px; color: var(--text); display: flex; flex-direction: column; gap: 6px">
+<li>The same gates I'd put on a product: a change that hurts accessibility, performance or the visuals fails its check.</li>
+<li>The AI feature is tested like any other code, for the right facts, invented ones and prompt injection.</li>
+<li>Anonymous counts instead of tracking: no cookies, no IP addresses, nothing that identifies a visitor.</li>
+<li>It runs on the free tiers of GitHub Pages and Cloudflare.</li>
+</ul>
+</div>
+</div>
+</div>
+
 </div>
 </div>
 </section>
@@ -1950,7 +2032,7 @@ html:has(.c-light){scrollbar-color:#A8B8AD #EDF1EE}
 <article class="c-card" style="border: 1px solid var(--line2); border-radius: 12px; padding: 26px; background: var(--panel)">
 <div style="font-size: 13px; color: var(--acc)">open-source/qtip2</div>
 <h3 style="margin: 8px 0 10px; font-size: 21px; color: var(--head)"><a href="https://github.com/qTip2/qTip2" style="color: var(--head)">qTip2 — pretty powerful tooltips</a></h3>
-<p style="margin: 0; color: var(--text3); font-size: 15px">Widely adopted jQuery plugin and a go-to tooltip library in its day: ~2k stars, 458 forks and 1,384 commits, built with extensive help from community contributors. Featured in Smashing jQuery (2011).</p>
+<p style="margin: 0; color: var(--text3); font-size: 15px">Widely adopted jQuery plugin and a go-to tooltip library in its day: {{live.qStars}} stars, {{live.qForks}} forks and {{live.qCommits}} commits, built with extensive help from community contributors. Featured in Smashing jQuery (2011).</p>
 </article>
 <article class="c-card" style="border: 1px solid var(--line2); border-radius: 12px; padding: 26px; background: var(--panel)">
 <div style="font-size: 13px; color: var(--acc)">open-source/micromouse</div>
@@ -1966,7 +2048,7 @@ html:has(.c-light){scrollbar-color:#A8B8AD #EDF1EE}
 
 <div style="margin-top: 48px">
 <h3 class="c-cmd" style="margin: 0 0 6px; font-size: clamp(15px, 1.8vw, 18px); font-weight: 500; color: var(--ok)">$ git log --upstream --merged</h3>
-<p style="margin: 0 0 20px; color: var(--mute); font-size: 14px; max-width: 72ch"><strong style="color: var(--head)">59 merged pull requests across 35 other projects</strong> since 2012, usually fixing something I hit in production. A selection:</p>
+<p style="margin: 0 0 20px; color: var(--mute); font-size: 14px; max-width: 72ch"><strong style="color: var(--head)">{{live.prs}} merged pull requests across {{live.repos}} other projects</strong> since {{live.since}}, usually fixing something I hit in production. A selection:</p>
 <div role="table" aria-label="Selected upstream contributions" style="border: 1px solid var(--line2); border-radius: 12px; overflow: hidden">
 <div role="rowgroup">
 <div role="row" class="c-yr" style="display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 18px; padding: 12px 20px; border-bottom: 1px solid var(--line)"><span role="cell" style="flex: 0 1 300px"><a href="https://github.com/better-auth/better-auth/pull/9398">better-auth/better-auth</a></span><span role="cell" style="flex: 1 1 280px; color: var(--text2)">Fixed SAML metadata so an organisation's default SSO provider works</span></div>
@@ -2069,6 +2151,14 @@ html:has(.c-light){scrollbar-color:#A8B8AD #EDF1EE}
 <button type="button" class="c-ask-go" onClick="{{askGo}}" disabled="{{askBusy}}">ask ↵</button>
 </div>
 </div>
+<details id="c-tests" class="c-rs-more c-tests">
+<summary><span style="color: var(--ok)">$ ./ask.sh --test</span> <span style="color: var(--dim)"># how answers are checked</span><span class="c-tests-n">{{live.evShort}}</span></summary>
+<div class="c-tests-b">
+<p>After every change to the Worker, and every week, a script asks ask.sh these questions and checks each answer: the right facts, nothing invented, and no response to instructions slipped into a question. One wrong answer fails the run. The tests are <a href="https://github.com/Craga89/portfolio/blob/main/worker/evals.json">in the repo</a>.</p>
+<sc-if value="{{live.evHas}}" hint-placeholder-val="false"><ul class="c-tests-l"><sc-for list="{{live.evCases}}" as="c" hint-placeholder-count="2"><li class="c-test"><div class="c-test-q"><span class="c-test-r" data-pass="{{c.passAttr}}"><span aria-hidden="true">{{c.mark}}</span><span class="c-sr">{{c.srMark}}</span></span>{{c.q}}</div><div class="c-test-e">expects: {{c.expect}}</div><div class="c-test-a">{{c.answer}}</div></li></sc-for></ul><p class="c-tests-m">{{live.evMeta}}<sc-if value="{{live.evRun}}" hint-placeholder-val="false"> · <a href="{{live.evRun}}">view run</a></sc-if></p></sc-if>
+<sc-if value="{{live.evNone}}" hint-placeholder-val="true"><p class="c-tests-m">The latest results load from CI on the live site.</p></sc-if>
+</div>
+</details>
 </section>
 <section id="contact" class="c-rv" style="margin-top: clamp(72px, 10vw, 128px)">
 <div class="c-hrow" style="margin: 0 0 12px"><h2 class="c-cmd" style="margin: 0; font-size: clamp(16px, 2vw, 20px); font-weight: 500; color: var(--ok)">$ cat get-in-touch.md <span style="color: var(--dim)"># contact</span></h2><a class="c-anchor" href="#contact" data-done="{{anc.contact}}" data-file="get-in-touch.md" aria-label="Copy link to get-in-touch.md" title="Copy link to this section">#</a></div>
@@ -2245,6 +2335,14 @@ class Component extends DCLogic {
       }).catch(() => {});
     };
     document.addEventListener('click', this._onCopyLink, true);
+    // Latest CI results and open-source counts, fetched once the page has settled.
+    const loadLive = () => {
+      if (this._liveLoading) return;
+      this._liveLoading = true;
+      fetch('live.json', { cache: 'no-cache' }).then((r) => (r.ok ? r.json() : null)).then((d) => { if (d && typeof d === 'object') this.setState({ live: d }); }).catch(() => {});
+    };
+    const idle = () => (window.requestIdleCallback ? requestIdleCallback(loadLive, { timeout: 4000 }) : setTimeout(loadLive, 1500));
+    if (document.readyState === 'complete') idle(); else window.addEventListener('load', idle, { once: true });
   }
   palOpen() {
     const d = document.getElementById('c-pal');
@@ -2778,7 +2876,8 @@ class Component extends DCLogic {
       ['auth', 'auth.md'],
       ['data', 'data.md'],
       ['cost', 'cost.md'],
-      ['ai', 'ai/platform.md']
+      ['ai', 'ai/platform.md'],
+      ['site', 'this-site.md']
     ];
     const base = 'min-height: 44px; padding: 0 16px; border-radius: 8px; font: inherit; font-size: 14px; cursor: pointer; ';
     const tabs = defs.map(([id, label]) => {
@@ -2940,6 +3039,27 @@ class Component extends DCLogic {
         setTimeout(() => { const el = document.getElementById('c-pal-o' + i); if (el) el.scrollIntoView({ block: 'nearest' }); }, 0);
       } else if (e.key === 'Enter') { e.preventDefault(); palRun(palList[palIdx]); }
     };
+    // Live CI results and open-source counts (live.json, published with each deploy); static fallbacks until it loads.
+    const L = st0.live || null;
+    const n = (v) => (typeof v === 'number' ? v.toLocaleString('en-GB') : v);
+    const day = (iso) => { try { return iso ? new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', timeZone: 'Europe/London' }) : ''; } catch (e) { return ''; } };
+    const lh = L && L.lighthouse, ax = L && L.a11y, ev = L && L.evals, os = L && L.oss;
+    const live = {
+      lhLine: lh && lh.mobile && lh.desktop ? lh.mobile.performance + ' · ' + lh.desktop.performance : 'loads on the live site',
+      lhSub: lh && lh.mobile ? 'performance on mobile · desktop; accessibility ' + Math.min(lh.mobile.accessibility, (lh.desktop || lh.mobile).accessibility) + ', best practices ' + Math.min(lh.mobile.bestPractices, (lh.desktop || lh.mobile).bestPractices) : 'performance, accessibility and best practices, mobile and desktop',
+      lhMeta: lh ? 'last run ' + (day(lh.at) || 'recently') : 'from the latest CI run', lhRun: (lh && lh.run) || '',
+      a11yLine: ax ? (ax.pass ? 'Passing' : 'Failing') : 'loads on the live site',
+      a11ySub: ax ? (ax.axeRuns + ' axe runs, plus keyboard, focus, reflow, spacing and motion checks') : 'axe-core in every page state, plus keyboard, focus, reflow and motion checks',
+      a11yMeta: ax ? 'last run ' + (day(ax.at) || 'recently') : 'from the latest CI run', a11yRun: (ax && ax.run) || '',
+      evLine: ev ? ev.passed + ' of ' + ev.total + ' correct' : 'loads on the live site',
+      evMeta: ev ? 'last run ' + (day(ev.at) || 'recently') : 'from the latest CI run', evRun: (ev && ev.run) || '',
+      evShort: ev ? ev.passed + '/' + ev.total + ' passing' : '',
+      evHas: !!(ev && ev.cases && ev.cases.length), evNone: !(ev && ev.cases && ev.cases.length),
+      evCases: ev && ev.cases ? ev.cases.map((c) => ({ q: c.q, expect: c.expect, answer: c.answer || '(no answer)', mark: c.pass ? '✓' : '✗', srMark: c.pass ? 'Passed: ' : 'Failed: ', passAttr: c.pass ? 'true' : 'false' })) : [],
+      sideLine: ax || lh ? [ax ? 'WCAG 2.2 AA ' + (ax.pass ? '✓' : '✗') : '', lh && lh.mobile ? 'Lighthouse ' + lh.mobile.performance : ''].filter(Boolean).join(' · ') : 'CI checks · this-site.md',
+      prs: os ? n(os.prs) : '59', repos: os ? n(os.repos) : '35', since: os && os.since ? os.since : '2012',
+      qStars: os && os.qtip ? n(os.qtip.stars) : '~2k', qForks: os && os.qtip ? n(os.qtip.forks) : '458', qCommits: os && os.qtip ? n(os.qtip.commits) : '1,384'
+    };
     const ancIds = ['career', 'responsibilities', 'case-studies', 'stack', 'oss', 'recommendations', 'faq', 'ask', 'contact'];
     const ASK_SUGG = ['What roles is he looking for?', 'How has he used AI in engineering?', 'Has he owned a budget?', 'Has he been through an acquisition?'];
     const askSugg = ASK_SUGG.map((t) => ({ t, pick: () => this.askSubmit(t) }));
@@ -2971,6 +3091,8 @@ class Component extends DCLogic {
       keysClose: () => { const d = document.getElementById('c-keys'); if (d && d.open) d.close(); },
       anc: Object.fromEntries(ancIds.map((id) => [id, st0.ancDone === id ? 'true' : 'false'])),
       shareOk: !!st0.shareOk, shareGo,
+      live, goSite: () => { this.setState({ tab: 'site' }); this.scrollToId('case-studies'); },
+      openTests: (e) => { if (e && e.preventDefault) e.preventDefault(); const d = document.getElementById('c-tests'); if (d) d.open = true; this.scrollToId('c-tests'); },
       clockOn: !!askSt.clockOn,
       clockH: (this._clock || {}).h || '', clockM: (this._clock || {}).m || '', clockOff: (this._clock || {}).off || '', clockSr: (this._clock || {}).sr || '',
       motionOn: !askSt.motionOff, motionOff: !!askSt.motionOff, motionText: askSt.motionOff ? 'play animations' : 'pause animations',
@@ -3039,6 +3161,7 @@ class Component extends DCLogic {
       vData: tab === 'data' ? '' : 'display: none;',
       vCost: tab === 'cost' ? '' : 'display: none;',
       vAi: tab === 'ai' ? '' : 'display: none;',
+      vSite: tab === 'site' ? '' : 'display: none;',
       vAiProc: rtab === 'aiproc' ? '' : 'display: none;',
       vLead: rtab === 'lead' ? '' : 'display: none;',
       vHire: rtab === 'hire' ? '' : 'display: none;',

@@ -460,7 +460,7 @@ function extractPassages() {
     const body = [q('.c-rs-s', p), q('.c-rs-pts', p), q('.c-rs-n', p) && q('.c-rs-n', p).parentNode, q('.c-rs-body', p)].filter(Boolean).map(txt).join(' ');
     add('resp-' + key, file + (h ? ': ' + clean(txt(h)) : ''), body, '#responsibilities', 'resp', rmap[key] || key);
   });
-  const cmap = { 'monorepo.md': 'mono', 'refactor.md': 'refactor', 'ci-cd.md': 'ci', 'testing.md': 'test', 'aws.md': 'aws', 'security.md': 'sec', 'auth.md': 'auth', 'data.md': 'data', 'cost.md': 'cost', 'ai/platform.md': 'ai', 'accessibility.md': 'a11y' };
+  const cmap = { 'monorepo.md': 'mono', 'refactor.md': 'refactor', 'ci-cd.md': 'ci', 'testing.md': 'test', 'aws.md': 'aws', 'security.md': 'sec', 'auth.md': 'auth', 'data.md': 'data', 'cost.md': 'cost', 'ai/platform.md': 'ai', 'accessibility.md': 'a11y', 'this-site.md': 'site' };
   qa('#case-studies [role="tabpanel"]').forEach((p) => {
     const file = p.getAttribute('aria-label') || '';
     const h = q('h3', p);
@@ -688,10 +688,10 @@ self.addEventListener('fetch', (e) => {
   if (req.method !== 'GET') return;
   const url = new URL(req.url);
   if (url.origin !== self.location.origin) return;
-  if (req.mode === 'navigate') {
-    // Pages: network first so content is never stale online; cached copy offline.
+  if (req.mode === 'navigate' || url.pathname.endsWith('/live.json')) {
+    // Pages and live CI results: network first so they're never stale online; cached copy offline.
     e.respondWith(fetch(req).then((res) => { const copy = res.clone(); caches.open(CACHE).then((c) => c.put(req, copy)); return res; })
-      .catch(() => caches.match(req).then((r) => r || caches.match('./'))));
+      .catch(() => caches.match(req).then((r) => r || (req.mode === 'navigate' ? caches.match('./') : Response.error()))));
     return;
   }
   // Assets: cache first, then network (and keep a copy).

@@ -50,6 +50,10 @@ Every push to `main` deploys `site/` through `.github/workflows/pages.yml`.
 - **Print:** the home page prints as a light, single-column document with every tab and FAQ answer laid out, controls hidden and outbound link URLs shown.
 - **Console:** opening DevTools shows a greeting, and `ask("…")` queries ask.sh from the console.
 
+## Live results on the site (live.json)
+
+The Pages deploy (on every push, and daily) collects the latest CI results from their report branches into `site/live.json` (`tools/live.mjs`): Lighthouse scores (`lighthouse`), the WCAG suite (`accessibility`), the ask.sh answer tests with each answer (`evals`, from `.github/workflows/evals.yml`) and the open-source counts (`oss`, from `.github/workflows/oss-stats.yml`, weekly via the GitHub API). The page fetches it once it's idle and shows it in the sidebar, the `this-site.md` case study, the open-source section and "how ask.sh is tested"; until then (or offline, or locally) it shows static fallbacks. The service worker always fetches `live.json` from the network first.
+
 ## Visits and questions (anonymous)
 
 - The Worker keeps two tables in the D1 database `craga-ask` (schema in `worker/schema.sql`). `questions` holds each ask.sh question, whether it was answered, the model and the sources. `visits` holds one row per page view: path, referring site, country, device class, sections seen and seconds on the page. No IP addresses, cookies or user agents are stored. Bots, CI traffic (`x-craga-test: 1`) and Do Not Track / Global Privacy Control visitors are skipped. The page says so in ask.sh, the chat and the FAQ.
@@ -57,7 +61,7 @@ Every push to `main` deploys `site/` through `.github/workflows/pages.yml`.
 
 ## Quality checks in CI
 
-- **ask.sh evals** (`worker/evals.json`, `tools/ask-evals.mjs`): after every Worker deploy, known questions must get answers with the right facts, no invented ones, no salary figures, and no response to prompt injection.
+- **ask.sh evals** (`worker/evals.json`, `tools/ask-evals.mjs`, `.github/workflows/evals.yml`): after every Worker deploy and weekly, known questions must get answers with the right facts, no invented ones, no salary figures, and no response to prompt injection. Results (with the answers) are saved to the `evals` branch and shown on the site.
 - **Lighthouse thresholds:** performance at least 95 and accessibility and best practices at 100 on mobile and desktop. SEO counts once the site is open to search engines.
 - **Screenshot comparison** (`tools/visual.mjs`, `.github/workflows/visual.yml`): 11 views compared against baselines on the `visual-baselines` branch. Put `[visual]` in a commit message to accept an intended change.
 - **Link check** (`.github/workflows/links.yml`): every outbound link, weekly.
