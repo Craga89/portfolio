@@ -38,7 +38,8 @@ try {
   const n = await tabs.count();
   ok('case-study tabs present', n >= 8, String(n));
   await tabs.nth(2).click();
-  await page.waitForTimeout(150);
+  // Tab switches cross-fade with a view transition, so the new state lands a frame or two later.
+  await page.waitForFunction(() => document.querySelectorAll('#case-studies [role="tab"]')[2].getAttribute('aria-selected') === 'true', null, { timeout: 3000 }).catch(() => {});
   ok('case-study tab selects', (await tabs.nth(2).getAttribute('aria-selected')) === 'true');
 
   // stack search

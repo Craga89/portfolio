@@ -162,7 +162,8 @@
     for (i = 0; i < as.length; i++) {
       n = as[i].name;
       if (b.hasAttribute(n)) continue;
-      if (n === 'open' && a.localName === 'details') continue; // user-toggled
+      if (n === 'open' && (a.localName === 'details' || a.localName === 'dialog')) continue; // user-toggled, or opened with showModal()
+      if (n === 'tabindex' && a.getAttribute(n) === '-1') continue; // set by code to move focus to a section
       a.removeAttribute(n);
     }
     if ((a.localName === 'input' || a.localName === 'textarea') && document.activeElement !== a) {

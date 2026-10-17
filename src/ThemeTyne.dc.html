@@ -449,6 +449,110 @@ a{color:var(--acc)!important;text-decoration:none!important}
 .v2-name .v2-ph{flex:none;width:clamp(88px,13vw,176px)}
 @media (max-width:600px){.v2-name{display:block}.v2-name::after{content:'';display:block;clear:both}.v2-name .v2-ph{float:left;width:96px;margin:4px 14px 8px 0}}
 @media (max-width:370px){.v2-name .v2-ph{width:68px;margin-right:10px}.v2-lead .v2-name h1{font-size:15vw!important}}
+/* ---------- polish ---------- */
+/* typography: balanced headings, no lone last words, quotes that hang where supported */
+.c-root h1,.c-root h2,.c-root h3,.c-root .v2-st,.c-root .c-rs-t,.c-faq summary{text-wrap:balance}
+.c-root p,.c-root li,.c-root blockquote{text-wrap:pretty}
+.c-root p,.c-root blockquote{hanging-punctuation:first allow-end}
+.c-root ::selection{background:color-mix(in srgb,var(--acc) 38%,transparent);color:var(--head)}
+.c-root .c-chat-me ::selection,.c-root .c-ask-go::selection{background:var(--head);color:var(--bg)}
+/* scrollbars in the theme's colours */
+html{scrollbar-color:#47685A #16271F}
+html:has(.c-light){scrollbar-color:#A8B8AD #EDF1EE}
+.c-root *{scrollbar-color:var(--line3) transparent}
+.c-ask-log,.c-chat-log,.v2-sin,.c-pal-list,[role="region"][tabindex="0"]{scrollbar-width:thin}
+/* section headings: a link to each section that copies itself */
+.c-hrow{display:flex;align-items:baseline;flex-wrap:wrap;gap:4px 10px}
+.c-hrow>h2{margin:0!important}
+.c-anchor{display:inline-grid;place-items:center;min-width:28px;min-height:28px;border-radius:5px;font-family:var(--f-mono,ui-monospace,monospace);font-size:16px;font-weight:700;color:var(--line3);text-decoration:none!important;transition:color .2s ease,background-color .2s ease}
+.c-hrow:hover .c-anchor,.c-anchor:focus-visible{color:var(--acc)}
+.c-anchor:hover{background:var(--panel2)}
+.c-anchor[data-done="true"]{color:var(--ok)}
+/* tab and file switches cross-fade (view transitions; skipped with reduced motion or paused animations) */
+.c-deck-slides{view-transition-name:c-rs}
+.c-cs-panels{view-transition-name:c-cs}
+::view-transition-group(c-rs),::view-transition-group(c-cs){animation-duration:.24s;animation-timing-function:cubic-bezier(.2,.8,.2,1)}
+::view-transition-old(c-rs),::view-transition-old(c-cs){animation:c-vt-out .14s ease both}
+::view-transition-new(c-rs),::view-transition-new(c-cs){animation:none}
+@keyframes c-vt-out{to{opacity:0}}
+/* things that appear ease in instead of popping */
+.c-chat{transition:transform .25s ease,width .2s ease}
+.c-chat-panel{transition:opacity .2s ease,transform .2s ease}
+@starting-style{.c-chat-panel{opacity:0;transform:translateY(8px)}}
+.c-tip{opacity:0;transform:translateY(-3px);transition:opacity .15s ease,transform .15s ease,display .15s allow-discrete,overlay .15s allow-discrete}
+.c-tip:popover-open,.c-tip.is-open{opacity:1;transform:none}
+@starting-style{.c-tip:popover-open,.c-tip.is-open{opacity:0;transform:translateY(-3px)}}
+/* command palette and keyboard shortcuts */
+.v2-exprow{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:-12px}
+.v2-exprow .v2-exp{margin:0}
+.v2-pal{all:unset;box-sizing:border-box;cursor:pointer;display:inline-flex;align-items:center;gap:6px;min-height:28px;padding:0 8px;border:1px solid var(--line3);border-radius:6px;font-family:var(--f-mono,ui-monospace,monospace);font-size:11.5px;color:var(--mute);transition:border-color .2s ease,color .2s ease}
+.v2-pal:hover{border-color:var(--acc);color:var(--head)}
+.v2-pal:focus-visible,.c-keys-x:focus-visible,.v2-share:focus-visible,.c-pal-field:focus-visible{outline:2px solid var(--acc);outline-offset:2px;border-radius:5px}
+.c-pal-field:focus-visible{outline:none}
+.c-pal-in:focus-within{box-shadow:inset 0 -2px 0 var(--acc)}
+.c-root kbd{display:inline-block;min-width:1.5em;box-sizing:border-box;padding:0 4px;border:1px solid var(--line3);border-bottom-width:2px;border-radius:4px;font-size:.85em;line-height:1.5;text-align:center;color:var(--text3);background:var(--panel2)}
+.v2-pal kbd{border:0;background:none;padding:0;min-width:0;color:inherit;font-size:inherit}
+.c-pal,.c-keys{box-sizing:border-box;width:min(580px,calc(100vw - 24px));max-height:min(560px,calc(100dvh - 48px));margin:min(14vh,120px) auto auto;padding:0;border:1px solid var(--line3);border-radius:12px;background:var(--panel);color:var(--text);font-family:var(--f-body);box-shadow:0 24px 60px -20px rgba(0,0,0,.6);overflow:hidden}
+.c-pal[open],.c-keys[open]{display:flex;flex-direction:column}
+.c-pal::backdrop,.c-keys::backdrop{background:rgba(8,14,11,.55);backdrop-filter:blur(3px)}
+.c-light .c-pal::backdrop,.c-light .c-keys::backdrop{background:rgba(15,29,22,.28)}
+.c-pal,.c-keys,.c-pal::backdrop,.c-keys::backdrop{transition:opacity .16s ease,transform .16s ease,display .16s allow-discrete,overlay .16s allow-discrete}
+@starting-style{.c-pal[open],.c-keys[open]{opacity:0;transform:translateY(-8px) scale(.985)}.c-pal[open]::backdrop,.c-keys[open]::backdrop{opacity:0}}
+.c-pal-in{display:flex;align-items:center;gap:10px;padding:6px 14px;border-bottom:1px solid var(--line2);color:var(--mute)}
+.c-pal-field{all:unset;box-sizing:border-box;flex:1;min-width:0;min-height:48px;font-family:var(--f-mono,ui-monospace,monospace);font-size:16px;color:var(--head);caret-color:var(--acc)}
+.c-pal-field::placeholder{color:var(--dim)}
+.c-pal-list{list-style:none;margin:0;padding:6px;overflow-y:auto;overscroll-behavior:contain;flex:1;min-height:0}
+.c-pal-o{display:grid;grid-template-columns:22px minmax(0,1fr) auto;align-items:center;gap:10px;min-height:42px;padding:0 10px;border-radius:7px;cursor:pointer;color:var(--text2);font-size:14.5px}
+.c-pal-o[aria-selected="true"]{background:var(--acc-bg);color:var(--head);box-shadow:inset 2px 0 0 var(--acc)}
+.c-pal-i{font-family:var(--f-mono,ui-monospace,monospace);font-size:13px;color:var(--dim);text-align:center}
+.c-pal-o[aria-selected="true"] .c-pal-i{color:var(--acc)}
+.c-pal-l{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.c-pal-l mark{background:none;color:var(--acc);font-weight:700}
+.c-pal-k{font-family:var(--f-mono,ui-monospace,monospace);font-size:11.5px;color:var(--dim)}
+.c-pal-foot{display:flex;flex-wrap:wrap;align-items:center;gap:6px 16px;padding:10px 14px;border-top:1px solid var(--line2);background:var(--panel2);font-size:12px;color:var(--mute)}
+.c-pal-foot span{display:inline-flex;align-items:center;gap:4px}
+.c-pal-link{all:unset;box-sizing:border-box;cursor:pointer;margin-left:auto;min-height:24px;display:inline-flex;align-items:center;color:var(--acc);text-decoration:underline;text-underline-offset:2px}
+.c-keys-b{padding:18px 20px 20px;overflow-y:auto}
+.c-keys h2{margin:0 0 12px;font-family:var(--f-head);font-size:28px;line-height:1;color:var(--head)}
+.c-keys dl{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px 16px;margin:0 0 18px;font-size:14.5px;color:var(--text2)}
+.c-keys dt{white-space:nowrap}
+.c-keys dd{margin:0}
+.c-keys label{display:flex;align-items:center;gap:10px;min-height:44px;font-size:14.5px;color:var(--head);cursor:pointer}
+.c-keys input[type="checkbox"]{width:18px;height:18px;margin:0;accent-color:var(--acc)}
+.c-keys-x{all:unset;box-sizing:border-box;cursor:pointer;display:grid;place-items:center;width:40px;height:40px;border-radius:8px;color:var(--mute);position:absolute;top:10px;right:10px}
+.c-keys-x:hover{background:var(--panel2);color:var(--head)}
+.c-keys p{margin:0;font-size:13px;color:var(--mute)}
+.c-root section[tabindex="-1"]:focus,.c-root main[tabindex="-1"]:focus{outline:none}
+.c-pal-o:hover{background:var(--panel2)}
+.c-pal-o[aria-selected="true"]:hover{background:var(--acc-bg)}
+/* sharing, and the version stamp's age */
+.v2-share{all:unset;box-sizing:border-box;cursor:pointer;display:inline-flex;align-items:center;gap:6px;min-height:24px;font-size:14px;color:var(--acc)}
+.v2-share:hover{text-decoration:underline}
+@media print{.c-anchor,.c-pal,.c-keys,.v2-share{display:none!important}}
+/* Windows High Contrast and other forced-colour modes: keep state visible with system colours */
+@media (forced-colors: active){
+.c-tab[aria-selected="true"]{forced-color-adjust:none;background:Highlight!important;color:HighlightText!important;border-color:Highlight!important}
+.c-seg-bar{border:1px solid CanvasText}
+.c-seg-bar i{forced-color-adjust:none;background:Highlight}
+.c-seg[aria-selected="true"] .c-seg-l{text-decoration:underline}
+.v2-tree a[aria-current="true"],.c-pal-o[aria-selected="true"]{forced-color-adjust:none;background:Highlight;color:HighlightText;border-left-color:HighlightText}
+.v2-tree a[aria-current="true"] i::before,.c-pal-o[aria-selected="true"] *{color:HighlightText}
+.c-dot,.v2-open::before,.v2-open2::before,.c-chat-av i,.c-cursor,.c-chat-typing i{forced-color-adjust:none;background:CanvasText!important;box-shadow:none!important}
+.c-btn,.c-ask-go,.c-chat-me,.c-ask-chip,.c-chip,.c-sq-hit,.c-gt,.c-dd{border:1px solid ButtonText!important}
+.c-chat,.c-tip,.c-deck,.c-ask,.c-pal,.c-keys,.v2-side,.c-card{border:1px solid CanvasText!important}
+.c-term{border-bottom:1px dotted CanvasText}
+.c-sq-hit mark,.c-pal-l mark{forced-color-adjust:none;background:Mark;color:MarkText}
+.c-cmd{background:none!important}
+:where(.c-root) :focus-visible{outline:2px solid Highlight!important;outline-offset:2px}
+.c-rs-pts li::before,.c-ask-a p.c-ask-li::before{color:CanvasText}
+}
+/* "more contrast" preference: stronger lines and secondary text */
+@media (prefers-contrast: more){
+.c-root{--dim:#C9D8CF;--mute2:#C9D8CF;--mute:#D9E4DD;--line:#6E9483;--line2:#6E9483;--line3:#7FA593}
+.c-root.c-light{--dim:#30403A;--mute2:#30403A;--mute:#26342D;--line:#6F8577;--line2:#6F8577;--line3:#5E7467}
+.c-root main a:not(.c-btn):not(.v2-soc):not(.c-anchor):not([role]){text-decoration:underline}
+.c-anchor{color:var(--mute)}
+}
 </style>
 </helmet>
 <div class="{{rootClass}}" style="background: var(--bg); color: var(--text); min-height: 100vh; font-size: 16px; line-height: 1.7">
@@ -467,7 +571,7 @@ a{color:var(--acc)!important;text-decoration:none!important}
 </sc-if>
 </button></div>
 <div class="v2-id"><b>Craig Michael Thompson</b><span>Full-stack engineer</span><a class="v2-loc" href="https://www.google.com/maps/search/?api=1&amp;query=Newcastle+upon+Tyne%2C+UK" target="_blank" rel="noopener" title="Open Newcastle upon Tyne in Google Maps"><svg class="v2-ico v2-angel" viewBox="0 5.4 19.94 9.3" width="28" height="13" fill="currentColor" aria-hidden="true"><path d="M19.842,7.215c0-0.143-0.261-0.107-0.261-0.107l-8.789,0.127c-0.047-0.042-0.116-0.084-0.198-0.099c-0.172-0.033-0.36-0.08-0.36-0.08s-0.094-0.217,0-0.391c0.096-0.173,0.188-0.328,0.143-0.564c-0.048-0.235-0.188-0.39-0.408-0.376C9.75,5.712,9.608,5.867,9.562,6.102C9.514,6.338,9.608,6.493,9.703,6.666c0.094,0.173,0,0.391,0,0.391s-0.188,0.047-0.36,0.08C9.262,7.15,9.192,7.193,9.146,7.235L0.278,7.121c0,0-0.183-0.049-0.183,0.094C0.095,7.354,0,8.905,0,8.905s-0.022,0.258,0.353,0.33C0.694,9.3,7.629,9.651,9.24,9.719C9.237,9.744,9.234,9.77,9.232,9.798c-0.062,0.719,0.221,1.519,0.282,1.769c0.063,0.25-0.015,0.312-0.093,0.563c-0.079,0.251-0.079,0.47,0.093,0.971c0.174,0.503,0.141,0.723,0.032,0.831c-0.11,0.109-0.125,0.282-0.125,0.282h1.095c0,0-0.016-0.171-0.125-0.282c-0.105-0.108-0.139-0.328,0.032-0.831c0.172-0.501,0.172-0.72,0.093-0.971c-0.078-0.251-0.156-0.313-0.093-0.563c0.062-0.25,0.345-1.05,0.282-1.769c-0.003-0.028-0.004-0.055-0.01-0.079c1.611-0.069,8.549-0.419,8.891-0.484c0.375-0.072,0.352-0.33,0.352-0.33S19.842,7.354,19.842,7.215zM0.74,7.41C0.488,7.394,0.323,7.513,0.323,7.513s0-0.119,0.046-0.192c0.044-0.075,0.193-0.044,0.193-0.044l8.544,0.117l0.043,0.15C9.15,7.544,0.992,7.425,0.74,7.41zM19.303,7.41c-0.251,0.017-8.41,0.134-8.41,0.134l0.043-0.15l8.546-0.117c0,0,0.149-0.031,0.192,0.046c0.044,0.071,0.044,0.191,0.044,0.191S19.556,7.397,19.303,7.41z"></path></svg>Newcastle upon Tyne, UK</a><sc-if value="{{clockOn}}" hint-placeholder-val="false"><span class="v2-time"><svg class="v2-ico" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg><span class="v2-time-v" aria-hidden="true"><span class="v2-hh">{{clockH}}</span><span class="v2-colon">:</span><span class="v2-mm">{{clockM}}</span><span class="v2-off">({{clockOff}})</span></span><span class="c-sr v2-time-sr">{{clockSr}}</span><span>in Newcastle</span></span></sc-if><span class="v2-open">open to new roles</span></div>
-<div class="v2-exp">EXPLORER</div>
+<div class="v2-exprow"><div class="v2-exp">EXPLORER</div><button type="button" class="v2-pal" onClick="{{palGo}}" aria-haspopup="dialog" aria-label="Search and jump, {{palKeys}}" title="Search and jump ({{palKeys}})"><svg class="v2-ico" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg><kbd>{{palKeys}}</kbd></button></div>
 <nav class="v2-tree" aria-label="Main">
 <a href="#top" aria-current="{{spy.top}}"><i>·</i>README.md</a>
 <a href="#career" aria-current="{{spy.career}}"><i>·</i>career.log</a>
@@ -483,7 +587,7 @@ a{color:var(--acc)!important;text-decoration:none!important}
 <a class="c-btn" href="mailto:craga89@gmail.com" style="display: inline-flex; align-items: center; min-height: 44px; padding: 0 16px; border-radius: 8px; background: var(--acc); color: var(--bg); font-weight: 700; text-decoration: none">./get-in-touch</a>
 <div style="display: flex; flex-wrap: wrap; gap: 6px 14px"><a class="v2-soc" href="mailto:craga89@gmail.com" title="craga89@gmail.com"><svg class="v2-ico" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="m22 7-10 6L2 7"></path></svg>email</a><button type="button" class="v2-copy" onClick="{{copyEmail}}" aria-label="Copy email address" title="{{copyTitle}}"><sc-if value="{{copied}}" hint-placeholder-val="false"><svg class="v2-ico" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7"></path></svg></sc-if><sc-if value="{{notCopied}}" hint-placeholder-val="true"><svg class="v2-ico" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg></sc-if></button><a class="v2-soc" href="https://github.com/Craga89"><svg class="v2-ico" viewBox="0 0 16 16" width="15" height="15" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path></svg>github</a><a class="v2-soc" href="https://www.linkedin.com/in/craigmichaelthompson/"><svg class="v2-ico" viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"></path></svg>linkedin</a><a class="v2-soc" href="/cv"><svg class="v2-ico" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><path d="M14 2v6h6"></path><path d="M16 13H8M16 17H8M10 9H8"></path></svg>plain CV</a><a class="v2-soc" href="cv.pdf" download="Craig-Michael-Thompson-CV.pdf"><svg class="v2-ico" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"></path><path d="m7 10 5 5 5-5"></path><path d="M5 21h14"></path></svg>cv.pdf</a><a class="v2-soc" href="craig-thompson.vcf" download="Craig-Michael-Thompson.vcf"><svg class="v2-ico" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="4"></circle><path d="M2 21a7 7 0 0 1 14 0"></path><path d="M19 8v6M16 11h6"></path></svg>add contact</a></div>
 <button type="button" class="v2-motion" onClick="{{toggleMotion}}"><svg class="v2-ico" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><sc-if value="{{motionOn}}" hint-placeholder-val="true"><path d="M9 5v14M15 5v14"></path></sc-if><sc-if value="{{motionOff}}" hint-placeholder-val="false"><path d="M8 5l11 7-11 7z"></path></sc-if></svg>{{motionText}}</button>
-<sc-if value="{{build.show}}" hint-placeholder-val="false"><a class="v2-ver" href="{{build.href}}" title="The commit this version of the site was built from">{{build.label}}</a></sc-if>
+<sc-if value="{{build.show}}" hint-placeholder-val="false"><a class="v2-ver" href="{{build.href}}" title="{{build.title}}">{{build.label}}</a></sc-if>
 </div>
 </div>
 </aside>
@@ -502,14 +606,14 @@ a{color:var(--acc)!important;text-decoration:none!important}
 </div>
 <div class="v2-mcta">
 <a class="c-btn" href="mailto:craga89@gmail.com" style="display: inline-flex; align-items: center; min-height: 44px; padding: 0 18px; border-radius: 8px; background: var(--acc); color: var(--bg); font-weight: 700; text-decoration: none">./get-in-touch</a>
-<a class="v2-soc" href="mailto:craga89@gmail.com" title="craga89@gmail.com"><svg class="v2-ico" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="m22 7-10 6L2 7"></path></svg>email</a><button type="button" class="v2-copy" onClick="{{copyEmail}}" aria-label="Copy email address" title="{{copyTitle}}"><sc-if value="{{copied}}" hint-placeholder-val="false"><svg class="v2-ico" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7"></path></svg></sc-if><sc-if value="{{notCopied}}" hint-placeholder-val="true"><svg class="v2-ico" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg></sc-if></button><a class="v2-soc" href="https://github.com/Craga89"><svg class="v2-ico" viewBox="0 0 16 16" width="15" height="15" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path></svg>github</a><a class="v2-soc" href="https://www.linkedin.com/in/craigmichaelthompson/"><svg class="v2-ico" viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"></path></svg>linkedin</a><a class="v2-soc" href="/cv"><svg class="v2-ico" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><path d="M14 2v6h6"></path><path d="M16 13H8M16 17H8M10 9H8"></path></svg>plain CV</a><a class="v2-soc" href="cv.pdf" download="Craig-Michael-Thompson-CV.pdf"><svg class="v2-ico" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"></path><path d="m7 10 5 5 5-5"></path><path d="M5 21h14"></path></svg>cv.pdf</a><a class="v2-soc" href="craig-thompson.vcf" download="Craig-Michael-Thompson.vcf"><svg class="v2-ico" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="4"></circle><path d="M2 21a7 7 0 0 1 14 0"></path><path d="M19 8v6M16 11h6"></path></svg>add contact</a><button type="button" class="v2-motion" onClick="{{toggleMotion}}"><svg class="v2-ico" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><sc-if value="{{motionOn}}" hint-placeholder-val="true"><path d="M9 5v14M15 5v14"></path></sc-if><sc-if value="{{motionOff}}" hint-placeholder-val="false"><path d="M8 5l11 7-11 7z"></path></sc-if></svg>{{motionText}}</button>
+<a class="v2-soc" href="mailto:craga89@gmail.com" title="craga89@gmail.com"><svg class="v2-ico" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="m22 7-10 6L2 7"></path></svg>email</a><button type="button" class="v2-copy" onClick="{{copyEmail}}" aria-label="Copy email address" title="{{copyTitle}}"><sc-if value="{{copied}}" hint-placeholder-val="false"><svg class="v2-ico" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7"></path></svg></sc-if><sc-if value="{{notCopied}}" hint-placeholder-val="true"><svg class="v2-ico" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg></sc-if></button><a class="v2-soc" href="https://github.com/Craga89"><svg class="v2-ico" viewBox="0 0 16 16" width="15" height="15" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path></svg>github</a><a class="v2-soc" href="https://www.linkedin.com/in/craigmichaelthompson/"><svg class="v2-ico" viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"></path></svg>linkedin</a><a class="v2-soc" href="/cv"><svg class="v2-ico" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><path d="M14 2v6h6"></path><path d="M16 13H8M16 17H8M10 9H8"></path></svg>plain CV</a><a class="v2-soc" href="cv.pdf" download="Craig-Michael-Thompson-CV.pdf"><svg class="v2-ico" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"></path><path d="m7 10 5 5 5-5"></path><path d="M5 21h14"></path></svg>cv.pdf</a><a class="v2-soc" href="craig-thompson.vcf" download="Craig-Michael-Thompson.vcf"><svg class="v2-ico" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="4"></circle><path d="M2 21a7 7 0 0 1 14 0"></path><path d="M19 8v6M16 11h6"></path></svg>add contact</a><sc-if value="{{shareOk}}" hint-placeholder-val="false"><button type="button" class="v2-share" onClick="{{shareGo}}"><svg class="v2-ico" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v13"></path><path d="m7 8 5-5 5 5"></path><path d="M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"></path></svg>share</button></sc-if><button type="button" class="v2-motion" onClick="{{toggleMotion}}"><svg class="v2-ico" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><sc-if value="{{motionOn}}" hint-placeholder-val="true"><path d="M9 5v14M15 5v14"></path></sc-if><sc-if value="{{motionOff}}" hint-placeholder-val="false"><path d="M8 5l11 7-11 7z"></path></sc-if></svg>{{motionText}}</button>
 </div>
 </div>
 </div>
 </section>
 
 <section id="career" class="c-rv" style="margin-top: clamp(72px, 10vw, 128px)">
-<h2 class="c-cmd" style="margin: 0 0 32px; font-size: clamp(16px, 2vw, 20px); font-weight: 500; color: var(--ok)">$ cat career.log <span style="color: var(--dim)"># experience</span></h2>
+<div class="c-hrow" style="margin: 0 0 32px"><h2 class="c-cmd" style="margin: 0; font-size: clamp(16px, 2vw, 20px); font-weight: 500; color: var(--ok)">$ cat career.log <span style="color: var(--dim)"># experience</span></h2><a class="c-anchor" href="#career" data-done="{{anc.career}}" data-file="career.log" aria-label="Copy link to career.log" title="Copy link to this section">#</a></div>
 <div style="position: relative; padding-left: 32px">
 <div class="c-line" style="position: absolute; left: 6px; top: 8px; bottom: 8px; width: 2px; background: var(--line3)"></div>
 
@@ -568,7 +672,7 @@ a{color:var(--acc)!important;text-decoration:none!important}
 </section>
 
 <section id="responsibilities" class="c-rv" style="margin-top: clamp(72px, 10vw, 128px)">
-<h2 class="c-cmd" style="margin: 0 0 8px; font-size: clamp(16px, 2vw, 20px); font-weight: 500; color: var(--ok)">$ ls ./responsibilities <span style="color: var(--dim)"># roles &amp; responsibilities</span></h2>
+<div class="c-hrow" style="margin: 0 0 8px"><h2 class="c-cmd" style="margin: 0; font-size: clamp(16px, 2vw, 20px); font-weight: 500; color: var(--ok)">$ ls ./responsibilities <span style="color: var(--dim)"># roles &amp; responsibilities</span></h2><a class="c-anchor" href="#responsibilities" data-done="{{anc.responsibilities}}" data-file="responsibilities/" aria-label="Copy link to responsibilities/" title="Copy link to this section">#</a></div>
 <p style="margin: 0 0 24px; color: var(--mute); font-size: 14px; max-width: 72ch">The responsibilities I've held beyond the code, and the impact they had: leading and growing the team, hiring, working with product and customers, incidents, budgets, ways of working and the move to AI-first engineering, seeing a startup through to acquisition, compliance and internal IT. It plays through each file on its own and holds while you hover or read. Jump to any file, or open its full detail.</p>
 
 <div class="c-deck" id="r-deck" tabindex="0" role="region" aria-roledescription="carousel" aria-label="Responsibilities tour" onKeyDown="{{rKey}}">
@@ -1149,7 +1253,7 @@ a{color:var(--acc)!important;text-decoration:none!important}
 </section>
 
 <section id="case-studies" class="c-rv" style="margin-top: clamp(72px, 10vw, 128px)">
-<h2 class="c-cmd" style="margin: 0 0 8px; font-size: clamp(16px, 2vw, 20px); font-weight: 500; color: var(--ok)">$ ls ./case-studies <span style="color: var(--dim)"># case studies</span></h2>
+<div class="c-hrow" style="margin: 0 0 8px"><h2 class="c-cmd" style="margin: 0; font-size: clamp(16px, 2vw, 20px); font-weight: 500; color: var(--ok)">$ ls ./case-studies <span style="color: var(--dim)"># case studies</span></h2><a class="c-anchor" href="#case-studies" data-done="{{anc.case-studies}}" data-file="case-studies/" aria-label="Copy link to case-studies/" title="Copy link to this section">#</a></div>
 <p style="margin: 0 0 24px; color: var(--mute); font-size: 14px; max-width: 72ch">The technical projects I've led with my teams: what we built, what changed, and what it means in practice. Open a file.</p>
 
 <div class="c-cs">
@@ -1409,12 +1513,13 @@ a{color:var(--acc)!important;text-decoration:none!important}
 <div>
 <div style="font-size: 13px; color: var(--mute); margin-bottom: 10px">What the suite checks</div>
 <ul style="margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr)); gap: 10px">
-<li style="border: 1px solid var(--line2); border-radius: 8px; padding: 12px 14px"><div style="font-size: 12px; color: var(--acc)">axe-core · WCAG 2.0–2.2 A/AA</div><div style="color: var(--head); font-weight: 700; margin: 2px 0 4px">Every automated rule, in every state</div><div style="font-size: 14px; color: var(--text3)">Both themes, desktop and mobile, every tab, open FAQs, search results, ask.sh and the chat: 124 page states per run.</div></li>
+<li style="border: 1px solid var(--line2); border-radius: 8px; padding: 12px 14px"><div style="font-size: 12px; color: var(--acc)">axe-core · WCAG 2.0–2.2 A/AA</div><div style="color: var(--head); font-weight: 700; margin: 2px 0 4px">Every automated rule, in every state</div><div style="font-size: 14px; color: var(--text3)">Both themes, desktop and mobile, every tab, open FAQs, search results, ask.sh, the chat and the search dialogs: 138 page states per run.</div></li>
 <li style="border: 1px solid var(--line2); border-radius: 8px; padding: 12px 14px"><div style="font-size: 12px; color: var(--acc)">2.1.1 · 2.4.7</div><div style="color: var(--head); font-weight: 700; margin: 2px 0 4px">Keyboard only</div><div style="font-size: 14px; color: var(--text3)">A Tab-key walk through every focus stop, confirming each one shows a visible focus ring.</div></li>
 <li style="border: 1px solid var(--line2); border-radius: 8px; padding: 12px 14px"><div style="font-size: 12px; color: var(--acc)">2.4.11 · new in 2.2</div><div style="color: var(--head); font-weight: 700; margin: 2px 0 4px">Focus never hidden</div><div style="font-size: 14px; color: var(--text3)">Nothing focused can sit behind the sticky header or the chat bar.</div></li>
 <li style="border: 1px solid var(--line2); border-radius: 8px; padding: 12px 14px"><div style="font-size: 12px; color: var(--acc)">2.5.8 · new in 2.2</div><div style="color: var(--head); font-weight: 700; margin: 2px 0 4px">Targets you can hit</div><div style="font-size: 14px; color: var(--text3)">Controls are at least 24px, or spaced so a miss won't land on a neighbour.</div></li>
 <li style="border: 1px solid var(--line2); border-radius: 8px; padding: 12px 14px"><div style="font-size: 12px; color: var(--acc)">1.4.10 · 1.4.12</div><div style="color: var(--head); font-weight: 700; margin: 2px 0 4px">Reflow and spacing</div><div style="font-size: 14px; color: var(--text3)">Nothing scrolls sideways at 320px, and nothing clips with the WCAG text-spacing overrides applied.</div></li>
 <li style="border: 1px solid var(--line2); border-radius: 8px; padding: 12px 14px"><div style="font-size: 12px; color: var(--acc)">2.2.2 · 2.3.3</div><div style="color: var(--head); font-weight: 700; margin: 2px 0 4px">Motion under control</div><div style="font-size: 14px; color: var(--text3)">Reduced-motion users get a still page, and the auto-playing tour can be paused.</div></li>
+<li style="border: 1px solid var(--line2); border-radius: 8px; padding: 12px 14px"><div style="font-size: 12px; color: var(--acc)">2.1.4</div><div style="color: var(--head); font-weight: 700; margin: 2px 0 4px">Shortcuts you can switch off</div><div style="font-size: 14px; color: var(--text3)">The single-key shortcuts can be turned off, so they never clash with screen readers or speech input.</div></li>
 </ul>
 </div>
 
@@ -1781,7 +1886,7 @@ a{color:var(--acc)!important;text-decoration:none!important}
 
 <section id="stack" class="c-rv c-fxwrap" style="margin-top: clamp(72px, 10vw, 128px)">
 <canvas id="c-fx-stack" class="c-fx" aria-hidden="true" style="inset: -40px -24px"></canvas>
-<h2 class="c-cmd" style="margin: 0 0 28px; font-size: clamp(16px, 2vw, 20px); font-weight: 500; color: var(--ok)">$ ls ./stack <span style="color: var(--dim)"># skills</span></h2>
+<div class="c-hrow" style="margin: 0 0 28px"><h2 class="c-cmd" style="margin: 0; font-size: clamp(16px, 2vw, 20px); font-weight: 500; color: var(--ok)">$ ls ./stack <span style="color: var(--dim)"># skills</span></h2><a class="c-anchor" href="#stack" data-done="{{anc.stack}}" data-file="stack/" aria-label="Copy link to stack/" title="Copy link to this section">#</a></div>
 <div style="border: 1px solid var(--line2); border-radius: 12px; background: var(--panel); overflow: hidden">
 <div style="display: flex; align-items: center; gap: 10px; padding: 6px 16px; border-bottom: 1px solid var(--line2); background: var(--panel2)">
 <span aria-hidden="true" style="color: var(--ok)">$ grep -ri</span>
@@ -1802,7 +1907,7 @@ a{color:var(--acc)!important;text-decoration:none!important}
 </section>
 
 <section id="oss" class="c-rv" style="margin-top: clamp(72px, 10vw, 128px)">
-<h2 class="c-cmd" style="margin: 0 0 28px; font-size: clamp(16px, 2vw, 20px); font-weight: 500; color: var(--ok)">$ ls ./open-source <span style="color: var(--dim)"># open source</span></h2>
+<div class="c-hrow" style="margin: 0 0 28px"><h2 class="c-cmd" style="margin: 0; font-size: clamp(16px, 2vw, 20px); font-weight: 500; color: var(--ok)">$ ls ./open-source <span style="color: var(--dim)"># open source</span></h2><a class="c-anchor" href="#oss" data-done="{{anc.oss}}" data-file="open-source/" aria-label="Copy link to open-source/" title="Copy link to this section">#</a></div>
 <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); gap: 18px">
 <article class="c-card" style="border: 1px solid var(--line2); border-radius: 12px; padding: 26px; background: var(--panel)">
 <div style="font-size: 13px; color: var(--acc)">open-source/qtip2</div>
@@ -1827,7 +1932,7 @@ a{color:var(--acc)!important;text-decoration:none!important}
 <div role="table" aria-label="Selected upstream contributions" style="border: 1px solid var(--line2); border-radius: 12px; overflow: hidden">
 <div role="rowgroup">
 <div role="row" class="c-yr" style="display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 18px; padding: 12px 20px; border-bottom: 1px solid var(--line)"><span role="cell" style="flex: 0 1 300px"><a href="https://github.com/better-auth/better-auth/pull/9398">better-auth/better-auth</a></span><span role="cell" style="flex: 1 1 280px; color: var(--text2)">Fixed SAML metadata so an organisation's default SSO provider works</span></div>
-<div role="row" class="c-yr" style="display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 18px; padding: 12px 20px; border-bottom: 1px solid var(--line)"><span role="cell" style="flex: 0 1 300px"><a href="https://github.com/nextra/nextra/pull/4995">nextra/nextra</a></span><span role="cell" style="flex: 1 1 280px; color: var(--text2)">Git worktree support for the docs framework</span></div>
+<div role="row" class="c-yr" style="display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 18px; padding: 12px 20px; border-bottom: 1px solid var(--line)"><span role="cell" style="flex: 0 1 300px"><a href="https://github.com/shuding/nextra/pull/4995">shuding/nextra</a></span><span role="cell" style="flex: 1 1 280px; color: var(--text2)">Git worktree support for the docs framework</span></div>
 <div role="row" class="c-yr" style="display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 18px; padding: 12px 20px; border-bottom: 1px solid var(--line)"><span role="cell" style="flex: 0 1 300px"><a href="https://github.com/buildkite/test-collector-javascript/pull/30">buildkite/test-collector-javascript</a></span><span role="cell" style="flex: 1 1 280px; color: var(--text2)">Path prefixes so Test Analytics works in monorepos</span></div>
 <div role="row" class="c-yr" style="display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 18px; padding: 12px 20px; border-bottom: 1px solid var(--line)"><span role="cell" style="flex: 0 1 300px"><a href="https://github.com/swc-project/swc-node/pull/647">swc-project/swc-node</a></span><span role="cell" style="flex: 1 1 280px; color: var(--text2)">Made the require hook revertible</span></div>
 <div role="row" class="c-yr" style="display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 18px; padding: 12px 20px; border-bottom: 1px solid var(--line)"><span role="cell" style="flex: 0 1 300px"><a href="https://github.com/Popmotion/popmotion/pull/506">Popmotion/popmotion</a></span><span role="cell" style="flex: 1 1 280px; color: var(--text2)">IE11 compatibility fix for the animation library</span></div>
@@ -1846,7 +1951,7 @@ a{color:var(--acc)!important;text-decoration:none!important}
 </section>
 
 <section id="recommendations" class="c-rv" style="margin-top: clamp(72px, 10vw, 128px)">
-<h2 class="c-cmd" style="margin: 0 0 8px; font-size: clamp(16px, 2vw, 20px); font-weight: 500; color: var(--ok)">$ cat recommendations.txt <span style="color: var(--dim)"># recommendations</span></h2>
+<div class="c-hrow" style="margin: 0 0 8px"><h2 class="c-cmd" style="margin: 0; font-size: clamp(16px, 2vw, 20px); font-weight: 500; color: var(--ok)">$ cat recommendations.txt <span style="color: var(--dim)"># recommendations</span></h2><a class="c-anchor" href="#recommendations" data-done="{{anc.recommendations}}" data-file="recommendations.txt" aria-label="Copy link to recommendations.txt" title="Copy link to this section">#</a></div>
 <p style="margin: 0 0 24px; color: var(--mute); font-size: 14px; max-width: 72ch">From LinkedIn, quoted as written. <a href="https://www.linkedin.com/in/craigmichaelthompson/details/recommendations/">See them on LinkedIn →</a></p>
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr)); gap: 18px">
 <figure class="c-card" style="margin: 0; border: 1px solid var(--line2); border-radius: 12px; padding: 26px; background: var(--panel); display: flex; flex-direction: column; gap: 18px">
@@ -1876,7 +1981,7 @@ a{color:var(--acc)!important;text-decoration:none!important}
 </section>
 
 <section id="faq" class="c-rv" style="margin-top: clamp(72px, 10vw, 128px)">
-<h2 class="c-cmd" style="margin: 0 0 24px; font-size: clamp(16px, 2vw, 20px); font-weight: 500; color: var(--ok)">$ cat faq.md <span style="color: var(--dim)"># faq</span></h2>
+<div class="c-hrow" style="margin: 0 0 24px"><h2 class="c-cmd" style="margin: 0; font-size: clamp(16px, 2vw, 20px); font-weight: 500; color: var(--ok)">$ cat faq.md <span style="color: var(--dim)"># faq</span></h2><a class="c-anchor" href="#faq" data-done="{{anc.faq}}" data-file="faq.md" aria-label="Copy link to faq.md" title="Copy link to this section">#</a></div>
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 460px), 1fr)); gap: 0 32px; border-top: 1px solid var(--line2)">
 <details class="c-faq"><summary>What roles are you open to?</summary><p>Hands-on technical leadership roles, such as Head of Engineering, where I stay close to the code and to AI-first delivery while setting direction for the team. I'm most at home in start-ups and scale-ups.</p></details>
 <details class="c-faq"><summary>Remote, hybrid or office?</summary><p>Primarily remote. I'd consider hybrid for a North East–based company with genuinely flexible attendance, but not a fixed "X days a week" commitment.</p></details>
@@ -1901,7 +2006,7 @@ a{color:var(--acc)!important;text-decoration:none!important}
 </section>
 
 <section id="ask" class="c-rv" style="margin-top: clamp(72px, 10vw, 128px)">
-<h2 class="c-cmd" style="margin: 0 0 12px; font-size: clamp(16px, 2vw, 20px); font-weight: 500; color: var(--ok)">$ ./ask.sh <span style="color: var(--dim)"># ask about my experience</span></h2>
+<div class="c-hrow" style="margin: 0 0 12px"><h2 class="c-cmd" style="margin: 0; font-size: clamp(16px, 2vw, 20px); font-weight: 500; color: var(--ok)">$ ./ask.sh <span style="color: var(--dim)"># ask about my experience</span></h2><a class="c-anchor" href="#ask" data-done="{{anc.ask}}" data-file="ask.sh" aria-label="Copy link to ask.sh" title="Copy link to this section">#</a></div>
 <p style="margin: 0 0 20px; color: var(--mute); font-size: 14px; max-width: 72ch">Ask anything about my experience, roles or skills. An AI model answers using only what's on this site and links to where it found it. Questions are kept anonymously, with nothing that identifies you, so I can improve the site.</p>
 <div class="c-ask">
 <div class="c-ask-log" aria-live="polite">
@@ -1929,6 +2034,30 @@ a{color:var(--acc)!important;text-decoration:none!important}
 </section>
 </main>
 <div id="c-tip" class="{{tipClass}}" popover="auto" style="{{tipPos}}"><b>{{tipTitle}}</b>{{tipText}}</div>
+<dialog id="c-pal" class="c-pal" aria-labelledby="c-pal-t">
+<h2 id="c-pal-t" class="c-sr">Search and jump</h2>
+<div class="c-pal-in"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg><input id="c-pal-field" class="c-pal-field" type="text" role="combobox" aria-expanded="true" aria-controls="c-pal-list" aria-autocomplete="list" aria-activedescendant="{{palActive}}" aria-label="Search sections, files and actions" autocomplete="off" spellcheck="false" placeholder="Jump to a section or file, or ask a question…" value="{{palQ}}" onChange="{{palType}}" onKeyDown="{{palKey}}"></div>
+<ul id="c-pal-list" class="c-pal-list" role="listbox" aria-label="Results">
+<sc-for list="{{palItems}}" as="o" hint-placeholder-count="6"><li id="{{o.id}}" role="option" aria-selected="{{o.sel}}" class="c-pal-o" onClick="{{o.go}}"><span class="c-pal-i" aria-hidden="true">{{o.icon}}</span><span class="c-pal-l"><sc-for list="{{o.parts}}" as="x" hint-placeholder-count="1"><sc-if value="{{x.m}}" hint-placeholder-val="false"><mark>{{x.t}}</mark></sc-if><sc-if value="{{x.p}}" hint-placeholder-val="true">{{x.t}}</sc-if></sc-for></span><span class="c-pal-k">{{o.kind}}</span></li></sc-for>
+</ul>
+<div class="c-pal-foot" aria-hidden="true"><span><kbd>↑</kbd><kbd>↓</kbd> move</span><span><kbd>↵</kbd> open</span><span><kbd>esc</kbd> close</span></div>
+<p class="c-sr" role="status">{{palCount}}</p>
+</dialog>
+<dialog id="c-keys" class="c-keys" aria-labelledby="c-keys-t">
+<div class="c-keys-b">
+<h2 id="c-keys-t">Keyboard shortcuts</h2>
+<dl>
+<dt><kbd>{{palMod}}</kbd> <kbd>K</kbd></dt><dd>Search and jump to any section, file or action</dd>
+<dt><kbd>/</kbd></dt><dd>Search and jump (single key)</dd>
+<dt><kbd>?</kbd></dt><dd>This list (single key)</dd>
+<dt><kbd>←</kbd> <kbd>→</kbd></dt><dd>Previous and next file in the responsibilities tour</dd>
+<dt><kbd>esc</kbd></dt><dd>Close a dialog, the chat or a definition</dd>
+</dl>
+<label><input type="checkbox" checked="{{keysOn}}" onChange="{{keysToggle}}"> Single-key shortcuts (<kbd>/</kbd> and <kbd>?</kbd>)</label>
+<p>Turn these off if they clash with your screen reader or speech software. The setting is saved in this browser.</p>
+</div>
+<button type="button" class="c-keys-x" onClick="{{keysClose}}" aria-label="Close"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"></path></svg></button>
+</dialog>
 <span class="c-sr" role="status">{{srNote}}</span>
 <div class="c-chat" data-open="{{chatOpenAttr}}" data-hide="{{chatHide}}">
 <button type="button" class="c-chat-bar" onClick="{{chatToggle}}" aria-expanded="{{chatOpenAttr}}" aria-controls="c-chat-panel" title="{{chatBarTitle}}">
@@ -1964,7 +2093,7 @@ a{color:var(--acc)!important;text-decoration:none!important}
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props='{"motion":{"editor":"boolean","default":true},"theme":{"editor":"enum","options":["dark","light"],"default":"dark"},"$preview":{"width":1440,"height":7600}}'>
 class Component extends DCLogic {
-  componentDidMount() { this.mountFx(); this.trackHeader(); this.bindAnchors(); this.bindDeck(); this.bindSpy(); this.bindChat(); }
+  componentDidMount() { this.mountFx(); this.trackHeader(); this.bindAnchors(); this.bindDeck(); this.bindSpy(); this.bindChat(); this.bindKeys(); }
   bindChat() {
     if (this._onChatLink || typeof document === 'undefined') return;
     this._onChatLink = (e) => {
@@ -2001,6 +2130,84 @@ class Component extends DCLogic {
       const q = new URLSearchParams(location.search).get('ask');
       if (q) setTimeout(() => { this.askSubmit(q.slice(0, 300)); this.scrollToId('ask'); }, 60);
     } catch (e) {}
+  }
+  // Cross-fade a tab or file switch with a view transition, where supported and motion is on.
+  vt(update) {
+    let ok = typeof document !== 'undefined' && typeof document.startViewTransition === 'function' && (this.props.motion ?? true) && !(this.state || {}).motionOff;
+    try { if (ok && window.matchMedia('(prefers-reduced-motion: reduce)').matches) ok = false; } catch (e) {}
+    if (!ok) { update(); return; }
+    try { document.startViewTransition(() => { update(); return Promise.resolve().then(() => {}); }); } catch (e) { update(); }
+  }
+  // Command palette (Ctrl/Cmd+K, or / and ? as single-key shortcuts that can be turned off),
+  // copy-link anchors on section headings, and the native share sheet.
+  bindKeys() {
+    if (this._onKeys || typeof document === 'undefined') return;
+    let mac = false, keysOn = true, shareOk = false;
+    try { mac = /mac|iphone|ipad/i.test((navigator.userAgentData && navigator.userAgentData.platform) || navigator.platform || ''); } catch (e) {}
+    try { keysOn = localStorage.getItem('keys') !== 'off'; } catch (e) {}
+    try { shareOk = typeof navigator.share === 'function' && window.isSecureContext; } catch (e) {}
+    try { this._faqs = [...document.querySelectorAll('#faq details > summary')].map((n, i) => ({ q: n.textContent.trim(), i })); } catch (e) { this._faqs = []; }
+    this.setState({ palMac: mac, keysOn, shareOk });
+    this._onKeys = (e) => {
+      const st = this.state || {};
+      const k = e.key;
+      if ((e.metaKey || e.ctrlKey) && !e.altKey && !e.shiftKey && (k === 'k' || k === 'K')) { e.preventDefault(); if (st.palOpen) this.palClose(); else this.palOpen(); return; }
+      if (e.metaKey || e.ctrlKey || e.altKey || e.defaultPrevented || !st.keysOn) return;
+      const t = e.target;
+      if (t && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))) return;
+      if (document.querySelector('dialog[open]')) return;
+      if (k === '/') { e.preventDefault(); this.palOpen(); }
+      else if (k === '?') { e.preventDefault(); this.keysOpen(); }
+    };
+    document.addEventListener('keydown', this._onKeys);
+    ['c-pal', 'c-keys'].forEach((id) => {
+      const d = document.getElementById(id);
+      if (!d) return;
+      d.addEventListener('close', () => this.setState(id === 'c-pal' ? { palOpen: false } : { keysDlg: false }));
+      d.addEventListener('click', (e) => { if (e.target === d) d.close(); });
+    });
+    // Section heading links copy their address (and still jump there).
+    this._onCopyLink = (e) => {
+      const a = e.target && e.target.closest ? e.target.closest('a.c-anchor') : null;
+      if (!a || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      const id = a.getAttribute('href').slice(1);
+      const url = location.origin + location.pathname + '#' + id;
+      try { history.replaceState(null, '', '#' + id); } catch (x) {}
+      this.copyText(url).then(() => {
+        this.setState({ ancDone: id });
+        this.note('Link to ' + (a.getAttribute('data-file') || id) + ' copied');
+        clearTimeout(this._ancT);
+        this._ancT = setTimeout(() => this.setState({ ancDone: null }), 1800);
+      }).catch(() => {});
+    };
+    document.addEventListener('click', this._onCopyLink, true);
+  }
+  palOpen() {
+    const d = document.getElementById('c-pal');
+    if (!d || d.open || typeof d.showModal !== 'function') return;
+    this.setState({ palOpen: true, palQ: '', palIdx: 0 });
+    try { d.showModal(); } catch (e) { this.setState({ palOpen: false }); return; }
+    const f = document.getElementById('c-pal-field');
+    if (f) { f.value = ''; f.focus(); }
+    const l = document.getElementById('c-pal-list');
+    if (l) l.scrollTop = 0;
+  }
+  palClose() { const d = document.getElementById('c-pal'); if (d && d.open) d.close(); }
+  keysOpen() {
+    const d = document.getElementById('c-keys');
+    if (!d || d.open || typeof d.showModal !== 'function') return;
+    this.palClose();
+    this.setState({ keysDlg: true });
+    try { d.showModal(); } catch (e) {}
+  }
+  // Move to a section and put keyboard focus there, so the next Tab continues from it.
+  palFocus(el) {
+    if (!el) return;
+    try { if (el.tabIndex < 0 && !el.hasAttribute('tabindex')) el.setAttribute('tabindex', '-1'); el.focus({ preventScroll: true }); } catch (e) {}
+  }
+  palJump(id) {
+    this.scrollToId(id);
+    this.palFocus(document.getElementById(id));
   }
   // Voice dictation into the ask.sh or chat field, using the browser's own speech recognition.
   dictate(target) {
@@ -2358,7 +2565,7 @@ class Component extends DCLogic {
     const id = typeof step === 'string' ? step : ids[(cur + step + ids.length) % ids.length];
     this.setState({ rtab: id, rSeq: (st.rSeq || 0) + 1 });
   }
-  componentWillUnmount() { if (this._onSpy) { window.removeEventListener('scroll', this._onSpy, true); window.removeEventListener('resize', this._onSpy); ['wheel', 'touchstart', 'keydown'].forEach((t) => window.removeEventListener(t, this._onSpyUser)); document.removeEventListener('click', this._onSpyClick, true); } this._fxKey = null; this.destroyFx(); clearTimeout(this._rTo); if (this._rIo) this._rIo.disconnect(); if (this._rEl && this._rOn) Object.keys(this._rOn).forEach((k) => this._rEl.removeEventListener(k, this._rOn[k])); if (this._onAnchor) document.removeEventListener('click', this._onAnchor, true); if (this._onChatLink) document.removeEventListener('click', this._onChatLink); if (this._rec) { try { this._rec.abort(); } catch (e) {} } clearInterval(this._clockT); if (this._beforePrint) { window.removeEventListener('beforeprint', this._beforePrint); window.removeEventListener('afterprint', this._afterPrint); } if (this._tipKey) { document.removeEventListener('keydown', this._tipKey); document.removeEventListener('pointerdown', this._tipDown); } if (this._hdrRo) { try { this._hdrRo.disconnect(); } catch (e) {} } }
+  componentWillUnmount() { if (this._onSpy) { window.removeEventListener('scroll', this._onSpy, true); window.removeEventListener('resize', this._onSpy); ['wheel', 'touchstart', 'keydown'].forEach((t) => window.removeEventListener(t, this._onSpyUser)); document.removeEventListener('click', this._onSpyClick, true); } this._fxKey = null; this.destroyFx(); clearTimeout(this._rTo); if (this._rIo) this._rIo.disconnect(); if (this._rEl && this._rOn) Object.keys(this._rOn).forEach((k) => this._rEl.removeEventListener(k, this._rOn[k])); if (this._onAnchor) document.removeEventListener('click', this._onAnchor, true); if (this._onChatLink) document.removeEventListener('click', this._onChatLink); if (this._rec) { try { this._rec.abort(); } catch (e) {} } clearInterval(this._clockT); if (this._beforePrint) { window.removeEventListener('beforeprint', this._beforePrint); window.removeEventListener('afterprint', this._afterPrint); } if (this._tipKey) { document.removeEventListener('keydown', this._tipKey); document.removeEventListener('pointerdown', this._tipDown); } if (this._hdrRo) { try { this._hdrRo.disconnect(); } catch (e) {} } if (this._onKeys) document.removeEventListener('keydown', this._onKeys); if (this._onCopyLink) document.removeEventListener('click', this._onCopyLink, true); }
   fxKey() {
     const motion = this.props.motion ?? true;
     const theme = (this.state && this.state.theme) || this.props.theme || 'dark';
@@ -2492,7 +2699,7 @@ class Component extends DCLogic {
         label,
         sel: on ? 'true' : 'false',
         style: base + (on ? 'background: var(--acc); color: var(--bg); border: 1px solid var(--acc); font-weight: 700;' : 'background: transparent; color: var(--text3); border: 1px solid var(--line3);'),
-        pick: () => this.setState({ tab: id })
+        pick: () => this.vt(() => this.setState({ tab: id }))
       };
     });
     const rdefs = [['lead', 'leadership.md'], ['hire', 'hiring.md'], ['people', 'people.md'], ['proc', 'process.md'], ['aiproc', 'ai.md'], ['prod', 'product.md'], ['cust', 'customers.md'], ['bud', 'budget.md'], ['acq', 'acquisition.md'], ['inc', 'incidents.md'], ['comp', 'compliance.md'], ['it', 'it.md']];
@@ -2506,13 +2713,13 @@ class Component extends DCLogic {
       label, short: label.replace('.md', ''), ctrl: 'rp-' + id,
       sel: i === rIdx ? 'true' : 'false',
       fill: i < rIdx ? 'width: 100%;' : i > rIdx ? 'width: 0;' : (rCanPlay ? 'animation: ' + rFill + ' 10s linear both; animation-play-state: ' + (rRun ? 'running' : 'paused') + ';' : 'width: 100%;'),
-      pick: () => this.goResp(id)
+      pick: () => this.vt(() => this.goResp(id))
     }));
     const rPaused = rst.rPlay === false;
     const rKey = (e) => {
       if (e.target && e.target.tagName === 'SUMMARY' && e.key === ' ') return;
-      if (e.key === 'ArrowRight') { e.preventDefault(); this.goResp(1); }
-      if (e.key === 'ArrowLeft') { e.preventDefault(); this.goResp(-1); }
+      if (e.key === 'ArrowRight') { e.preventDefault(); this.vt(() => this.goResp(1)); }
+      if (e.key === 'ArrowLeft') { e.preventDefault(); this.vt(() => this.goResp(-1)); }
     };
     const toResp = (id) => () => { this.setState({ rPlay: false }); this.goResp(id); this.scrollToId('responsibilities'); };
     const toCase = (id) => () => { this.setState({ tab: id }); this.scrollToId('case-studies'); };
@@ -2580,6 +2787,71 @@ class Component extends DCLogic {
       meta: e.mode === 'ai' ? 'Answered by an AI model using only this site. It can get things wrong, so check the linked sections.' : e.mode === 'search' ? (e.note || 'Closest match from the site.') : ''
     }));
     const TIPS = {"multitenant": ["Multi-tenant", "One shared platform serving many customer organisations, with each one's data kept separate."], "cicd": ["CI/CD", "Continuous integration and delivery: every change is built and tested automatically, then released."], "cd": ["Continuous deployment", "Every change that passes the automated checks goes to production automatically, with no manual release step."], "fargate": ["AWS Fargate", "AWS's serverless way to run containers: no servers to manage, and you pay only for what runs."], "cloudfront": ["Amazon CloudFront", "AWS's content delivery network, serving traffic from locations close to each user."], "waf": ["WAF", "Web application firewall: filters malicious traffic before it reaches the application."], "svcconnect": ["ECS Service Connect", "An AWS feature that lets services in a container cluster find and call each other, with traffic metrics built in."], "codemod": ["Codemod", "A script that rewrites source code automatically, so one change can land across thousands of files at once."], "mastra": ["Mastra", "An open-source TypeScript framework for building AI agents and workflows."], "bedrock": ["Amazon Bedrock", "AWS's service for using foundation AI models through an API, inside your own AWS account."], "evals": ["Eval suite", "Automated tests for AI behaviour: set inputs checked against expected qualities, run on every change to catch regressions."], "mdm": ["MDM", "Mobile device management: software that sets up company laptops and enforces security settings remotely."]};
+    // Command palette: sections, files, FAQ and actions, filtered as you type.
+    const st0 = this.state || {};
+    const jumpTo = (id) => () => this.palJump(id);
+    const focusLater = (sel) => setTimeout(() => this.palFocus(document.querySelector(sel)), 80);
+    const openUrl = (u) => () => { location.href = u; };
+    const copyEmail = () => { this.copyText('craga89@gmail.com').then(() => { this.setState({ copied: true }); this.note('Email address copied'); clearTimeout(this._copyT); this._copyT = setTimeout(() => this.setState({ copied: false }), 2000); }).catch(() => { location.href = 'mailto:craga89@gmail.com'; }); };
+    const toggleTheme = () => this.setState({ theme: light ? 'dark' : 'light' });
+    const toggleMotion = () => { const off = !(this.state || {}).motionOff; this.setState({ motionOff: off }); try { localStorage.setItem('motion', off ? 'off' : 'on'); } catch (e) {} this.note(off ? 'Animations paused' : 'Animations on'); };
+    const shareGo = () => { try { navigator.share({ title: document.title, text: 'Craig Michael Thompson · Head of Engineering', url: location.origin + location.pathname }).catch(() => {}); } catch (e) {} };
+    const palAll = [];
+    const add = (icon, label, kind, act, kw) => palAll.push({ icon, label, kind, act, kw: (label + ' ' + kind + ' ' + (kw || '')).toLowerCase() });
+    [['top', 'README.md', 'intro about summary home'], ['career', 'career.log', 'experience jobs history work employers'], ['responsibilities', 'responsibilities/', 'roles leadership'], ['case-studies', 'case-studies/', 'projects work'], ['stack', 'stack/', 'skills tools technologies'], ['oss', 'open-source/', 'github pull requests contributions'], ['recommendations', 'recommendations.txt', 'references testimonials'], ['faq', 'faq.md', 'questions'], ['ask', 'ask.sh', 'ai question chat']].forEach(([id, f, kw]) => add('#', f, 'section', jumpTo(id), kw));
+    add('@', 'Copy email address', 'action', copyEmail, 'contact mail email craga89@gmail.com');
+    add('↓', 'Download cv.pdf', 'action', openUrl('cv.pdf'), 'resume pdf');
+    add('▤', 'Open the plain CV', 'action', openUrl('cv/'), 'resume');
+    add('+', 'Add contact (contact.vcf)', 'action', openUrl('craig-thompson.vcf'), 'vcard address book');
+    add('◐', light ? 'Switch to dark theme' : 'Switch to light theme', 'action', toggleTheme, 'theme dark light mode colours');
+    add(st0.motionOff ? '▶' : '‖', st0.motionOff ? 'Play animations' : 'Pause animations', 'action', toggleMotion, 'motion animation stop');
+    if (st0.shareOk) add('↗', 'Share this page', 'action', shareGo, 'send');
+    add('⌨', 'Keyboard shortcuts', 'action', () => setTimeout(() => this.keysOpen(), 0), 'keys help hotkeys');
+    add('↗', 'GitHub profile', 'link', openUrl('https://github.com/Craga89'), 'craga89 code');
+    add('↗', 'LinkedIn profile', 'link', openUrl('https://www.linkedin.com/in/craigmichaelthompson/'), 'linkedin');
+    rdefs.forEach(([id, f]) => add('›', 'responsibilities/' + f, 'responsibility', () => { toResp(id)(); focusLater('#r-deck'); }));
+    defs.forEach(([id, f]) => add('›', 'case-studies/' + f, 'case study', () => { toCase(id)(); focusLater('.c-cs-tabs [aria-selected="true"]'); }));
+    (this._faqs || []).forEach((f) => add('?', f.q, 'faq', () => {
+      const d = document.querySelectorAll('#faq details')[f.i];
+      if (!d) return;
+      d.open = true;
+      document.documentElement.classList.add('cv-all');
+      let smooth = true;
+      try { smooth = !window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
+      try { d.scrollIntoView({ block: 'center', behavior: smooth ? 'smooth' : 'auto' }); } catch (e) {}
+      this.palFocus(d.querySelector('summary'));
+    }));
+    const pq = String(st0.palQ || '').trim();
+    const pql = pq.toLowerCase();
+    const ptoks = pql.split(/\s+/).filter(Boolean);
+    let palList = palAll.map((o, i) => {
+      if (!ptoks.length) return { o, i, s: 0 };
+      if (!ptoks.every((t) => o.kw.includes(t))) return null;
+      const L = o.label.toLowerCase();
+      return { o, i, s: L.startsWith(pql) ? 4 : L.split(/[\s/.(]+/).some((w) => w.startsWith(pql)) ? 3 : L.includes(pql) ? 2 : 1 };
+    }).filter(Boolean).sort((a, b) => b.s - a.s || a.i - b.i).map((x) => x.o);
+    if (pq) {
+      const askItem = { icon: '$', label: 'Ask ask.sh: “' + pq + '”', kind: 'ask', act: () => { this.askSubmit(pq); this.scrollToId('ask'); focusLater('#c-ask-field'); } };
+      if (palList.length) palList.push(askItem); else palList = [askItem];
+    }
+    const palIdx = Math.min(Math.max(0, st0.palIdx || 0), Math.max(0, palList.length - 1));
+    const palRun = (o) => { this.palClose(); if (o) o.act(); };
+    const palItems = palList.map((o, i) => {
+      const L = o.label, at = pql ? L.toLowerCase().indexOf(pql) : -1;
+      const parts = at < 0 ? [{ t: L, p: true }] : [{ t: L.slice(0, at), p: true }, { t: L.slice(at, at + pql.length), m: true }, { t: L.slice(at + pql.length), p: true }].filter((x) => x.t);
+      return { id: 'c-pal-o' + i, sel: i === palIdx ? 'true' : 'false', icon: o.icon, kind: o.kind, parts, go: () => palRun(o) };
+    });
+    const palKey = (e) => {
+      const n = palList.length;
+      if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+        e.preventDefault();
+        if (!n) return;
+        const i = (palIdx + (e.key === 'ArrowDown' ? 1 : -1) + n) % n;
+        this.setState({ palIdx: i });
+        setTimeout(() => { const el = document.getElementById('c-pal-o' + i); if (el) el.scrollIntoView({ block: 'nearest' }); }, 0);
+      } else if (e.key === 'Enter') { e.preventDefault(); palRun(palList[palIdx]); }
+    };
+    const ancIds = ['career', 'responsibilities', 'case-studies', 'stack', 'oss', 'recommendations', 'faq', 'ask'];
     const ASK_SUGG = ['What roles is he looking for?', 'How has he used AI in engineering?', 'Has he owned a budget?', 'Has he been through an acquisition?'];
     const askSugg = ASK_SUGG.map((t) => ({ t, pick: () => this.askSubmit(t) }));
     return {
@@ -2601,13 +2873,34 @@ class Component extends DCLogic {
       tipClass: 'c-tip' + (askSt.tipFallbackOpen ? ' is-open' : ''),
       tipPos: askSt.tipPos || '',
       srNote: askSt.srNote || '',
+      palGo: () => this.palOpen(), palItems, palKey, palType: (e) => this.setState({ palQ: e.target.value, palIdx: 0 }), palQ: st0.palQ || '',
+      palActive: palList.length ? 'c-pal-o' + palIdx : null,
+      palCount: pq ? palList.length + (palList.length === 1 ? ' result' : ' results') : '',
+      palKeys: st0.palMac ? '⌘K' : 'Ctrl K', palMod: st0.palMac ? '⌘' : 'Ctrl',
+      keysOn: st0.keysOn !== false,
+      keysToggle: (e) => { const on = !!e.target.checked; this.setState({ keysOn: on }); try { localStorage.setItem('keys', on ? 'on' : 'off'); } catch (x) {} this.note(on ? 'Single-key shortcuts on' : 'Single-key shortcuts off'); },
+      keysClose: () => { const d = document.getElementById('c-keys'); if (d && d.open) d.close(); },
+      anc: Object.fromEntries(ancIds.map((id) => [id, st0.ancDone === id ? 'true' : 'false'])),
+      shareOk: !!st0.shareOk, shareGo,
       clockOn: !!askSt.clockOn,
       clockH: (this._clock || {}).h || '', clockM: (this._clock || {}).m || '', clockOff: (this._clock || {}).off || '', clockSr: (this._clock || {}).sr || '',
       motionOn: !askSt.motionOff, motionOff: !!askSt.motionOff, motionText: askSt.motionOff ? 'play animations' : 'pause animations',
-      toggleMotion: () => { const off = !(this.state || {}).motionOff; this.setState({ motionOff: off }); try { localStorage.setItem('motion', off ? 'off' : 'on'); } catch (e) {} this.note(off ? 'Animations paused' : 'Animations on'); },
+      toggleMotion,
       copied: !!askSt.copied, notCopied: !askSt.copied, copyTitle: askSt.copied ? 'Copied' : 'Copy email address',
-      copyEmail: () => { this.copyText('craga89@gmail.com').then(() => { this.setState({ copied: true }); this.note('Email address copied'); clearTimeout(this._copyT); this._copyT = setTimeout(() => this.setState({ copied: false }), 2000); }).catch(() => { location.href = 'mailto:craga89@gmail.com'; }); },
-      build: (() => { const B = typeof window !== 'undefined' && window.CRAGA_BUILD; if (!B) return { show: false }; const d = new Date(B.date + 'T12:00:00Z'); return { show: true, label: 'main@' + B.short + ' · ' + d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' }), href: 'https://github.com/Craga89/portfolio/commit/' + B.sha }; })(),
+      copyEmail,
+      build: (() => {
+        const B = typeof window !== 'undefined' && window.CRAGA_BUILD;
+        if (!B) return { show: false };
+        const at = /^\d{4}-/.test(B.at || '') ? new Date(B.at) : new Date(B.date + 'T12:00:00Z');
+        const day = at.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'Europe/London' });
+        let ago = 'on ' + day;
+        try {
+          const rtf = new Intl.RelativeTimeFormat('en-GB', { numeric: 'auto' });
+          const mins = (Date.now() - at.getTime()) / 60000;
+          ago = mins < 60 ? 'just now' : mins < 1440 ? rtf.format(-Math.round(mins / 60), 'hour') : mins < 20160 ? rtf.format(-Math.round(mins / 1440), 'day') : mins < 86400 ? rtf.format(-Math.round(mins / 10080), 'week') : rtf.format(-Math.round(mins / 43200), 'month');
+        } catch (e) {}
+        return { show: true, label: 'main@' + B.short + ' · ' + ago, title: 'Built from commit ' + B.short + ', ' + day, href: 'https://github.com/Craga89/portfolio/commit/' + B.sha };
+      })(),
       chatOpen: !!askSt.chatOpen, chatOpenAttr: askSt.chatOpen ? 'true' : 'false',
       chatHide: !askSt.chatOpen && (askSt.spy || 'top') === 'ask' ? 'true' : 'false',
       chatSub: askBusy ? 'thinking…' : 'Ask about my experience', chatBarTitle: askSt.chatOpen ? 'Minimise' : 'Ask about my experience',
@@ -2629,11 +2922,11 @@ class Component extends DCLogic {
       isLight: light,
       isDark: !light,
       themeLabel: light ? 'Switch to dark theme' : 'Switch to light theme',
-      toggleTheme: () => this.setState({ theme: light ? 'dark' : 'light' }),
+      toggleTheme,
       tabs, rsegs, rKey, rCanPlay, rPaused: rPaused ? 'true' : 'false',
       rPlayLabel: rPaused ? '▶ play' : '❚❚ pause', rLive: rRun ? 'off' : 'polite',
       rNextLabel: 'next: ' + rdefs[(rIdx + 1) % rdefs.length][1],
-      rPrev: () => this.goResp(-1), rNext: () => this.goResp(1),
+      rPrev: () => this.vt(() => this.goResp(-1)), rNext: () => this.vt(() => this.goResp(1)),
       rToggle: () => this.setState({ rPlay: rPaused }), rHold: () => this.setState({ rPlay: false }),
       goAcq: toResp('acq'), goHire: toResp('hire'), goAi: toResp('aiproc'), goProd: toResp('prod'),
       tabMono: tab === 'mono',

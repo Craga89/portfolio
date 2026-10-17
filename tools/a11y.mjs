@@ -98,6 +98,8 @@ for (const [width, scheme] of [[1440, 'dark'], [1440, 'light'], [390, 'dark'], [
   const segs = page.locator('#responsibilities .c-seg');
   for (let i = 0; i < await segs.count(); i++) {
     await segs.nth(i).click();
+    // Switches cross-fade with a view transition, so wait for the new state to land.
+    await page.waitForFunction((k) => document.querySelectorAll('#responsibilities .c-seg')[k].getAttribute('aria-selected') === 'true', i, { timeout: 3000 }).catch(() => {});
     await page.waitForTimeout(60);
     await page.evaluate(() => document.querySelectorAll('#responsibilities details').forEach((d) => { d.open = true; }));
     await axe(page, `responsibilities tab ${i + 1} ${tag}`, '#responsibilities');
@@ -106,6 +108,7 @@ for (const [width, scheme] of [[1440, 'dark'], [1440, 'light'], [390, 'dark'], [
   const tabs = page.locator('#case-studies [role="tab"]');
   for (let i = 0; i < await tabs.count(); i++) {
     await tabs.nth(i).click();
+    await page.waitForFunction((k) => document.querySelectorAll('#case-studies [role="tab"]')[k].getAttribute('aria-selected') === 'true', i, { timeout: 3000 }).catch(() => {});
     await page.waitForTimeout(60);
     await axe(page, `case study tab ${i + 1} ${tag}`, '#case-studies');
   }
@@ -117,6 +120,23 @@ for (const [width, scheme] of [[1440, 'dark'], [1440, 'light'], [390, 'dark'], [
     await page.waitForTimeout(150);
     await axe(page, `toggletip open ${tag}`);
     await page.keyboard.press('Escape');
+  }
+  // The command palette (Ctrl+K), unfiltered and filtered, and the keyboard shortcuts dialog.
+  if (width > 600) {
+    await page.keyboard.press('Control+k');
+    await page.waitForTimeout(250);
+    await axe(page, `command palette ${tag}`, '#c-pal');
+    await page.keyboard.type('budget');
+    await page.waitForTimeout(150);
+    await axe(page, `command palette filtered ${tag}`, '#c-pal');
+    await page.keyboard.press('Escape');
+    await page.waitForTimeout(250);
+    await page.evaluate(() => document.activeElement && document.activeElement.blur());
+    await page.keyboard.press('?');
+    await page.waitForTimeout(250);
+    await axe(page, `keyboard shortcuts ${tag}`, '#c-keys');
+    await page.keyboard.press('Escape');
+    await page.waitForTimeout(250);
   }
   // Stack search with results, and with none.
   await page.locator('#stack input').fill('aws');
@@ -267,6 +287,32 @@ for (const path of ['', 'cv/']) {
   const pause = await m.page.evaluate(() => [...document.querySelectorAll('#responsibilities button')].find((b) => /pause/i.test((b.getAttribute('aria-label') || '') + ' ' + b.textContent)));
   if (!pause) failures.push({ check: '2.2.2 Pause, Stop, Hide', state: 'home', what: 'the auto-playing tour has no pause control' });
   await m.ctx.close();
+  // 2.1.4 Character Key Shortcuts: single-key shortcuts must be possible to turn off.
+  const k = await open('', { width: 1440 });
+  const palOpen = () => k.page.evaluate(() => { const d = document.getElementById('c-pal'); return !!(d && d.open); });
+  await k.page.evaluate(() => document.activeElement && document.activeElement.blur());
+  await k.page.keyboard.press('/');
+  await k.page.waitForTimeout(200);
+  if (await palOpen()) {
+    await k.page.keyboard.press('Escape');
+    await k.page.waitForTimeout(150);
+    await k.page.evaluate(() => document.activeElement && document.activeElement.blur());
+    await k.page.keyboard.press('?');
+    await k.page.waitForTimeout(200);
+    const box = k.page.locator('#c-keys input[type="checkbox"]');
+    if (!(await box.count())) failures.push({ check: '2.1.4 Character Key Shortcuts', state: 'home', what: 'single-key shortcuts have no off switch' });
+    else {
+      await box.click();
+      await k.page.keyboard.press('Escape');
+      await k.page.waitForTimeout(150);
+      await k.page.evaluate(() => document.activeElement && document.activeElement.blur());
+      await k.page.keyboard.press('/');
+      await k.page.waitForTimeout(200);
+      if (await palOpen()) failures.push({ check: '2.1.4 Character Key Shortcuts', state: 'home', what: '"/" still opens the palette after single-key shortcuts are turned off' });
+      else notes.push('single-key shortcuts (/ and ?) can be turned off');
+    }
+  }
+  await k.ctx.close();
 }
 
 await browser.close();

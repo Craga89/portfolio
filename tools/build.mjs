@@ -294,7 +294,8 @@ ${FALLBACKS}
 </style>
 <script>if(location.hash.length>1)document.documentElement.classList.add('cv-all')</script>
 ${localFonts(d.helmet.trim())}
-<script>window.CRAGA_BUILD={sha:"__BUILD_SHA__",short:"__BUILD_SHORT__",date:"${today}"}</script>
+<script>window.CRAGA_BUILD={sha:"__BUILD_SHA__",short:"__BUILD_SHORT__",date:"${today}",at:"__BUILD_AT__"}</script>
+<script type="speculationrules">{"prerender":[{"source":"document","where":{"selector_matches":"a[href=\\"cv/\\"]"},"eagerness":"moderate"}]}</script>
 <script src="${appName}" defer></script>
 </head>
 <body>
@@ -327,6 +328,7 @@ ${meta('../')}
 <link rel="alternate" type="application/json" href="../cv.json" title="CV (JSON Resume)">
 ${inter ? preloadFont('../assets/fonts/inter-latin-400.woff2') + '\n<style>\n' + fontFaces('../assets/fonts/', ['Inter']) + '\n' + FALLBACKS + '\n</style>' : ''}
 ${helmet}
+<script type="speculationrules">{"prerender":[{"source":"document","where":{"selector_matches":"a[href=\\"../\\"]"},"eagerness":"moderate"}]}</script>
 </head>
 <body>
 ${body}

@@ -35,7 +35,13 @@ Every push to `main` deploys `site/` through `.github/workflows/pages.yml`.
 - **Downloads:** the build prints the plain CV to `cv.pdf` (Chromium, the CV's own print styles) and writes a `craig-thompson.vcf` contact card. Both are linked from the sidebar, the mobile links and the CV page.
 - **Text files:** `llms.txt` (a summary for AI assistants, built from `cv.json`), `humans.txt` and `.well-known/security.txt`.
 - **Offline:** `sw.js` makes pages network-first and assets cache-first, so return visits are instant and the site works offline. It only registers over https.
-- **Version stamp:** the sidebar shows `main@<commit> · <date>`. The Pages workflow fills in the commit at deploy time; local builds show the placeholder.
+- **Version stamp:** the sidebar shows `main@<commit> · 3 days ago`, with the full date on hover. The Pages workflow fills in the commit and its time at deploy; local builds show the placeholder.
+- **Command palette:** Ctrl/⌘+K (or the button by EXPLORER) searches sections, every responsibilities and case-study file, the FAQ and actions (copy email, cv.pdf, theme, animations…); anything else becomes an ask.sh question. `/` and `?` are single-key shortcuts, which the shortcuts dialog can turn off (WCAG 2.1.4). Both are native modal `<dialog>`s.
+- **Section links:** the `#` beside each section heading copies a link to that section.
+- **Transitions:** tab and file switches cross-fade with the View Transitions API; the chat panel, toggletips and dialogs ease in with `@starting-style`. All of it is skipped with reduced motion or "pause animations".
+- **Instant CV:** speculation rules prerender `/cv/` when you hover its link (and the home page from the CV).
+- **Share:** on phones, a share link opens the native share sheet.
+- **Typography and modes:** balanced headings, `text-wrap: pretty` paragraphs, themed selection and scrollbars, tuned styles for Windows High Contrast (`forced-colors`) and `prefers-contrast: more`.
 - **ask.sh:** shell commands (`help`, `ls`, `cat <file>`, `whoami`, `clear`…) are answered locally. Every answer has a "copy link", and `/?ask=…` opens the page with that question answered.
 - **Jargon toggletips:** buttons on technical terms open a definition in a shared popover. CSS anchor positioning places it, and a few lines of JS take over in browsers without it.
 - **Print:** the home page prints as a light, single-column document with every tab and FAQ answer laid out, controls hidden and outbound link URLs shown.
@@ -57,8 +63,8 @@ Every push to `main` deploys `site/` through `.github/workflows/pages.yml`.
 
 `npm run a11y` (`tools/a11y.mjs`) checks the built site against WCAG 2.2 AA:
 
-- axe-core (vendored in `tools/vendor/`, refreshed by `.github/workflows/vendor-axe.yml`) with every WCAG 2.0, 2.1 and 2.2 A/AA rule. It runs in both themes, at desktop and mobile widths, on every responsibilities and case-study tab, with the FAQ open, in stack search, in ask.sh and the chat with an answer, and on the plain CV and 404 pages.
-- Checks automated rule engines can't make: a keyboard-only walk through the whole page with a visible focus indicator at every stop (2.4.7), nothing focused hidden behind the sticky header or chat bar (2.4.11), reflow at 320px (1.4.10), text spacing (1.4.12), reduced motion and a pause control for the auto-playing tour (2.2.2, 2.3.3).
+- axe-core (vendored in `tools/vendor/`, refreshed by `.github/workflows/vendor-axe.yml`) with every WCAG 2.0, 2.1 and 2.2 A/AA rule. It runs in both themes, at desktop and mobile widths, on every responsibilities and case-study tab, with the FAQ open, in stack search, in ask.sh and the chat with an answer, in the command palette and shortcuts dialog, and on the plain CV and 404 pages.
+- Checks automated rule engines can't make: a keyboard-only walk through the whole page with a visible focus indicator at every stop (2.4.7), nothing focused hidden behind the sticky header or chat bar (2.4.11), reflow at 320px (1.4.10), text spacing (1.4.12), reduced motion and a pause control for the auto-playing tour (2.2.2, 2.3.3), and an off switch for single-key shortcuts (2.1.4).
 
 `.github/workflows/accessibility.yml` runs it after every Pages deploy and every Monday, saves the report to the `accessibility` branch (`reports/latest.txt`), and fails the run if anything doesn't pass. Pass `--url https://craigthompson.dev/` to test the live site instead.
 
