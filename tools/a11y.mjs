@@ -244,7 +244,8 @@ for (const path of ['', 'cv/']) {
       if (![...el.childNodes].some((n) => n.nodeType === 3 && n.data.trim())) return;
       const clipX = /hidden|clip/.test(cs.overflowX) && el.scrollWidth > el.clientWidth + 2 && cs.textOverflow !== 'ellipsis';
       const clipY = /hidden|clip/.test(cs.overflowY) && el.scrollHeight > el.clientHeight + 2;
-      if ((clipX || clipY) && el.clientWidth > 0) out.push(el.tagName.toLowerCase() + (el.className ? '.' + String(el.className).split(' ')[0] : '') + ' "' + el.textContent.trim().slice(0, 40) + '"');
+      // 1px visually-hidden text (screen-reader only) is clipped on purpose.
+      if ((clipX || clipY) && el.clientWidth > 1 && el.clientHeight > 1) out.push(el.tagName.toLowerCase() + (el.className ? '.' + String(el.className).split(' ')[0] : '') + ' "' + el.textContent.trim().slice(0, 40) + '"');
     });
     return out.slice(0, 10);
   });
