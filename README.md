@@ -38,7 +38,9 @@ Every push to `main` deploys `site/` through `.github/workflows/pages.yml`.
 - **Version stamp:** the sidebar shows `main@<commit> · 3 days ago`, with the full date on hover. The Pages workflow fills in the commit and its time at deploy; local builds show the placeholder.
 - **Command palette:** Ctrl/⌘+K (or the button by EXPLORER) searches sections, every responsibilities and case-study file, the FAQ and actions (copy email, cv.pdf, theme, animations…); anything else becomes an ask.sh question. `/` and `?` are single-key shortcuts, which the shortcuts dialog can turn off (WCAG 2.1.4). Both are native modal `<dialog>`s.
 - **Section links:** the `#` beside each section heading copies a link to that section.
-- **Get in touch:** a contact section at the bottom (`#contact`) that every get-in-touch button links to: email with a copy button, links, cv.pdf, contact card, and what roles and working pattern Craig is looking for.
+- **Plain CV themes:** `/cv/` follows the same saved theme as the home page (or the system setting), has its own toggle, and always prints and exports light.
+- **Landing flash:** an in-page link briefly highlights where it lands (the section heading, or the item itself) once the scroll ends.
+- **Get in touch:** a contact section at the bottom (`#contact`, get-in-touch.md in the sidebar) that every get-in-touch button links to: email with a copy button, links, cv.pdf, contact card, and what roles and working pattern Craig is looking for.
 - **Transitions:** tab and file switches cross-fade with the View Transitions API; the chat panel, toggletips and dialogs ease in with `@starting-style`. All of it is skipped with reduced motion or "pause animations".
 - **Instant CV:** speculation rules prerender `/cv/` when you hover its link (and the home page from the CV).
 - **Share:** on phones, a share link opens the native share sheet.

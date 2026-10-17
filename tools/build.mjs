@@ -39,11 +39,12 @@ function splitDesign(file) {
 }
 
 // Paths are relative so the same build works at craigthompson.dev/ and at craga89.github.io/portfolio/.
-// The plain CV is always light, so it says so (no dark canvas flash while it loads).
-const meta = (root, lightOnly) => `<meta name="viewport" content="width=device-width, initial-scale=1">${ROBOTS_META}
-${lightOnly ? '<meta name="color-scheme" content="light">\n<meta name="theme-color" content="#F4F4F2">' : `<meta name="color-scheme" content="dark light">
-<meta name="theme-color" content="#16271F" media="(prefers-color-scheme: dark)">
-<meta name="theme-color" content="#EDF1EE" media="(prefers-color-scheme: light)">`}
+// Browser chrome colours per page: [dark, light].
+const CHROME = { home: ['#16271F', '#EDF1EE'], cv: ['#111214', '#F4F4F2'] };
+const meta = (root, page = 'home') => `<meta name="viewport" content="width=device-width, initial-scale=1">${ROBOTS_META}
+<meta name="color-scheme" content="dark light">
+<meta name="theme-color" content="${CHROME[page][0]}" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="${CHROME[page][1]}" media="(prefers-color-scheme: light)">
 <link rel="icon" href="${root}favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="${root}apple-touch-icon.png">`;
 
@@ -282,7 +283,7 @@ ${beacon(ASK.endpoint, true)}
   // straight away, so the canvas and body are the right colour even if the browser paints part of
   // the long prerendered page before reaching the end of it, and the theme class lands on the app
   // root the moment the parser creates it. themeNow (end of body) stays as a fallback.
-  const themeHead = `<style>html.t-light,html.t-light body{background:#EDF1EE!important;color-scheme:light}html.t-dark,html.t-dark body{background:#16271F!important;color-scheme:dark}</style>
+  const themeHead = `<style>@media screen{html.t-light,html.t-light body{background:#EDF1EE!important;color-scheme:light}html.t-dark,html.t-dark body{background:#16271F!important;color-scheme:dark}}</style>
 <script>try{(function(){var d=document.documentElement,t=localStorage.getItem('theme'),L=t?t==='light':matchMedia('(prefers-color-scheme: light)').matches,M=localStorage.getItem('motion')==='off';d.classList.add(L?'t-light':'t-dark');if(t)document.querySelectorAll('meta[name="theme-color"]').forEach(function(m){m.content=L?'#EDF1EE':'#16271F'});var o=new MutationObserver(function(){var r=document.querySelector('#app .c-root');if(!r)return;if(L)r.classList.add('c-light');if(M)r.classList.add('still');o.disconnect()});o.observe(d,{childList:true,subtree:true})})()}catch(e){}</script>`;
   const fonts = fontFaces('assets/fonts/', ['Big Shoulders Display', 'Public Sans', 'Red Hat Mono']);
   const head = seoHead(d.head.trim(), { title: HOME_TITLE, desc: HOME_DESC, url: SITE + '/', type: 'profile', today });
@@ -324,10 +325,15 @@ function buildCV() {
   const d = splitDesign('CV.dc.html');
   const body = d.template
     .replace(/onClick="\{\{print\}\}"/g, 'onclick="window.print()"')
+    .replace(/onClick="\{\{toggleTheme\}\}"/g, 'onclick="cvTheme()"')
     .replace(/\s*hint-placeholder-[a-z]+="[^"]*"/g, '')
     .replace(/href="\/"/g, 'href="../"');
   if (/\{\{/.test(body)) throw new Error('CV still has template holes');
   const today = new Date().toISOString().slice(0, 10);
+  // Same saved theme as the portfolio (localStorage "theme", else the system setting), applied in
+  // <head> before anything paints. Print styles force light regardless.
+  const cvThemeHead = `<script>try{(function(){var d=document.documentElement,t=localStorage.getItem('theme'),D=t?t==='dark':matchMedia('(prefers-color-scheme: dark)').matches;d.classList.add(D?'t-dark':'t-light');if(t)document.querySelectorAll('meta[name="theme-color"]').forEach(function(m){m.content=D?'${CHROME.cv[0]}':'${CHROME.cv[1]}'})})()}catch(e){}</script>`;
+  const cvThemeTail = `<script>function cvTheme(){var d=document.documentElement,D=!d.classList.contains('t-dark');d.classList.toggle('t-dark',D);d.classList.toggle('t-light',!D);try{localStorage.setItem('theme',D?'dark':'light')}catch(e){}cvThemeLabel();document.querySelectorAll('meta[name="theme-color"]').forEach(function(m){m.content=D?'${CHROME.cv[0]}':'${CHROME.cv[1]}'})}function cvThemeLabel(){var b=document.querySelector('.v-theme'),l=document.documentElement.classList.contains('t-dark')?'Switch to light theme':'Switch to dark theme';if(b){b.setAttribute('aria-label',l);b.title=l}}cvThemeLabel()</script>`;
   const title = (d.head.match(/<title>([\s\S]*?)<\/title>/) || [])[1] || 'CV';
   let head = d.head.replace('href="https://craigthompson.dev/cv"', 'href="https://craigthompson.dev/cv/"');
   head = seoHead(head.trim(), { title: title.replace(/&amp;/g, '&'), desc: CV_DESC, url: SITE + '/cv/', type: 'website', today });
@@ -337,7 +343,7 @@ function buildCV() {
 <html lang="en-GB">
 <head>
 ${head}
-${meta('../', true)}
+${meta('../', 'cv')}\n${cvThemeHead}
 <link rel="alternate" type="application/json" href="../cv.json" title="CV (JSON Resume)">
 ${inter ? preloadFont('../assets/fonts/inter-latin-400.woff2') + '\n<style>\n' + fontFaces('../assets/fonts/', ['Inter']) + '\n' + FALLBACKS + '\n</style>' : ''}
 ${helmet}
@@ -345,6 +351,7 @@ ${helmet}
 </head>
 <body>
 ${body}
+${cvThemeTail}
 ${ASK.endpoint ? '<script>' + beacon(ASK.endpoint, false) + '</script>\n' : ''}</body>
 </html>
 `;
