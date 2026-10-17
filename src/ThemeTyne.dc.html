@@ -2912,13 +2912,14 @@ class Component extends DCLogic {
     const pq = String(st0.palQ || '').trim();
     const pql = pq.toLowerCase();
     const ptoks = pql.split(/\s+/).filter(Boolean);
-    let palList = palAll.map((o, i) => {
+    // Only built while the palette is open: keeps the page's DOM (and every re-render) small.
+    let palList = !st0.palOpen ? [] : palAll.map((o, i) => {
       if (!ptoks.length) return { o, i, s: 0 };
       if (!ptoks.every((t) => o.kw.includes(t))) return null;
       const L = o.label.toLowerCase();
       return { o, i, s: L.startsWith(pql) ? 4 : L.split(/[\s/.(]+/).some((w) => w.startsWith(pql)) ? 3 : L.includes(pql) ? 2 : 1 };
     }).filter(Boolean).sort((a, b) => b.s - a.s || a.i - b.i).map((x) => x.o);
-    if (pq) {
+    if (pq && st0.palOpen) {
       const askItem = { icon: '$', label: 'Ask ask.sh: “' + pq + '”', kind: 'ask', act: () => { this.askSubmit(pq); this.scrollToId('ask'); focusLater('#c-ask-field'); } };
       if (palList.length) palList.push(askItem); else palList = [askItem];
     }
