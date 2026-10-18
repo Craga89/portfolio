@@ -291,7 +291,7 @@ async function pump() {
   } finally {
     state.running = false;
   }
-  if (state.lang === lang && !state.queue.length) { flush(); saveCache(); progress(); }
+  if (state.lang === lang && !state.queue.length) { clearTimeout(state.flushT); state.flushT = 0; flush(); saveCache(); progress(); }
 }
 
 function flushSoon() {

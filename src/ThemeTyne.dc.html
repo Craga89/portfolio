@@ -1718,7 +1718,7 @@ html[data-vt-dir="prev"]::view-transition-new(c-rs),html[data-vt-dir="prev"]::vi
 <div>
 <div style="font-size: 13px; color: var(--mute); margin-bottom: 10px">What the suite checks</div>
 <ul style="margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr)); gap: 10px">
-<li style="border: 1px solid var(--line2); border-radius: 8px; padding: 12px 14px"><div style="font-size: 12px; color: var(--acc)">axe-core · WCAG 2.0–2.2 A/AA</div><div style="color: var(--head); font-weight: 700; margin: 2px 0 4px">Every automated rule, in every state</div><div style="font-size: 14px; color: var(--text3)">Both themes, desktop and mobile, every tab, open FAQs, search results, ask.sh, the chat, the search dialogs and every file page: 276 page states per run.</div></li>
+<li style="border: 1px solid var(--line2); border-radius: 8px; padding: 12px 14px"><div style="font-size: 12px; color: var(--acc)">axe-core · WCAG 2.0–2.2 A/AA</div><div style="color: var(--head); font-weight: 700; margin: 2px 0 4px">Every automated rule, in every state</div><div style="font-size: 14px; color: var(--text3)">Both themes, desktop and mobile, every tab, open FAQs, search results, ask.sh, the chat, the search dialogs and every file page: 284 page states per run.</div></li>
 <li style="border: 1px solid var(--line2); border-radius: 8px; padding: 12px 14px"><div style="font-size: 12px; color: var(--acc)">2.1.1 · 2.4.7</div><div style="color: var(--head); font-weight: 700; margin: 2px 0 4px">Keyboard only</div><div style="font-size: 14px; color: var(--text3)">A Tab-key walk through every focus stop, confirming each one shows a visible focus ring.</div></li>
 <li style="border: 1px solid var(--line2); border-radius: 8px; padding: 12px 14px"><div style="font-size: 12px; color: var(--acc)">2.4.11 · new in 2.2</div><div style="color: var(--head); font-weight: 700; margin: 2px 0 4px">Focus never hidden</div><div style="font-size: 14px; color: var(--text3)">Nothing focused can sit behind the sticky header or the chat bar.</div></li>
 <li style="border: 1px solid var(--line2); border-radius: 8px; padding: 12px 14px"><div style="font-size: 12px; color: var(--acc)">2.5.8 · new in 2.2</div><div style="color: var(--head); font-weight: 700; margin: 2px 0 4px">Targets you can hit</div><div style="font-size: 14px; color: var(--text3)">Controls are at least 24px, or spaced so a miss won't land on a neighbour.</div></li>
@@ -1744,6 +1744,81 @@ html[data-vt-dir="prev"]::view-transition-new(c-rs),html[data-vt-dir="prev"]::vi
 <li>Fixes went into the shared design tokens and components, so each one holds across the whole site.</li>
 <li>A regression fails the accessibility check, so it can't quietly slip back in.</li>
 <li>Automated checks cover what tools can see; screen-reader passes cover the rest.</li>
+</ul>
+</div>
+</div>
+</div>
+
+<div style="{{vI18n}}">
+<div role="tabpanel" aria-label="i18n.md" class="c-pop" style="border: 1px solid var(--line2); border-radius: 12px; background: var(--panel); padding: clamp(22px, 4vw, 40px); display: flex; flex-direction: column; gap: 32px">
+<div>
+<div style="font-size: 13px; color: var(--acc)">// internationalisation · 2019 → 2026</div>
+<h3 style="margin: 8px 0 10px; font-size: clamp(22px, 3vw, 30px); line-height: 1.25; color: var(--head)">One product in 36 languages, kept in step</h3>
+<p style="margin: 0; color: var(--text3); max-width: 72ch">Customers survey their people in their own language, so the interface and the questions have to work in every language they turn on. I've kept the platform's 36 interface languages in step with English, and made translating customers' own content cache-first and selective.</p>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 14px">
+<div class="c-pop" style="border: 1px solid var(--line2); border-radius: 10px; padding: 18px; animation-delay: .2s"><div style="font-size: 32px; font-weight: 800; color: var(--head)">36</div><div style="font-size: 14px; color: var(--mute)">interface languages, including Welsh and Arabic</div></div>
+<div class="c-pop" style="border: 1px solid var(--line2); border-radius: 10px; padding: 18px; animation-delay: .3s"><div style="font-size: 32px; font-weight: 800; color: var(--head)">~116k</div><div style="font-size: 14px; color: var(--mute)">blank strings removed, so nothing renders empty</div></div>
+<div class="c-pop" style="border: 1px solid var(--line2); border-radius: 10px; padding: 18px; animation-delay: .4s"><div style="font-size: 32px; font-weight: 800; color: var(--head)">cache first</div><div style="font-size: 14px; color: var(--mute)">translations checked inside the VPC before any network call</div></div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 18px">
+<div>
+<div style="font-size: 13px; color: var(--mute); margin-bottom: 10px">Interface text, kept in step by the build</div>
+<ol class="c-mcp-flow" aria-label="Interface text, kept in step by the build">
+<li><span class="c-mcp-s"><b>messages</b> in components</span><span class="c-mcp-a" aria-hidden="true">→</span></li>
+<li><span class="c-mcp-s"><b>extracted</b> to English</span><span class="c-mcp-a" aria-hidden="true">→</span></li>
+<li><span class="c-mcp-s"><b>keys synced</b> to every language</span><span class="c-mcp-a" aria-hidden="true">→</span></li>
+<li><span class="c-mcp-s c-mcp-end"><b>gaps</b> fall back to English</span></li>
+</ol>
+</div>
+<div>
+<div style="font-size: 13px; color: var(--mute); margin-bottom: 10px">Customer content, translated at runtime, cache first</div>
+<ol class="c-mcp-flow" aria-label="Customer content, translated at runtime, cache first">
+<li><span class="c-mcp-s"><b>survey question</b></span><span class="c-mcp-a" aria-hidden="true">→</span></li>
+<li><span class="c-mcp-s"><b>Redis cache</b> inside the VPC</span><span class="c-mcp-a" aria-hidden="true">→</span></li>
+<li><span class="c-mcp-s"><b>translation service</b> + DynamoDB</span><span class="c-mcp-a" aria-hidden="true">→</span></li>
+<li><span class="c-mcp-s c-mcp-end"><b>Google Cloud Translation</b></span></li>
+</ol>
+</div>
+</div>
+
+<div role="table" aria-label="Internationalisation before and after" style="border: 1px solid var(--line2); border-radius: 10px; overflow: hidden">
+<div role="row" style="display: flex; flex-wrap: wrap; gap: 4px 16px; padding: 10px 16px; background: var(--panel2); font-size: 12px; color: var(--mute)"><span role="columnheader" style="flex: 0 0 130px">area</span><span role="columnheader" style="flex: 1 1 160px">before</span><span role="columnheader" style="flex: 2 1 260px">after</span></div>
+<div role="row" class="c-pop" style="display: flex; flex-wrap: wrap; gap: 4px 16px; padding: 12px 16px; border-top: 1px solid var(--line); animation-delay: 0.1s"><span role="cell" style="flex: 0 0 130px; color: var(--mute); font-size: 14px">language files</span><span role="cell" style="flex: 1 1 160px"><span class="c-strike" style="animation-delay: 0.5s">drifted as keys changed</span></span><span role="cell" style="flex: 2 1 260px; color: var(--head)">Every build adds and removes keys in every language to match English</span></div>
+<div role="row" class="c-pop" style="display: flex; flex-wrap: wrap; gap: 4px 16px; padding: 12px 16px; border-top: 1px solid var(--line); animation-delay: 0.18s"><span role="cell" style="flex: 0 0 130px; color: var(--mute); font-size: 14px">missing text</span><span role="cell" style="flex: 1 1 160px"><span class="c-strike" style="animation-delay: 0.58s">shown as a blank</span></span><span role="cell" style="flex: 2 1 260px; color: var(--head)">Falls back to the English message</span></div>
+<div role="row" class="c-pop" style="display: flex; flex-wrap: wrap; gap: 4px 16px; padding: 12px 16px; border-top: 1px solid var(--line); animation-delay: 0.26s"><span role="cell" style="flex: 0 0 130px; color: var(--mute); font-size: 14px">new languages</span><span role="cell" style="flex: 1 1 160px"><span class="c-strike" style="animation-delay: 0.66s">wired in by hand; three dropped</span></span><span role="cell" style="flex: 2 1 260px; color: var(--head)">Generated from the language files present</span></div>
+<div role="row" class="c-pop" style="display: flex; flex-wrap: wrap; gap: 4px 16px; padding: 12px 16px; border-top: 1px solid var(--line); animation-delay: 0.34s"><span role="cell" style="flex: 0 0 130px; color: var(--mute); font-size: 14px">translation calls</span><span role="cell" style="flex: 1 1 160px"><span class="c-strike" style="animation-delay: 0.74s">a network round trip each, often timing out</span></span><span role="cell" style="flex: 2 1 260px; color: var(--head)">Cache inside the VPC first, with one set of timeouts across services</span></div>
+<div role="row" class="c-pop" style="display: flex; flex-wrap: wrap; gap: 4px 16px; padding: 12px 16px; border-top: 1px solid var(--line); animation-delay: 0.42s"><span role="cell" style="flex: 0 0 130px; color: var(--mute); font-size: 14px">what's translated</span><span role="cell" style="flex: 1 1 160px"><span class="c-strike" style="animation-delay: 0.82s">every name, on every read and write</span></span><span role="cell" style="flex: 2 1 260px; color: var(--head)">Only content written to be read in other languages; place names stay as written</span></div>
+<div role="row" class="c-pop" style="display: flex; flex-wrap: wrap; gap: 4px 16px; padding: 12px 16px; border-top: 1px solid var(--line); animation-delay: 0.5s"><span role="cell" style="flex: 0 0 130px; color: var(--mute); font-size: 14px">language picker</span><span role="cell" style="flex: 1 1 160px"><span class="c-strike" style="animation-delay: 0.9s">each language in its own script</span></span><span role="cell" style="flex: 2 1 260px; color: var(--head)">Every language named in the reader's own language</span></div>
+<div role="row" class="c-pop" style="display: flex; flex-wrap: wrap; gap: 4px 16px; padding: 12px 16px; border-top: 1px solid var(--line); animation-delay: 0.58s"><span role="cell" style="flex: 0 0 130px; color: var(--mute); font-size: 14px">emoji</span><span role="cell" style="flex: 1 1 160px"><span class="c-strike" style="animation-delay: 0.98s">sent to the translator as-is</span></span><span role="cell" style="flex: 2 1 260px; color: var(--head)">Swapped for keywords and restored, so they come through translation intact</span></div>
+</div>
+
+<div>
+<div style="font-size: 13px; color: var(--mute); margin-bottom: 12px">How it evolved: drifting files → in step on every build</div>
+<div style="overflow-x: auto" tabindex="0" role="region" aria-label="Wide content, scrolls sideways"><div style="min-width: 640px; padding: 4px 0">
+<div style="position: relative">
+<span aria-hidden="true" style="position: absolute; left: 12px; right: 12px; top: 50%; height: 2px; margin-top: -1px"><span class="c-fill" style="display: block; height: 2px; width: 100%; background: var(--line3)"></span></span>
+<ol aria-label="internationalisation evolution" style="position: relative; margin: 0; padding: 0; list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 10px">
+<li class="c-pop" style="animation-delay: 0.00s; position: relative; z-index: 1; flex: 0 1 auto; text-align: center; font-size: 12px; line-height: 1.35; padding: 5px 9px; border-radius: 6px; border: 1px solid var(--line3); background: var(--panel); color: var(--text3)"><span class="c-sr">started as: </span>language service (2019)</li>
+<li class="c-pop" style="animation-delay: 0.15s; position: relative; z-index: 1; flex: 0 1 auto; text-align: center; font-size: 12px; line-height: 1.35; padding: 5px 9px; border-radius: 6px; border: 1px solid var(--line3); background: var(--panel); color: var(--text3)"><span class="c-sr">then: </span>locale pipeline rebuilt</li>
+<li class="c-pop" style="animation-delay: 0.30s; position: relative; z-index: 1; flex: 0 1 auto; text-align: center; font-size: 12px; line-height: 1.35; padding: 5px 9px; border-radius: 6px; border: 1px solid var(--line3); background: var(--panel); color: var(--text3)"><span class="c-sr">then: </span>translations in the survey builder</li>
+<li class="c-pop" style="animation-delay: 0.45s; position: relative; z-index: 1; flex: 0 1 auto; text-align: center; font-size: 12px; line-height: 1.35; padding: 5px 9px; border-radius: 6px; border: 1px solid var(--line3); background: var(--panel); color: var(--text3)"><span class="c-sr">then: </span>cache-first translation</li>
+<li class="c-pop" style="animation-delay: 0.60s; position: relative; z-index: 1; flex: 0 1 auto; text-align: center; font-size: 12px; line-height: 1.35; padding: 5px 9px; border-radius: 6px; border: 1px solid var(--acc); background: var(--acc-bg); color: var(--head); font-weight: 700"><span class="c-sr">today: </span>synced on every build</li>
+</ol>
+</div>
+</div></div>
+</div>
+
+<div style="border-inline-start: 3px solid var(--ok); padding-block: 4px; padding-inline: 18px 0">
+<div style="font-size: 13px; color: var(--ok); margin-bottom: 8px"># in practice</div>
+<ul style="margin: 0; padding-inline-start: 18px; color: var(--text); display: flex; flex-direction: column; gap: 6px">
+<li>A changed or removed string updates every language in the same change, so no file falls behind.</li>
+<li>Untranslated text shows in English rather than as a gap on screen.</li>
+<li>Adding a language means adding its file; the build generates the rest.</li>
+<li>Customer content is translated only when it should be, and served from a cache next to the services.</li>
+<li>This site follows the same ideas on the visitor's own device: English fills any gap, translations are cached, and names and file names are never translated. See <a class="c-see" href="#case-studies" onClick="{{see.c_site}}" translate="no">this-site.md</a>.</li>
 </ul>
 </div>
 </div>
@@ -2438,14 +2513,14 @@ html[data-vt-dir="prev"]::view-transition-new(c-rs),html[data-vt-dir="prev"]::vi
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props='{"motion":{"editor":"boolean","default":true},"theme":{"editor":"enum","options":["dark","light"],"default":"dark"},"$preview":{"width":1440,"height":7600}}'>
 class Component extends DCLogic {
-  static CASES = [['mono', 'monorepo.md'], ['refactor', 'refactor.md'], ['ci', 'ci-cd.md'], ['test', 'testing.md'], ['a11y', 'accessibility.md'], ['aws', 'aws.md'], ['sec', 'security.md'], ['auth', 'auth.md'], ['data', 'data.md'], ['cost', 'cost.md'], ['ai', 'ai/platform.md'], ['mcp', 'webmcp.md'], ['site', 'this-site.md']];
+  static CASES = [['mono', 'monorepo.md'], ['refactor', 'refactor.md'], ['ci', 'ci-cd.md'], ['test', 'testing.md'], ['a11y', 'accessibility.md'], ['i18n', 'i18n.md'], ['aws', 'aws.md'], ['sec', 'security.md'], ['auth', 'auth.md'], ['data', 'data.md'], ['cost', 'cost.md'], ['ai', 'ai/platform.md'], ['mcp', 'webmcp.md'], ['site', 'this-site.md']];
   static RESPS = [['lead', 'leadership.md'], ['hire', 'hiring.md'], ['people', 'people.md'], ['proc', 'process.md'], ['aiproc', 'ai.md'], ['prod', 'product.md'], ['cust', 'customers.md'], ['bud', 'budget.md'], ['acq', 'acquisition.md'], ['inc', 'incidents.md'], ['comp', 'compliance.md'], ['it', 'it.md']];
   // Suggested reading orders for ?focus=… links: [kind, id, headline].
   static FOCUS = {
     leadership: { label: 'engineering leadership', tab: 'cost', rtab: 'lead', items: [['r', 'lead', 'Led the team, not just the platform'], ['r', 'hire', 'Building the team, from first interview to first deploy'], ['r', 'acq', 'From startup to acquisition'], ['r', 'bud', 'Every pound accounted for'], ['r', 'inc', 'When things break: a plan, not a panic'], ['c', 'cost', 'Measure first, then cut']] },
     platform: { label: 'platform engineering', tab: 'mono', rtab: 'inc', items: [['c', 'mono', 'One codebase, kept modern without stopping delivery'], ['c', 'ci', 'Build only what changed, ship every merge'], ['c', 'aws', 'Nothing public but the CDN'], ['c', 'sec', 'Closing doors, not adding locks'], ['c', 'data', 'Making the flagship report fast at scale'], ['r', 'inc', 'When things break: a plan, not a panic']] },
     ai: { label: 'AI-first engineering', tab: 'ai', rtab: 'aiproc', items: [['r', 'aiproc', 'From AI-assisted to AI-first, in a year'], ['c', 'ai', 'AI where it earns its keep'], ['c', 'site', 'This site, run like a production system'], ['c', 'mcp', 'A site AI agents can use, not just read'], ['c', 'test', 'A test suite that kept up with the platform']] },
-    frontend: { label: 'front end and accessibility', tab: 'a11y', rtab: 'lead', items: [['c', 'a11y', 'Accessible by default, checked on every deploy'], ['c', 'refactor', 'Keep the toolchain modern, one reviewed change at a time'], ['c', 'test', 'A test suite that kept up with the platform'], ['c', 'mono', 'One codebase, kept modern without stopping delivery']] }
+    frontend: { label: 'front end and accessibility', tab: 'a11y', rtab: 'lead', items: [['c', 'a11y', 'Accessible by default, checked on every deploy'], ['c', 'i18n', 'One product in 36 languages, kept in step'], ['c', 'refactor', 'Keep the toolchain modern, one reviewed change at a time'], ['c', 'test', 'A test suite that kept up with the platform'], ['c', 'mono', 'One codebase, kept modern without stopping delivery']] }
   };
   // Everything that can be known before the first render goes into the initial state, so mounting
   // doesn't set state and trigger a second full render straight away.
@@ -3669,6 +3744,7 @@ class Component extends DCLogic {
       vAi: tab === 'ai' ? '' : 'display: none;',
       vSite: tab === 'site' ? '' : 'display: none;',
       vMcp: tab === 'mcp' ? '' : 'display: none;',
+      vI18n: tab === 'i18n' ? '' : 'display: none;',
       agent: Object.assign(this._agentCount ? { on: 'true', line: 'In this browser: WebMCP is on, with ' + this._agentCount + ' tools registered.' } : { on: 'false', line: "In this browser: no WebMCP, so the page skips it." }, (() => {
         const ep = (typeof window !== 'undefined' && window.CRAGA_ASK && window.CRAGA_ASK.endpoint) || '';
         const mcpUrl = ep ? ep.replace(/\/ask$/, '/mcp') : '';
@@ -3687,7 +3763,7 @@ class Component extends DCLogic {
       vIt: rtab === 'it' ? '' : 'display: none;',
       goAws: toCase('aws'),
       goSec: toCase('sec'),
-      see: { r_acq: toResp('acq'), r_aiproc: toResp('aiproc'), r_bud: toResp('bud'), r_comp: toResp('comp'), r_cust: toResp('cust'), r_hire: toResp('hire'), r_inc: toResp('inc'), r_it: toResp('it'), r_lead: toResp('lead'), r_people: toResp('people'), r_proc: toResp('proc'), r_prod: toResp('prod'), c_ai: toCase('ai'), c_auth: toCase('auth'), c_aws: toCase('aws'), c_ci: toCase('ci'), c_cost: toCase('cost'), c_data: toCase('data'), c_mono: toCase('mono'), c_refactor: toCase('refactor'), c_sec: toCase('sec'), c_test: toCase('test') },
+      see: { r_acq: toResp('acq'), r_aiproc: toResp('aiproc'), r_bud: toResp('bud'), r_comp: toResp('comp'), r_cust: toResp('cust'), r_hire: toResp('hire'), r_inc: toResp('inc'), r_it: toResp('it'), r_lead: toResp('lead'), r_people: toResp('people'), r_proc: toResp('proc'), r_prod: toResp('prod'), c_ai: toCase('ai'), c_auth: toCase('auth'), c_aws: toCase('aws'), c_ci: toCase('ci'), c_cost: toCase('cost'), c_data: toCase('data'), c_mono: toCase('mono'), c_refactor: toCase('refactor'), c_sec: toCase('sec'), c_test: toCase('test'), c_site: toCase('site'), c_i18n: toCase('i18n') },
       goComp: toResp('comp'),
       goRefactor: toCase('refactor'),
       goCi: toCase('ci'),

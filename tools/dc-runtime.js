@@ -174,7 +174,8 @@
       if (n === 'tabindex' && a.getAttribute(n) === '-1') continue; // set by code to move focus to a section
       a.removeAttribute(n);
     }
-    if ((a.localName === 'input' || a.localName === 'textarea') && document.activeElement !== a) {
+    // Typed values only: a checkbox's or radio's value attribute isn't what the user changes.
+    if (((a.localName === 'input' && !/^(checkbox|radio)$/i.test(a.type)) || a.localName === 'textarea') && document.activeElement !== a) {
       var v = b.getAttribute('value') || '';
       if (a.value !== v) a.value = v;
     }

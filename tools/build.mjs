@@ -545,7 +545,7 @@ function extractPassages() {
     const body = [q('.c-rs-s', p), q('.c-rs-pts', p), q('.c-rs-n', p) && q('.c-rs-n', p).parentNode, q('.c-rs-body', p)].filter(Boolean).map(txt).join(' ');
     add('resp-' + key, file + (h ? ': ' + clean(txt(h)) : ''), body, '#responsibilities', 'resp', rmap[key] || key);
   });
-  const cmap = { 'monorepo.md': 'mono', 'refactor.md': 'refactor', 'ci-cd.md': 'ci', 'testing.md': 'test', 'aws.md': 'aws', 'security.md': 'sec', 'auth.md': 'auth', 'data.md': 'data', 'cost.md': 'cost', 'ai/platform.md': 'ai', 'accessibility.md': 'a11y', 'webmcp.md': 'mcp', 'this-site.md': 'site' };
+  const cmap = { 'monorepo.md': 'mono', 'refactor.md': 'refactor', 'ci-cd.md': 'ci', 'testing.md': 'test', 'aws.md': 'aws', 'security.md': 'sec', 'auth.md': 'auth', 'data.md': 'data', 'cost.md': 'cost', 'ai/platform.md': 'ai', 'accessibility.md': 'a11y', 'i18n.md': 'i18n', 'webmcp.md': 'mcp', 'this-site.md': 'site' };
   qa('#case-studies [role="tabpanel"]').forEach((p) => {
     const file = p.getAttribute('aria-label') || '';
     const h = q('h3', p);
@@ -685,7 +685,7 @@ h1{margin:0;font:900 112px/0.88 BS;letter-spacing:.005em}
 // as a static page with its own title, description and social preview, for sharing and search.
 const SLUG = (f) => f.replace(/\.md$/, '').replace(/\//g, '-');
 const SECTION = { case: { dir: 'case-studies', label: 'case-studies/', home: 'case', name: 'Case study' }, resp: { dir: 'responsibilities', label: 'responsibilities/', home: 'resp', name: 'Responsibility' } };
-const HOME_KEYS = { case: { 'monorepo.md': 'mono', 'refactor.md': 'refactor', 'ci-cd.md': 'ci', 'testing.md': 'test', 'accessibility.md': 'a11y', 'aws.md': 'aws', 'security.md': 'sec', 'auth.md': 'auth', 'data.md': 'data', 'cost.md': 'cost', 'ai/platform.md': 'ai', 'webmcp.md': 'mcp', 'this-site.md': 'site' }, resp: { 'leadership.md': 'lead', 'hiring.md': 'hire', 'people.md': 'people', 'process.md': 'proc', 'ai.md': 'aiproc', 'product.md': 'prod', 'customers.md': 'cust', 'budget.md': 'bud', 'acquisition.md': 'acq', 'incidents.md': 'inc', 'compliance.md': 'comp', 'it.md': 'it' } };
+const HOME_KEYS = { case: { 'monorepo.md': 'mono', 'refactor.md': 'refactor', 'ci-cd.md': 'ci', 'testing.md': 'test', 'accessibility.md': 'a11y', 'i18n.md': 'i18n', 'aws.md': 'aws', 'security.md': 'sec', 'auth.md': 'auth', 'data.md': 'data', 'cost.md': 'cost', 'ai/platform.md': 'ai', 'webmcp.md': 'mcp', 'this-site.md': 'site' }, resp: { 'leadership.md': 'lead', 'hiring.md': 'hire', 'people.md': 'people', 'process.md': 'proc', 'ai.md': 'aiproc', 'product.md': 'prod', 'customers.md': 'cust', 'budget.md': 'bud', 'acquisition.md': 'acq', 'incidents.md': 'inc', 'compliance.md': 'comp', 'it.md': 'it' } };
 const strip = (h) => h.replace(/<[^>]+>/g, ' ').replace(/&amp;/g, '&').replace(/&nbsp;/g, ' ').replace(/&#39;|&rsquo;/g, "'").replace(/\s+/g, ' ').replace(/\s+([,.;:!?)])/g, '$1').trim();
 
 function cleanPanel(html, kind, where) {

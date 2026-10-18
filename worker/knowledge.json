@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-18T19:36:36.436Z",
+ "generated": "2026-10-18T20:13:22.841Z",
  "passages": [
   {
    "id": "intro",
@@ -12,7 +12,7 @@
   {
    "id": "profile",
    "title": "Profile",
-   "text": "Craig Michael Thompson Full-stack engineer Newcastle upon Tyne, UK 20: 36 (UTC+1) 20:36 UTC+1 in Newcastle open to new roles. Contact: craga89@gmail.com, github.com/Craga89, linkedin.com/in/craigmichaelthompson.",
+   "text": "Craig Michael Thompson Full-stack engineer Newcastle upon Tyne, UK 21: 13 (UTC+1) 21:13 UTC+1 in Newcastle open to new roles. Contact: craga89@gmail.com, github.com/Craga89, linkedin.com/in/craigmichaelthompson.",
    "href": "#top",
    "kind": "link",
    "key": ""
@@ -188,10 +188,18 @@
   {
    "id": "case-a11y",
    "title": "accessibility.md: Accessible by default, checked on every deploy",
-   "text": "// accessibility · wcag 2.2 aa · this site Accessible by default, checked on every deploy Accessible UI has been part of my work since building UI libraries held to WCAG for clients. This site is held to WCAG 2.2 AA, and an automated suite checks it after every deploy and every week, failing the check if anything regresses. 1 · audit; 2 · walk it by keyboard; 3 · fix at the source; 4 · gate in CI What the suite checks axe-core · WCAG 2.0–2.2 A/AA Every automated rule, in every state Both themes, desktop and mobile, every tab, open FAQs, search results, ask.sh, the chat, the search dialogs and every file page: 276 page states per run. 2.1.1 · 2.4.7 Keyboard only A Tab-key walk through every focus stop, confirming each one shows a visible focus ring. 2.4.11 · new in 2.2 Focus never hidden Nothing focused can sit behind the sticky header or the chat bar. 2.5.8 · new in 2.2 Targets you can hit Controls are at least 24px, or spaced so a miss won't land on a neighbour. 1.4.10 · 1.4.12 Reflow and spacing Nothing scrolls sideways at 320px, and nothing clips with the WCAG text-spacing overrides applied. 2.2.2 · 2.3.3 Motion under control Reduced-motion users get a still page, and the auto-playing tour can be paused. 2.1.4 Shortcuts you can switch off The single-key shortcuts can be turned off, so they never clash with screen readers or speech input. area before after contrast muted text under 4.5:1 Every text colour at 4.6:1 or more on every background it sits on focus some controls with no ring A visible focus ring on everything that can take focus obscured focus focus could hide off screen Scroll padding clears the sticky bars; hidden UI leaves the tab order targets 18px links 24px minimum wide tables unreachable by keyboard Focusable, named scroll regions Lighthouse alone…",
+   "text": "// accessibility · wcag 2.2 aa · this site Accessible by default, checked on every deploy Accessible UI has been part of my work since building UI libraries held to WCAG for clients. This site is held to WCAG 2.2 AA, and an automated suite checks it after every deploy and every week, failing the check if anything regresses. 1 · audit; 2 · walk it by keyboard; 3 · fix at the source; 4 · gate in CI What the suite checks axe-core · WCAG 2.0–2.2 A/AA Every automated rule, in every state Both themes, desktop and mobile, every tab, open FAQs, search results, ask.sh, the chat, the search dialogs and every file page: 284 page states per run. 2.1.1 · 2.4.7 Keyboard only A Tab-key walk through every focus stop, confirming each one shows a visible focus ring. 2.4.11 · new in 2.2 Focus never hidden Nothing focused can sit behind the sticky header or the chat bar. 2.5.8 · new in 2.2 Targets you can hit Controls are at least 24px, or spaced so a miss won't land on a neighbour. 1.4.10 · 1.4.12 Reflow and spacing Nothing scrolls sideways at 320px, and nothing clips with the WCAG text-spacing overrides applied. 2.2.2 · 2.3.3 Motion under control Reduced-motion users get a still page, and the auto-playing tour can be paused. 2.1.4 Shortcuts you can switch off The single-key shortcuts can be turned off, so they never clash with screen readers or speech input. area before after contrast muted text under 4.5:1 Every text colour at 4.6:1 or more on every background it sits on focus some controls with no ring A visible focus ring on everything that can take focus obscured focus focus could hide off screen Scroll padding clears the sticky bars; hidden UI leaves the tab order targets 18px links 24px minimum wide tables unreachable by keyboard Focusable, named scroll regions Lighthouse alone…",
    "href": "#case-studies",
    "kind": "case",
    "key": "a11y"
+  },
+  {
+   "id": "case-i18n",
+   "title": "i18n.md: One product in 36 languages, kept in step",
+   "text": "// internationalisation · 2019; 2026 One product in 36 languages, kept in step Customers survey their people in their own language, so the interface and the questions have to work in every language they turn on. I've kept the platform's 36 interface languages in step with English, and made translating customers' own content cache-first and selective. 36 interface languages, including Welsh and Arabic ~116k blank strings removed, so nothing renders empty cache first translations checked inside the VPC before any network call Interface text, kept in step by the build messages in components; extracted to English; keys synced to every language; gaps fall back to English Customer content, translated at runtime, cache first survey question; Redis cache inside the VPC; translation service + DynamoDB; Google Cloud Translation area before after language files drifted as keys changed Every build adds and removes keys in every language to match English missing text shown as a blank Falls back to the English message new languages wired in by hand; three dropped Generated from the language files present translation calls a network round trip each, often timing out Cache inside the VPC first, with one set of timeouts across services what's translated every name, on every read and write Only content written to be read in other languages; place names stay as written language picker each language in its own script Every language named in the reader's own language emoji sent to the translator as-is Swapped for keywords and restored, so they come through translation intact How it evolved: drifting files; in step on every build started as: language service (2019) then: locale pipeline rebuilt then: translations in the survey builder then: cache-first translation today: synced on every…",
+   "href": "#case-studies",
+   "kind": "case",
+   "key": "i18n"
   },
   {
    "id": "case-aws",

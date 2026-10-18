@@ -159,7 +159,7 @@ try {
   ok('webmcp get_profile', d('profile').name === 'Craig Michael Thompson' && /@/.test(d('profile').email || '') && /cv\.pdf$/.test((d('profile').links || {}).cv_pdf || ''));
   ok('webmcp get_career', (d('career').work || []).length >= 3 && (d('career').education || []).length >= 1);
   const lf = (x) => (x && x.data && x.data.files) || [];
-  ok('webmcp list_files', lf(ar.list).length === 25 && lf(ar.listCase).length === 13 && lf(ar.list).every((f) => /\/(case-studies|responsibilities)\/[\w-]+\/$/.test(f.url)), String(lf(ar.list).length));
+  ok('webmcp list_files', lf(ar.list).length === 26 && lf(ar.listCase).length === 14 && lf(ar.list).every((f) => /\/(case-studies|responsibilities)\/[\w-]+\/$/.test(f.url)), String(lf(ar.list).length));
   ok('webmcp read_file (and show)', !ar.read.err && d('read').text.length > 200 && ar.tabAi && ar.missing.err && /monorepo\.md/.test(ar.missing.txt));
   ok('webmcp search_site', (d('search').results || []).length > 0 && ar.badArgs.err && /string/.test(ar.badArgs.txt));
   ok('webmcp page-only arguments present (show)', ar.noShowOnMcp);
