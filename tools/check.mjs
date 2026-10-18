@@ -6,6 +6,7 @@ import { join, extname, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
+import { translatorStub } from './translator-stub.mjs';
 const OUT = join(ROOT, 'site');
 const SHOTS = process.argv[2] || join(ROOT, 'shots');
 mkdirSync(SHOTS, { recursive: true });
@@ -168,6 +169,99 @@ try {
   ok('webmcp show_section', !ar.show.err && ar.faqInView);
   ok('webmcp tools unregister on pagehide', ar.aborted === 9, String(ar.aborted));
   await ag.close();
+
+  // On-device translation, with a stand-in for the browser's Translator API.
+  const done = (pg) => pg.waitForFunction(() => document.querySelector('.tr-bar') && document.querySelector('.tr-bar').dataset.kind === 'done', null, { timeout: 60000 });
+  {
+    // Safari and Firefox have no Translator API (Playwright's Chromium does, with no language models).
+    const plainCtx = await browser.newContext();
+    await plainCtx.addInitScript(() => { delete self.Translator; delete self.LanguageDetector; });
+    const plain = await plainCtx.newPage();
+    await plain.goto(base + '/', { waitUntil: 'networkidle' });
+    ok('translate: nothing loads without the API', (await plain.evaluate(() => !window.CRAGA_I18N && !document.querySelector('.v2-lang-s, .tr-offer'))));
+    await plainCtx.close();
+    const en = await browser.newContext({ locale: 'en-GB' });
+    await en.addInitScript(translatorStub);
+    const ep = await en.newPage();
+    await ep.goto(base + '/', { waitUntil: 'networkidle' });
+    await ep.waitForTimeout(300);
+    ok('translate: English browsers get the menu, not the offer', (await ep.locator('.tr-offer').count()) === 0 && (await ep.locator('.v2-side .v2-lang-s').count()) === 1 && (await ep.evaluate(() => !document.querySelector('script[src*="i18n."]') && window.__trCalls === 0)));
+    await en.close();
+
+    const de = await browser.newContext({ locale: 'de-DE', viewport: { width: 1280, height: 900 } });
+    await de.addInitScript(translatorStub);
+    await de.route(/\/ask(\?|$)/, (r) => r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ answer: 'He has led engineering teams. See leadership.md.', sources: ['intro'] }) }));
+    const tp = await de.newPage();
+    const terr = []; tp.on('pageerror', (e) => terr.push(e.message));
+    await tp.goto(base + '/', { waitUntil: 'networkidle' });
+    await tp.waitForTimeout(300);
+    ok('translate: offered in the visitor\'s language', /Diese Seite auf Deutsch lesen\?/.test(await tp.locator('.tr-offer').innerText().catch(() => '')));
+    await tp.getByRole('button', { name: 'Übersetzen' }).click();
+    await done(tp);
+    const t1 = await tp.evaluate(() => {
+      const app = document.getElementById('app');
+      const text = [...app.querySelectorAll('p, li, h2, h3')].filter((e) => e.offsetParent && /\p{L}{3}/u.test(e.textContent) && !/^[\w./@-]+$/.test(e.textContent.trim()) && !e.closest('[translate="no"]') && !e.querySelector('[translate="no"]'));
+      return {
+        lang: document.documentElement.lang,
+        untranslated: text.filter((e) => !/«de»/.test(e.textContent)).map((e) => e.textContent.trim().slice(0, 50)),
+        kept: document.querySelector('h1').textContent === 'Craig Michael Thompson' && [...document.querySelectorAll('.c-see')].every((a) => !/«/.test(a.textContent)) && /^\$ cat README\.md/.test(document.querySelector('.c-cmd').textContent),
+        title: /^«de» Craig Michael Thompson/.test(document.title),
+        menu: document.querySelector('.v2-side .v2-lang-s').value,
+      };
+    });
+    ok('translate: the page translates, names and files kept', t1.lang === 'de' && !t1.untranslated.length && t1.kept && t1.title && t1.menu === 'de', JSON.stringify(t1.untranslated.slice(0, 3)));
+    const idle = await tp.evaluate(() => new Promise((res) => { let n = 0; const mo = new MutationObserver((l) => { n += l.length; }); mo.observe(document.getElementById('app'), { subtree: true, childList: true, characterData: true, attributes: true }); setTimeout(() => { mo.disconnect(); res(n); }, 2000); }));
+    ok('translate: no flicker back to English (idle page unchanged)', idle === 0, String(idle));
+    // The stand-in drops the markup tokens for text mentioning "monorepo": the intro paragraph's
+    // highlighted phrases must survive as working buttons, each translated on its own.
+    const fb = await tp.evaluate(() => { const p = [...document.querySelectorAll('#app p')].find((x) => /monorepo/i.test(x.textContent) && x.querySelector('button.v2-x')); if (!p) return null; const bs = [...p.querySelectorAll('button.v2-x')]; return { n: bs.length, all: bs.every((x) => /^«de»/.test(x.textContent) && x.hasAttribute('data-dc-click')) }; });
+    ok('translate: lost tokens fall back, markup kept', fb && fb.n >= 2 && fb.all, JSON.stringify(fb));
+    await tp.locator('#case-studies [role="tab"]').nth(4).click();
+    await tp.waitForTimeout(600);
+    const tab = await tp.locator('#case-studies [role="tabpanel"]:visible h3').first().innerText();
+    ok('translate: switching tabs stays translated', /^«de»/.test(tab), tab.slice(0, 50));
+    await tp.fill('#c-ask-field', 'Welche Erfahrung hat er mit Teams?');
+    await tp.press('#c-ask-field', 'Enter');
+    await tp.waitForTimeout(1500);
+    const ans = await tp.locator('.c-ask-log .c-ask-a').last().innerText();
+    ok('translate: ask.sh in German (question to English, answer back)', /«de» He has led engineering teams/.test(ans) && /leadership\.md/.test(ans), ans.slice(0, 80));
+    await tp.getByRole('button', { name: /Show original/ }).click();
+    await tp.waitForTimeout(400);
+    ok('translate: "Show original" restores English', await tp.evaluate(() => document.documentElement.lang === 'en-GB' && !/«/.test(document.getElementById('app').textContent) && !document.querySelector('.tr-bar') && !/«/.test(document.title)));
+    // A returning visitor who chose German gets it straight away.
+    await tp.evaluate(() => { localStorage.setItem('craga-lang', 'de'); });
+    await tp.reload({ waitUntil: 'networkidle' });
+    await tp.waitForFunction(() => document.documentElement.lang === 'de', null, { timeout: 15000 }).catch(() => {});
+    ok('translate: a returning visitor gets their language without asking', await tp.evaluate(() => document.documentElement.lang === 'de' && !document.querySelector('.tr-offer')));
+    ok('translate: no page errors', !terr.length, terr.join(' | '));
+    await de.close();
+
+    const no = await browser.newContext({ locale: 'fr-FR' });
+    await no.addInitScript(translatorStub);
+    const np = await no.newPage();
+    await np.goto(base + '/', { waitUntil: 'networkidle' });
+    await np.waitForTimeout(300);
+    await np.getByRole('button', { name: 'Non merci' }).click();
+    await np.reload({ waitUntil: 'networkidle' });
+    await np.waitForTimeout(300);
+    ok('translate: "no thanks" is remembered', (await np.locator('.tr-offer').count()) === 0);
+    await no.close();
+
+    for (const [w, path] of [[1280, ''], [390, ''], [390, 'cv/']]) {
+      const ar = await browser.newContext({ locale: 'en-GB', viewport: { width: w, height: 844 }, isMobile: w < 600, hasTouch: w < 600 });
+      await ar.addInitScript(translatorStub);
+      const ap = await ar.newPage();
+      await ap.goto(base + '/' + path, { waitUntil: 'networkidle' });
+      await ap.waitForTimeout(300);
+      if (path) await ap.selectOption('.v-lang', 'ar'); else await ap.evaluate(() => window.CRAGA_I18N.load().then((m) => m.setLanguage('ar')));
+      await done(ap);
+      await ap.evaluate(() => document.documentElement.classList.add('cv-all'));
+      await ap.waitForTimeout(300);
+      const r = await ap.evaluate(() => { const nx = document.querySelector('.c-deck-ctl button[aria-label]:last-child span'); return { dir: document.documentElement.dir, over: document.documentElement.scrollWidth - innerWidth, flipped: !nx || nx.textContent === '←' }; });
+      ok(`translate: Arabic is right-to-left, no sideways scroll (${path || 'home'} ${w}px)`, r.dir === 'rtl' && r.over <= 1 && r.flipped, JSON.stringify(r));
+      await ar.close();
+    }
+  }
 
   // CV + 404
   const cv = await browser.newPage({ viewport: { width: 1100, height: 900 } });

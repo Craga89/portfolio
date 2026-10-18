@@ -218,6 +218,9 @@
     var frag = this.build(vals || {});
     var holder = document.createElement('div');
     holder.appendChild(frag);
+    // An optional step between building and patching (the page translator uses it), so every
+    // render can be adjusted before it reaches the page.
+    if (this.transform) { try { this.transform(holder); } catch (e) { if (window.console) console.error(e); } }
     patchChildren(this.root, holder);
     if (!this.mounted) {
       this.mounted = true;

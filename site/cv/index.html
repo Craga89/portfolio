@@ -54,7 +54,7 @@ body{margin:0;background:var(--cv-bg,#F4F4F2)}
 .v-job{margin:0 0 18px}
 .v-job h3{margin:0;font-size:16px}
 .v-meta{display:flex;flex-wrap:wrap;justify-content:space-between;gap:2px 16px;font-size:14px;color:var(--mute);margin:2px 0 6px}
-.v-root ul{margin:0;padding-left:18px}
+.v-root ul{margin:0;padding-inline-start:18px}
 .v-root li{margin:0 0 4px}
 .v-btn{all:unset;box-sizing:border-box;display:inline-flex;align-items:center;min-height:44px;padding:0 18px;border-radius:6px;background:var(--cv-btn);color:var(--cv-btn-t);font-weight:600;font-size:14px;cursor:pointer}
 .v-btn:hover{background:var(--cv-btn-h)}
@@ -63,6 +63,10 @@ body{margin:0;background:var(--cv-bg,#F4F4F2)}
 .v-theme{padding:0;width:44px;justify-content:center}
 .v-sun{display:none}.t-dark .v-sun{display:block}.t-dark .v-moon{display:none}
 .v-btn:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.v-lang{min-height:44px;padding:0 10px;border-radius:6px;border:0;box-shadow:inset 0 0 0 1.5px var(--ink);background:transparent;color:var(--ink);font:inherit;font-size:14px;font-weight:600;cursor:pointer}
+.v-lang:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.v-lang option{color:#1B2A22;background:#fff}
+@media print{.v-lang{display:none!important}}
 @media (max-width:700px){.v-page{margin:0;padding:28px 18px;box-shadow:none}}
 @page{size:A4;margin:14mm}
 @media print{:root,:root.t-dark{--cv-bg:#FFFFFF;--cv-page:#FFFFFF;--cv-ink:#16171A;--cv-mute:#55585F;--cv-rule:#DCDDE0;--cv-acc:#8A4B00;--cv-call:#F6F1E8;color-scheme:light}body{background:#FFFFFF}.v-page{margin:0;padding:0;box-shadow:none;max-width:none}.v-noprint{display:none!important}.v-root a{color:var(--ink);text-decoration:none}.v-job{break-inside:auto}.v-job h3,.v-job .v-meta{break-after:avoid}.v-job li{break-inside:avoid}}
@@ -73,7 +77,7 @@ body{margin:0;background:var(--cv-bg,#F4F4F2)}
 <div class="v-root" style="font-size: 14.5px; line-height: 1.5">
 <div class="v-noprint" style="max-width: 820px; margin: 24px auto 0; padding: 0 16px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px">
 <a href="../" style="font-size: 14px">← craigthompson.dev</a>
-<span style="display: flex; flex-wrap: wrap; gap: 10px"><a class="v-btn v-btn2" href="../cv.pdf" download="Craig-Michael-Thompson-CV.pdf">Download PDF</a><button type="button" class="v-btn" onclick="window.print()">Print</button><button type="button" class="v-btn v-btn2 v-theme" onclick="cvTheme()" aria-label="Switch to dark theme" title="Switch to dark theme"><svg class="v-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"></path></svg><svg class="v-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></svg></button></span>
+<span style="display: flex; flex-wrap: wrap; gap: 10px"><a class="v-btn v-btn2" href="../cv.pdf" download="Craig-Michael-Thompson-CV.pdf">Download PDF</a><button type="button" class="v-btn" onclick="window.print()">Print</button><select class="v-lang" data-tr-menu hidden aria-label="Language" title="Language" translate="no"></select><button type="button" class="v-btn v-btn2 v-theme" onclick="cvTheme()" aria-label="Switch to dark theme" title="Switch to dark theme"><svg class="v-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"></path></svg><svg class="v-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></svg></button></span>
 </div>
 
 <main class="v-page">
@@ -81,7 +85,7 @@ body{margin:0;background:var(--cv-bg,#F4F4F2)}
 <h1 style="margin: 0; font-size: 30px; letter-spacing: -.01em">Craig Michael Thompson</h1>
 <p style="margin: 4px 0 8px; font-size: 17px; font-weight: 600">Head of Engineering · Hands-on, AI-first</p>
 <p style="margin: 0; color: var(--mute)">Newcastle upon Tyne, UK · <a href="mailto:craga89@gmail.com">craga89@gmail.com</a> · <a href="https://craigthompson.dev">craigthompson.dev</a> · <a href="https://github.com/Craga89">github.com/Craga89</a> · <a href="https://www.linkedin.com/in/craigmichaelthompson/">linkedin.com/in/craigmichaelthompson</a></p>
-<p class="v-call" style="margin: 10px 0 0; padding: 8px 12px; border-left: 3px solid var(--acc)"><strong>Open to:</strong> hands-on technical leadership roles, such as Head of Engineering, in start-ups and scale-ups · <strong>Work:</strong> remote first; flexible hybrid considered in the North East · <strong>Notice:</strong> 3 months</p>
+<p class="v-call" style="margin: 10px 0 0; padding: 8px 12px; border-inline-start: 3px solid var(--acc)"><strong>Open to:</strong> hands-on technical leadership roles, such as Head of Engineering, in start-ups and scale-ups · <strong>Work:</strong> remote first; flexible hybrid considered in the North East · <strong>Notice:</strong> 3 months</p>
 </header>
 
 <section>
@@ -189,13 +193,43 @@ body{margin:0;background:var(--cv-bg,#F4F4F2)}
 <script>function cvTheme(){var d=document.documentElement,D=!d.classList.contains('t-dark');d.classList.toggle('t-dark',D);d.classList.toggle('t-light',!D);try{localStorage.setItem('theme',D?'dark':'light')}catch(e){}cvThemeLabel();document.querySelectorAll('meta[name="theme-color"]').forEach(function(m){m.content=D?'#111214':'#F4F4F2'})}function cvThemeLabel(){var b=document.querySelector('.v-theme'),l=document.documentElement.classList.contains('t-dark')?'Switch to light theme':'Switch to dark theme';if(b){b.setAttribute('aria-label',l);b.title=l}}cvThemeLabel()</script>
 <script>(function () {
   try {
+    if (!('Translator' in self) || window.CRAGA_PRERENDER) return;
+    var L = ["ar","bg","bn","cs","da","de","el","es","fi","fr","he","hi","hr","hu","id","it","ja","kn","ko","lt","mr","nl","no","pl","pt","ro","ru","sk","sl","sv","ta","te","th","tr","uk","vi","zh","zh-Hant"];
+    var norm = function (t) { t = String(t || '').toLowerCase(); if (/^zh-(tw|hk|mo)|^zh-hant/.test(t)) return 'zh-Hant'; var b = t.split('-')[0]; b = { nb: 'no', nn: 'no', iw: 'he', 'in': 'id' }[b] || b; return L.indexOf(b) >= 0 ? b : null; };
+    var I = window.CRAGA_I18N = { langs: L, load: function () { return I._p || (I._p = import("/assets/i18n.c573e26e0f.js")); } };
+    var saved = null, no = null;
+    try { saved = localStorage.getItem('craga-lang'); no = localStorage.getItem('craga-lang-no'); } catch (e) {}
+    var want = saved && saved !== 'en' ? norm(saved) : null, offer = null;
+    if (!saved) {
+      var ls = navigator.languages || [navigator.language];
+      for (var i = 0; i < ls.length; i++) { var l = String(ls[i]).toLowerCase(); if (/^en(-|$)/.test(l)) break; var n = norm(l); if (n) { offer = n; break; } }
+    }
+    if (offer && offer === no) offer = null;
+    // Static pages' language menus (the CV), filled in only where translation works.
+    var menus = document.querySelectorAll('[data-tr-menu]');
+    if (menus.length) {
+      var cur = want || 'en';
+      var name = function (c) { try { var n = new Intl.DisplayNames([c], { type: 'language' }).of(c); return n.charAt(0).toLocaleUpperCase(c) + n.slice(1); } catch (e) { return c; } };
+      Array.prototype.forEach.call(menus, function (s) {
+        ['en'].concat(L).forEach(function (c) { var o = document.createElement('option'); o.value = c; o.lang = c; o.textContent = c === 'en' ? 'English' : name(c); s.appendChild(o); });
+        s.value = cur;
+        s.hidden = false;
+        s.addEventListener('change', function () { var v = s.value; I.load().then(function (m) { m.setLanguage(v); }); });
+      });
+      window.addEventListener('craga:lang', function (e) { Array.prototype.forEach.call(menus, function (s) { s.value = e.detail.lang; }); });
+    }
+    if (want || offer) I.load().then(function (m) { m.boot({ lang: want || offer, saved: !!want }); }).catch(function () {});
+  } catch (e) {}
+})();</script>
+<script>(function () {
+  try {
     if (navigator.globalPrivacyControl || navigator.doNotTrack === '1' || !navigator.sendBeacon) return;
     var url = "https://craga-ask.craga89.workers.dev/hit", t0 = Date.now(), seen = {}, sent = false;
     
     var send = function () {
       if (sent) return; sent = true;
       var w = window.innerWidth;
-      navigator.sendBeacon(url, new Blob([JSON.stringify({ path: location.pathname, ref: document.referrer, device: w < 601 ? 'mobile' : w < 1025 ? 'tablet' : 'desktop', sections: Object.keys(seen), seconds: (Date.now() - t0) / 1000 })], { type: 'text/plain' }));
+      navigator.sendBeacon(url, new Blob([JSON.stringify({ path: location.pathname, ref: document.referrer, device: w < 601 ? 'mobile' : w < 1025 ? 'tablet' : 'desktop', sections: Object.keys(seen), seconds: (Date.now() - t0) / 1000, lang: window.CRAGA_LANG && window.CRAGA_LANG !== 'en' ? window.CRAGA_LANG : null, offer: window.CRAGA_I18N_OFFER || null })], { type: 'text/plain' }));
     };
     document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'hidden') send(); });
     window.addEventListener('pagehide', send);

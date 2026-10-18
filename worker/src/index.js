@@ -179,6 +179,8 @@ const json = (body, status, headers) => new Response(JSON.stringify(body), { sta
 // ---------- anonymous logging (D1) ----------
 // Nothing here identifies a visitor: no IP addresses, cookies or user agents are stored.
 const BOT = /bot|crawl|spider|slurp|headless|lighthouse|preview|facebookexternalhit|embedly|pingdom|monitor|curl|wget|python|node-fetch|axios/i;
+import { LANGS as TR_LANGS } from '../../src/i18n.js';
+const LANGS = new Set(TR_LANGS);
 const SECTIONS = new Set(['top', 'career', 'responsibilities', 'case-studies', 'stack', 'oss', 'recommendations', 'faq', 'ask']);
 const isTest = (request) => request.headers.get('x-craga-test') === '1';
 const country = (request) => (request.cf && request.cf.country) || null;
@@ -204,7 +206,10 @@ export function cleanHit(body, origin) {
   const device = ['mobile', 'tablet', 'desktop'].includes(body.device) ? body.device : null;
   const sections = Array.isArray(body.sections) ? [...new Set(body.sections.filter((x) => SECTIONS.has(x)))].join(',') : '';
   const seconds = Math.max(0, Math.min(3600, Math.round(Number(body.seconds) || 0)));
-  return { path, referrer, device, sections, seconds };
+  // The language the page was translated into on the visitor's device, and what they did with the offer.
+  const lang = typeof body.lang === 'string' && LANGS.has(body.lang) ? body.lang : null;
+  const offer = ['shown', 'accepted', 'dismissed'].includes(body.offer) ? body.offer : null;
+  return { path, referrer, device, sections, seconds, lang, offer };
 }
 
 async function hit(request, env, origin) {
@@ -217,8 +222,8 @@ async function hit(request, env, origin) {
   try { body = JSON.parse(await request.text()); } catch (e) { return; }
   const v = cleanHit(body, origin);
   if (!v) return;
-  await env.DB.prepare('INSERT INTO visits (path, referrer, country, device, sections, seconds) VALUES (?, ?, ?, ?, ?, ?)')
-    .bind(v.path, v.referrer, country(request), v.device, v.sections, v.seconds).run();
+  await env.DB.prepare('INSERT INTO visits (path, referrer, country, device, sections, seconds, lang, offer) VALUES (?, ?, ?, ?, ?, ?, ?, ?)')
+    .bind(v.path, v.referrer, country(request), v.device, v.sections, v.seconds, v.lang, v.offer).run();
 }
 
 // ---------- MCP ----------

@@ -129,7 +129,7 @@ test('visit beacons are cleaned, bots and other sites ignored', async () => {
   const beacon = (body, headers = {}) => worker.fetch(new Request('https://x/hit', { method: 'POST', headers: { origin: 'https://craigthompson.dev', 'content-type': 'text/plain', 'user-agent': 'Mozilla/5.0 Chrome/150', ...headers }, body: JSON.stringify(body) }), env);
   const r = await beacon({ path: '/', ref: 'https://www.linkedin.com/feed/?x=1', device: 'mobile', sections: ['career', 'faq', 'evil', 'faq'], seconds: 99999 });
   assert.equal(r.status, 204);
-  assert.deepEqual(DB.rows[0].args, ['/', 'linkedin.com', null, 'mobile', 'career,faq', 3600]);
+  assert.deepEqual(DB.rows[0].args, ['/', 'linkedin.com', null, 'mobile', 'career,faq', 3600, null, null]);
   await beacon({ path: '/cv/', ref: 'https://craigthompson.dev/' });
   assert.deepEqual(DB.rows[1].args.slice(0, 2), ['/cv/', null]);
   await beacon({ path: '/' }, { 'user-agent': 'Mozilla/5.0 (compatible; Googlebot/2.1)' });
@@ -327,6 +327,14 @@ test('mcp transport: methods, origins, batches, rate limit', async () => {
   assert.equal(slow.status, 429);
   const wrongHeader = await call(rpc('tools/list', {}, { headers: { 'mcp-protocol-version': '1999-01-01' } }));
   assert.equal(wrongHeader.status, 400);
+});
+
+test('visit beacons record the translated language and the offer, nothing else', () => {
+  assert.deepEqual(mod.cleanHit({ path: '/', lang: 'de', offer: 'accepted' }, ORIGIN).lang, 'de');
+  assert.equal(mod.cleanHit({ path: '/', lang: 'de', offer: 'accepted' }, ORIGIN).offer, 'accepted');
+  assert.equal(mod.cleanHit({ path: '/', lang: 'xx-evil', offer: 'hack' }, ORIGIN).lang, null);
+  assert.equal(mod.cleanHit({ path: '/', lang: 'xx-evil', offer: 'hack' }, ORIGIN).offer, null);
+  assert.equal(mod.cleanHit({ path: '/', lang: 'zh-Hant' }, ORIGIN).lang, 'zh-Hant');
 });
 
 test('page and worker share one search: worker context uses the shared ranking', async () => {

@@ -5,7 +5,7 @@ name: Deploy ask.sh worker
 on:
   push:
     branches: [main]
-    paths: ['worker/**', 'shared/**', '.github/workflows/ask-worker.yml']
+    paths: ['worker/**', 'shared/**', 'src/i18n.js', '.github/workflows/ask-worker.yml']
   workflow_dispatch:
 
 concurrency:

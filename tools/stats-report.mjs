@@ -29,6 +29,9 @@ const byPath = q(`SELECT path, COUNT(*) AS visits FROM visits WHERE at >= ${sinc
 const refs = q(`SELECT COALESCE(referrer,'(direct or hidden)') AS referrer, COUNT(*) AS visits FROM visits WHERE at >= ${since} GROUP BY referrer ORDER BY visits DESC LIMIT 10`);
 const devices = q(`SELECT COALESCE(device,'?') AS device, COUNT(*) AS visits FROM visits WHERE at >= ${since} GROUP BY device ORDER BY visits DESC`);
 const countries = q(`SELECT COALESCE(country,'?') AS country, COUNT(*) AS visits FROM visits WHERE at >= ${since} GROUP BY country ORDER BY visits DESC LIMIT 8`);
+const langs = q(`SELECT COALESCE(lang,'English (original)') AS language, COUNT(*) AS visits FROM visits WHERE at >= ${since} GROUP BY lang ORDER BY visits DESC`);
+const offers = q(`SELECT offer, COUNT(*) AS visits FROM visits WHERE at >= ${since} AND offer IS NOT NULL GROUP BY offer ORDER BY visits DESC`);
+const channels = q(`SELECT COALESCE(via,'site') AS via, COUNT(*) AS questions FROM questions WHERE at >= ${since} GROUP BY via ORDER BY questions DESC`);
 const home = q(`SELECT COUNT(*) AS n FROM visits WHERE at >= ${since} AND path IN ('/','/portfolio/')`)[0].n || 0;
 const reach = ['career', 'responsibilities', 'case-studies', 'stack', 'oss', 'recommendations', 'faq', 'ask'].map((s) => {
   const n = q(`SELECT COUNT(*) AS n FROM visits WHERE at >= ${since} AND path IN ('/','/portfolio/') AND (',' || sections || ',') LIKE '%,${s},%'`)[0].n || 0;
@@ -52,6 +55,12 @@ ${table(reach, ['section', 'reached', 'share'])}
 ${table(devices, ['device', 'visits'])}
 ### Countries
 ${table(countries, ['country', 'visits'])}
+### Languages (translated on the visitor's device)
+${table(langs, ['language', 'visits'])}
+### The translation offer
+${table(offers, ['offer', 'visits'])}
+### Where questions came from (site, WebMCP, MCP)
+${table(channels, ['via', 'questions'])}
 ### Questions ask.sh couldn't answer (FAQ candidates)
 ${table(unanswered, ['day', 'question', 'model'])}
 ### Questions it answered

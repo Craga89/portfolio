@@ -3,6 +3,7 @@
 //   node tools/build.mjs --no-prerender
 import { readFileSync, writeFileSync, mkdirSync, copyFileSync, rmSync, existsSync, readdirSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
+import { LANGS as TR_LANGS } from '../src/i18n.js';
 import { createHash } from 'node:crypto';
 import { dirname, join, extname } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -123,7 +124,7 @@ const beacon = (endpoint, sections) => !endpoint ? '' : `(function () {
     var send = function () {
       if (sent) return; sent = true;
       var w = window.innerWidth;
-      navigator.sendBeacon(url, new Blob([JSON.stringify({ path: location.pathname, ref: document.referrer, device: w < 601 ? 'mobile' : w < 1025 ? 'tablet' : 'desktop', sections: Object.keys(seen), seconds: (Date.now() - t0) / 1000 })], { type: 'text/plain' }));
+      navigator.sendBeacon(url, new Blob([JSON.stringify({ path: location.pathname, ref: document.referrer, device: w < 601 ? 'mobile' : w < 1025 ? 'tablet' : 'desktop', sections: Object.keys(seen), seconds: (Date.now() - t0) / 1000, lang: window.CRAGA_LANG && window.CRAGA_LANG !== 'en' ? window.CRAGA_LANG : null, offer: window.CRAGA_I18N_OFFER || null })], { type: 'text/plain' }));
     };
     document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'hidden') send(); });
     window.addEventListener('pagehide', send);
@@ -231,6 +232,42 @@ const HOME = {};
 // one origin, read from the token itself. The app bundle adds the one for the origin it's served
 // from: tokens registered for third-party matching only count when an external script on that
 // origin adds them, never from a <meta> tag in the HTML. Tokens are public.
+// On-device translation (src/i18n.js), loaded only when it's needed. The boot snippet runs on
+// every page: it decides whether to offer a language (the visitor's browser prefers one before
+// English) or to start straight away (they chose one before), and loads the module if so.
+const I18N_SRC = readFileSync(join(SRC, 'i18n.js'), 'utf8');
+const I18N_PATH = '/assets/i18n.' + createHash('sha256').update(I18N_SRC).digest('hex').slice(0, 10) + '.js';
+const i18nBoot = () => `(function () {
+  try {
+    if (!('Translator' in self) || window.CRAGA_PRERENDER) return;
+    var L = ${JSON.stringify(TR_LANGS)};
+    var norm = function (t) { t = String(t || '').toLowerCase(); if (/^zh-(tw|hk|mo)|^zh-hant/.test(t)) return 'zh-Hant'; var b = t.split('-')[0]; b = { nb: 'no', nn: 'no', iw: 'he', 'in': 'id' }[b] || b; return L.indexOf(b) >= 0 ? b : null; };
+    var I = window.CRAGA_I18N = { langs: L, load: function () { return I._p || (I._p = import(${JSON.stringify(I18N_PATH)})); } };
+    var saved = null, no = null;
+    try { saved = localStorage.getItem('craga-lang'); no = localStorage.getItem('craga-lang-no'); } catch (e) {}
+    var want = saved && saved !== 'en' ? norm(saved) : null, offer = null;
+    if (!saved) {
+      var ls = navigator.languages || [navigator.language];
+      for (var i = 0; i < ls.length; i++) { var l = String(ls[i]).toLowerCase(); if (/^en(-|$)/.test(l)) break; var n = norm(l); if (n) { offer = n; break; } }
+    }
+    if (offer && offer === no) offer = null;
+    // Static pages' language menus (the CV), filled in only where translation works.
+    var menus = document.querySelectorAll('[data-tr-menu]');
+    if (menus.length) {
+      var cur = want || 'en';
+      var name = function (c) { try { var n = new Intl.DisplayNames([c], { type: 'language' }).of(c); return n.charAt(0).toLocaleUpperCase(c) + n.slice(1); } catch (e) { return c; } };
+      Array.prototype.forEach.call(menus, function (s) {
+        ['en'].concat(L).forEach(function (c) { var o = document.createElement('option'); o.value = c; o.lang = c; o.textContent = c === 'en' ? 'English' : name(c); s.appendChild(o); });
+        s.value = cur;
+        s.hidden = false;
+        s.addEventListener('change', function () { var v = s.value; I.load().then(function (m) { m.setLanguage(v); }); });
+      });
+      window.addEventListener('craga:lang', function (e) { Array.prototype.forEach.call(menus, function (s) { s.value = e.detail.lang; }); });
+    }
+    if (want || offer) I.load().then(function (m) { m.boot({ lang: want || offer, saved: !!want }); }).catch(function () {});
+  } catch (e) {}
+})();`;
+
 // shared/agent-tools.js (the agent tools and site search, also used by the worker) as a plain
 // script for the page: its exports become window.CragaAgent.
 function sharedForPage() {
@@ -299,7 +336,9 @@ function buildHome(today) {
     window.addEventListener('load', function () { navigator.serviceWorker.register('sw.js').catch(function () {}); });
   }
   window.CRAGA_ASK = { endpoint: ${JSON.stringify(ASK.endpoint || '')}, index: 'assets/ask-index.json' };
+  ${i18nBoot()}
   var app = DCRuntime.mount({ root: '#app', template: '#dc-template', script: '#dc-component', props: { theme: saved || (light ? 'light' : 'dark') } });
+  window.CRAGA_APP = app;
   var set = app.c.setState;
   app.c.setState = function (p) {
     if (p && typeof p === 'object' && 'theme' in p) {
@@ -316,6 +355,7 @@ ${beacon(ASK.endpoint, true)}
 `;
   const appName = 'assets/app.' + hash(app) + '.js';
   writeOut(appName, app);
+  writeOut(I18N_PATH.slice(1), I18N_SRC);
   // Runs before first paint: applies a saved or system light theme to the prerendered (dark) markup.
   const themeNow = `<script>try{var r=document.querySelector('#app .c-root'),t=localStorage.getItem('theme');if(r&&(t?t==='light':matchMedia('(prefers-color-scheme: light)').matches))r.classList.add('c-light');if(r&&localStorage.getItem('motion')==='off')r.classList.add('still')}catch(e){}</script>`;
   // Runs in <head>, before any of the page is painted: the saved (or system) theme goes on <html>
@@ -395,6 +435,7 @@ ${helmet}
 <body>
 ${body}
 ${cvThemeTail}
+<script>${i18nBoot()}</script>
 ${ASK.endpoint ? '<script>' + beacon(ASK.endpoint, false) + '</script>\n' : ''}${cfAnalytics}
 </body>
 </html>
@@ -540,6 +581,7 @@ async function prerender() {
   const browser = await chromium.launch();
   try {
     const page = await browser.newPage({ viewport: { width: 1440, height: 1000 }, reducedMotion: 'reduce', colorScheme: 'dark' });
+    await page.addInitScript(() => { window.CRAGA_PRERENDER = true; });
     const errors = [];
     page.on('pageerror', (e) => errors.push(String(e)));
     await page.goto(`http://127.0.0.1:${port}/`, { waitUntil: 'load' });
@@ -657,8 +699,8 @@ function cleanPanel(html, kind, where) {
     .replace(/\s+data-dc-[a-z]+="\d+"/g, '')
     .replace(/<canvas[^>]*><\/canvas>/g, '')
     .replace(/<button type="button" class="c-term"[^>]*>([\s\S]*?)<\/button>/g, (m, text) => { const tip = tipFor(strip(text)); if (tip) terms.set(tip[0], tip); return `<span class="c-term-s">${text}</span>`; })
-    .replace(/<a class="c-see" href="#(responsibilities|case-studies)"([^>]*)>([^<]+)<\/a>/g, (m, sec, rest, file) => `<a class="c-see" href="../../${sec}/${SLUG(file.trim())}/">${file}</a>`)
-    .replace(/<button type="button" class="c-dd">([\s\S]*?<span style="color: var\(--acc\)">([\w./-]+\.md) →<\/span>)<\/button>/g, (m, inner, file) => where[file] ? `<a class="c-dd" href="../../${where[file]}/${SLUG(file)}/">${inner}</a>` : `<div class="c-dd">${inner}</div>`)
+    .replace(/<a class="c-see" href="#(responsibilities|case-studies)"([^>]*)>([^<]+)<\/a>/g, (m, sec, rest, file) => `<a class="c-see" href="../../${sec}/${SLUG(file.trim())}/" translate="no">${file}</a>`)
+    .replace(/<button type="button" class="c-dd">([\s\S]*?<span style="color: var\(--acc\)"(?: translate="no")?>([\w./-]+\.md) →<\/span>)<\/button>/g, (m, inner, file) => where[file] ? `<a class="c-dd" href="../../${where[file]}/${SLUG(file)}/">${inner}</a>` : `<div class="c-dd">${inner}</div>`)
     .replace(/href="#c-tests"/g, 'href="../../#c-tests"')
     // Whether this browser has WebMCP only means something on the home page, where the tools are.
     .replace(/<p class="c-mcp-live"[\s\S]*?<\/p>/, '')
@@ -698,7 +740,7 @@ ${HOME.css}
 .sp-pn a{display:inline-flex;flex-direction:column;gap:2px;min-height:44px;padding:10px 14px;border:1px solid var(--line3);border-radius:8px;text-decoration:none!important;max-width:48%}
 .sp-pn a span{font-size:12px;color:var(--dim)}
 .sp-pn a b{font-family:var(--f-mono);font-weight:500;color:var(--acc)}
-.sp-pn .next{margin-left:auto;text-align:right}
+.sp-pn .next{margin-inline-start:auto;text-align:end}
 .sp-more{margin-top:36px}
 .sp-more ul{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:8px}
 .sp-more a{display:inline-flex;align-items:center;min-height:36px;padding:0 12px;border:1px solid var(--line3);border-radius:6px;font-family:var(--f-mono);font-size:13px;text-decoration:none!important;color:var(--text3)}
@@ -789,6 +831,7 @@ function label(){var L=r.classList.contains('c-light');tb.textContent=L?'dark th
 tb.addEventListener('click',function(){var L=!r.classList.contains('c-light');r.classList.toggle('c-light',L);d.classList.toggle('t-light',L);d.classList.toggle('t-dark',!L);try{localStorage.setItem('theme',L?'light':'dark')}catch(e){}label()});label();
 var loops=document.querySelector('.c-glow,.c-trav,.c-tick,.c-b1,.c-ping');var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
 if(loops&&!reduce){mb.hidden=false;var ml=function(){var off=r.classList.contains('still');mb.textContent=off?'play animations':'pause animations'};mb.addEventListener('click',function(){var off=!r.classList.contains('still');r.classList.toggle('still',off);try{localStorage.setItem('motion',off?'off':'on')}catch(e){}ml()});ml()}})()</script>
+<script>${i18nBoot()}</script>
 ${ASK.endpoint ? '<script>' + beacon(ASK.endpoint, false) + '</script>' : ''}
 ${cfAnalytics}
 </body>

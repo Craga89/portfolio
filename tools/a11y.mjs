@@ -19,6 +19,7 @@
 //      tour has a pause control.
 // Exits non-zero if anything fails.
 import { chromium } from 'playwright';
+import { translatorStub } from './translator-stub.mjs';
 import http from 'node:http';
 import { readFileSync, writeFileSync, existsSync, readdirSync } from 'node:fs';
 import { join, extname, dirname } from 'node:path';
@@ -57,8 +58,9 @@ let axeRuns = 0;
 
 const ANSWER = { answer: 'Yes. He led engineering from start-up through to acquisition and represented engineering through due diligence. See acquisition.md, or email craga89@gmail.com.', sources: ['resp-acq', 'faq-13'], model: 'a11y-fixture' };
 
-async function open(path, { width, height = 900, scheme = 'dark', reduced = false } = {}) {
-  const ctx = await browser.newContext({ viewport: { width, height }, colorScheme: scheme, reducedMotion: reduced ? 'reduce' : 'no-preference', isMobile: width < 600, hasTouch: width < 600 });
+async function open(path, { width, height = 900, scheme = 'dark', reduced = false, locale, init } = {}) {
+  const ctx = await browser.newContext({ viewport: { width, height }, colorScheme: scheme, reducedMotion: reduced ? 'reduce' : 'no-preference', isMobile: width < 600, hasTouch: width < 600, ...(locale ? { locale } : {}) });
+  if (init) await ctx.addInitScript(init);
   const page = await ctx.newPage();
   // ask.sh answers come from a fixture, so audits never spend the Worker's allowance.
   await page.route(/workers\.dev\/ask/, (r) => r.fulfill({ status: 200, contentType: 'application/json', headers: { 'access-control-allow-origin': '*' }, body: JSON.stringify(ANSWER) }));
@@ -177,6 +179,37 @@ for (const [width, scheme] of [[1440, 'dark'], [1440, 'light'], [390, 'dark'], [
     await axe(o.page, `${path === 'cv/' ? 'plain CV' : path.endsWith('/') ? path : '404 page'} ${tag}`);
     await o.ctx.close();
   }
+}
+
+// ---------- 1b. translated pages (on-device translation, with a stand-in translator) ----------
+const trDone = (page) => page.waitForFunction(() => document.querySelector('.tr-bar') && document.querySelector('.tr-bar').dataset.kind === 'done', null, { timeout: 60000 });
+for (const [width, scheme, locale] of [[1440, 'dark', 'de-DE'], [390, 'light', 'de-DE'], [1440, 'light', 'ar'], [390, 'dark', 'ar']]) {
+  const tag = `${width}px ${scheme} ${locale.slice(0, 2)}`;
+  const { page, ctx } = await open('', { width, scheme, locale, init: translatorStub });
+  await settle(page);
+  await page.waitForSelector('.tr-offer', { timeout: 10000 });
+  await axe(page, `translation offer ${tag}`, '.tr-offer');
+  await page.locator('.tr-offer .tr-go').click();
+  await trDone(page);
+  await renderAll(page);
+  await page.waitForTimeout(200);
+  await axe(page, `home translated ${tag}`);
+  await axe(page, `translation banner ${tag}`, '.tr-bar');
+  const tabs = page.locator('#case-studies [role="tab"]');
+  for (const i of [3, 12]) {
+    if (i >= await tabs.count()) continue;
+    await tabs.nth(i).click();
+    await page.waitForTimeout(150);
+    await axe(page, `case study tab ${i + 1} translated ${tag}`, '#case-studies');
+  }
+  await ctx.close();
+  const cv = await open('cv/', { width, scheme, locale, init: translatorStub });
+  await settle(cv.page);
+  await cv.page.waitForSelector('.tr-offer', { timeout: 10000 });
+  await cv.page.locator('.tr-offer .tr-go').click();
+  await trDone(cv.page);
+  await axe(cv.page, `plain CV translated ${tag}`);
+  await cv.ctx.close();
 }
 
 // ---------- 2a. keyboard: visible focus, nothing obscured ----------
