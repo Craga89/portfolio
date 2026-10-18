@@ -2461,7 +2461,7 @@ class Component extends DCLogic {
       return { h: get('hour'), m: get('minute'), off, sr: get('hour') + ':' + get('minute') + ' ' + off };
     } catch (e) { return null; }
   }
-  componentDidMount() { this.mountFx(); this.trackHeader(); this.bindAnchors(); this.bindDeck(); this.bindSpy(); this.bindChat(); this.bindKeys(); this.bindSwipe(); this.bindAgentTools(); }
+  componentDidMount() { this.mountFx(); this.trackHeader(); this.bindAnchors(); this.bindDeck(); this.bindSpy(); this.bindChat(); this.bindKeys(); this.bindSwipe(); this.whenIdle(() => this.bindAgentTools()); }
   bindChat() {
     if (this._onChatLink || typeof document === 'undefined') return;
     this._onChatLink = (e) => {
@@ -3096,6 +3096,11 @@ class Component extends DCLogic {
   // WebMCP: tools an AI agent in the browser can call, instead of reading and clicking through
   // the page. Only where the browser offers it: document.modelContext (navigator.modelContext
   // before Chrome 150). Built on what the page already loads: the ask.sh index, cv.json, live.json.
+  // Work that can wait until the page has loaded and gone quiet.
+  whenIdle(fn) {
+    const run = () => { if (typeof requestIdleCallback === 'function') requestIdleCallback(() => fn(), { timeout: 3000 }); else setTimeout(fn, 1); };
+    if (document.readyState === 'complete') run(); else window.addEventListener('load', run, { once: true });
+  }
   bindAgentTools() {
     if (this._agentCtl || typeof document === 'undefined') return;
     const mc = document.modelContext || (typeof navigator !== 'undefined' ? navigator.modelContext : null);
@@ -3265,13 +3270,17 @@ class Component extends DCLogic {
       },
     ];
     this._agentTools = tools.map((t) => t.name);
-    let registered = 0;
+    const pending = [];
     tools.forEach((t) => {
       try {
         const p = mc.registerTool(t, ctl.signal ? { signal: ctl.signal } : undefined);
-        const done = () => { registered++; this.setState({ agentTools: registered }); };
-        if (p && typeof p.then === 'function') p.then(done, () => {}); else done();
+        pending.push(p && typeof p.then === 'function' ? p.then(() => 1, () => 0) : 1);
       } catch (e) {}
+    });
+    // Shown in webmcp.md. Re-render only if that's on screen; otherwise the next render picks it up.
+    Promise.all(pending).then((r) => {
+      this._agentCount = r.reduce((n, x) => n + x, 0);
+      if ((this.state || {}).tab === 'mcp') this.setState({});
     });
   }
   unbindAgentTools() {
@@ -3737,7 +3746,7 @@ class Component extends DCLogic {
       vAi: tab === 'ai' ? '' : 'display: none;',
       vSite: tab === 'site' ? '' : 'display: none;',
       vMcp: tab === 'mcp' ? '' : 'display: none;',
-      agent: (this.state || {}).agentTools ? { on: 'true', line: 'In this browser: WebMCP is on, with ' + this.state.agentTools + ' tools registered.' } : { on: 'false', line: "In this browser: no WebMCP, so the page skips it." },
+      agent: this._agentCount ? { on: 'true', line: 'In this browser: WebMCP is on, with ' + this._agentCount + ' tools registered.' } : { on: 'false', line: "In this browser: no WebMCP, so the page skips it." },
       vAiProc: rtab === 'aiproc' ? '' : 'display: none;',
       vLead: rtab === 'lead' ? '' : 'display: none;',
       vHire: rtab === 'hire' ? '' : 'display: none;',
