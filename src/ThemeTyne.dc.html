@@ -507,6 +507,19 @@ a{color:var(--acc)!important;text-decoration:none!important}
 .c-live-v{margin:4px 0 2px;font-family:var(--f-mono,ui-monospace,monospace);font-size:18px;line-height:1.45;font-weight:700;color:var(--head);white-space:pre-wrap}
 .c-live-s{font-size:13px;color:var(--text3)}
 .c-live-m{margin-top:6px;font-size:12px;color:var(--dim)}
+.c-mcp-live{display:flex;align-items:baseline;gap:8px;margin:14px 0 0;font-size:13px;color:var(--mute)}
+.c-mcp-dot{flex:none;width:8px;height:8px;align-self:flex-start;margin-top:.45em;border-radius:50%;box-shadow:inset 0 0 0 1.5px var(--dim)}
+.c-mcp-live[data-on="true"]{color:var(--text2)}.c-mcp-live[data-on="true"] .c-mcp-dot{background:var(--ok);box-shadow:none}
+.c-mcp-flow{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:14px}
+.c-mcp-flow li:not(.c-mcp-a){border:1px solid var(--line3);border-radius:6px;padding:6px 10px;color:var(--text3)}
+.c-mcp-flow b{color:var(--head);font-weight:600}
+.c-mcp-flow .c-mcp-end{border-color:var(--ok)}
+.c-mcp-a{color:var(--acc)}
+@media (max-width:560px){.c-mcp-flow{flex-direction:column;align-items:stretch;gap:4px}.c-mcp-a{align-self:flex-start;margin-left:14px;transform:rotate(90deg);line-height:1}}
+.c-mcp-t{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,250px),1fr));gap:8px 12px}
+.c-mcp-t li{border:1px solid var(--line2);border-radius:8px;padding:10px 12px;min-width:0}
+.c-mcp-t code{font-family:var(--f-mono,ui-monospace,monospace);font-size:13px;color:var(--head);overflow-wrap:anywhere}
+.c-mcp-t span{display:block;margin-top:3px;font-size:13px;color:var(--text3)}
 .c-arch{list-style:none;margin:0;padding:0;display:grid;gap:10px}
 .c-arch li{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
 .c-arch-k{flex:0 0 72px;font-family:var(--f-mono,ui-monospace,monospace);font-size:12.5px;color:var(--dim)}
@@ -1683,7 +1696,7 @@ html[data-vt-dir="prev"]::view-transition-new(c-rs),html[data-vt-dir="prev"]::vi
 <div>
 <div style="font-size: 13px; color: var(--mute); margin-bottom: 10px">What the suite checks</div>
 <ul style="margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr)); gap: 10px">
-<li style="border: 1px solid var(--line2); border-radius: 8px; padding: 12px 14px"><div style="font-size: 12px; color: var(--acc)">axe-core · WCAG 2.0–2.2 A/AA</div><div style="color: var(--head); font-weight: 700; margin: 2px 0 4px">Every automated rule, in every state</div><div style="font-size: 14px; color: var(--text3)">Both themes, desktop and mobile, every tab, open FAQs, search results, ask.sh, the chat, the search dialogs and every file page: 244 page states per run.</div></li>
+<li style="border: 1px solid var(--line2); border-radius: 8px; padding: 12px 14px"><div style="font-size: 12px; color: var(--acc)">axe-core · WCAG 2.0–2.2 A/AA</div><div style="color: var(--head); font-weight: 700; margin: 2px 0 4px">Every automated rule, in every state</div><div style="font-size: 14px; color: var(--text3)">Both themes, desktop and mobile, every tab, open FAQs, search results, ask.sh, the chat, the search dialogs and every file page: 252 page states per run.</div></li>
 <li style="border: 1px solid var(--line2); border-radius: 8px; padding: 12px 14px"><div style="font-size: 12px; color: var(--acc)">2.1.1 · 2.4.7</div><div style="color: var(--head); font-weight: 700; margin: 2px 0 4px">Keyboard only</div><div style="font-size: 14px; color: var(--text3)">A Tab-key walk through every focus stop, confirming each one shows a visible focus ring.</div></li>
 <li style="border: 1px solid var(--line2); border-radius: 8px; padding: 12px 14px"><div style="font-size: 12px; color: var(--acc)">2.4.11 · new in 2.2</div><div style="color: var(--head); font-weight: 700; margin: 2px 0 4px">Focus never hidden</div><div style="font-size: 14px; color: var(--text3)">Nothing focused can sit behind the sticky header or the chat bar.</div></li>
 <li style="border: 1px solid var(--line2); border-radius: 8px; padding: 12px 14px"><div style="font-size: 12px; color: var(--acc)">2.5.8 · new in 2.2</div><div style="color: var(--head); font-weight: 700; margin: 2px 0 4px">Targets you can hit</div><div style="font-size: 14px; color: var(--text3)">Controls are at least 24px, or spaced so a miss won't land on a neighbour.</div></li>
@@ -2050,6 +2063,51 @@ html[data-vt-dir="prev"]::view-transition-new(c-rs),html[data-vt-dir="prev"]::vi
 </div>
 </div>
 
+<div style="{{vMcp}}">
+<div role="tabpanel" aria-label="webmcp.md" class="c-pop" style="border: 1px solid var(--line2); border-radius: 12px; background: var(--panel); padding: clamp(22px, 4vw, 40px); display: flex; flex-direction: column; gap: 32px">
+<div>
+<div style="font-size: 13px; color: var(--acc)">// webmcp · tools for browser agents · 2026</div>
+<h3 style="margin: 8px 0 10px; font-size: clamp(22px, 3vw, 30px); line-height: 1.25; color: var(--head)">A site AI agents can use, not just read</h3>
+<p style="margin: 0; color: var(--text3); max-width: 72ch">AI assistants are starting to work inside the browser, on the page a person has open. Rather than leave them to read the screen and guess, I've given this site its own tools through WebMCP, a draft web standard. An agent calls a tool and gets structured answers, drawn from the same content visitors read.</p>
+<p class="c-mcp-live" data-on="{{agent.on}}"><span class="c-mcp-dot" aria-hidden="true"></span>{{agent.line}}</p>
+</div>
+
+<div>
+<div style="font-size: 13px; color: var(--mute); margin-bottom: 10px">How an agent uses the page</div>
+<ol class="c-mcp-flow" aria-label="How an agent uses the page">
+<li><b>AI agent</b> in the visitor's browser</li><li aria-hidden="true" class="c-mcp-a">→</li>
+<li><b>calls a tool</b> the page registered</li><li aria-hidden="true" class="c-mcp-a">→</li>
+<li><b>reads the site's own data</b> cv.json, the ask.sh index, CI results</li><li aria-hidden="true" class="c-mcp-a">→</li>
+<li class="c-mcp-end"><b>gets a structured answer</b> or opens it on screen</li>
+</ol>
+</div>
+
+<div>
+<div style="font-size: 13px; color: var(--mute); margin-bottom: 10px">The tools</div>
+<ul class="c-mcp-t">
+<li><code>get_profile</code><span>headline, summary, contact, CV links and skills</span></li>
+<li><code>get_career</code><span>every role, with highlights, and the degree</span></li>
+<li><code>list_files</code> · <code>read_file</code><span>case studies and responsibilities in full, and can open one on the page</span></li>
+<li><code>search_site</code><span>the best-matching passages, in my own words</span></li>
+<li><code>ask</code><span>an ask.sh answer, with the same limits as the box on the page</span></li>
+<li><code>get_open_source</code><span>merged pull requests by quarter, and qTip2</span></li>
+<li><code>get_site_report</code><span>the latest Lighthouse, WCAG and ask.sh results</span></li>
+<li><code>show_section</code><span>scrolls to a section and highlights it</span></li>
+</ul>
+</div>
+
+<div style="border-left: 3px solid var(--ok); padding: 4px 0 4px 18px">
+<div style="font-size: 13px; color: var(--ok); margin-bottom: 8px"># in practice</div>
+<ul style="margin: 0; padding-left: 18px; color: var(--text); display: flex; flex-direction: column; gap: 6px">
+<li>The tools are built on the files the page already loads, so an agent gets the same facts a visitor reads.</li>
+<li>Browsers without WebMCP skip it. In Chrome it runs as an origin trial.</li>
+<li>CI tests every tool against a stand-in for the browser API: it registers, returns the right data and unregisters when the page closes. The ask tool is stubbed, so tests never reach the live service.</li>
+<li>For agents that read rather than act, the same content is in llms.txt and cv.json.</li>
+</ul>
+</div>
+</div>
+</div>
+
 <div style="{{vSite}}">
 <div role="tabpanel" aria-label="this-site.md" class="c-pop" style="border: 1px solid var(--line2); border-radius: 12px; background: var(--panel); padding: clamp(22px, 4vw, 40px); display: flex; flex-direction: column; gap: 32px">
 <div>
@@ -2354,13 +2412,13 @@ html[data-vt-dir="prev"]::view-transition-new(c-rs),html[data-vt-dir="prev"]::vi
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props='{"motion":{"editor":"boolean","default":true},"theme":{"editor":"enum","options":["dark","light"],"default":"dark"},"$preview":{"width":1440,"height":7600}}'>
 class Component extends DCLogic {
-  static CASES = [['mono', 'monorepo.md'], ['refactor', 'refactor.md'], ['ci', 'ci-cd.md'], ['test', 'testing.md'], ['a11y', 'accessibility.md'], ['aws', 'aws.md'], ['sec', 'security.md'], ['auth', 'auth.md'], ['data', 'data.md'], ['cost', 'cost.md'], ['ai', 'ai/platform.md'], ['site', 'this-site.md']];
+  static CASES = [['mono', 'monorepo.md'], ['refactor', 'refactor.md'], ['ci', 'ci-cd.md'], ['test', 'testing.md'], ['a11y', 'accessibility.md'], ['aws', 'aws.md'], ['sec', 'security.md'], ['auth', 'auth.md'], ['data', 'data.md'], ['cost', 'cost.md'], ['ai', 'ai/platform.md'], ['mcp', 'webmcp.md'], ['site', 'this-site.md']];
   static RESPS = [['lead', 'leadership.md'], ['hire', 'hiring.md'], ['people', 'people.md'], ['proc', 'process.md'], ['aiproc', 'ai.md'], ['prod', 'product.md'], ['cust', 'customers.md'], ['bud', 'budget.md'], ['acq', 'acquisition.md'], ['inc', 'incidents.md'], ['comp', 'compliance.md'], ['it', 'it.md']];
   // Suggested reading orders for ?focus=… links: [kind, id, headline].
   static FOCUS = {
     leadership: { label: 'engineering leadership', tab: 'cost', rtab: 'lead', items: [['r', 'lead', 'Led the team, not just the platform'], ['r', 'hire', 'Building the team, from first interview to first deploy'], ['r', 'acq', 'From startup to acquisition'], ['r', 'bud', 'Every pound accounted for'], ['r', 'inc', 'When things break: a plan, not a panic'], ['c', 'cost', 'Measure first, then cut']] },
     platform: { label: 'platform engineering', tab: 'mono', rtab: 'inc', items: [['c', 'mono', 'One codebase, kept modern without stopping delivery'], ['c', 'ci', 'Build only what changed, ship every merge'], ['c', 'aws', 'Nothing public but the CDN'], ['c', 'sec', 'Closing doors, not adding locks'], ['c', 'data', 'Making the flagship report fast at scale'], ['r', 'inc', 'When things break: a plan, not a panic']] },
-    ai: { label: 'AI-first engineering', tab: 'ai', rtab: 'aiproc', items: [['r', 'aiproc', 'From AI-assisted to AI-first, in a year'], ['c', 'ai', 'AI where it earns its keep'], ['c', 'site', 'This site, run like a production system'], ['c', 'test', 'A test suite that kept up with the platform']] },
+    ai: { label: 'AI-first engineering', tab: 'ai', rtab: 'aiproc', items: [['r', 'aiproc', 'From AI-assisted to AI-first, in a year'], ['c', 'ai', 'AI where it earns its keep'], ['c', 'site', 'This site, run like a production system'], ['c', 'mcp', 'A site AI agents can use, not just read'], ['c', 'test', 'A test suite that kept up with the platform']] },
     frontend: { label: 'front end and accessibility', tab: 'a11y', rtab: 'lead', items: [['c', 'a11y', 'Accessible by default, checked on every deploy'], ['c', 'refactor', 'Keep the toolchain modern, one reviewed change at a time'], ['c', 'test', 'A test suite that kept up with the platform'], ['c', 'mono', 'One codebase, kept modern without stopping delivery']] }
   };
   // Everything that can be known before the first render goes into the initial state, so mounting
@@ -3113,7 +3171,8 @@ class Component extends DCLogic {
           if (!f) return fail('No file called "' + i.file + '". Files: ' + fs.map((x) => x.file).join(', ') + '.');
           if (i.show) {
             if (f.section === 'case-studies') this.setState({ tab: f.key }); else this.goResp(f.key);
-            setTimeout(() => this.scrollToId(f.section), 60);
+            clearTimeout(this._agentScrollT);
+            this._agentScrollT = setTimeout(() => this.scrollToId(f.section), 60);
           }
           return ok({ file: f.file, section: f.section, title: f.title, url: f.url, text: f.text });
         })),
@@ -3199,16 +3258,19 @@ class Component extends DCLogic {
         annotations: { readOnlyHint: false },
         execute: safe((i) => {
           if (sections.indexOf(i.section) < 0) return fail('No section "' + i.section + '". Sections: ' + sections.join(', ') + '.');
+          clearTimeout(this._agentScrollT);
           this.scrollToId(i.section);
           return ok({ shown: i.section, url: abs('#' + i.section) });
         }),
       },
     ];
     this._agentTools = tools.map((t) => t.name);
+    let registered = 0;
     tools.forEach((t) => {
       try {
         const p = mc.registerTool(t, ctl.signal ? { signal: ctl.signal } : undefined);
-        if (p && typeof p.catch === 'function') p.catch(() => {});
+        const done = () => { registered++; this.setState({ agentTools: registered }); };
+        if (p && typeof p.then === 'function') p.then(done, () => {}); else done();
       } catch (e) {}
     });
   }
@@ -3674,6 +3736,8 @@ class Component extends DCLogic {
       vCost: tab === 'cost' ? '' : 'display: none;',
       vAi: tab === 'ai' ? '' : 'display: none;',
       vSite: tab === 'site' ? '' : 'display: none;',
+      vMcp: tab === 'mcp' ? '' : 'display: none;',
+      agent: (this.state || {}).agentTools ? { on: 'true', line: 'In this browser: WebMCP is on, with ' + this.state.agentTools + ' tools registered.' } : { on: 'false', line: "In this browser: no WebMCP, so the page skips it." },
       vAiProc: rtab === 'aiproc' ? '' : 'display: none;',
       vLead: rtab === 'lead' ? '' : 'display: none;',
       vHire: rtab === 'hire' ? '' : 'display: none;',

@@ -155,7 +155,7 @@ try {
   ok('webmcp registers 9 tools, well-formed', ar.names.length === 9 && ar.unique && ar.shape, ar.names.join(' '));
   ok('webmcp get_profile', d('profile').name === 'Craig Michael Thompson' && /@/.test(d('profile').email || '') && /cv\.pdf$/.test((d('profile').links || {}).cv_pdf || ''));
   ok('webmcp get_career', (d('career').work || []).length >= 3 && (d('career').education || []).length >= 1);
-  ok('webmcp list_files', Array.isArray(ar.list.data) && ar.list.data.length === 24 && ar.listCase.data.length === 12 && ar.list.data.every((f) => /\/(case-studies|responsibilities)\/[\w-]+\/$/.test(f.url)), String(ar.list.data && ar.list.data.length));
+  ok('webmcp list_files', Array.isArray(ar.list.data) && ar.list.data.length === 25 && ar.listCase.data.length === 13 && ar.list.data.every((f) => /\/(case-studies|responsibilities)\/[\w-]+\/$/.test(f.url)), String(ar.list.data && ar.list.data.length));
   ok('webmcp read_file (and show)', !ar.read.err && d('read').text.length > 200 && ar.tabAi && ar.missing.err && /monorepo\.md/.test(ar.missing.txt));
   ok('webmcp search_site', (d('search').results || []).length > 0);
   ok('webmcp ask (stubbed service)', d('ask').answer === 'Stub answer.' && d('ask').via === 'ai' && asked === 1, JSON.stringify(d('ask')).slice(0, 120));

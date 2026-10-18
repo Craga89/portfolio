@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>A site AI agents can use, not just read · webmcp.md · Craig Michael Thompson</title>
+<meta name="description" content="AI assistants are starting to work inside the browser, on the page a person has open. Rather than leave them to read the screen and guess, I've given this…">
+<link rel="canonical" href="https://craigthompson.dev/case-studies/webmcp/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="craigthompson.dev">
+<meta property="og:locale" content="en_GB">
+<meta property="og:title" content="A site AI agents can use, not just read · webmcp.md">
+<meta property="og:description" content="AI assistants are starting to work inside the browser, on the page a person has open. Rather than leave them to read the screen and guess, I've given this…">
+<meta property="og:url" content="https://craigthompson.dev/case-studies/webmcp/">
+<meta property="og:image" content="https://craigthompson.dev/case-studies/webmcp/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="A site AI agents can use, not just read. case-studies/webmcp.md, Craig Michael Thompson">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="A site AI agents can use, not just read · webmcp.md">
+<meta name="twitter:description" content="AI assistants are starting to work inside the browser, on the page a person has open. Rather than leave them to read the screen and guess, I've given this…">
+<meta name="twitter:image" content="https://craigthompson.dev/case-studies/webmcp/og.png">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"A site AI agents can use, not just read","name":"webmcp.md","description":"AI assistants are starting to work inside the browser, on the page a person has open. Rather than leave them to read the screen and guess, I've given this…","url":"https://craigthompson.dev/case-studies/webmcp/","image":"https://craigthompson.dev/case-studies/webmcp/og.png","inLanguage":"en-GB","dateModified":"2026-10-18","author":{"@type":"Person","@id":"https://craigthompson.dev/#person","name":"Craig Michael Thompson","url":"https://craigthompson.dev/"},"isPartOf":{"@type":"WebSite","name":"craigthompson.dev","url":"https://craigthompson.dev/"}}</script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="color-scheme" content="dark light">
+<meta name="theme-color" content="#16271F" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#EDF1EE" media="(prefers-color-scheme: light)">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../../apple-touch-icon.png">
+<style>@media screen{html.t-light,html.t-light body{background:#EDF1EE!important;color-scheme:light}html.t-dark,html.t-dark body{background:#16271F!important;color-scheme:dark}}</style>
+<script>try{(function(){var d=document.documentElement,t=localStorage.getItem('theme'),L=t?t==='light':matchMedia('(prefers-color-scheme: light)').matches,M=localStorage.getItem('motion')==='off';d.classList.add(L?'t-light':'t-dark');if(t)document.querySelectorAll('meta[name="theme-color"]').forEach(function(m){m.content=L?'#EDF1EE':'#16271F'});var o=new MutationObserver(function(){var r=document.querySelector('.c-root');if(!r)return;if(L)r.classList.add('c-light');if(M)r.classList.add('still');o.disconnect()});o.observe(d,{childList:true,subtree:true})})()}catch(e){}</script>
+<link rel="preload" href="../../assets/fonts/big-shoulders-display-latin-600.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../../assets/fonts/public-sans-latin-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../assets/pages.a0126d23dd.css">
+</head>
+<body>
+<div class="c-root" style="background: var(--bg); color: var(--text); min-height: 100vh; font-size: 16px; line-height: 1.7">
+<div class="sp">
+<header class="sp-top"><a class="sp-home" href="../../"><span class="c-dot" style="width: 9px; height: 9px; border-radius: 50%; background: var(--ok)"></span>craigthompson.dev</a>
+<div class="sp-tools"><button type="button" class="sp-b" id="sp-theme">theme</button><button type="button" class="sp-b" id="sp-motion" hidden>pause animations</button></div></header>
+<main class="sp-main">
+<p class="sp-crumb">$ cat <a href="../../?case=mcp#case-studies">case-studies/</a>webmcp.md</p>
+<h1 class="c-sr">A site AI agents can use, not just read</h1>
+<div class="c-pop" style="border: 1px solid var(--line2); border-radius: 12px; background: var(--panel); padding: clamp(22px, 4vw, 40px); display: flex; flex-direction: column; gap: 32px">
+<div>
+<div style="font-size: 13px; color: var(--acc)">// webmcp · tools for browser agents · 2026</div>
+<h3 style="margin: 8px 0 10px; font-size: clamp(22px, 3vw, 30px); line-height: 1.25; color: var(--head)">A site AI agents can use, not just read</h3>
+<p style="margin: 0; color: var(--text3); max-width: 72ch">AI assistants are starting to work inside the browser, on the page a person has open. Rather than leave them to read the screen and guess, I've given this site its own tools through WebMCP, a draft web standard. An agent calls a tool and gets structured answers, drawn from the same content visitors read.</p>
+
+</div>
+
+<div>
+<div style="font-size: 13px; color: var(--mute); margin-bottom: 10px">How an agent uses the page</div>
+<ol class="c-mcp-flow" aria-label="How an agent uses the page">
+<li><b>AI agent</b> in the visitor's browser</li><li aria-hidden="true" class="c-mcp-a">→</li>
+<li><b>calls a tool</b> the page registered</li><li aria-hidden="true" class="c-mcp-a">→</li>
+<li><b>reads the site's own data</b> cv.json, the ask.sh index, CI results</li><li aria-hidden="true" class="c-mcp-a">→</li>
+<li class="c-mcp-end"><b>gets a structured answer</b> or opens it on screen</li>
+</ol>
+</div>
+
+<div>
+<div style="font-size: 13px; color: var(--mute); margin-bottom: 10px">The tools</div>
+<ul class="c-mcp-t">
+<li><code>get_profile</code><span>headline, summary, contact, CV links and skills</span></li>
+<li><code>get_career</code><span>every role, with highlights, and the degree</span></li>
+<li><code>list_files</code> · <code>read_file</code><span>case studies and responsibilities in full, and can open one on the page</span></li>
+<li><code>search_site</code><span>the best-matching passages, in my own words</span></li>
+<li><code>ask</code><span>an ask.sh answer, with the same limits as the box on the page</span></li>
+<li><code>get_open_source</code><span>merged pull requests by quarter, and qTip2</span></li>
+<li><code>get_site_report</code><span>the latest Lighthouse, WCAG and ask.sh results</span></li>
+<li><code>show_section</code><span>scrolls to a section and highlights it</span></li>
+</ul>
+</div>
+
+<div style="border-left: 3px solid var(--ok); padding: 4px 0 4px 18px">
+<div style="font-size: 13px; color: var(--ok); margin-bottom: 8px"># in practice</div>
+<ul style="margin: 0; padding-left: 18px; color: var(--text); display: flex; flex-direction: column; gap: 6px">
+<li>The tools are built on the files the page already loads, so an agent gets the same facts a visitor reads.</li>
+<li>Browsers without WebMCP skip it. In Chrome it runs as an origin trial.</li>
+<li>CI tests every tool against a stand-in for the browser API: it registers, returns the right data and unregisters when the page closes. The ask tool is stubbed, so tests never reach the live service.</li>
+<li>For agents that read rather than act, the same content is in llms.txt and cv.json.</li>
+</ul>
+</div>
+</div>
+
+<nav class="sp-pn" aria-label="More case-studies/"><a href="../ai-platform/"><span>← previous</span><b>ai/platform.md</b></a><a class="next" href="../this-site/"><span>next →</span><b>this-site.md</b></a></nav>
+<section class="sp-more" aria-labelledby="sp-more-h"><h2 id="sp-more-h">$ ls case-studies/</h2><ul><li><a href="../monorepo/">monorepo.md</a></li><li><a href="../refactor/">refactor.md</a></li><li><a href="../ci-cd/">ci-cd.md</a></li><li><a href="../testing/">testing.md</a></li><li><a href="../accessibility/">accessibility.md</a></li><li><a href="../aws/">aws.md</a></li><li><a href="../security/">security.md</a></li><li><a href="../auth/">auth.md</a></li><li><a href="../data/">data.md</a></li><li><a href="../cost/">cost.md</a></li><li><a href="../ai-platform/">ai/platform.md</a></li><li><a href="../webmcp/" aria-current="page">webmcp.md</a></li><li><a href="../this-site/">this-site.md</a></li></ul></section>
+<aside class="sp-cta" aria-label="About Craig"><p><b>Craig Michael Thompson</b>, Head of Engineering: hands-on, AI-first, from start-up to acquisition. Open to new roles.</p><div><a class="go" href="mailto:craga89@gmail.com">get in touch</a><a class="alt" href="../../?case=mcp#case-studies">see it in the portfolio</a><a class="alt" href="../../cv/">CV</a></div></aside>
+</main>
+</div>
+</div>
+<script>(function(){var d=document.documentElement,r=document.querySelector('.c-root'),tb=document.getElementById('sp-theme'),mb=document.getElementById('sp-motion');
+function label(){var L=r.classList.contains('c-light');tb.textContent=L?'dark theme':'light theme';tb.setAttribute('aria-label',L?'Switch to dark theme':'Switch to light theme')}
+tb.addEventListener('click',function(){var L=!r.classList.contains('c-light');r.classList.toggle('c-light',L);d.classList.toggle('t-light',L);d.classList.toggle('t-dark',!L);try{localStorage.setItem('theme',L?'light':'dark')}catch(e){}label()});label();
+var loops=document.querySelector('.c-glow,.c-trav,.c-tick,.c-b1,.c-ping');var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+if(loops&&!reduce){mb.hidden=false;var ml=function(){var off=r.classList.contains('still');mb.textContent=off?'play animations':'pause animations'};mb.addEventListener('click',function(){var off=!r.classList.contains('still');r.classList.toggle('still',off);try{localStorage.setItem('motion',off?'off':'on')}catch(e){}ml()});ml()}})()</script>
+<script>(function () {
+  try {
+    if (navigator.globalPrivacyControl || navigator.doNotTrack === '1' || !navigator.sendBeacon) return;
+    var url = "https://craga-ask.craga89.workers.dev/hit", t0 = Date.now(), seen = {}, sent = false;
+    
+    var send = function () {
+      if (sent) return; sent = true;
+      var w = window.innerWidth;
+      navigator.sendBeacon(url, new Blob([JSON.stringify({ path: location.pathname, ref: document.referrer, device: w < 601 ? 'mobile' : w < 1025 ? 'tablet' : 'desktop', sections: Object.keys(seen), seconds: (Date.now() - t0) / 1000 })], { type: 'text/plain' }));
+    };
+    document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'hidden') send(); });
+    window.addEventListener('pagehide', send);
+  } catch (e) {}
+})();</script>
+<script>(function(){try{if(!/(^|\.)(craigthompson|craga)\.dev$/.test(location.hostname)||navigator.globalPrivacyControl||navigator.doNotTrack==='1')return;var go=function(){var s=document.createElement('script');s.defer=true;s.src='https://static.cloudflareinsights.com/beacon.min.js';s.setAttribute('data-cf-beacon','{"token":"3204254163b94619a6f630b47e82c749"}');document.head.appendChild(s)};var done=false,ev=['pointerdown','keydown','wheel','touchstart','scroll'],once=function(){if(done)return;done=true;ev.forEach(function(t){removeEventListener(t,once,true)});go()};ev.forEach(function(t){addEventListener(t,once,{capture:true,passive:true})});var later=function(){setTimeout(once,6000)};if(document.readyState==='complete')later();else addEventListener('load',later,{once:true})}catch(e){}})()</script>
+</body>
+</html>

@@ -228,9 +228,23 @@ const HOME = {};
 // The open-source counts from the weekly CI job (oss branch), baked in so the heatmap renders
 // without JavaScript; the page swaps in live.json's copy when it loads.
 // Chrome origin-trial tokens (WebMCP), one per line in src/origin-trials.txt. Each token is tied to
-// one origin, so the file can hold one for each domain the site is served from. Tokens are public.
+// one origin, read from the token itself. The app bundle adds the one for the origin it's served
+// from: tokens registered for third-party matching only count when an external script on that
+// origin adds them, never from a <meta> tag in the HTML. Tokens are public.
 const ORIGIN_TRIALS = (() => {
-  try { return readFileSync(join(SRC, 'origin-trials.txt'), 'utf8').split('\n').map((l) => l.trim()).filter((l) => l && !l.startsWith('#')); } catch (e) { return []; }
+  let lines = [];
+  try { lines = readFileSync(join(SRC, 'origin-trials.txt'), 'utf8').split('\n').map((l) => l.trim()).filter((l) => l && !l.startsWith('#')); } catch (e) { return {}; }
+  const map = {};
+  for (const token of lines) {
+    try {
+      const raw = Buffer.from(token, 'base64');
+      const info = JSON.parse(raw.subarray(69).toString('utf8'));
+      const origin = new URL(info.origin).origin;
+      if (info.expiry * 1000 < Date.now()) { console.warn(`origin trial: token for ${origin} (${info.feature}) has expired`); continue; }
+      (map[origin] = map[origin] || []).push(token);
+    } catch (e) { console.warn('origin trial: skipped a token that could not be read'); }
+  }
+  return map;
 })();
 const OSS_SNAPSHOT = (() => {
   try { const d = JSON.parse(execFileSync('git', ['show', 'origin/oss:reports/oss.json'], { cwd: ROOT, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] })); return d && Array.isArray(d.timeline) ? d : null; } catch (e) { return null; }
@@ -253,7 +267,9 @@ function buildHome(today) {
   const props = d.props.replace('"$preview"', '"$x"');
   // Everything the page needs only once JavaScript runs (runtime, template, component,
   // boot) goes into one deferred, cache-busted file, so the HTML stays small.
-  const app = readFileSync(join(ROOT, 'tools', 'dc-runtime.js'), 'utf8') + `
+  // Origin-trial tokens first, before anything checks for the features they turn on.
+  const otPrelude = Object.keys(ORIGIN_TRIALS).length ? `(function(){var T=${JSON.stringify(ORIGIN_TRIALS)}[location.origin];if(T)T.forEach(function(t){var m=document.createElement('meta');m.httpEquiv='origin-trial';m.content=t;document.head.appendChild(m);});})();\n` : '';
+  const app = otPrelude + readFileSync(join(ROOT, 'tools', 'dc-runtime.js'), 'utf8') + `
 ;(function () {
   var t = document.createElement('template');
   t.id = 'dc-template';
@@ -309,7 +325,7 @@ ${beacon(ASK.endpoint, true)}
 <head>
 ${head}
 ${meta('')}
-${ORIGIN_TRIALS.map((t) => `<meta http-equiv="origin-trial" content="${t.replace(/"/g, '')}">\n`).join('')}${themeHead}
+${themeHead}
 ${preloadFont('assets/fonts/big-shoulders-display-latin-600.woff2')}
 ${preloadFont('assets/fonts/public-sans-latin-400.woff2')}
 ${preloadFont('assets/fonts/red-hat-mono-latin-400.woff2')}
@@ -445,7 +461,7 @@ function extractPassages() {
   const txt = (n) => {
     if (!n) return '';
     if (n.nodeType === 3) return n.data;
-    if (n.nodeType !== 1 || SKIP.has(n.localName)) return '';
+    if (n.nodeType !== 1 || SKIP.has(n.localName) || (n.classList && n.classList.contains('c-mcp-live'))) return '';
     let out = '';
     for (const c of n.childNodes) out += txt(c);
     return INLINE.has(n.localName) ? out : ' ' + out + ' ';
@@ -479,7 +495,7 @@ function extractPassages() {
     const body = [q('.c-rs-s', p), q('.c-rs-pts', p), q('.c-rs-n', p) && q('.c-rs-n', p).parentNode, q('.c-rs-body', p)].filter(Boolean).map(txt).join(' ');
     add('resp-' + key, file + (h ? ': ' + clean(txt(h)) : ''), body, '#responsibilities', 'resp', rmap[key] || key);
   });
-  const cmap = { 'monorepo.md': 'mono', 'refactor.md': 'refactor', 'ci-cd.md': 'ci', 'testing.md': 'test', 'aws.md': 'aws', 'security.md': 'sec', 'auth.md': 'auth', 'data.md': 'data', 'cost.md': 'cost', 'ai/platform.md': 'ai', 'accessibility.md': 'a11y', 'this-site.md': 'site' };
+  const cmap = { 'monorepo.md': 'mono', 'refactor.md': 'refactor', 'ci-cd.md': 'ci', 'testing.md': 'test', 'aws.md': 'aws', 'security.md': 'sec', 'auth.md': 'auth', 'data.md': 'data', 'cost.md': 'cost', 'ai/platform.md': 'ai', 'accessibility.md': 'a11y', 'webmcp.md': 'mcp', 'this-site.md': 'site' };
   qa('#case-studies [role="tabpanel"]').forEach((p) => {
     const file = p.getAttribute('aria-label') || '';
     const h = q('h3', p);
@@ -615,7 +631,7 @@ h1{margin:0;font:900 112px/0.88 BS;letter-spacing:.005em}
 // as a static page with its own title, description and social preview, for sharing and search.
 const SLUG = (f) => f.replace(/\.md$/, '').replace(/\//g, '-');
 const SECTION = { case: { dir: 'case-studies', label: 'case-studies/', home: 'case', name: 'Case study' }, resp: { dir: 'responsibilities', label: 'responsibilities/', home: 'resp', name: 'Responsibility' } };
-const HOME_KEYS = { case: { 'monorepo.md': 'mono', 'refactor.md': 'refactor', 'ci-cd.md': 'ci', 'testing.md': 'test', 'accessibility.md': 'a11y', 'aws.md': 'aws', 'security.md': 'sec', 'auth.md': 'auth', 'data.md': 'data', 'cost.md': 'cost', 'ai/platform.md': 'ai', 'this-site.md': 'site' }, resp: { 'leadership.md': 'lead', 'hiring.md': 'hire', 'people.md': 'people', 'process.md': 'proc', 'ai.md': 'aiproc', 'product.md': 'prod', 'customers.md': 'cust', 'budget.md': 'bud', 'acquisition.md': 'acq', 'incidents.md': 'inc', 'compliance.md': 'comp', 'it.md': 'it' } };
+const HOME_KEYS = { case: { 'monorepo.md': 'mono', 'refactor.md': 'refactor', 'ci-cd.md': 'ci', 'testing.md': 'test', 'accessibility.md': 'a11y', 'aws.md': 'aws', 'security.md': 'sec', 'auth.md': 'auth', 'data.md': 'data', 'cost.md': 'cost', 'ai/platform.md': 'ai', 'webmcp.md': 'mcp', 'this-site.md': 'site' }, resp: { 'leadership.md': 'lead', 'hiring.md': 'hire', 'people.md': 'people', 'process.md': 'proc', 'ai.md': 'aiproc', 'product.md': 'prod', 'customers.md': 'cust', 'budget.md': 'bud', 'acquisition.md': 'acq', 'incidents.md': 'inc', 'compliance.md': 'comp', 'it.md': 'it' } };
 const strip = (h) => h.replace(/<[^>]+>/g, ' ').replace(/&amp;/g, '&').replace(/&nbsp;/g, ' ').replace(/&#39;|&rsquo;/g, "'").replace(/\s+/g, ' ').replace(/\s+([,.;:!?)])/g, '$1').trim();
 
 function cleanPanel(html, kind, where) {
@@ -632,6 +648,8 @@ function cleanPanel(html, kind, where) {
     .replace(/<a class="c-see" href="#(responsibilities|case-studies)"([^>]*)>([^<]+)<\/a>/g, (m, sec, rest, file) => `<a class="c-see" href="../../${sec}/${SLUG(file.trim())}/">${file}</a>`)
     .replace(/<button type="button" class="c-dd">([\s\S]*?<span style="color: var\(--acc\)">([\w./-]+\.md) →<\/span>)<\/button>/g, (m, inner, file) => where[file] ? `<a class="c-dd" href="../../${where[file]}/${SLUG(file)}/">${inner}</a>` : `<div class="c-dd">${inner}</div>`)
     .replace(/href="#c-tests"/g, 'href="../../#c-tests"')
+    // Whether this browser has WebMCP only means something on the home page, where the tools are.
+    .replace(/<p class="c-mcp-live"[\s\S]*?<\/p>/, '')
     // Live CI results only load on the home page: point there instead of showing placeholders.
     .replace(/<div style="font-size: 13px; color: var\(--mute\); margin-bottom: 10px">Latest results<\/div>\s*<ul class="c-live"[\s\S]*?<\/ul>/, '<div style="font-size: 13px; color: var(--mute); margin-bottom: 10px">Latest results</div><p style="margin: 0; color: var(--text3)">The latest Lighthouse, WCAG and ask.sh test results are live on <a href="../../?case=site#case-studies">the home page</a>.</p>')
     .replace(/<details class="c-rs-more"/g, '<details class="c-rs-more" open')

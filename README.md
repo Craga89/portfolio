@@ -66,7 +66,9 @@ Where the browser supports [WebMCP](https://webmachinelearning.github.io/webmcp/
 
 `tools/check.mjs` tests them with a stand-in `modelContext`: every tool registers with a valid schema, returns the right data, and the `ask` call is stubbed so tests never reach the real service.
 
-In Chrome 149–156 WebMCP is an origin trial. Register each origin the site is served from at https://developer.chrome.com/origintrials/ and add the tokens to `src/origin-trials.txt`; the build turns them into `<meta http-equiv="origin-trial">` tags. To try it without a token, enable `chrome://flags/#enable-webmcp-testing`.
+In Chrome 149–156 WebMCP is an origin trial. Tokens live in `src/origin-trials.txt`, one per line. The build reads the origin out of each token (and drops expired ones), and the app bundle adds the token for the origin it's served from as a `<meta http-equiv="origin-trial">` before the tools register. They're added by the bundle, not written into the HTML, because tokens registered for third-party matching only count when an external script on their origin adds them. To try it without a token, enable `chrome://flags/#enable-webmcp-testing`.
+
+The `webmcp.md` case study explains the tools and shows whether the visitor's browser has WebMCP; its file page leaves that line out.
 
 The open-source section has a heatmap of merged pull requests to other projects by year and quarter. `tools/oss-stats.mjs` writes the per-quarter `timeline` (count and repos); the build bakes the latest snapshot into the page (`window.CRAGA_OSS`) so it prerenders, and `live.json` replaces it when newer. It uses one blue ramp per theme (checked for contrast and colour-blind separation), hover tips per cell, and a "as a table" view for screen readers and print.
 
