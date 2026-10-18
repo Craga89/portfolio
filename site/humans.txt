@@ -6,7 +6,7 @@ GitHub: https://github.com/Craga89
 From: Newcastle upon Tyne, UK
 
 /* SITE */
-Last update: 2026-10-17
+Last update: 2026-10-18
 Standards: HTML, CSS, JavaScript, WCAG 2.2 AA
 Components: a small hand-written runtime, prerendered with Playwright
 Fonts: Big Shoulders Display, Public Sans, Red Hat Mono (self-hosted)

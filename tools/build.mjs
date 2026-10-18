@@ -227,6 +227,11 @@ const portraitPicture = () => `<picture><source type="image/avif" srcset="assets
 const HOME = {};
 // The open-source counts from the weekly CI job (oss branch), baked in so the heatmap renders
 // without JavaScript; the page swaps in live.json's copy when it loads.
+// Chrome origin-trial tokens (WebMCP), one per line in src/origin-trials.txt. Each token is tied to
+// one origin, so the file can hold one for each domain the site is served from. Tokens are public.
+const ORIGIN_TRIALS = (() => {
+  try { return readFileSync(join(SRC, 'origin-trials.txt'), 'utf8').split('\n').map((l) => l.trim()).filter((l) => l && !l.startsWith('#')); } catch (e) { return []; }
+})();
 const OSS_SNAPSHOT = (() => {
   try { const d = JSON.parse(execFileSync('git', ['show', 'origin/oss:reports/oss.json'], { cwd: ROOT, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] })); return d && Array.isArray(d.timeline) ? d : null; } catch (e) { return null; }
 })();
@@ -304,7 +309,7 @@ ${beacon(ASK.endpoint, true)}
 <head>
 ${head}
 ${meta('')}
-${themeHead}
+${ORIGIN_TRIALS.map((t) => `<meta http-equiv="origin-trial" content="${t.replace(/"/g, '')}">\n`).join('')}${themeHead}
 ${preloadFont('assets/fonts/big-shoulders-display-latin-600.woff2')}
 ${preloadFont('assets/fonts/public-sans-latin-400.woff2')}
 ${preloadFont('assets/fonts/red-hat-mono-latin-400.woff2')}
@@ -815,6 +820,8 @@ Location: ${b.location.city}, UK. Contact: ${b.email}.
 - [Plain CV](${SITE}/cv/), also as [PDF](${SITE}/cv.pdf) and [JSON Resume](${SITE}/cv.json)
 - [GitHub](https://github.com/Craga89)
 - [LinkedIn](https://www.linkedin.com/in/craigmichaelthompson/)
+
+In browsers with WebMCP, the portfolio page also registers tools an agent can call: get_profile, get_career, list_files, read_file, search_site, ask, get_open_source, get_site_report and show_section.
 
 ## Experience
 

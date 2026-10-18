@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-17T22:25:03.637Z",
+ "generated": "2026-10-18T16:59:38.711Z",
  "passages": [
   {
    "id": "intro",
@@ -12,7 +12,7 @@
   {
    "id": "profile",
    "title": "Profile",
-   "text": "Craig Michael Thompson Full-stack engineer Newcastle upon Tyne, UK 23: 25 (UTC+1) 23:25 UTC+1 in Newcastle open to new roles. Contact: craga89@gmail.com, github.com/Craga89, linkedin.com/in/craigmichaelthompson.",
+   "text": "Craig Michael Thompson Full-stack engineer Newcastle upon Tyne, UK 17: 59 (UTC+1) 17:59 UTC+1 in Newcastle open to new roles. Contact: craga89@gmail.com, github.com/Craga89, linkedin.com/in/craigmichaelthompson.",
    "href": "#top",
    "kind": "link",
    "key": ""
@@ -244,7 +244,7 @@
   {
    "id": "case-site",
    "title": "this-site.md: This site, run like a production system",
-   "text": "// this site · craigthompson.dev · github.com/Craga89/portfolio This site, run like a production system It's a small site, but it's built and run the way I'd run a product. Everything lives in one public repository, every change goes through automated quality gates, and the AI feature has tests of its own. The results below come live from the latest CI runs. Latest results Lighthouse loads on the live site performance, accessibility and best practices, mobile and desktop from the latest CI run WCAG 2.2 AA suite loads on the live site axe-core in every page state, plus keyboard, focus, reflow and motion checks from the latest CI run ask.sh answer tests loads on the live site right facts, nothing invented, no prompt injection from the latest CI run · see the tests How a visit works the page Browser; GitHub Pagesstatic, prerendered, works offline ask.sh Browser; Cloudflare Workerrate-limited per visitor; Workers AIthree models, each a fallback for the one before; answers only from this site counts Browser; Cloudflare Worker; D1anonymous question log and visit counts What every change goes through build prerender the page, self-host fonts, resize images, print cv.pdf, write the contact card and the ask.sh index deploy GitHub Pages on every merge to main, stamped with the commit check WCAG 2.2 AA suite, Lighthouse thresholds and a screenshot comparison against approved baselines worker unit tests, deploy, a smoke test, then the ask.sh answer tests weekly every check again, plus a dead-link check, visit and question stats, and the open-source counts The same gates I'd put on a product: a change that hurts accessibility, performance or the visuals fails its check. The AI feature is tested like any other code, for the right facts, invented ones and prompt injection. Anonymous…",
+   "text": "// this site · craigthompson.dev · github.com/Craga89/portfolio This site, run like a production system It's a small site, but it's built and run the way I'd run a product. Everything lives in one public repository, every change goes through automated quality gates, and the AI feature has tests of its own. The results below come live from the latest CI runs. Latest results Lighthouse loads on the live site performance, accessibility and best practices, mobile and desktop from the latest CI run WCAG 2.2 AA suite loads on the live site axe-core in every page state, plus keyboard, focus, reflow and motion checks from the latest CI run ask.sh answer tests loads on the live site right facts, nothing invented, no prompt injection from the latest CI run · see the tests How a visit works the page Browser; GitHub Pagesstatic, prerendered, works offline ask.sh Browser; Cloudflare Workerrate-limited per visitor; Workers AIthree models, each a fallback for the one before; answers only from this site counts Browser; Cloudflare Worker; D1anonymous question log and visit counts agents AI agentin the browser; WebMCPthe page's own tools: profile, career, files, search and ask.sh What every change goes through build prerender the page, self-host fonts, resize images, print cv.pdf, write the contact card and the ask.sh index deploy GitHub Pages on every merge to main, stamped with the commit check WCAG 2.2 AA suite, Lighthouse thresholds and a screenshot comparison against approved baselines worker unit tests, deploy, a smoke test, then the ask.sh answer tests weekly every check again, plus a dead-link check, visit and question stats, and the open-source counts The same gates I'd put on a product: a change that hurts accessibility, performance or the visuals fails its check. The AI…",
    "href": "#case-studies",
    "kind": "case",
    "key": "site"

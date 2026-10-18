@@ -11,6 +11,8 @@ Location: Newcastle upon Tyne, UK. Contact: craga89@gmail.com.
 - [GitHub](https://github.com/Craga89)
 - [LinkedIn](https://www.linkedin.com/in/craigmichaelthompson/)
 
+In browsers with WebMCP, the portfolio page also registers tools an agent can call: get_profile, get_career, list_files, read_file, search_site, ask, get_open_source, get_site_report and show_section.
+
 ## Experience
 
 ### Head of Engineering, Hive HR (2018–present)

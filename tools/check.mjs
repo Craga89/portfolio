@@ -115,6 +115,56 @@ try {
   const overflow = await m.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
   ok('no horizontal scroll on mobile', overflow <= 1, String(overflow));
 
+  // WebMCP: a stand-in modelContext records the tools the page registers, then each one is called.
+  const ag = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+  await ag.addInitScript(() => {
+    window.__tools = [];
+    window.__aborted = 0;
+    Object.defineProperty(document, 'modelContext', { configurable: true, value: { registerTool(t, o) { window.__tools.push(t); if (o && o.signal) o.signal.addEventListener('abort', () => { window.__aborted++; }); return Promise.resolve(); } } });
+  });
+  // Never send test questions to the real ask.sh service.
+  let asked = 0;
+  await ag.route(/\/ask(\?|$)/, (r) => { asked++; r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ answer: 'Stub answer.', sources: ['intro'] }) }); });
+  await ag.goto(base + '/', { waitUntil: 'networkidle' });
+  await ag.waitForFunction(() => window.__tools.length > 0, null, { timeout: 5000 }).catch(() => {});
+  const ar = await ag.evaluate(async () => {
+    const T = {}; window.__tools.forEach((t) => { T[t.name] = t; });
+    const call = async (n, i) => { const r = await T[n].execute(i || {}, { signal: new AbortController().signal }); const txt = r && r.content && r.content[0] ? r.content[0].text : ''; let data = null; try { data = JSON.parse(txt); } catch (e) {} return { err: !!(r && r.isError), txt, data }; };
+    const shape = window.__tools.every((t) => /^[a-z_]+$/.test(t.name) && t.description && t.description.length > 30 && t.inputSchema && t.inputSchema.type === 'object' && typeof t.execute === 'function' && t.annotations && typeof t.annotations.readOnlyHint === 'boolean');
+    const out = { names: window.__tools.map((t) => t.name), unique: new Set(window.__tools.map((t) => t.name)).size === window.__tools.length, shape };
+    out.profile = await call('get_profile');
+    out.career = await call('get_career');
+    out.list = await call('list_files');
+    out.listCase = await call('list_files', { section: 'case-studies' });
+    out.read = await call('read_file', { file: 'ai/platform.md', show: true });
+    out.missing = await call('read_file', { file: 'nope.md' });
+    out.search = await call('search_site', { query: 'AWS cost' });
+    out.ask = await call('ask', { question: 'What does Craig do?' });
+    out.oss = await call('get_open_source');
+    out.report = await call('get_site_report');
+    out.show = await call('show_section', { section: 'faq' });
+    await new Promise((r) => setTimeout(r, 1500));
+    out.tabAi = !!document.querySelector('#case-studies [role="tab"][aria-selected="true"]') && /platform/.test(document.querySelector('#case-studies [role="tab"][aria-selected="true"]').textContent);
+    const faq = document.getElementById('faq').getBoundingClientRect().top;
+    out.faqInView = faq > -50 && faq < window.innerHeight / 2;
+    window.dispatchEvent(new Event('pagehide'));
+    out.aborted = window.__aborted;
+    return out;
+  });
+  const d = (k) => (ar[k] && ar[k].data) || {};
+  ok('webmcp registers 9 tools, well-formed', ar.names.length === 9 && ar.unique && ar.shape, ar.names.join(' '));
+  ok('webmcp get_profile', d('profile').name === 'Craig Michael Thompson' && /@/.test(d('profile').email || '') && /cv\.pdf$/.test((d('profile').links || {}).cv_pdf || ''));
+  ok('webmcp get_career', (d('career').work || []).length >= 3 && (d('career').education || []).length >= 1);
+  ok('webmcp list_files', Array.isArray(ar.list.data) && ar.list.data.length === 24 && ar.listCase.data.length === 12 && ar.list.data.every((f) => /\/(case-studies|responsibilities)\/[\w-]+\/$/.test(f.url)), String(ar.list.data && ar.list.data.length));
+  ok('webmcp read_file (and show)', !ar.read.err && d('read').text.length > 200 && ar.tabAi && ar.missing.err && /monorepo\.md/.test(ar.missing.txt));
+  ok('webmcp search_site', (d('search').results || []).length > 0);
+  ok('webmcp ask (stubbed service)', d('ask').answer === 'Stub answer.' && d('ask').via === 'ai' && asked === 1, JSON.stringify(d('ask')).slice(0, 120));
+  ok('webmcp get_open_source', d('oss').merged_pull_requests > 0 && (d('oss').by_quarter || []).length > 0);
+  ok('webmcp get_site_report', /github\.com\/Craga89\/portfolio/.test(d('report').source || ''));
+  ok('webmcp show_section', !ar.show.err && ar.faqInView);
+  ok('webmcp tools unregister on pagehide', ar.aborted === 9, String(ar.aborted));
+  await ag.close();
+
   // CV + 404
   const cv = await browser.newPage({ viewport: { width: 1100, height: 900 } });
   await cv.goto(base + '/cv/', { waitUntil: 'networkidle' });

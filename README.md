@@ -60,6 +60,14 @@ Every push to `main` deploys `site/` through `.github/workflows/pages.yml`.
 
 The Pages deploy (on every push, and daily) collects the latest CI results from their report branches into `site/live.json` (`tools/live.mjs`): Lighthouse scores (`lighthouse`), the WCAG suite (`accessibility`), the ask.sh answer tests with each answer (`evals`, from `.github/workflows/evals.yml`) and the open-source counts (`oss`, from `.github/workflows/oss-stats.yml`, weekly via the GitHub API). The page fetches it once it's idle and shows it in the sidebar, the `this-site.md` case study, the open-source section and "how ask.sh is tested"; until then (or offline, or locally) it shows static fallbacks. The service worker always fetches `live.json` from the network first.
 
+### WebMCP (tools for browser agents)
+
+Where the browser supports [WebMCP](https://webmachinelearning.github.io/webmcp/) (`document.modelContext`, or `navigator.modelContext` before Chrome 150), the home page registers tools an AI agent in the browser can call instead of reading and clicking through the page: `get_profile`, `get_career`, `list_files`, `read_file` (optionally opening the file on the page), `search_site`, `ask` (the ask.sh service, same rate limits), `get_open_source`, `get_site_report` and `show_section`. They're built on what the page already loads (`cv.json`, the ask.sh index, `live.json`), return MCP-style text content, and unregister on `pagehide` through an `AbortSignal`. Browsers without the API skip it entirely.
+
+`tools/check.mjs` tests them with a stand-in `modelContext`: every tool registers with a valid schema, returns the right data, and the `ask` call is stubbed so tests never reach the real service.
+
+In Chrome 149–156 WebMCP is an origin trial. Register each origin the site is served from at https://developer.chrome.com/origintrials/ and add the tokens to `src/origin-trials.txt`; the build turns them into `<meta http-equiv="origin-trial">` tags. To try it without a token, enable `chrome://flags/#enable-webmcp-testing`.
+
 The open-source section has a heatmap of merged pull requests to other projects by year and quarter. `tools/oss-stats.mjs` writes the per-quarter `timeline` (count and repos); the build bakes the latest snapshot into the page (`window.CRAGA_OSS`) so it prerenders, and `live.json` replaces it when newer. It uses one blue ramp per theme (checked for contrast and colour-blind separation), hover tips per cell, and a "as a table" view for screen readers and print.
 
 ## Visits and questions (anonymous)

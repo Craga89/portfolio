@@ -1,0 +1,3 @@
+# Chrome origin-trial tokens, one per line. Lines starting with # are ignored.
+# WebMCP (Chrome 149-156): register each origin the site is served from at
+# https://developer.chrome.com/origintrials/ and paste its token below.

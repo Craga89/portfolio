@@ -2073,6 +2073,7 @@ html[data-vt-dir="prev"]::view-transition-new(c-rs),html[data-vt-dir="prev"]::vi
 <li><span class="c-arch-k">the page</span><span class="c-arch-c"><b>Browser</b></span><span class="c-arch-a" aria-hidden="true">→</span><span class="c-arch-c"><b>GitHub Pages</b><small>static, prerendered, works offline</small></span></li>
 <li><span class="c-arch-k">ask.sh</span><span class="c-arch-c"><b>Browser</b></span><span class="c-arch-a" aria-hidden="true">→</span><span class="c-arch-c"><b>Cloudflare Worker</b><small>rate-limited per visitor</small></span><span class="c-arch-a" aria-hidden="true">→</span><span class="c-arch-c"><b>Workers AI</b><small>three models, each a fallback for the one before; answers only from this site</small></span></li>
 <li><span class="c-arch-k">counts</span><span class="c-arch-c"><b>Browser</b></span><span class="c-arch-a" aria-hidden="true">→</span><span class="c-arch-c"><b>Cloudflare Worker</b></span><span class="c-arch-a" aria-hidden="true">→</span><span class="c-arch-c"><b>D1</b><small>anonymous question log and visit counts</small></span></li>
+<li><span class="c-arch-k">agents</span><span class="c-arch-c"><b>AI agent</b><small>in the browser</small></span><span class="c-arch-a" aria-hidden="true">→</span><span class="c-arch-c"><b>WebMCP</b><small>the page's own tools: profile, career, files, search and ask.sh</small></span></li>
 </ul>
 </div>
 
@@ -2402,7 +2403,7 @@ class Component extends DCLogic {
       return { h: get('hour'), m: get('minute'), off, sr: get('hour') + ':' + get('minute') + ' ' + off };
     } catch (e) { return null; }
   }
-  componentDidMount() { this.mountFx(); this.trackHeader(); this.bindAnchors(); this.bindDeck(); this.bindSpy(); this.bindChat(); this.bindKeys(); this.bindSwipe(); }
+  componentDidMount() { this.mountFx(); this.trackHeader(); this.bindAnchors(); this.bindDeck(); this.bindSpy(); this.bindChat(); this.bindKeys(); this.bindSwipe(); this.bindAgentTools(); }
   bindChat() {
     if (this._onChatLink || typeof document === 'undefined') return;
     this._onChatLink = (e) => {
@@ -3034,7 +3035,192 @@ class Component extends DCLogic {
     const id = typeof step === 'string' ? step : ids[(cur + step + ids.length) % ids.length];
     this.setState({ rtab: id, rSeq: (st.rSeq || 0) + 1 });
   }
-  componentWillUnmount() { if (this._onSpy) { window.removeEventListener('scroll', this._onSpy, true); window.removeEventListener('resize', this._onSpy); ['wheel', 'touchstart', 'keydown'].forEach((t) => window.removeEventListener(t, this._onSpyUser)); document.removeEventListener('click', this._onSpyClick, true); } this._fxKey = null; this.destroyFx(); clearTimeout(this._rTo); if (this._rIo) this._rIo.disconnect(); if (this._rEl && this._rOn) Object.keys(this._rOn).forEach((k) => this._rEl.removeEventListener(k, this._rOn[k])); if (this._onAnchor) document.removeEventListener('click', this._onAnchor, true); if (this._onChatLink) document.removeEventListener('click', this._onChatLink); if (this._rec) { try { this._rec.abort(); } catch (e) {} } clearInterval(this._clockT); if (this._beforePrint) { window.removeEventListener('beforeprint', this._beforePrint); window.removeEventListener('afterprint', this._afterPrint); } if (this._tipKey) { document.removeEventListener('keydown', this._tipKey); document.removeEventListener('pointerdown', this._tipDown); } if (this._hdrRo) { try { this._hdrRo.disconnect(); } catch (e) {} } this.sayStop(); if (this._onKeys) document.removeEventListener('keydown', this._onKeys); if (this._onCopyLink) document.removeEventListener('click', this._onCopyLink, true); }
+  // WebMCP: tools an AI agent in the browser can call, instead of reading and clicking through
+  // the page. Only where the browser offers it: document.modelContext (navigator.modelContext
+  // before Chrome 150). Built on what the page already loads: the ask.sh index, cv.json, live.json.
+  bindAgentTools() {
+    if (this._agentCtl || typeof document === 'undefined') return;
+    const mc = document.modelContext || (typeof navigator !== 'undefined' ? navigator.modelContext : null);
+    if (!mc || typeof mc.registerTool !== 'function') return;
+    const ctl = (this._agentCtl = typeof AbortController !== 'undefined' ? new AbortController() : {});
+    this._agentMc = mc;
+    const abs = (p) => { try { return new URL(p, location.href).href; } catch (e) { return p; } };
+    const getJson = (u) => fetch(u, { cache: 'no-cache' }).then((r) => (r.ok ? r.json() : Promise.reject(new Error(u + ': HTTP ' + r.status))));
+    let cvP = null;
+    const cv = () => (cvP = cvP || getJson('cv.json').catch((e) => { cvP = null; throw e; }));
+    const live = () => {
+      const l = (this.state || {}).live;
+      if (l && Object.keys(l).length) return Promise.resolve(l);
+      return getJson('live.json').then((d) => { if (d && typeof d === 'object' && Object.keys(d).length) this.setState({ live: d }); return d || {}; }).catch(() => ({}));
+    };
+    // Results in the MCP shape (content blocks), which the WebMCP bridges pass straight on.
+    const ok = (data) => ({ content: [{ type: 'text', text: typeof data === 'string' ? data : JSON.stringify(data) }] });
+    const fail = (msg) => ({ content: [{ type: 'text', text: msg }], isError: true });
+    const files = () => this.askIndex().then((ix) => ix.passages.filter((p) => p.kind === 'case' || p.kind === 'resp').map((p) => {
+      const parts = String(p.title).split(':');
+      const file = parts[0].trim();
+      const section = p.kind === 'case' ? 'case-studies' : 'responsibilities';
+      return { file, section, title: parts.slice(1).join(':').trim(), key: p.key, url: abs(section + '/' + file.replace(/\.md$/, '').replace(/\//g, '-') + '/'), text: p.text };
+    }));
+    const sections = Array.prototype.map.call(document.querySelectorAll('.c-root section[id]'), (s) => s.id).filter((id, i, a) => a.indexOf(id) === i);
+    const safe = (fn) => (input, opts) => Promise.resolve().then(() => fn(input || {}, opts)).catch((e) => fail('Something went wrong: ' + (e && e.message ? e.message : e) + '. The same information is on the page and in ' + abs('llms.txt') + '.'));
+    const tools = [
+      {
+        name: 'get_profile',
+        title: 'Profile and contact',
+        description: "Craig Michael Thompson's profile: headline, summary, location, what roles he's open to, how to contact him, links to his CV (web, PDF, JSON Resume), GitHub and LinkedIn, and his skills.",
+        inputSchema: { type: 'object', properties: {} },
+        annotations: { readOnlyHint: true },
+        execute: safe(() => cv().then((c) => {
+          const b = c.basics || {};
+          return ok({
+            name: b.name, headline: b.label, summary: b.summary,
+            location: b.location ? [b.location.city, b.location.region, b.location.countryCode].filter(Boolean).join(', ') : '',
+            email: b.email,
+            links: { portfolio: abs('./'), cv: abs('cv/'), cv_pdf: abs('cv.pdf'), cv_json: abs('cv.json'), contact_card: abs('craig-thompson.vcf'), profiles: (b.profiles || []).map((p) => ({ network: p.network, url: p.url })) },
+            skills: (c.skills || []).map((s) => ({ area: s.name, keywords: s.keywords })),
+          });
+        })),
+      },
+      {
+        name: 'get_career',
+        title: 'Career history',
+        description: 'Every role Craig has held, newest first, with dates, a summary and highlights, plus his education. The same content as his CV.',
+        inputSchema: { type: 'object', properties: {} },
+        annotations: { readOnlyHint: true },
+        execute: safe(() => cv().then((c) => ok({
+          work: (c.work || []).map((w) => ({ company: w.name, role: w.position, location: w.location, start: w.startDate, end: w.endDate || 'present', summary: w.summary, highlights: w.highlights || [] })),
+          education: (c.education || []).map((e) => ({ institution: e.institution, qualification: [e.studyType, e.area].filter(Boolean).join(', '), start: e.startDate, end: e.endDate })),
+        }))),
+      },
+      {
+        name: 'list_files',
+        title: 'List case studies and responsibilities',
+        description: "List the portfolio's files: case studies (projects Craig has led, with outcomes) and responsibilities (what he has owned as Head of Engineering). Returns each file name, title and page URL. Read one with read_file.",
+        inputSchema: { type: 'object', properties: { section: { type: 'string', enum: ['all', 'case-studies', 'responsibilities'], description: 'Which set to list. Defaults to all.' } } },
+        annotations: { readOnlyHint: true },
+        execute: safe((i) => files().then((fs) => ok(fs.filter((f) => !i.section || i.section === 'all' || f.section === i.section).map((f) => ({ file: f.file, section: f.section, title: f.title, url: f.url }))))),
+      },
+      {
+        name: 'read_file',
+        title: 'Read a case study or responsibility',
+        description: 'The full text of one case study or responsibility, by file name from list_files (for example monorepo.md or hiring.md). Set show to true to also open it on the page for the person you are helping.',
+        inputSchema: { type: 'object', properties: { file: { type: 'string', description: 'File name, for example "monorepo.md", "ai/platform.md" or "budget.md".' }, show: { type: 'boolean', description: 'Also open the file on the page and scroll to it. Defaults to false.' } }, required: ['file'] },
+        annotations: { readOnlyHint: true },
+        execute: safe((i) => files().then((fs) => {
+          const want = String(i.file || '').trim().toLowerCase().replace(/^\.?\//, '').replace(/^(case-studies|responsibilities)\//, '');
+          const f = fs.find((x) => x.file.toLowerCase() === want || x.file.toLowerCase().replace(/\.md$/, '') === want || x.key === want);
+          if (!f) return fail('No file called "' + i.file + '". Files: ' + fs.map((x) => x.file).join(', ') + '.');
+          if (i.show) {
+            if (f.section === 'case-studies') this.setState({ tab: f.key }); else this.goResp(f.key);
+            setTimeout(() => this.scrollToId(f.section), 60);
+          }
+          return ok({ file: f.file, section: f.section, title: f.title, url: f.url, text: f.text });
+        })),
+      },
+      {
+        name: 'search_site',
+        title: 'Search the portfolio',
+        description: "Keyword search across everything on the site (profile, career, responsibilities, case studies, stack, FAQ). Returns the best-matching passages in Craig's own words. Use ask for a written answer instead.",
+        inputSchema: { type: 'object', properties: { query: { type: 'string', description: 'What to look for, for example "AWS cost" or "accessibility".', maxLength: 300 } }, required: ['query'] },
+        annotations: { readOnlyHint: true },
+        execute: safe((i) => this.askIndex().then((ix) => {
+          const q = String(i.query || '').trim().slice(0, 300);
+          if (!q) return fail('Give a query to search for.');
+          const r = this.askSearch(ix, q);
+          return ok({ query: q, results: (r.sources || []).map((p) => ({ title: p.title, text: p.text.length > 900 ? p.text.slice(0, 900) + '…' : p.text, url: abs(p.href || './') })) });
+        })),
+      },
+      {
+        name: 'ask',
+        title: 'Ask a question (ask.sh)',
+        description: "Ask a question about Craig's experience and get a short answer written only from this site's content, the same as the ask.sh box on the page. Rate-limited, so ask one question at a time; for exact wording use read_file or search_site.",
+        inputSchema: { type: 'object', properties: { question: { type: 'string', description: 'The question, for example "Has Craig led an ISO 27001 audit?"', maxLength: 300 } }, required: ['question'] },
+        annotations: { readOnlyHint: true },
+        execute: safe((i, opts) => this.askIndex().then((ix) => {
+          const q = String(i.question || '').trim().slice(0, 300);
+          if (!q) return fail('Give a question to ask.');
+          const cfg = (typeof window !== 'undefined' && window.CRAGA_ASK) || {};
+          const local = (note) => { const r = this.askSearch(ix, q); return ok({ question: q, answer: r.answer, via: 'search', note, sources: (r.sources || []).map((p) => p.title) }); };
+          if (!cfg.endpoint) return local('The AI answer service is only on the live site, so this is the closest passage.');
+          const sig = opts && opts.signal ? opts.signal : undefined;
+          return fetch(cfg.endpoint, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ q }), signal: sig })
+            .then((r) => (r.ok ? r.json() : Promise.reject(new Error('HTTP ' + r.status))))
+            .then((d) => {
+              if (!d || !d.answer) throw new Error('empty answer');
+              return ok({ question: q, answer: d.answer, via: 'ai', sources: (d.sources || []).map((id) => (ix.byId[id] ? ix.byId[id].title : id)) });
+            })
+            .catch(() => local("The AI answer service didn't respond, so this is the closest passage."));
+        })),
+      },
+      {
+        name: 'get_open_source',
+        title: 'Open-source contributions',
+        description: "Craig's open-source work: merged pull requests to other people's projects (with a per-quarter timeline and the repositories), and qTip2, the jQuery tooltip library he wrote and maintains. Counts come from the GitHub API, updated weekly.",
+        inputSchema: { type: 'object', properties: {} },
+        annotations: { readOnlyHint: true },
+        execute: safe(() => live().then((l) => {
+          const o = l.oss || {};
+          const tl = o.timeline || (window.CRAGA_OSS && window.CRAGA_OSS.timeline) || [];
+          const projects = [];
+          document.querySelectorAll('#oss a[href^="https://github.com/"]').forEach((a) => { const u = a.href.replace(/\/$/, ''); if (!projects.some((p) => p.url === u)) projects.push({ name: (a.textContent || '').trim(), url: u }); });
+          return ok({
+            merged_pull_requests: o.prs != null ? o.prs : tl.reduce((n, t) => n + t.n, 0), repositories: o.repos, since: o.since, counted_at: o.at,
+            qtip2: o.qtip ? { stars: o.qtip.stars, forks: o.qtip.forks, commits: o.qtip.commits, url: 'https://github.com/qTip2/qTip2' } : { url: 'https://github.com/qTip2/qTip2' },
+            by_quarter: tl.map((t) => ({ year: t.y, quarter: t.q, merged: t.n, repositories: t.repos })),
+            linked_projects: projects,
+            github: 'https://github.com/Craga89',
+          });
+        })),
+      },
+      {
+        name: 'get_site_report',
+        title: 'How this site is built and tested',
+        description: "This site's latest automated results: Lighthouse scores (mobile and desktop), the WCAG 2.2 AA accessibility suite, and the ask.sh answer tests, with the deployed commit and the public source repository.",
+        inputSchema: { type: 'object', properties: {} },
+        annotations: { readOnlyHint: true },
+        execute: safe(() => live().then((l) => {
+          const B = window.CRAGA_BUILD || {};
+          return ok({
+            source: 'https://github.com/Craga89/portfolio',
+            deployed: { commit: B.sha || null, at: B.at || null },
+            lighthouse: l.lighthouse ? { mobile: l.lighthouse.mobile, desktop: l.lighthouse.desktop, at: l.lighthouse.at } : null,
+            accessibility: l.a11y ? { standard: 'WCAG 2.2 AA', pass: l.a11y.pass, axe_runs: l.a11y.axeRuns, violations: l.a11y.violations, at: l.a11y.at } : null,
+            ask_tests: l.evals ? { passed: l.evals.passed, total: l.evals.total, at: l.evals.at } : null,
+            note: l.lighthouse || l.a11y || l.evals ? '' : 'Live results are only on the deployed site.',
+          });
+        })),
+      },
+      {
+        name: 'show_section',
+        title: 'Show a section of the page',
+        description: 'Scroll the page to one of its sections and highlight it, to point the person you are helping at something.',
+        inputSchema: { type: 'object', properties: { section: { type: 'string', enum: sections, description: 'Section id.' } }, required: ['section'] },
+        annotations: { readOnlyHint: false },
+        execute: safe((i) => {
+          if (sections.indexOf(i.section) < 0) return fail('No section "' + i.section + '". Sections: ' + sections.join(', ') + '.');
+          this.scrollToId(i.section);
+          return ok({ shown: i.section, url: abs('#' + i.section) });
+        }),
+      },
+    ];
+    this._agentTools = tools.map((t) => t.name);
+    tools.forEach((t) => {
+      try {
+        const p = mc.registerTool(t, ctl.signal ? { signal: ctl.signal } : undefined);
+        if (p && typeof p.catch === 'function') p.catch(() => {});
+      } catch (e) {}
+    });
+  }
+  unbindAgentTools() {
+    if (!this._agentCtl) return;
+    try { if (this._agentCtl.abort) this._agentCtl.abort(); } catch (e) {}
+    // Earlier builds of the API have no AbortSignal option, only unregisterTool.
+    const mc = this._agentMc;
+    if (mc && typeof mc.unregisterTool === 'function') (this._agentTools || []).forEach((n) => { try { const p = mc.unregisterTool(n); if (p && p.catch) p.catch(() => {}); } catch (e) {} });
+    this._agentCtl = null;
+  }
+  componentWillUnmount() { this.unbindAgentTools(); if (this._onSpy) { window.removeEventListener('scroll', this._onSpy, true); window.removeEventListener('resize', this._onSpy); ['wheel', 'touchstart', 'keydown'].forEach((t) => window.removeEventListener(t, this._onSpyUser)); document.removeEventListener('click', this._onSpyClick, true); } this._fxKey = null; this.destroyFx(); clearTimeout(this._rTo); if (this._rIo) this._rIo.disconnect(); if (this._rEl && this._rOn) Object.keys(this._rOn).forEach((k) => this._rEl.removeEventListener(k, this._rOn[k])); if (this._onAnchor) document.removeEventListener('click', this._onAnchor, true); if (this._onChatLink) document.removeEventListener('click', this._onChatLink); if (this._rec) { try { this._rec.abort(); } catch (e) {} } clearInterval(this._clockT); if (this._beforePrint) { window.removeEventListener('beforeprint', this._beforePrint); window.removeEventListener('afterprint', this._afterPrint); } if (this._tipKey) { document.removeEventListener('keydown', this._tipKey); document.removeEventListener('pointerdown', this._tipDown); } if (this._hdrRo) { try { this._hdrRo.disconnect(); } catch (e) {} } this.sayStop(); if (this._onKeys) document.removeEventListener('keydown', this._onKeys); if (this._onCopyLink) document.removeEventListener('click', this._onCopyLink, true); }
   fxKey() {
     const motion = this.props.motion ?? true;
     const theme = (this.state && this.state.theme) || this.props.theme || 'dark';
