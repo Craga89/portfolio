@@ -138,6 +138,8 @@ try {
     out.listCase = await call('list_files', { section: 'case-studies' });
     out.read = await call('read_file', { file: 'ai/platform.md', show: true });
     out.missing = await call('read_file', { file: 'nope.md' });
+    out.badArgs = await call('search_site', { query: 42 });
+    out.noShowOnMcp = !!T.read_file.inputSchema.properties.show;
     out.search = await call('search_site', { query: 'AWS cost' });
     out.ask = await call('ask', { question: 'What does Craig do?' });
     out.oss = await call('get_open_source');
@@ -155,9 +157,11 @@ try {
   ok('webmcp registers 9 tools, well-formed', ar.names.length === 9 && ar.unique && ar.shape, ar.names.join(' '));
   ok('webmcp get_profile', d('profile').name === 'Craig Michael Thompson' && /@/.test(d('profile').email || '') && /cv\.pdf$/.test((d('profile').links || {}).cv_pdf || ''));
   ok('webmcp get_career', (d('career').work || []).length >= 3 && (d('career').education || []).length >= 1);
-  ok('webmcp list_files', Array.isArray(ar.list.data) && ar.list.data.length === 25 && ar.listCase.data.length === 13 && ar.list.data.every((f) => /\/(case-studies|responsibilities)\/[\w-]+\/$/.test(f.url)), String(ar.list.data && ar.list.data.length));
+  const lf = (x) => (x && x.data && x.data.files) || [];
+  ok('webmcp list_files', lf(ar.list).length === 25 && lf(ar.listCase).length === 13 && lf(ar.list).every((f) => /\/(case-studies|responsibilities)\/[\w-]+\/$/.test(f.url)), String(lf(ar.list).length));
   ok('webmcp read_file (and show)', !ar.read.err && d('read').text.length > 200 && ar.tabAi && ar.missing.err && /monorepo\.md/.test(ar.missing.txt));
-  ok('webmcp search_site', (d('search').results || []).length > 0);
+  ok('webmcp search_site', (d('search').results || []).length > 0 && ar.badArgs.err && /string/.test(ar.badArgs.txt));
+  ok('webmcp page-only arguments present (show)', ar.noShowOnMcp);
   ok('webmcp ask (stubbed service)', d('ask').answer === 'Stub answer.' && d('ask').via === 'ai' && asked === 1, JSON.stringify(d('ask')).slice(0, 120));
   ok('webmcp get_open_source', d('oss').merged_pull_requests > 0 && (d('oss').by_quarter || []).length > 0);
   ok('webmcp get_site_report', /github\.com\/Craga89\/portfolio/.test(d('report').source || ''));

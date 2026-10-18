@@ -33,3 +33,13 @@ database_id = "50a1bb5b-4518-449e-a2a3-c62990219ca0"
 
 [observability]
 enabled = true
+
+# MCP endpoint (/mcp): 60 requests a minute per client. ask tool calls also count against ASK_LIMITER.
+[[ratelimits]]
+name = "MCP_LIMITER"
+namespace_id = "1004"
+simple = { limit = 60, period = 60 }
+
+[vars]
+# Where the MCP tools link to and read live.json from. Switch to https://craigthompson.dev once it serves the site.
+SITE_URL = "https://craga.dev"

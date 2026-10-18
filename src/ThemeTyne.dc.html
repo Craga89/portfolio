@@ -511,11 +511,18 @@ a{color:var(--acc)!important;text-decoration:none!important}
 .c-mcp-dot{flex:none;width:8px;height:8px;align-self:flex-start;margin-top:.45em;border-radius:50%;box-shadow:inset 0 0 0 1.5px var(--dim)}
 .c-mcp-live[data-on="true"]{color:var(--text2)}.c-mcp-live[data-on="true"] .c-mcp-dot{background:var(--ok);box-shadow:none}
 .c-mcp-flow{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:14px}
-.c-mcp-flow li:not(.c-mcp-a){border:1px solid var(--line3);border-radius:6px;padding:6px 10px;color:var(--text3)}
+.c-mcp-flow li{display:flex;align-items:center;gap:8px;min-width:0}
+.c-mcp-s{border:1px solid var(--line3);border-radius:6px;padding:6px 10px;color:var(--text3);min-width:0}
 .c-mcp-flow b{color:var(--head);font-weight:600}
-.c-mcp-flow .c-mcp-end{border-color:var(--ok)}
+.c-mcp-s.c-mcp-end{border-color:var(--ok)}
 .c-mcp-a{color:var(--acc)}
-@media (max-width:560px){.c-mcp-flow{flex-direction:column;align-items:stretch;gap:4px}.c-mcp-a{align-self:flex-start;margin-left:14px;transform:rotate(90deg);line-height:1}}
+@media (max-width:560px){.c-mcp-flow{flex-direction:column;align-items:stretch;gap:4px}.c-mcp-flow li{flex-direction:column;align-items:stretch;gap:4px}.c-mcp-a{align-self:flex-start;margin-left:14px;transform:rotate(90deg);line-height:1}}
+.c-mcp-url{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;margin:10px 0 0;font-size:13px}
+.c-mcp-url-k{color:var(--mute)}
+.c-mcp-url code{font-family:var(--f-mono,ui-monospace,monospace);color:var(--head);overflow-wrap:anywhere;min-width:0}
+.c-mcp-copy{min-height:28px;padding:0 10px;border:1px solid var(--line3);border-radius:6px;background:transparent;color:var(--acc);font:inherit;font-size:13px;cursor:pointer}
+.c-mcp-copy:hover{border-color:var(--acc)}
+.c-mcp-copy:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
 .c-mcp-t{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,250px),1fr));gap:8px 12px}
 .c-mcp-t li{border:1px solid var(--line2);border-radius:8px;padding:10px 12px;min-width:0}
 .c-mcp-t code{font-family:var(--f-mono,ui-monospace,monospace);font-size:13px;color:var(--head);overflow-wrap:anywhere}
@@ -2066,19 +2073,20 @@ html[data-vt-dir="prev"]::view-transition-new(c-rs),html[data-vt-dir="prev"]::vi
 <div style="{{vMcp}}">
 <div role="tabpanel" aria-label="webmcp.md" class="c-pop" style="border: 1px solid var(--line2); border-radius: 12px; background: var(--panel); padding: clamp(22px, 4vw, 40px); display: flex; flex-direction: column; gap: 32px">
 <div>
-<div style="font-size: 13px; color: var(--acc)">// webmcp · tools for browser agents · 2026</div>
+<div style="font-size: 13px; color: var(--acc)">// webmcp + mcp · tools for AI agents · 2026</div>
 <h3 style="margin: 8px 0 10px; font-size: clamp(22px, 3vw, 30px); line-height: 1.25; color: var(--head)">A site AI agents can use, not just read</h3>
-<p style="margin: 0; color: var(--text3); max-width: 72ch">AI assistants are starting to work inside the browser, on the page a person has open. Rather than leave them to read the screen and guess, I've given this site its own tools through WebMCP, a draft web standard. An agent calls a tool and gets structured answers, drawn from the same content visitors read.</p>
+<p style="margin: 0; color: var(--text3); max-width: 72ch">AI assistants are starting to work inside the browser, on the page a person has open. Rather than leave them to read the screen and guess, I've given this site its own tools through WebMCP, a draft web standard. An agent calls a tool and gets structured answers, drawn from the same content visitors read. The same tools also run as an MCP server, so any MCP client can use them without the site open.</p>
 <p class="c-mcp-live" data-on="{{agent.on}}"><span class="c-mcp-dot" aria-hidden="true"></span>{{agent.line}}</p>
+<sc-if value="{{agent.mcpUrl}}" hint-placeholder-val="true"><p class="c-mcp-url"><span class="c-mcp-url-k">MCP server</span><code>{{agent.mcpUrl}}</code><button type="button" class="c-mcp-copy" onClick="{{agent.copy}}">{{agent.copyText}}</button></p></sc-if>
 </div>
 
 <div>
-<div style="font-size: 13px; color: var(--mute); margin-bottom: 10px">How an agent uses the page</div>
-<ol class="c-mcp-flow" aria-label="How an agent uses the page">
-<li><b>AI agent</b> in the visitor's browser</li><li aria-hidden="true" class="c-mcp-a">→</li>
-<li><b>calls a tool</b> the page registered</li><li aria-hidden="true" class="c-mcp-a">→</li>
-<li><b>reads the site's own data</b> cv.json, the ask.sh index, CI results</li><li aria-hidden="true" class="c-mcp-a">→</li>
-<li class="c-mcp-end"><b>gets a structured answer</b> or opens it on screen</li>
+<div style="font-size: 13px; color: var(--mute); margin-bottom: 10px">How an agent uses the tools</div>
+<ol class="c-mcp-flow" aria-label="How an agent uses the tools">
+<li><span class="c-mcp-s"><b>AI agent</b> in the browser, or any MCP client</span><span class="c-mcp-a" aria-hidden="true">→</span></li>
+<li><span class="c-mcp-s"><b>calls a tool</b> through WebMCP or MCP</span><span class="c-mcp-a" aria-hidden="true">→</span></li>
+<li><span class="c-mcp-s"><b>reads the site's own data</b> cv.json, the ask.sh index, CI results</span><span class="c-mcp-a" aria-hidden="true">→</span></li>
+<li><span class="c-mcp-s c-mcp-end"><b>gets a structured answer</b> or opens it on screen</span></li>
 </ol>
 </div>
 
@@ -2092,16 +2100,18 @@ html[data-vt-dir="prev"]::view-transition-new(c-rs),html[data-vt-dir="prev"]::vi
 <li><code>ask</code><span>an ask.sh answer, with the same limits as the box on the page</span></li>
 <li><code>get_open_source</code><span>merged pull requests by quarter, and qTip2</span></li>
 <li><code>get_site_report</code><span>the latest Lighthouse, WCAG and ask.sh results</span></li>
-<li><code>show_section</code><span>scrolls to a section and highlights it</span></li>
+<li><code>show_section</code><span>scrolls to a section and highlights it (on the page only)</span></li>
 </ul>
 </div>
 
 <div style="border-left: 3px solid var(--ok); padding: 4px 0 4px 18px">
 <div style="font-size: 13px; color: var(--ok); margin-bottom: 8px"># in practice</div>
 <ul style="margin: 0; padding-left: 18px; color: var(--text); display: flex; flex-direction: column; gap: 6px">
-<li>The tools are built on the files the page already loads, so an agent gets the same facts a visitor reads.</li>
+<li>Each tool is defined once, in one shared module, and runs in both places: on the page through WebMCP and on the Worker through MCP. The site's search lives there too, so ask.sh, the page and the server can't drift apart.</li>
+<li>The tools read the same files the page loads, so an agent gets the same facts a visitor reads.</li>
+<li>The MCP server is public, read-only and rate-limited. It keeps no state between requests and serves both the current protocol (2026-07-28) and older clients.</li>
 <li>Browsers without WebMCP skip it. In Chrome it runs as an origin trial.</li>
-<li>CI tests every tool against a stand-in for the browser API: it registers, returns the right data and unregisters when the page closes. The ask tool is stubbed, so tests never reach the live service.</li>
+<li>CI tests both: the page's tools against a stand-in for the browser API, and the server against both protocol versions and the official MCP client. The ask tool is stubbed in tests, so they never reach the live service.</li>
 <li>For agents that read rather than act, the same content is in llms.txt and cv.json.</li>
 </ul>
 </div>
@@ -2131,7 +2141,7 @@ html[data-vt-dir="prev"]::view-transition-new(c-rs),html[data-vt-dir="prev"]::vi
 <li><span class="c-arch-k">the page</span><span class="c-arch-c"><b>Browser</b></span><span class="c-arch-a" aria-hidden="true">→</span><span class="c-arch-c"><b>GitHub Pages</b><small>static, prerendered, works offline</small></span></li>
 <li><span class="c-arch-k">ask.sh</span><span class="c-arch-c"><b>Browser</b></span><span class="c-arch-a" aria-hidden="true">→</span><span class="c-arch-c"><b>Cloudflare Worker</b><small>rate-limited per visitor</small></span><span class="c-arch-a" aria-hidden="true">→</span><span class="c-arch-c"><b>Workers AI</b><small>three models, each a fallback for the one before; answers only from this site</small></span></li>
 <li><span class="c-arch-k">counts</span><span class="c-arch-c"><b>Browser</b></span><span class="c-arch-a" aria-hidden="true">→</span><span class="c-arch-c"><b>Cloudflare Worker</b></span><span class="c-arch-a" aria-hidden="true">→</span><span class="c-arch-c"><b>D1</b><small>anonymous question log and visit counts</small></span></li>
-<li><span class="c-arch-k">agents</span><span class="c-arch-c"><b>AI agent</b><small>in the browser</small></span><span class="c-arch-a" aria-hidden="true">→</span><span class="c-arch-c"><b>WebMCP</b><small>the page's own tools: profile, career, files, search and ask.sh</small></span></li>
+<li><span class="c-arch-k">agents</span><span class="c-arch-c"><b>AI agent</b><small>in the browser</small></span><span class="c-arch-a" aria-hidden="true">→</span><span class="c-arch-c"><b>WebMCP or MCP</b><small>the same tools, on the page or on the Worker: profile, career, files, search and ask.sh</small></span></li>
 </ul>
 </div>
 
@@ -2899,18 +2909,11 @@ class Component extends DCLogic {
       const cfg = (typeof window !== 'undefined' && window.CRAGA_ASK) || {};
       this._askIdx = fetch(cfg.index || 'assets/ask-index.json')
         .then((r) => (r.ok ? r.json() : Promise.reject(new Error('index ' + r.status))))
-        .then((d) => {
-          const STOP = new Set('a an and are as at be been but by can did do does for from had has have he her his how i in is it its me my of on or our she so that the their them they this to was we were what when where which who why will with you your about any ever there been craig craigs'.split(' '));
-          const toks = (s) => (s.toLowerCase().match(/[a-z0-9+#.]+/g) || []).map((w) => w.replace(/\.+$/, '')).filter((w) => w.length > 1 && !STOP.has(w));
-          const df = {};
-          d.byId = {};
-          d.passages.forEach((p) => {
-            p._t = toks(p.title);
-            p._b = toks(p.text);
-            new Set(p._t.concat(p._b)).forEach((w) => { df[w] = (df[w] || 0) + 1; });
-            d.byId[p.id] = p;
-          });
-          d.idf = (w) => Math.log(1 + d.passages.length / (df[w] || 0.5));
+        .then((raw) => {
+          // Tokenising and ranking are shared with the worker and the agent tools (shared/agent-tools.js).
+          const A = typeof window !== 'undefined' && window.CragaAgent;
+          if (!A) throw new Error('search unavailable');
+          const d = A.prepareIndex(raw);
           // File names mentioned in answers (budget.md, ai/platform.md…) link to their tab.
           const map = { 'readme.md': { href: '#top' }, 'career.log': { href: '#career' }, 'responsibilities/': { href: '#responsibilities' }, 'case-studies/': { href: '#case-studies' }, 'faq.md': { href: '#faq' }, 'recommendations.txt': { href: '#recommendations' }, 'craigthompson.dev/cv': { href: 'cv/' }, 'stack/': { href: '#stack' }, 'open-source/': { href: '#oss' }, 'ask.sh': { href: '#ask' }, 'cv.json': { href: 'cv.json' }, 'cv.pdf': { href: 'cv.pdf' }, 'contact.vcf': { href: 'craig-thompson.vcf' } };
           d.passages.forEach((p) => {
@@ -2922,7 +2925,6 @@ class Component extends DCLogic {
           const esc = (k) => k.replace(/[.*+?^${}()|[\]\\/]/g, '\\$&');
           const keys = Object.keys(map).sort((a, b) => b.length - a.length).map(esc);
           this._askLinks = { map, re: new RegExp('(?<![\\w./-])(?:' + keys.join('|') + ')(?![\\w/-])|[\\w.+-]+@[\\w-]+\\.[\\w.]+[a-z]', 'gi') };
-          d.toks = toks;
           return d;
         });
       this._askIdx.catch(() => { this._askIdx = null; });
@@ -2930,26 +2932,7 @@ class Component extends DCLogic {
     return this._askIdx;
   }
   askSearch(index, q) {
-    const ALT = { study: 'education university degree meng', studied: 'education university degree meng', degree: 'education university meng', university: 'education', qualification: 'education degree', school: 'education university', salary: 'roles open', pay: 'roles open', location: 'newcastle remote hybrid', based: 'newcastle remote hybrid', live: 'newcastle remote hybrid', remote: 'hybrid newcastle', ai: 'ai-first llm', team: 'engineers lead', manage: 'lead leadership engineers', managed: 'lead leadership engineers', hire: 'hiring hired interview', hiring: 'hired interview', money: 'budget cost', budget: 'cost', cost: 'budget', security: 'iso27001 soc compliance', compliance: 'iso27001 audit', oncall: 'incidents on-call', 'on-call': 'incidents', outage: 'incidents', open: 'roles' };
-    const base = index.toks(q);
-    const terms = base.concat(...base.map((w) => (ALT[w] ? ALT[w].split(' ').filter((x) => !base.includes(x)) : [])));
-    const scored = index.passages.map((p) => {
-      let s = 0;
-      terms.forEach((w) => {
-        const stem = w.length > 4 ? w.slice(0, -1) : w;
-        const hit = (arr) => arr.reduce((n, x) => n + (x === w || (stem.length > 3 && x.startsWith(stem)) ? 1 : 0), 0);
-        s += (3 * hit(p._t) + Math.min(hit(p._b), 4)) * index.idf(w);
-      });
-      return { p, s: s / Math.sqrt(10 + p._b.length / 20) };
-    }).filter((x) => x.s > 0).sort((a, b) => b.s - a.s);
-    if (!scored.length) {
-      return { answer: "I couldn't find anything about that on the site. Email craga89@gmail.com and Craig will answer directly.", sources: [] };
-    }
-    const best = scored[0].p;
-    const sentences = best.text.match(/[^.!?]+[.!?]+/g) || [best.text];
-    let answer = '';
-    for (const s of sentences) { if ((answer + s).length > 420 && answer) break; answer += s; }
-    return { answer: answer.trim(), sources: scored.slice(0, 3).map((x) => x.p) };
+    return window.CragaAgent.bestAnswer(index, q);
   }
   askSubmit(raw, from) {
     const q = String(raw || '').trim().slice(0, 300);
@@ -3093,187 +3076,58 @@ class Component extends DCLogic {
     const id = typeof step === 'string' ? step : ids[(cur + step + ids.length) % ids.length];
     this.setState({ rtab: id, rSeq: (st.rSeq || 0) + 1 });
   }
-  // WebMCP: tools an AI agent in the browser can call, instead of reading and clicking through
-  // the page. Only where the browser offers it: document.modelContext (navigator.modelContext
-  // before Chrome 150). Built on what the page already loads: the ask.sh index, cv.json, live.json.
   // Work that can wait until the page has loaded and gone quiet.
   whenIdle(fn) {
     const run = () => { if (typeof requestIdleCallback === 'function') requestIdleCallback(() => fn(), { timeout: 3000 }); else setTimeout(fn, 1); };
     if (document.readyState === 'complete') run(); else window.addEventListener('load', run, { once: true });
   }
+  // WebMCP: tools an AI agent in the browser can call, instead of reading and clicking through
+  // the page. Only where the browser offers it: document.modelContext (navigator.modelContext
+  // before Chrome 150).
   bindAgentTools() {
     if (this._agentCtl || typeof document === 'undefined') return;
     const mc = document.modelContext || (typeof navigator !== 'undefined' ? navigator.modelContext : null);
-    if (!mc || typeof mc.registerTool !== 'function') return;
+    const A = window.CragaAgent;
+    if (!mc || typeof mc.registerTool !== 'function' || !A) return;
     const ctl = (this._agentCtl = typeof AbortController !== 'undefined' ? new AbortController() : {});
     this._agentMc = mc;
-    const abs = (p) => { try { return new URL(p, location.href).href; } catch (e) { return p; } };
+    // The tools themselves are in shared/agent-tools.js, shared with the MCP server in the worker.
+    // This is where they get their data on the page: what the page has already loaded.
     const getJson = (u) => fetch(u, { cache: 'no-cache' }).then((r) => (r.ok ? r.json() : Promise.reject(new Error(u + ': HTTP ' + r.status))));
     let cvP = null;
-    const cv = () => (cvP = cvP || getJson('cv.json').catch((e) => { cvP = null; throw e; }));
-    const live = () => {
-      const l = (this.state || {}).live;
-      if (l && Object.keys(l).length) return Promise.resolve(l);
-      return getJson('live.json').then((d) => { if (d && typeof d === 'object' && Object.keys(d).length) this.setState({ live: d }); return d || {}; }).catch(() => ({}));
-    };
-    // Results in the MCP shape (content blocks), which the WebMCP bridges pass straight on.
-    const ok = (data) => ({ content: [{ type: 'text', text: typeof data === 'string' ? data : JSON.stringify(data) }] });
-    const fail = (msg) => ({ content: [{ type: 'text', text: msg }], isError: true });
-    const files = () => this.askIndex().then((ix) => ix.passages.filter((p) => p.kind === 'case' || p.kind === 'resp').map((p) => {
-      const parts = String(p.title).split(':');
-      const file = parts[0].trim();
-      const section = p.kind === 'case' ? 'case-studies' : 'responsibilities';
-      return { file, section, title: parts.slice(1).join(':').trim(), key: p.key, url: abs(section + '/' + file.replace(/\.md$/, '').replace(/\//g, '-') + '/'), text: p.text };
-    }));
     const sections = Array.prototype.map.call(document.querySelectorAll('.c-root section[id]'), (s) => s.id).filter((id, i, a) => a.indexOf(id) === i);
-    const safe = (fn) => (input, opts) => Promise.resolve().then(() => fn(input || {}, opts)).catch((e) => fail('Something went wrong: ' + (e && e.message ? e.message : e) + '. The same information is on the page and in ' + abs('llms.txt') + '.'));
-    const tools = [
-      {
-        name: 'get_profile',
-        title: 'Profile and contact',
-        description: "Craig Michael Thompson's profile: headline, summary, location, what roles he's open to, how to contact him, links to his CV (web, PDF, JSON Resume), GitHub and LinkedIn, and his skills.",
-        inputSchema: { type: 'object', properties: {} },
-        annotations: { readOnlyHint: true },
-        execute: safe(() => cv().then((c) => {
-          const b = c.basics || {};
-          return ok({
-            name: b.name, headline: b.label, summary: b.summary,
-            location: b.location ? [b.location.city, b.location.region, b.location.countryCode].filter(Boolean).join(', ') : '',
-            email: b.email,
-            links: { portfolio: abs('./'), cv: abs('cv/'), cv_pdf: abs('cv.pdf'), cv_json: abs('cv.json'), contact_card: abs('craig-thompson.vcf'), profiles: (b.profiles || []).map((p) => ({ network: p.network, url: p.url })) },
-            skills: (c.skills || []).map((s) => ({ area: s.name, keywords: s.keywords })),
-          });
-        })),
+    const src = {
+      url: (p) => { try { return new URL(p, location.href).href; } catch (e) { return p; } },
+      cv: () => (cvP = cvP || getJson('cv.json').catch((e) => { cvP = null; throw e; })),
+      index: () => this.askIndex(),
+      live: () => {
+        const l = (this.state || {}).live;
+        const snap = window.CRAGA_OSS ? { oss: { timeline: window.CRAGA_OSS.timeline } } : {};
+        if (l && Object.keys(l).length) return Promise.resolve(l);
+        return getJson('live.json').then((d) => { if (d && typeof d === 'object' && Object.keys(d).length) { this.setState({ live: d }); return d; } return snap; }).catch(() => snap);
       },
-      {
-        name: 'get_career',
-        title: 'Career history',
-        description: 'Every role Craig has held, newest first, with dates, a summary and highlights, plus his education. The same content as his CV.',
-        inputSchema: { type: 'object', properties: {} },
-        annotations: { readOnlyHint: true },
-        execute: safe(() => cv().then((c) => ok({
-          work: (c.work || []).map((w) => ({ company: w.name, role: w.position, location: w.location, start: w.startDate, end: w.endDate || 'present', summary: w.summary, highlights: w.highlights || [] })),
-          education: (c.education || []).map((e) => ({ institution: e.institution, qualification: [e.studyType, e.area].filter(Boolean).join(', '), start: e.startDate, end: e.endDate })),
-        }))),
+      projects: () => A.linkedProjects(document),
+      build: () => window.CRAGA_BUILD || null,
+      ask: (q, signal) => {
+        const cfg = window.CRAGA_ASK || {};
+        if (!cfg.endpoint) return Promise.reject(new Error('no ask.sh service here'));
+        return fetch(cfg.endpoint, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ q, via: 'webmcp' }), signal })
+          .then((r) => (r.ok ? r.json() : Promise.reject(new Error('HTTP ' + r.status))));
       },
-      {
-        name: 'list_files',
-        title: 'List case studies and responsibilities',
-        description: "List the portfolio's files: case studies (projects Craig has led, with outcomes) and responsibilities (what he has owned as Head of Engineering). Returns each file name, title and page URL. Read one with read_file.",
-        inputSchema: { type: 'object', properties: { section: { type: 'string', enum: ['all', 'case-studies', 'responsibilities'], description: 'Which set to list. Defaults to all.' } } },
-        annotations: { readOnlyHint: true },
-        execute: safe((i) => files().then((fs) => ok(fs.filter((f) => !i.section || i.section === 'all' || f.section === i.section).map((f) => ({ file: f.file, section: f.section, title: f.title, url: f.url }))))),
+      sections: () => sections,
+      show: (f) => {
+        if (f.section === 'case-studies') this.setState({ tab: f.key }); else this.goResp(f.key);
+        clearTimeout(this._agentScrollT);
+        this._agentScrollT = setTimeout(() => this.scrollToId(f.section), 60);
       },
-      {
-        name: 'read_file',
-        title: 'Read a case study or responsibility',
-        description: 'The full text of one case study or responsibility, by file name from list_files (for example monorepo.md or hiring.md). Set show to true to also open it on the page for the person you are helping.',
-        inputSchema: { type: 'object', properties: { file: { type: 'string', description: 'File name, for example "monorepo.md", "ai/platform.md" or "budget.md".' }, show: { type: 'boolean', description: 'Also open the file on the page and scroll to it. Defaults to false.' } }, required: ['file'] },
-        annotations: { readOnlyHint: true },
-        execute: safe((i) => files().then((fs) => {
-          const want = String(i.file || '').trim().toLowerCase().replace(/^\.?\//, '').replace(/^(case-studies|responsibilities)\//, '');
-          const f = fs.find((x) => x.file.toLowerCase() === want || x.file.toLowerCase().replace(/\.md$/, '') === want || x.key === want);
-          if (!f) return fail('No file called "' + i.file + '". Files: ' + fs.map((x) => x.file).join(', ') + '.');
-          if (i.show) {
-            if (f.section === 'case-studies') this.setState({ tab: f.key }); else this.goResp(f.key);
-            clearTimeout(this._agentScrollT);
-            this._agentScrollT = setTimeout(() => this.scrollToId(f.section), 60);
-          }
-          return ok({ file: f.file, section: f.section, title: f.title, url: f.url, text: f.text });
-        })),
-      },
-      {
-        name: 'search_site',
-        title: 'Search the portfolio',
-        description: "Keyword search across everything on the site (profile, career, responsibilities, case studies, stack, FAQ). Returns the best-matching passages in Craig's own words. Use ask for a written answer instead.",
-        inputSchema: { type: 'object', properties: { query: { type: 'string', description: 'What to look for, for example "AWS cost" or "accessibility".', maxLength: 300 } }, required: ['query'] },
-        annotations: { readOnlyHint: true },
-        execute: safe((i) => this.askIndex().then((ix) => {
-          const q = String(i.query || '').trim().slice(0, 300);
-          if (!q) return fail('Give a query to search for.');
-          const r = this.askSearch(ix, q);
-          return ok({ query: q, results: (r.sources || []).map((p) => ({ title: p.title, text: p.text.length > 900 ? p.text.slice(0, 900) + '…' : p.text, url: abs(p.href || './') })) });
-        })),
-      },
-      {
-        name: 'ask',
-        title: 'Ask a question (ask.sh)',
-        description: "Ask a question about Craig's experience and get a short answer written only from this site's content, the same as the ask.sh box on the page. Rate-limited, so ask one question at a time; for exact wording use read_file or search_site.",
-        inputSchema: { type: 'object', properties: { question: { type: 'string', description: 'The question, for example "Has Craig led an ISO 27001 audit?"', maxLength: 300 } }, required: ['question'] },
-        annotations: { readOnlyHint: true },
-        execute: safe((i, opts) => this.askIndex().then((ix) => {
-          const q = String(i.question || '').trim().slice(0, 300);
-          if (!q) return fail('Give a question to ask.');
-          const cfg = (typeof window !== 'undefined' && window.CRAGA_ASK) || {};
-          const local = (note) => { const r = this.askSearch(ix, q); return ok({ question: q, answer: r.answer, via: 'search', note, sources: (r.sources || []).map((p) => p.title) }); };
-          if (!cfg.endpoint) return local('The AI answer service is only on the live site, so this is the closest passage.');
-          const sig = opts && opts.signal ? opts.signal : undefined;
-          return fetch(cfg.endpoint, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ q }), signal: sig })
-            .then((r) => (r.ok ? r.json() : Promise.reject(new Error('HTTP ' + r.status))))
-            .then((d) => {
-              if (!d || !d.answer) throw new Error('empty answer');
-              return ok({ question: q, answer: d.answer, via: 'ai', sources: (d.sources || []).map((id) => (ix.byId[id] ? ix.byId[id].title : id)) });
-            })
-            .catch(() => local("The AI answer service didn't respond, so this is the closest passage."));
-        })),
-      },
-      {
-        name: 'get_open_source',
-        title: 'Open-source contributions',
-        description: "Craig's open-source work: merged pull requests to other people's projects (with a per-quarter timeline and the repositories), and qTip2, the jQuery tooltip library he wrote and maintains. Counts come from the GitHub API, updated weekly.",
-        inputSchema: { type: 'object', properties: {} },
-        annotations: { readOnlyHint: true },
-        execute: safe(() => live().then((l) => {
-          const o = l.oss || {};
-          const tl = o.timeline || (window.CRAGA_OSS && window.CRAGA_OSS.timeline) || [];
-          const projects = [];
-          document.querySelectorAll('#oss a[href^="https://github.com/"]').forEach((a) => { const u = a.href.replace(/\/$/, ''); if (!projects.some((p) => p.url === u)) projects.push({ name: (a.textContent || '').trim(), url: u }); });
-          return ok({
-            merged_pull_requests: o.prs != null ? o.prs : tl.reduce((n, t) => n + t.n, 0), repositories: o.repos, since: o.since, counted_at: o.at,
-            qtip2: o.qtip ? { stars: o.qtip.stars, forks: o.qtip.forks, commits: o.qtip.commits, url: 'https://github.com/qTip2/qTip2' } : { url: 'https://github.com/qTip2/qTip2' },
-            by_quarter: tl.map((t) => ({ year: t.y, quarter: t.q, merged: t.n, repositories: t.repos })),
-            linked_projects: projects,
-            github: 'https://github.com/Craga89',
-          });
-        })),
-      },
-      {
-        name: 'get_site_report',
-        title: 'How this site is built and tested',
-        description: "This site's latest automated results: Lighthouse scores (mobile and desktop), the WCAG 2.2 AA accessibility suite, and the ask.sh answer tests, with the deployed commit and the public source repository.",
-        inputSchema: { type: 'object', properties: {} },
-        annotations: { readOnlyHint: true },
-        execute: safe(() => live().then((l) => {
-          const B = window.CRAGA_BUILD || {};
-          return ok({
-            source: 'https://github.com/Craga89/portfolio',
-            deployed: { commit: B.sha || null, at: B.at || null },
-            lighthouse: l.lighthouse ? { mobile: l.lighthouse.mobile, desktop: l.lighthouse.desktop, at: l.lighthouse.at } : null,
-            accessibility: l.a11y ? { standard: 'WCAG 2.2 AA', pass: l.a11y.pass, axe_runs: l.a11y.axeRuns, violations: l.a11y.violations, at: l.a11y.at } : null,
-            ask_tests: l.evals ? { passed: l.evals.passed, total: l.evals.total, at: l.evals.at } : null,
-            note: l.lighthouse || l.a11y || l.evals ? '' : 'Live results are only on the deployed site.',
-          });
-        })),
-      },
-      {
-        name: 'show_section',
-        title: 'Show a section of the page',
-        description: 'Scroll the page to one of its sections and highlight it, to point the person you are helping at something.',
-        inputSchema: { type: 'object', properties: { section: { type: 'string', enum: sections, description: 'Section id.' } }, required: ['section'] },
-        annotations: { readOnlyHint: false },
-        execute: safe((i) => {
-          if (sections.indexOf(i.section) < 0) return fail('No section "' + i.section + '". Sections: ' + sections.join(', ') + '.');
-          clearTimeout(this._agentScrollT);
-          this.scrollToId(i.section);
-          return ok({ shown: i.section, url: abs('#' + i.section) });
-        }),
-      },
-    ];
+      scroll: (id) => { clearTimeout(this._agentScrollT); this.scrollToId(id); },
+    };
+    const tools = A.describeTools('page', src);
     this._agentTools = tools.map((t) => t.name);
     const pending = [];
     tools.forEach((t) => {
       try {
-        const p = mc.registerTool(t, ctl.signal ? { signal: ctl.signal } : undefined);
+        const p = mc.registerTool(Object.assign({}, t, { execute: (input, opts) => A.callTool(t.name, input, src, 'page', opts && opts.signal) }), ctl.signal ? { signal: ctl.signal } : undefined);
         pending.push(p && typeof p.then === 'function' ? p.then(() => 1, () => 0) : 1);
       } catch (e) {}
     });
@@ -3746,7 +3600,11 @@ class Component extends DCLogic {
       vAi: tab === 'ai' ? '' : 'display: none;',
       vSite: tab === 'site' ? '' : 'display: none;',
       vMcp: tab === 'mcp' ? '' : 'display: none;',
-      agent: this._agentCount ? { on: 'true', line: 'In this browser: WebMCP is on, with ' + this._agentCount + ' tools registered.' } : { on: 'false', line: "In this browser: no WebMCP, so the page skips it." },
+      agent: Object.assign(this._agentCount ? { on: 'true', line: 'In this browser: WebMCP is on, with ' + this._agentCount + ' tools registered.' } : { on: 'false', line: "In this browser: no WebMCP, so the page skips it." }, (() => {
+        const ep = (typeof window !== 'undefined' && window.CRAGA_ASK && window.CRAGA_ASK.endpoint) || '';
+        const mcpUrl = ep ? ep.replace(/\/ask$/, '/mcp') : '';
+        return { mcpUrl, copyText: (this.state || {}).mcpCopied ? 'copied' : 'copy', copy: () => this.copyText(mcpUrl).then(() => { this.setState({ mcpCopied: true }); this.note('MCP server address copied'); clearTimeout(this._mcpT); this._mcpT = setTimeout(() => this.setState({ mcpCopied: false }), 2000); }).catch(() => {}) };
+      })()),
       vAiProc: rtab === 'aiproc' ? '' : 'display: none;',
       vLead: rtab === 'lead' ? '' : 'display: none;',
       vHire: rtab === 'hire' ? '' : 'display: none;',

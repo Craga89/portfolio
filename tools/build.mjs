@@ -231,6 +231,15 @@ const HOME = {};
 // one origin, read from the token itself. The app bundle adds the one for the origin it's served
 // from: tokens registered for third-party matching only count when an external script on that
 // origin adds them, never from a <meta> tag in the HTML. Tokens are public.
+// shared/agent-tools.js (the agent tools and site search, also used by the worker) as a plain
+// script for the page: its exports become window.CragaAgent.
+function sharedForPage() {
+  const src = readFileSync(join(ROOT, 'shared', 'agent-tools.js'), 'utf8');
+  const names = [...src.matchAll(/^export (?:async function|function|const|class) (\w+)/gm)].map((m) => m[1]);
+  if (/^export (?!(?:async function|function|const|class) )/m.test(src)) throw new Error('shared/agent-tools.js: only export function/const/class declarations are supported');
+  return `;(function () {\n${src.replace(/^export (?=async function|function|const|class)/gm, '')}\nwindow.CragaAgent = { ${names.join(', ')} };\n})();\n`;
+}
+
 const ORIGIN_TRIALS = (() => {
   let lines = [];
   try { lines = readFileSync(join(SRC, 'origin-trials.txt'), 'utf8').split('\n').map((l) => l.trim()).filter((l) => l && !l.startsWith('#')); } catch (e) { return {}; }
@@ -269,7 +278,7 @@ function buildHome(today) {
   // boot) goes into one deferred, cache-busted file, so the HTML stays small.
   // Origin-trial tokens first, before anything checks for the features they turn on.
   const otPrelude = Object.keys(ORIGIN_TRIALS).length ? `(function(){var T=${JSON.stringify(ORIGIN_TRIALS)}[location.origin];if(T)T.forEach(function(t){var m=document.createElement('meta');m.httpEquiv='origin-trial';m.content=t;document.head.appendChild(m);});})();\n` : '';
-  const app = otPrelude + readFileSync(join(ROOT, 'tools', 'dc-runtime.js'), 'utf8') + `
+  const app = otPrelude + sharedForPage() + readFileSync(join(ROOT, 'tools', 'dc-runtime.js'), 'utf8') + `
 ;(function () {
   var t = document.createElement('template');
   t.id = 'dc-template';
@@ -461,7 +470,7 @@ function extractPassages() {
   const txt = (n) => {
     if (!n) return '';
     if (n.nodeType === 3) return n.data;
-    if (n.nodeType !== 1 || SKIP.has(n.localName) || (n.classList && n.classList.contains('c-mcp-live'))) return '';
+    if (n.nodeType !== 1 || SKIP.has(n.localName) || (n.classList && (n.classList.contains('c-mcp-live') || n.classList.contains('c-mcp-copy')))) return '';
     let out = '';
     for (const c of n.childNodes) out += txt(c);
     return INLINE.has(n.localName) ? out : ' ' + out + ' ';
@@ -564,6 +573,9 @@ async function prerender() {
     writeFileSync(join(OUT, 'assets', 'ask-index.json'), JSON.stringify(index));
     mkdirSync(join(ROOT, 'worker'), { recursive: true });
     writeFileSync(join(ROOT, 'worker', 'knowledge.json'), JSON.stringify(index, null, 1) + '\n');
+    // The rest of what the worker's MCP tools serve: the CV and the projects the page links to.
+    const projects = await page.evaluate(() => window.CragaAgent.linkedProjects(document));
+    writeFileSync(join(ROOT, 'worker', 'agent-data.json'), JSON.stringify({ cv: JSON.parse(readFileSync(join(SRC, 'cv.json'), 'utf8')), projects }, null, 1) + '\n');
     console.log('ask.sh index:', passages.length, 'passages,', passages.reduce((n, p) => n + p.text.length, 0), 'chars');
     const file = join(OUT, 'index.html');
     writeFileSync(file, readFileSync(file, 'utf8').replace('<!--PRERENDER-->', html).replace('/*CIS*/', cis.join('\n')));
@@ -650,6 +662,7 @@ function cleanPanel(html, kind, where) {
     .replace(/href="#c-tests"/g, 'href="../../#c-tests"')
     // Whether this browser has WebMCP only means something on the home page, where the tools are.
     .replace(/<p class="c-mcp-live"[\s\S]*?<\/p>/, '')
+    .replace(/<button type="button" class="c-mcp-copy"[^>]*>[^<]*<\/button>/, '')
     // Live CI results only load on the home page: point there instead of showing placeholders.
     .replace(/<div style="font-size: 13px; color: var\(--mute\); margin-bottom: 10px">Latest results<\/div>\s*<ul class="c-live"[\s\S]*?<\/ul>/, '<div style="font-size: 13px; color: var(--mute); margin-bottom: 10px">Latest results</div><p style="margin: 0; color: var(--text3)">The latest Lighthouse, WCAG and ask.sh test results are live on <a href="../../?case=site#case-studies">the home page</a>.</p>')
     .replace(/<details class="c-rs-more"/g, '<details class="c-rs-more" open')
@@ -839,7 +852,7 @@ Location: ${b.location.city}, UK. Contact: ${b.email}.
 - [GitHub](https://github.com/Craga89)
 - [LinkedIn](https://www.linkedin.com/in/craigmichaelthompson/)
 
-In browsers with WebMCP, the portfolio page also registers tools an agent can call: get_profile, get_career, list_files, read_file, search_site, ask, get_open_source, get_site_report and show_section.
+For AI agents: the same content is available as tools (get_profile, get_career, list_files, read_file, search_site, ask, get_open_source, get_site_report) from the MCP server at ${ASK.endpoint ? ASK.endpoint.replace(/\/ask$/, '/mcp') : '(not configured)'}, and on the portfolio page itself in browsers with WebMCP.
 
 ## Experience
 

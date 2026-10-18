@@ -9,6 +9,8 @@ const show = (ref) => { try { return execFileSync('git', ['show', ref], { encodi
 const json = (ref) => { const t = show(ref); try { return t ? JSON.parse(t) : null; } catch { return null; } };
 const text = (ref) => { const t = show(ref); return t ? t.trim() : null; };
 const out = { at: new Date().toISOString() };
+// The deployed commit, for the agent tools' site report (the worker has no other way to know it).
+if (process.env.GITHUB_SHA) out.build = { sha: process.env.GITHUB_SHA, at: out.at };
 
 const lh = json('origin/lighthouse:reports/summary.json');
 if (lh && lh.mobile && lh.mobile.scores) {

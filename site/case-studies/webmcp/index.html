@@ -31,7 +31,7 @@
 <script>try{(function(){var d=document.documentElement,t=localStorage.getItem('theme'),L=t?t==='light':matchMedia('(prefers-color-scheme: light)').matches,M=localStorage.getItem('motion')==='off';d.classList.add(L?'t-light':'t-dark');if(t)document.querySelectorAll('meta[name="theme-color"]').forEach(function(m){m.content=L?'#EDF1EE':'#16271F'});var o=new MutationObserver(function(){var r=document.querySelector('.c-root');if(!r)return;if(L)r.classList.add('c-light');if(M)r.classList.add('still');o.disconnect()});o.observe(d,{childList:true,subtree:true})})()}catch(e){}</script>
 <link rel="preload" href="../../assets/fonts/big-shoulders-display-latin-600.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="../../assets/fonts/public-sans-latin-400.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="../../assets/pages.a0126d23dd.css">
+<link rel="stylesheet" href="../../assets/pages.4dbf51ba65.css">
 </head>
 <body>
 <div class="c-root" style="background: var(--bg); color: var(--text); min-height: 100vh; font-size: 16px; line-height: 1.7">
@@ -43,19 +43,20 @@
 <h1 class="c-sr">A site AI agents can use, not just read</h1>
 <div class="c-pop" style="border: 1px solid var(--line2); border-radius: 12px; background: var(--panel); padding: clamp(22px, 4vw, 40px); display: flex; flex-direction: column; gap: 32px">
 <div>
-<div style="font-size: 13px; color: var(--acc)">// webmcp · tools for browser agents · 2026</div>
+<div style="font-size: 13px; color: var(--acc)">// webmcp + mcp · tools for AI agents · 2026</div>
 <h3 style="margin: 8px 0 10px; font-size: clamp(22px, 3vw, 30px); line-height: 1.25; color: var(--head)">A site AI agents can use, not just read</h3>
-<p style="margin: 0; color: var(--text3); max-width: 72ch">AI assistants are starting to work inside the browser, on the page a person has open. Rather than leave them to read the screen and guess, I've given this site its own tools through WebMCP, a draft web standard. An agent calls a tool and gets structured answers, drawn from the same content visitors read.</p>
+<p style="margin: 0; color: var(--text3); max-width: 72ch">AI assistants are starting to work inside the browser, on the page a person has open. Rather than leave them to read the screen and guess, I've given this site its own tools through WebMCP, a draft web standard. An agent calls a tool and gets structured answers, drawn from the same content visitors read. The same tools also run as an MCP server, so any MCP client can use them without the site open.</p>
 
+<p class="c-mcp-url"><span class="c-mcp-url-k">MCP server</span><code>https://craga-ask.craga89.workers.dev/mcp</code></p>
 </div>
 
 <div>
-<div style="font-size: 13px; color: var(--mute); margin-bottom: 10px">How an agent uses the page</div>
-<ol class="c-mcp-flow" aria-label="How an agent uses the page">
-<li><b>AI agent</b> in the visitor's browser</li><li aria-hidden="true" class="c-mcp-a">→</li>
-<li><b>calls a tool</b> the page registered</li><li aria-hidden="true" class="c-mcp-a">→</li>
-<li><b>reads the site's own data</b> cv.json, the ask.sh index, CI results</li><li aria-hidden="true" class="c-mcp-a">→</li>
-<li class="c-mcp-end"><b>gets a structured answer</b> or opens it on screen</li>
+<div style="font-size: 13px; color: var(--mute); margin-bottom: 10px">How an agent uses the tools</div>
+<ol class="c-mcp-flow" aria-label="How an agent uses the tools">
+<li><span class="c-mcp-s"><b>AI agent</b> in the browser, or any MCP client</span><span class="c-mcp-a" aria-hidden="true">→</span></li>
+<li><span class="c-mcp-s"><b>calls a tool</b> through WebMCP or MCP</span><span class="c-mcp-a" aria-hidden="true">→</span></li>
+<li><span class="c-mcp-s"><b>reads the site's own data</b> cv.json, the ask.sh index, CI results</span><span class="c-mcp-a" aria-hidden="true">→</span></li>
+<li><span class="c-mcp-s c-mcp-end"><b>gets a structured answer</b> or opens it on screen</span></li>
 </ol>
 </div>
 
@@ -69,16 +70,18 @@
 <li><code>ask</code><span>an ask.sh answer, with the same limits as the box on the page</span></li>
 <li><code>get_open_source</code><span>merged pull requests by quarter, and qTip2</span></li>
 <li><code>get_site_report</code><span>the latest Lighthouse, WCAG and ask.sh results</span></li>
-<li><code>show_section</code><span>scrolls to a section and highlights it</span></li>
+<li><code>show_section</code><span>scrolls to a section and highlights it (on the page only)</span></li>
 </ul>
 </div>
 
 <div style="border-left: 3px solid var(--ok); padding: 4px 0 4px 18px">
 <div style="font-size: 13px; color: var(--ok); margin-bottom: 8px"># in practice</div>
 <ul style="margin: 0; padding-left: 18px; color: var(--text); display: flex; flex-direction: column; gap: 6px">
-<li>The tools are built on the files the page already loads, so an agent gets the same facts a visitor reads.</li>
+<li>Each tool is defined once, in one shared module, and runs in both places: on the page through WebMCP and on the Worker through MCP. The site's search lives there too, so ask.sh, the page and the server can't drift apart.</li>
+<li>The tools read the same files the page loads, so an agent gets the same facts a visitor reads.</li>
+<li>The MCP server is public, read-only and rate-limited. It keeps no state between requests and serves both the current protocol (2026-07-28) and older clients.</li>
 <li>Browsers without WebMCP skip it. In Chrome it runs as an origin trial.</li>
-<li>CI tests every tool against a stand-in for the browser API: it registers, returns the right data and unregisters when the page closes. The ask tool is stubbed, so tests never reach the live service.</li>
+<li>CI tests both: the page's tools against a stand-in for the browser API, and the server against both protocol versions and the official MCP client. The ask tool is stubbed in tests, so they never reach the live service.</li>
 <li>For agents that read rather than act, the same content is in llms.txt and cv.json.</li>
 </ul>
 </div>

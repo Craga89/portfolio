@@ -5,7 +5,7 @@ name: Deploy ask.sh worker
 on:
   push:
     branches: [main]
-    paths: ['worker/**', '.github/workflows/ask-worker.yml']
+    paths: ['worker/**', 'shared/**', '.github/workflows/ask-worker.yml']
   workflow_dispatch:
 
 concurrency:
@@ -53,6 +53,22 @@ jobs:
           code=$(curl -sS -m 60 -o speak.mp3 -D speak.h -w '%{http_code}' -X POST "${ASK_URL%/ask}/speak" -H 'origin: https://craigthompson.dev' -H 'content-type: application/json' -H 'x-craga-test: 1' --data '{"text":"Craig has led engineering teams for over twelve years. See budget.md."}' || echo 000)
           voice=$(grep -i '^x-voice:' speak.h | tr -d '\r' | cut -d' ' -f2)
           if [ "$code" = 200 ] && [ "$(stat -c %s speak.mp3)" -gt 1000 ]; then echo "::notice title=Read aloud::voice $voice, $(stat -c %s speak.mp3) bytes"; else echo "::error title=Read aloud::HTTP $code $(head -c 200 speak.mp3)"; fail=1; fi
+          # MCP: both protocol eras on /mcp.
+          MCP_URL="${ASK_URL%/ask}/mcp"
+          code=$(curl -sS -m 30 -o init.json -w '%{http_code}' -X POST "$MCP_URL" -H 'content-type: application/json' -H 'accept: application/json, text/event-stream' -H 'x-craga-test: 1' \
+            --data '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-11-25","capabilities":{},"clientInfo":{"name":"ci","version":"1"}}}' || echo 000)
+          if [ "$code" = 200 ] && jq -e '.result.serverInfo.name == "craigthompson-dev"' init.json >/dev/null; then echo "::notice title=MCP initialize (2025-11-25)::$(jq -c '.result | {protocolVersion, serverInfo}' init.json)"; else echo "::error title=MCP initialize::HTTP $code $(head -c 300 init.json)"; fail=1; fi
+          meta='{"io.modelcontextprotocol/protocolVersion":"2026-07-28","io.modelcontextprotocol/clientInfo":{"name":"ci","version":"1"},"io.modelcontextprotocol/clientCapabilities":{}}'
+          code=$(curl -sS -m 30 -o disc.json -w '%{http_code}' -X POST "$MCP_URL" -H 'content-type: application/json' -H 'accept: application/json, text/event-stream' -H 'x-craga-test: 1' \
+            -H 'mcp-protocol-version: 2026-07-28' -H 'mcp-method: server/discover' --data "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"server/discover\",\"params\":{\"_meta\":$meta}}" || echo 000)
+          if [ "$code" = 200 ] && jq -e '.result.resultType == "complete" and (.result.supportedVersions | index("2026-07-28"))' disc.json >/dev/null; then echo "::notice title=MCP server/discover (2026-07-28)::$(jq -c '.result.supportedVersions' disc.json)"; else echo "::error title=MCP server/discover::HTTP $code $(head -c 300 disc.json)"; fail=1; fi
+          code=$(curl -sS -m 30 -o call.json -w '%{http_code}' -X POST "$MCP_URL" -H 'content-type: application/json' -H 'accept: application/json, text/event-stream' -H 'x-craga-test: 1' \
+            -H 'mcp-protocol-version: 2026-07-28' -H 'mcp-method: tools/call' -H 'mcp-name: get_open_source' --data "{\"jsonrpc\":\"2.0\",\"id\":2,\"method\":\"tools/call\",\"params\":{\"name\":\"get_open_source\",\"arguments\":{},\"_meta\":$meta}}" || echo 000)
+          if [ "$code" = 200 ] && jq -e '.result.structuredContent.merged_pull_requests > 0' call.json >/dev/null; then echo "::notice title=MCP tools/call (2026-07-28)::get_open_source: $(jq -r '.result.structuredContent.merged_pull_requests' call.json) merged PRs"; else echo "::error title=MCP tools/call::HTTP $code $(head -c 300 call.json)"; fail=1; fi
+          code=$(curl -sS -o /dev/null -w '%{http_code}' -X POST "$MCP_URL" -H 'origin: https://example.com' -H 'content-type: application/json' --data '{"jsonrpc":"2.0","id":1,"method":"tools/list"}')
+          if [ "$code" = 403 ]; then echo "::notice title=MCP other origins::refused (403)"; else echo "::error title=MCP other origins::expected 403, got $code"; fail=1; fi
+          # And with the official MCP SDK client, the way real clients connect.
+          mkdir -p /tmp/mcpc && cp worker/test/mcp-client.mjs /tmp/mcpc/ && (cd /tmp/mcpc && npm init -y >/dev/null && npm i --silent --no-audit --no-fund @modelcontextprotocol/sdk@1 && node mcp-client.mjs "$MCP_URL") || fail=1
           code=$(curl -sS -o /dev/null -w '%{http_code}' -X POST "$ASK_URL" -H 'origin: https://example.com' -H 'content-type: application/json' --data '{"q":"hi"}')
           if [ "$code" = 403 ]; then echo "::notice title=Other origins::refused (403)"; else echo "::error title=Other origins::expected 403, got $code"; fail=1; fi
           exit $fail

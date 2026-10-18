@@ -503,11 +503,18 @@ a{color:var(--acc)!important;text-decoration:none!important}
 .c-mcp-dot{flex:none;width:8px;height:8px;align-self:flex-start;margin-top:.45em;border-radius:50%;box-shadow:inset 0 0 0 1.5px var(--dim)}
 .c-mcp-live[data-on="true"]{color:var(--text2)}.c-mcp-live[data-on="true"] .c-mcp-dot{background:var(--ok);box-shadow:none}
 .c-mcp-flow{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:14px}
-.c-mcp-flow li:not(.c-mcp-a){border:1px solid var(--line3);border-radius:6px;padding:6px 10px;color:var(--text3)}
+.c-mcp-flow li{display:flex;align-items:center;gap:8px;min-width:0}
+.c-mcp-s{border:1px solid var(--line3);border-radius:6px;padding:6px 10px;color:var(--text3);min-width:0}
 .c-mcp-flow b{color:var(--head);font-weight:600}
-.c-mcp-flow .c-mcp-end{border-color:var(--ok)}
+.c-mcp-s.c-mcp-end{border-color:var(--ok)}
 .c-mcp-a{color:var(--acc)}
-@media (max-width:560px){.c-mcp-flow{flex-direction:column;align-items:stretch;gap:4px}.c-mcp-a{align-self:flex-start;margin-left:14px;transform:rotate(90deg);line-height:1}}
+@media (max-width:560px){.c-mcp-flow{flex-direction:column;align-items:stretch;gap:4px}.c-mcp-flow li{flex-direction:column;align-items:stretch;gap:4px}.c-mcp-a{align-self:flex-start;margin-left:14px;transform:rotate(90deg);line-height:1}}
+.c-mcp-url{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;margin:10px 0 0;font-size:13px}
+.c-mcp-url-k{color:var(--mute)}
+.c-mcp-url code{font-family:var(--f-mono,ui-monospace,monospace);color:var(--head);overflow-wrap:anywhere;min-width:0}
+.c-mcp-copy{min-height:28px;padding:0 10px;border:1px solid var(--line3);border-radius:6px;background:transparent;color:var(--acc);font:inherit;font-size:13px;cursor:pointer}
+.c-mcp-copy:hover{border-color:var(--acc)}
+.c-mcp-copy:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
 .c-mcp-t{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,250px),1fr));gap:8px 12px}
 .c-mcp-t li{border:1px solid var(--line2);border-radius:8px;padding:10px 12px;min-width:0}
 .c-mcp-t code{font-family:var(--f-mono,ui-monospace,monospace);font-size:13px;color:var(--head);overflow-wrap:anywhere}
