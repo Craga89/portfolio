@@ -231,11 +231,11 @@ test('mcp tools/list: the shared tools, minus page-only ones', async () => {
 test('mcp tools/call: profile, files, search and errors', async () => {
   const p = await call(rpc('tools/call', { name: 'get_profile', arguments: {} }));
   assert.equal(p.body.result.structuredContent.name, 'Craig Michael Thompson');
-  assert.equal(toolData(p.body).links.cv_pdf, 'https://craga.dev/cv.pdf');
+  assert.equal(toolData(p.body).links.cv_pdf, 'https://craigthompson.dev/cv.pdf');
   const list = await call(rpc('tools/call', { name: 'list_files', arguments: { section: 'case-studies' } }));
   assert.ok(list.body.result.structuredContent.files.length >= 12);
   const f = await call(rpc('tools/call', { name: 'read_file', arguments: { file: 'ai/platform.md' } }));
-  assert.equal(f.body.result.structuredContent.url, 'https://craga.dev/case-studies/ai-platform/');
+  assert.equal(f.body.result.structuredContent.url, 'https://craigthompson.dev/case-studies/ai-platform/');
   assert.ok(f.body.result.structuredContent.text.length > 200);
   const miss = await call(rpc('tools/call', { name: 'read_file', arguments: { file: 'nope.md' } }));
   assert.equal(miss.body.result.isError, true);

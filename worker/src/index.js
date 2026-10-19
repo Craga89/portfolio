@@ -13,7 +13,7 @@ const MODELS = [
   '@cf/qwen/qwen3-30b-a3b-fp8',
   '@cf/meta/llama-3.1-8b-instruct-fp8-fast',
 ];
-const ALLOWED = [/^https:\/\/(www\.)?(craigthompson|craga)\.dev$/, /^https:\/\/craga89\.github\.io$/, /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/];
+const ALLOWED = [/^https:\/\/(www\.)?craigthompson\.dev$/, /^https:\/\/craga89\.github\.io$/, /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/];
 const ALWAYS = ['intro', 'profile', 'faq-1', 'recognition'];
 const CONTEXT_CHARS = 14000;
 const MAX_Q = 300;
@@ -240,7 +240,7 @@ async function hit(request, env, origin) {
 
 // ---------- MCP ----------
 const MCP_HEADERS = 'content-type, accept, mcp-protocol-version, mcp-method, mcp-name';
-const SITE = (env) => String(env.SITE_URL || 'https://craga.dev').replace(/\/$/, '');
+const SITE = (env) => String(env.SITE_URL || 'https://craigthompson.dev').replace(/\/$/, '');
 
 // Where the shared agent tools get their data in the worker: the CV and passages bundled at
 // deploy, the latest CI and open-source results from the site, and the ask.sh model directly.

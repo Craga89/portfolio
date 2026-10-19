@@ -41,5 +41,5 @@ namespace_id = "1004"
 simple = { limit = 60, period = 60 }
 
 [vars]
-# Where the MCP tools link to and read live.json from. Switch to https://craigthompson.dev once it serves the site.
-SITE_URL = "https://craga.dev"
+# Where the MCP tools link to and read live.json from.
+SITE_URL = "https://craigthompson.dev"

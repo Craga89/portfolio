@@ -123,7 +123,7 @@ The open-source section has a heatmap of merged pull requests to other projects 
 
 ## Visits and questions (anonymous)
 
-- **Cloudflare Web Analytics** (cookieless) runs on the home page and CV, only on craigthompson.dev / craga.dev, and not for Do Not Track or Global Privacy Control. It loads on the first interaction (scroll, tap, key) or 6s after the page has loaded, so it never competes with the page for the network. The token is in `tools/build.mjs` (`CF_ANALYTICS_TOKEN`); the dashboard is Cloudflare → Analytics & Logs → Web Analytics.
+- **Cloudflare Web Analytics** (cookieless) runs on the home page and CV, only on craigthompson.dev, and not for Do Not Track or Global Privacy Control. It loads on the first interaction (scroll, tap, key) or 6s after the page has loaded, so it never competes with the page for the network. The token is in `tools/build.mjs` (`CF_ANALYTICS_TOKEN`); the dashboard is Cloudflare → Analytics & Logs → Web Analytics.
 
 - The Worker keeps two tables in the D1 database `craga-ask` (schema in `worker/schema.sql`). `questions` holds each ask.sh question, whether it was answered, the model and the sources. `visits` holds one row per page view: path, referring site, country, device class, sections seen and seconds on the page. No IP addresses, cookies or user agents are stored. Bots, CI traffic (`x-craga-test: 1`) and Do Not Track / Global Privacy Control visitors are skipped. The page says so in ask.sh, the chat and the FAQ.
 - `.github/workflows/stats.yml` writes a weekly summary to its run page: visits, referrers, how far people read, devices, countries, and the questions ask.sh couldn't answer (FAQ candidates). You can also query the tables in the Cloudflare dashboard (D1 → craga-ask → Console).
@@ -155,7 +155,7 @@ While the content is being finished, the build keeps the site out of search engi
 The `ask.sh` section at the bottom of the home page answers questions about the CV.
 
 - The build extracts the page's text into passages: `site/assets/ask-index.json` for the page and `worker/knowledge.json` for the Worker. Rebuilding after a content change keeps both in step.
-- `worker/` is a Cloudflare Worker that runs on Workers AI's free daily allowance. It picks the passages that best match the question and asks the model to answer only from those. When the allowance is used up it fails rather than charging, and the page falls back to its own search over the same passages. It tries Gemma 4 26B first, then Qwen3 30B, then Llama 3.1 8B. It only accepts requests from craigthompson.dev (and craga.dev while that redirects), craga89.github.io and localhost, and it allows each visitor 8 questions a minute.
+- `worker/` is a Cloudflare Worker that runs on Workers AI's free daily allowance. It picks the passages that best match the question and asks the model to answer only from those. When the allowance is used up it fails rather than charging, and the page falls back to its own search over the same passages. It tries Gemma 4 26B first, then Qwen3 30B, then Llama 3.1 8B. It only accepts requests from craigthompson.dev, craga89.github.io and localhost, and it allows each visitor 8 questions a minute.
 - `ask.config.json` holds the Worker URL. When it's empty, ask.sh works as search only.
 
 Deploying the Worker:
