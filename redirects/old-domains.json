@@ -1,5 +1,5 @@
 {
-  "about": "Redirects from Craig's old domains to craigthompson.dev. tools/redirects.mjs turns this into a Cloudflare Bulk Redirects CSV and checks the live redirects. The craigsworks.com rules carry over what the old site's .htaccess files did (github.com/Craga89/craigsworks: projects/.htaccess, and projects/simpletip from github.com/Craga89/simpletip).",
+  "about": "Redirects from Craig's old domains to craigthompson.dev. tools/redirects.mjs turns this into a Cloudflare Bulk Redirects CSV and checks the live redirects. The craigsworks.com rules carry over what the old site's .htaccess files did (github.com/Craga89/craigsworks: projects/.htaccess, and projects/simpletip from github.com/Craga89/simpletip). Each recovered blog post (src/blog/*.md, its 'original' address) also redirects to its new page.",
   "home": "https://craigthompson.dev/",
   "domains": [
     "craigsworks.com",
@@ -115,6 +115,21 @@
       "why": "Simpletip's first home (2009): its repository"
     },
     {
+      "source": "blog.craigsworks.com/",
+      "target": "https://craigthompson.dev/blog/",
+      "subpath": true,
+      "suffix": false,
+      "why": "the old blog (2012-16): the blog index. Each post also gets its own rule, from src/blog/ (see tools/redirects.mjs)"
+    },
+    {
+      "source": "craigsworks.com/blog",
+      "target": "https://craigthompson.dev/blog/",
+      "subdomains": true,
+      "subpath": true,
+      "suffix": false,
+      "why": "the first blog (2010): the blog index"
+    },
+    {
       "source": "craigsworks.com/cv.pdf",
       "target": "https://craigthompson.dev/cv.pdf",
       "subdomains": true,
@@ -152,6 +167,18 @@
     }
   ],
   "tests": [
+    [
+      "https://blog.craigsworks.com/durandal-and-webpack-part-1-module-format/",
+      "https://craigthompson.dev/blog/durandal-and-webpack-part-1-module-format/"
+    ],
+    [
+      "https://blog.craigsworks.com/tag/javascript/",
+      "https://craigthompson.dev/blog/"
+    ],
+    [
+      "http://craigsworks.com/blog/2010/07/where-are-you-using-qtip",
+      "https://craigthompson.dev/blog/where-are-you-using-qtip/"
+    ],
     [
       "http://craigsworks.com/",
       "https://craigthompson.dev/"
@@ -205,10 +232,6 @@
       "https://github.com/Craga89/simpletip"
     ],
     [
-      "https://blog.craigsworks.com/durandal-and-webpack-part-1-module-format/",
-      "https://craigthompson.dev/"
-    ],
-    [
       "https://craigsworks.com/cv.pdf",
       "https://craigthompson.dev/cv.pdf"
     ],
@@ -225,10 +248,6 @@
       "https://github.com/qTip2/qTip2"
     ],
     [
-      "https://blog.craigsworks.com/",
-      "https://craigthompson.dev/"
-    ],
-    [
       "https://craigsworks.com/no-such-page",
       "https://craigthompson.dev/"
     ],
@@ -243,6 +262,10 @@
     [
       "https://craigswork.com/",
       "https://craigthompson.dev/"
+    ],
+    [
+      "https://blog.craigsworks.com/",
+      "https://craigthompson.dev/blog/"
     ]
   ]
 }

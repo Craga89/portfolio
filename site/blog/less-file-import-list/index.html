@@ -47,19 +47,52 @@
 <p class="sp-post-note">First published on my old blog (<a href="https://web.archive.org/web/20170805024745/http://blog.craigsworks.com:80/less-file-import-list/">blog.craigsworks.com</a>) in October 2014, and kept as it was written. Some code and links are out of date.</p></header>
 <div class="sp-post-b">
 <p>Sometimes it&#39;s useful to get a list of all <code>@import</code>s for a given <code>.less</code> file, especially if you want to watch those files for changes in your <code>gulp</code> or <code>grunt</code> build steps. We can easily achieve this using the LESS parser itself!</p>
-<p><a href="https://gist.github.com/96f7fcad1f35b08bf88d">See the code on GitHub</a></p>
+<pre tabindex="0" translate="no" data-lang="js"><code class="language-js">var fs = require('fs'),
+	less = require('less');
+
+module.exports = function(path, opts, cb) {
+	// Support (path, cb) signature
+	if(typeof opts === 'function') {
+		cb = opts; opts = null;
+	}
+
+	// Read the file (async)
+	fs.readFile(path, function(err, source) {
+		if(err) { throw new Error(err); }
+
+		// Setup options
+		opts || (opts = {});
+		opts.filename = path;
+
+		// Create new parser instance
+		parser = new less.Parser(opts);
+
+		// Parse the source into AST tree via LESS
+		parser.parse(source.toString('utf8'), function (err, tree) {
+			if (err) { throw new Error(err); } 
+
+			// Return array of all `@import`ed files via the parsers `imports` object!
+			cb(Object.keys(parser.imports.files));
+		});
+	});
+};</code></pre>
 <blockquote>
 <p>Disclaimer... <strong>this relies on internal implementation details of the LESS.js library</strong> and as such <em>could break at any time</em>. That being said, <strong>this code should work on all LESS.js versions stretching right back to <code>v1.3</code></strong>!</p>
 </blockquote>
 <h2>Sample use</h2>
-<p><a href="https://gist.github.com/96f7fcad1f35b08bf88d">See the code on GitHub</a></p>
+<pre tabindex="0" translate="no" data-lang="js"><code class="language-js">var getImports = require('./lessImportList');
+
+// Sample usage - log all @import paths to the console :)
+getImports('less/themes/default/app.less', function(imports) {
+	console.log(imports); // Log to the console
+});</code></pre>
 <h2>gulp-watch-less</h2>
 <p>I&#39;ve rolled the above code into a <code>gulp</code> plugin called <a href="https://github.com/Craga89/gulp-watch-less">gulp-watch-less</a>, which works exactly like the <a href="https://github.com/floatdrop/gulp-watch">gulp-watch</a> plugin but also tracks changes to all <code>@import</code> paths of the files. Neat!</p>
 <p>Take a look at the <a href="https://github.com/Craga89/gulp-watch-less">official repo</a> for more information on how to use this in your work flow</p>
 </div>
 </article>
-<nav class="sp-pn" aria-label="More posts"><a href="../gulp-watch-less/"><span>← newer</span><b>gulp-watch-less - Watch LESS @imports</b></a><a class="next" href="../durandal-type-cast-querystring-parameters/"><span>older →</span><b>Durandal - Type cast queryString parameters</b></a></nav>
-<section class="sp-more" aria-labelledby="sp-more-h"><h2 id="sp-more-h">$ ls blog/</h2><ul><li><a href="../generating-roman-numerals/">generating-roman-numerals.md</a></li><li><a href="../durandal-and-webpack-part-1-module-format/">durandal-and-webpack-part-1-module-format.md</a></li><li><a href="../durandal-and-webpack-part-2-composition/">durandal-and-webpack-part-2-composition.md</a></li><li><a href="../github-pages-and-webpack-2/">github-pages-and-webpack-2.md</a></li><li><a href="../gulp-watch-less/">gulp-watch-less.md</a></li><li><a href="../less-file-import-list/" aria-current="page">less-file-import-list.md</a></li><li><a href="../durandal-type-cast-querystring-parameters/">durandal-type-cast-querystring-parameters.md</a></li><li><a href="../knockout-value-binding-input-number/">knockout-value-binding-input-number.md</a></li><li><a href="../jquery-ui-draggable-exclusive-draggables/">jquery-ui-draggable-exclusive-draggables.md</a></li><li><a href="../ckeditor-key-modifiers/">ckeditor-key-modifiers.md</a></li><li><a href="../qtip2-now-on-jsdelivr/">qtip2-now-on-jsdelivr.md</a></li><li><a href="../60fps-scrolling-using-pointer-events-none/">60fps-scrolling-using-pointer-events-none.md</a></li><li><a href="../qtip2-v2-2-0-released/">qtip2-v2-2-0-released.md</a></li><li><a href="../scratchpad-io/">scratchpad-io.md</a></li><li><a href="../qtip2-pre-release-changes-aka-what-happened-to-my-qtip-styles/">qtip2-pre-release-changes-aka-what-happened-to-my-qtip-styles.md</a></li><li><a href="../var-commas-and-equals/">var-commas-and-equals.md</a></li><li><a href="../qtip2-styles-update/">qtip2-styles-update.md</a></li><li><a href="../where-are-you-using-qtip/">where-are-you-using-qtip.md</a></li></ul></section>
+<nav class="sp-pn" aria-label="More posts"><a href="../gulp-watch-less/"><span>← newer</span><b>gulp-watch-less - Watch LESS @imports</b></a><a class="next" href="../knockout-bootstrap-3-buttons-and-the-enable-binding/"><span>older →</span><b>Bootstrap 3 Buttons and the enable binding</b></a></nav>
+<section class="sp-more" aria-labelledby="sp-more-h"><h2 id="sp-more-h">$ ls blog/</h2><ul><li><a href="../generating-roman-numerals/">generating-roman-numerals.md</a></li><li><a href="../tether-js-transition-small-changes/">tether-js-transition-small-changes.md</a></li><li><a href="../durandal-and-webpack-introduction/">durandal-and-webpack-introduction.md</a></li><li><a href="../durandal-and-webpack-part-1-module-format/">durandal-and-webpack-part-1-module-format.md</a></li><li><a href="../durandal-and-webpack-part-2-composition/">durandal-and-webpack-part-2-composition.md</a></li><li><a href="../github-pages-and-webpack-2/">github-pages-and-webpack-2.md</a></li><li><a href="../gulp-watch-less/">gulp-watch-less.md</a></li><li><a href="../less-file-import-list/" aria-current="page">less-file-import-list.md</a></li><li><a href="../knockout-bootstrap-3-buttons-and-the-enable-binding/">knockout-bootstrap-3-buttons-and-the-enable-binding.md</a></li><li><a href="../durandal-type-cast-querystring-parameters/">durandal-type-cast-querystring-parameters.md</a></li><li><a href="../knockout-value-binding-input-number/">knockout-value-binding-input-number.md</a></li><li><a href="../jquery-ui-draggable-exclusive-draggables/">jquery-ui-draggable-exclusive-draggables.md</a></li><li><a href="../ckeditor-key-modifiers/">ckeditor-key-modifiers.md</a></li><li><a href="../bootstrap-3-disabled-dropdown-links/">bootstrap-3-disabled-dropdown-links.md</a></li><li><a href="../jquery-ui-draggable-droppables-in-an-iframe/">jquery-ui-draggable-droppables-in-an-iframe.md</a></li><li><a href="../qtip2-now-on-jsdelivr/">qtip2-now-on-jsdelivr.md</a></li><li><a href="../60fps-scrolling-using-pointer-events-none/">60fps-scrolling-using-pointer-events-none.md</a></li><li><a href="../qtip2-v2-2-0-released/">qtip2-v2-2-0-released.md</a></li><li><a href="../scratchpad-io/">scratchpad-io.md</a></li><li><a href="../qtip2-pre-release-changes-aka-what-happened-to-my-qtip-styles/">qtip2-pre-release-changes-aka-what-happened-to-my-qtip-styles.md</a></li><li><a href="../noty-css-themes/">noty-css-themes.md</a></li><li><a href="../qtip2-tips-plugins-dimension-options-changed/">qtip2-tips-plugins-dimension-options-changed.md</a></li><li><a href="../var-commas-and-equals/">var-commas-and-equals.md</a></li><li><a href="../javascript-ios-version-detection/">javascript-ios-version-detection.md</a></li><li><a href="../qtip2-styles-update/">qtip2-styles-update.md</a></li><li><a href="../efficient-javascript-delta-encoding-merging-json-objects/">efficient-javascript-delta-encoding-merging-json-objects.md</a></li></ul></section>
 <aside class="sp-cta" aria-label="About Craig"><p><b>Craig Michael Thompson</b>, Head of Engineering: hands-on, AI-first, from start-up to acquisition. Open to new roles.</p><div><a class="go" href="mailto:craga89@gmail.com">get in touch</a><a class="alt" href="../../#blog">the portfolio</a><a class="alt" href="../../cv/">CV</a></div></aside>
 </main>
 </div>

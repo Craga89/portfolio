@@ -5,7 +5,7 @@ tags: [Plugins, JavaScript, jQuery, jQuery UI]
 original: https://blog.craigsworks.com/jquery-ui-draggable-exclusive-draggables/
 archived: https://web.archive.org/web/20161103025753/http://blog.craigsworks.com:80/jquery-ui-draggable-exclusive-draggables/
 ---
-*Shout out to to my friend and colleague [Steve Henderson](https://twitter.com/EasyInbox) who came up with the original concept behind this idea!*
+*Shout out to a former colleague, who came up with the original concept behind this idea!*
 
 #### UI.Draggable(s)... they're not exclusive!
 

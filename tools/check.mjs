@@ -160,7 +160,7 @@ try {
   ok('webmcp get_profile', d('profile').name === 'Craig Michael Thompson' && /@/.test(d('profile').email || '') && /cv\.pdf$/.test((d('profile').links || {}).cv_pdf || ''));
   ok('webmcp get_career', (d('career').work || []).length >= 3 && (d('career').education || []).length >= 1);
   const lf = (x) => (x && x.data && x.data.files) || [];
-  ok('webmcp list_files', lf(ar.list).length === 26 && lf(ar.listCase).length === 14 && lf(ar.list).every((f) => /\/(case-studies|responsibilities)\/[\w-]+\/$/.test(f.url)), String(lf(ar.list).length));
+  ok('webmcp list_files', lf(ar.list).length === 26 + (await page.evaluate(() => (window.CRAGA_POSTS || []).length)) && lf(ar.listCase).length === 14 && lf(ar.list).every((f) => /\/(case-studies|responsibilities|blog)\/[\w-]+\/$/.test(f.url)), String(lf(ar.list).length));
   ok('webmcp read_file (and show)', !ar.read.err && d('read').text.length > 200 && ar.tabAi && ar.missing.err && /monorepo\.md/.test(ar.missing.txt));
   ok('webmcp search_site', (d('search').results || []).length > 0 && ar.badArgs.err && /string/.test(ar.badArgs.txt));
   ok('webmcp page-only arguments present (show)', ar.noShowOnMcp);
@@ -333,6 +333,31 @@ try {
     }
   }
 
+  // The blog: the home page's list, "show all", every post page and the index.
+  {
+    const bp = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+    const berr = []; bp.on('pageerror', (e) => berr.push(e.message));
+    await bp.goto(base + '/', { waitUntil: 'networkidle' });
+    const total = await bp.evaluate(() => (window.CRAGA_POSTS || []).length);
+    const first = await bp.locator('#blog .c-bl-i').count();
+    const side = await bp.locator('.v2-side a[href="#blog"]').count();
+    await bp.locator('#blog .c-bl-b', { hasText: 'show all' }).click();
+    await bp.waitForTimeout(300);
+    const all = await bp.locator('#blog .c-bl-i').count();
+    const hrefs = await bp.$$eval('#blog .c-bl-a', (as) => as.map((a) => a.getAttribute('href')));
+    ok('blog: the home page lists the posts, and "show all" shows the rest', total > 8 && first === 8 && all === total && side === 1, `${first} → ${all} of ${total}`);
+    const bad = [];
+    for (const [w, h] of [[1280, 900], [390, 844]]) {
+      await bp.setViewportSize({ width: w, height: h });
+      for (const href of w === 1280 ? hrefs.concat(['blog/']) : hrefs.slice(0, 3)) {
+        const r = await bp.goto(base + '/' + href, { waitUntil: 'load' });
+        const info = await bp.evaluate(() => ({ h1: (document.querySelector('.sp-post h1, h1') || {}).textContent || '', over: document.documentElement.scrollWidth - innerWidth, imgs: [...document.querySelectorAll('.sp-post-b img')].filter((i) => !i.complete || !i.naturalWidth).length }));
+        if (!r || r.status() !== 200 || !info.h1.trim() || info.over > 0 || info.imgs) bad.push(`${href} @${w}: ${r && r.status()} over ${info.over} broken images ${info.imgs}`);
+      }
+    }
+    ok('blog: every post page and the index load, with no sideways scroll or broken images', !bad.length && !berr.length, bad.concat(berr).slice(0, 4).join(' | '));
+    await bp.close();
+  }
   // CV + 404
   const cv = await browser.newPage({ viewport: { width: 1100, height: 900 } });
   await cv.goto(base + '/cv/', { waitUntil: 'networkidle' });

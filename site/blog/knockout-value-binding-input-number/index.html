@@ -2,24 +2,24 @@
 <html lang="en-GB">
 <head>
 <meta charset="utf-8">
-<title>Knockout `value` binding + HTML5 number input · blog · Craig Michael Thompson</title>
+<title>Knockout value binding + HTML5 number input · blog · Craig Michael Thompson</title>
 <meta name="description" content="Knockout's default value binding is great in most cases, but when using the new HTML5 &lt;input type=&quot;number&quot; / element, it will always return an empty…">
 <link rel="canonical" href="https://craigthompson.dev/blog/knockout-value-binding-input-number/">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="craigthompson.dev">
 <meta property="og:locale" content="en_GB">
-<meta property="og:title" content="Knockout `value` binding + HTML5 number input">
+<meta property="og:title" content="Knockout value binding + HTML5 number input">
 <meta property="og:description" content="Knockout's default value binding is great in most cases, but when using the new HTML5 &lt;input type=&quot;number&quot; / element, it will always return an empty…">
 <meta property="og:url" content="https://craigthompson.dev/blog/knockout-value-binding-input-number/">
 <meta property="og:image" content="https://craigthompson.dev/blog/knockout-value-binding-input-number/og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Knockout `value` binding + HTML5 number input. blog/knockout-value-binding-input-number.md, Craig Michael Thompson">
+<meta property="og:image:alt" content="Knockout value binding + HTML5 number input. blog/knockout-value-binding-input-number.md, Craig Michael Thompson">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Knockout `value` binding + HTML5 number input">
+<meta name="twitter:title" content="Knockout value binding + HTML5 number input">
 <meta name="twitter:description" content="Knockout's default value binding is great in most cases, but when using the new HTML5 &lt;input type=&quot;number&quot; / element, it will always return an empty…">
 <meta name="twitter:image" content="https://craigthompson.dev/blog/knockout-value-binding-input-number/og.png">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"Knockout `value` binding + HTML5 number input","description":"Knockout's default value binding is great in most cases, but when using the new HTML5 <input type=\"number\" / element, it will always return an empty…","url":"https://craigthompson.dev/blog/knockout-value-binding-input-number/","image":"https://craigthompson.dev/blog/knockout-value-binding-input-number/og.png","inLanguage":"en-GB","datePublished":"2014-07-17","keywords":"JavaScript, Knockout.js, HTML5","author":{"@type":"Person","@id":"https://craigthompson.dev/#person","name":"Craig Michael Thompson","url":"https://craigthompson.dev/"},"isPartOf":{"@type":"Blog","name":"Craig Michael Thompson · blog","url":"https://craigthompson.dev/blog/"},"sameAs":"https://blog.craigsworks.com/knockout-value-binding-input-number/"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"Knockout value binding + HTML5 number input","description":"Knockout's default value binding is great in most cases, but when using the new HTML5 <input type=\"number\" / element, it will always return an empty…","url":"https://craigthompson.dev/blog/knockout-value-binding-input-number/","image":"https://craigthompson.dev/blog/knockout-value-binding-input-number/og.png","inLanguage":"en-GB","datePublished":"2014-07-17","keywords":"JavaScript, Knockout.js, HTML5","author":{"@type":"Person","@id":"https://craigthompson.dev/#person","name":"Craig Michael Thompson","url":"https://craigthompson.dev/"},"isPartOf":{"@type":"Blog","name":"Craig Michael Thompson · blog","url":"https://craigthompson.dev/blog/"},"sameAs":"https://blog.craigsworks.com/knockout-value-binding-input-number/"}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow, noarchive">
 <meta name="color-scheme" content="dark light">
@@ -42,7 +42,7 @@
 <p class="sp-crumb">$ cat <a href="../">blog/</a>knockout-value-binding-input-number.md</p>
 <article class="sp-post">
 <header class="sp-post-h"><p class="sp-post-k"><time datetime="2014-07-17">17 July 2014</time> · 1 min read</p>
-<h1>Knockout `value` binding + HTML5 number input</h1>
+<h1>Knockout value binding + HTML5 number input</h1>
 <ul class="sp-tags" aria-label="Tags"><li>JavaScript</li><li>Knockout.js</li><li>HTML5</li></ul>
 <p class="sp-post-note">First published on my old blog (<a href="https://web.archive.org/web/20180131164629/http://blog.craigsworks.com:80/knockout-value-binding-input-number/">blog.craigsworks.com</a>) in July 2014, and kept as it was written. Some code and links are out of date.</p></header>
 <div class="sp-post-b">
@@ -54,12 +54,26 @@
 <p>Luckily, the specification also provides a means of retrieving the input&#39;s value as a number, via the <code>valueAsNumber</code> property. When a non-numeric string is used, this will return <code>NaN</code>.</p>
 <h2>The solution</h2>
 <p>We can enhance Knockout&#39;s <code>selectExtensions.readValue</code>, which is utilised by the <code>value</code> binding to add support for this feature where possible:</p>
-<p><a href="https://gist.github.com/bb6d8cfa2bdbbfcafb28">See the code on GitHub</a></p>
+<pre tabindex="0" translate="no" data-lang="js"><code class="language-js">// Add `valueAsNumber` support to `value` bindings etc
+ko.selectExtensions.readValue = _.wrap(ko.selectExtensions.readValue, function(read, element) {
+    var result = read.apply(this, _.rest(arguments));
+
+    switch(ko.utils.tagNameLower(element)) {
+        // For input-type `number` elements, check if it has a `valueAsNumber` property and if so, use it
+        case 'input':
+            if(element.type === 'number' &amp;&amp; 'valueAsNumber' in element) {
+                result = element.valueAsNumber;
+            }
+            break;
+    }
+
+    return result;
+});</code></pre>
 <p><strong>Note:</strong> A byproduct of this implementation is that it will prevent people typing non-numeric characters! There&#39;s no easy way around this unfortunately...</p>
 </div>
 </article>
 <nav class="sp-pn" aria-label="More posts"><a href="../durandal-type-cast-querystring-parameters/"><span>← newer</span><b>Durandal - Type cast queryString parameters</b></a><a class="next" href="../jquery-ui-draggable-exclusive-draggables/"><span>older →</span><b>ui.draggable.exclusive - Exclusive draggables</b></a></nav>
-<section class="sp-more" aria-labelledby="sp-more-h"><h2 id="sp-more-h">$ ls blog/</h2><ul><li><a href="../generating-roman-numerals/">generating-roman-numerals.md</a></li><li><a href="../durandal-and-webpack-part-1-module-format/">durandal-and-webpack-part-1-module-format.md</a></li><li><a href="../durandal-and-webpack-part-2-composition/">durandal-and-webpack-part-2-composition.md</a></li><li><a href="../github-pages-and-webpack-2/">github-pages-and-webpack-2.md</a></li><li><a href="../gulp-watch-less/">gulp-watch-less.md</a></li><li><a href="../less-file-import-list/">less-file-import-list.md</a></li><li><a href="../durandal-type-cast-querystring-parameters/">durandal-type-cast-querystring-parameters.md</a></li><li><a href="../knockout-value-binding-input-number/" aria-current="page">knockout-value-binding-input-number.md</a></li><li><a href="../jquery-ui-draggable-exclusive-draggables/">jquery-ui-draggable-exclusive-draggables.md</a></li><li><a href="../ckeditor-key-modifiers/">ckeditor-key-modifiers.md</a></li><li><a href="../qtip2-now-on-jsdelivr/">qtip2-now-on-jsdelivr.md</a></li><li><a href="../60fps-scrolling-using-pointer-events-none/">60fps-scrolling-using-pointer-events-none.md</a></li><li><a href="../qtip2-v2-2-0-released/">qtip2-v2-2-0-released.md</a></li><li><a href="../scratchpad-io/">scratchpad-io.md</a></li><li><a href="../qtip2-pre-release-changes-aka-what-happened-to-my-qtip-styles/">qtip2-pre-release-changes-aka-what-happened-to-my-qtip-styles.md</a></li><li><a href="../var-commas-and-equals/">var-commas-and-equals.md</a></li><li><a href="../qtip2-styles-update/">qtip2-styles-update.md</a></li><li><a href="../where-are-you-using-qtip/">where-are-you-using-qtip.md</a></li></ul></section>
+<section class="sp-more" aria-labelledby="sp-more-h"><h2 id="sp-more-h">$ ls blog/</h2><ul><li><a href="../generating-roman-numerals/">generating-roman-numerals.md</a></li><li><a href="../tether-js-transition-small-changes/">tether-js-transition-small-changes.md</a></li><li><a href="../durandal-and-webpack-introduction/">durandal-and-webpack-introduction.md</a></li><li><a href="../durandal-and-webpack-part-1-module-format/">durandal-and-webpack-part-1-module-format.md</a></li><li><a href="../durandal-and-webpack-part-2-composition/">durandal-and-webpack-part-2-composition.md</a></li><li><a href="../github-pages-and-webpack-2/">github-pages-and-webpack-2.md</a></li><li><a href="../gulp-watch-less/">gulp-watch-less.md</a></li><li><a href="../less-file-import-list/">less-file-import-list.md</a></li><li><a href="../knockout-bootstrap-3-buttons-and-the-enable-binding/">knockout-bootstrap-3-buttons-and-the-enable-binding.md</a></li><li><a href="../durandal-type-cast-querystring-parameters/">durandal-type-cast-querystring-parameters.md</a></li><li><a href="../knockout-value-binding-input-number/" aria-current="page">knockout-value-binding-input-number.md</a></li><li><a href="../jquery-ui-draggable-exclusive-draggables/">jquery-ui-draggable-exclusive-draggables.md</a></li><li><a href="../ckeditor-key-modifiers/">ckeditor-key-modifiers.md</a></li><li><a href="../bootstrap-3-disabled-dropdown-links/">bootstrap-3-disabled-dropdown-links.md</a></li><li><a href="../jquery-ui-draggable-droppables-in-an-iframe/">jquery-ui-draggable-droppables-in-an-iframe.md</a></li><li><a href="../qtip2-now-on-jsdelivr/">qtip2-now-on-jsdelivr.md</a></li><li><a href="../60fps-scrolling-using-pointer-events-none/">60fps-scrolling-using-pointer-events-none.md</a></li><li><a href="../qtip2-v2-2-0-released/">qtip2-v2-2-0-released.md</a></li><li><a href="../scratchpad-io/">scratchpad-io.md</a></li><li><a href="../qtip2-pre-release-changes-aka-what-happened-to-my-qtip-styles/">qtip2-pre-release-changes-aka-what-happened-to-my-qtip-styles.md</a></li><li><a href="../noty-css-themes/">noty-css-themes.md</a></li><li><a href="../qtip2-tips-plugins-dimension-options-changed/">qtip2-tips-plugins-dimension-options-changed.md</a></li><li><a href="../var-commas-and-equals/">var-commas-and-equals.md</a></li><li><a href="../javascript-ios-version-detection/">javascript-ios-version-detection.md</a></li><li><a href="../qtip2-styles-update/">qtip2-styles-update.md</a></li><li><a href="../efficient-javascript-delta-encoding-merging-json-objects/">efficient-javascript-delta-encoding-merging-json-objects.md</a></li></ul></section>
 <aside class="sp-cta" aria-label="About Craig"><p><b>Craig Michael Thompson</b>, Head of Engineering: hands-on, AI-first, from start-up to acquisition. Open to new roles.</p><div><a class="go" href="mailto:craga89@gmail.com">get in touch</a><a class="alt" href="../../#blog">the portfolio</a><a class="alt" href="../../cv/">CV</a></div></aside>
 </main>
 </div>

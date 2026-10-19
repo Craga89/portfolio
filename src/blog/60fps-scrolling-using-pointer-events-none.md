@@ -1,5 +1,5 @@
 ---
-title: "60fps scrolling using `pointer-events: none`"
+title: "60fps scrolling using pointer-events: none"
 date: 2013-11-25
 tags: []
 original: https://blog.craigsworks.com/60fps-scrolling-using-pointer-events-none/

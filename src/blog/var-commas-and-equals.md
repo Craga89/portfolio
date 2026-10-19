@@ -9,7 +9,12 @@ Working with JavaScript for a while (or any other language for that matter) you 
 
 Take for example this:
 
-[See the code on GitHub](https://gist.github.com/undefined)
+```js
+function pollute() {
+	var foo = bar = 'uhoh'; // bar pollutes upper scope!
+}
+pollute(); // Execute the pollution!
+```
 
 At first glance, it might seem as if *both* `foo` and `bar` variables should be declared within the local invoke methods scope, but this alas is not the case, and for good reason!
 
@@ -17,4 +22,10 @@ Since **statements are evaluated right to left**, it first attempts to set the b
 
 Perhaps not what you’d expect upon first glance, and an easy thing to get tripped up on. The solution is simple,and actually a little syntactically nicer (i.e. more explicit) in my opinion:
 
-[See the code on GitHub](https://gist.github.com/undefined)
+```js
+function pollute() {
+	var foo = 'uhoh',
+	    bar = foo; // bar is in local scope, no pollution!
+}
+pollute(); // Execute the pollution..?
+```

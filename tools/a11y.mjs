@@ -172,7 +172,8 @@ for (const [width, scheme] of [[1440, 'dark'], [1440, 'light'], [390, 'dark'], [
   }
   await ctx.close();
   const filePages = [];
-  for (const dir of ['case-studies', 'responsibilities']) { try { for (const f of readdirSync(join(ROOT, 'site', dir))) filePages.push(`${dir}/${f}/`); } catch (e) {} }
+  for (const dir of ['case-studies', 'responsibilities', 'blog']) { try { for (const f of readdirSync(join(ROOT, 'site', dir), { withFileTypes: true })) if (f.isDirectory() && f.name !== 'img') filePages.push(`${dir}/${f.name}/`); } catch (e) {} }
+  if (existsSync(join(ROOT, 'site', 'blog', 'index.html'))) filePages.push('blog/');
   for (const path of ['cv/', 'this-page-does-not-exist', ...filePages]) {
     const o = await open(path, { width, scheme });
     await settle(o.page);

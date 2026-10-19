@@ -1,5 +1,5 @@
 ---
-title: "qTip<sup>2</sup> - v2.2.0 released!"
+title: "qTip2 - v2.2.0 released!"
 date: 2013-11-21
 tags: [javascript, release, plugins, qtip2]
 original: https://blog.craigsworks.com/qtip2-v2-2-0-released/

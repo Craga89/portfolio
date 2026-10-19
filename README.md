@@ -151,6 +151,13 @@ Automated checks can't cover all of WCAG; screen reader passes (VoiceOver, NVDA)
 While the content is being finished, the build keeps the site out of search engines: `robots.txt` disallows everything and every page carries `<meta name="robots" content="noindex">`. When it's ready to be found, build with `node tools/build.mjs --public` (or set `ALLOW_INDEXING` to `true` in `tools/build.mjs`) and push.
 
 
+## Blog (the old craigsworks posts)
+
+The posts from the old blogs (craigsworks.com/blog in 2010, blog.craigsworks.com 2012–16) live in `src/blog/` as Markdown, one file per post, with front matter: `title`, `date`, `tags`, `original` (the old address) and `archived` (the Wayback Machine copy they came from). Images go in `src/blog/img/`. The build renders each to `/blog/<slug>/` (with its own social preview and `BlogPosting` data), writes `/blog/` listing them all, lists them on the home page (`$ ls -t ./blog`), adds them to ask.sh's index and the agent tools (`list_files`, `read_file`), and puts them in the sitemap. Each old post address redirects to its new page (see below).
+
+- To edit a post, edit its Markdown and rebuild. To add one, add a file. After adding, removing or retitling a post, run `node tools/blog.mjs sync` so the design file's copy of the list (for the design canvas) matches; the build warns when it doesn't.
+- How they were recovered: the **Recover old blog posts** workflow (`tools/blog-fetch.mjs`) finds each post in the Wayback Machine's list of archived addresses, saves its last good snapshot from before the blog went offline, its images and the code from its embedded GitHub gists, to the `blog-import` branch. `node tools/blog-import.mjs <dir>` turned those into the Markdown files. The live demos some posts embedded didn't survive.
+
 ## Old domains (craigsworks.com and others)
 
 `redirects/old-domains.json` lists where each old address goes: the domains, the rules, and test URLs. The craigsworks.com rules carry over what the old site's `.htaccess` files did ([Craga89/craigsworks](https://github.com/Craga89/craigsworks)): `/projects/qtip2/…` and `/projects/qtip/…` (which went to qtip2.com and qtip1.com, both now offline) go to the qTip2 and qTip 1 GitHub projects, as do the old qTip forums. Simpletip's page goes to its repository, and its script files (`/projects/simpletip/download/…`) go to the same files through jsDelivr, so old sites that still load them keep working. `/projects/` goes to the open-source section, `/cv.pdf` to the CV, and everything else (www, blog and the other domains) goes to the home page. All are permanent (301) redirects.

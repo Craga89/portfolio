@@ -46,23 +46,78 @@
 
 <p class="sp-post-note">First published on my old blog (<a href="https://web.archive.org/web/20180628012739/http://blog.craigsworks.com/durandal-and-webpack-part-2-composition/">blog.craigsworks.com</a>) in July 2015, and kept as it was written. Some code and links are out of date.</p></header>
 <div class="sp-post-b">
-<p><em>This post is part of a series of posts entitled <strong>Durandal and Webpack</strong>. Check-out the <a href="http://blog.craigsworks.com/durandal-and-webpack-introduction">Introduction</a> here if you haven&#39;t already, as well as the <a href="http://craga89.github.io/durandal-webpack">online examples</a></em></p>
+<p><em>This post is part of a series of posts entitled <strong>Durandal and Webpack</strong>. Check-out the <a href="../durandal-and-webpack-introduction/">Introduction</a> here if you haven&#39;t already, as well as the <a href="http://craga89.github.io/durandal-webpack">online examples</a></em></p>
 <p><a href="http://durandaljs.com/">Durandal</a> implements a process known as <a href="http://durandaljs.com/documentation/Using-Composition.html">composition</a>, which allows developers to compose arbitrary Views and ViewModels together into a single output. Much like how <a href="https://facebook.github.io/react/">React</a> lets you nest Components within your <code>render</code> method. This <code>composition</code> workflow is used extensively in Durandal and is the process by which your <code>ViewModel</code> and <code>View</code>(s) are stitched together to create the basic building blocks of your application.</p>
 <p>By default, the <code>composition</code> engine deals with what are known in Durandal as <code>moduleId</code>s and <code>viewUrl</code>s, which are URLs that point to where the <code>ViewModel</code> or <code>View</code> are situated, respectively. Since Webpack doesn&#39;t understand this natively, we&#39;ll need to enhance this functionality a little and <strong>allow us to directly pass the module, rather than a path pointing to it</strong>.</p>
 <h2>system.acquire</h2>
 <p>The logic for this method is fairly straight forward, taking a single <code>moduleId</code> string and returning a <a href="https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a> instance that resolves with the <code>module</code>:</p>
-<p><a href="https://gist.github.com/add43ae8b5f245b29ec7">See the code on GitHub</a></p>
+<pre tabindex="0" translate="no" data-lang="js"><code class="language-js">system.acquire = function(moduleId: String) {}</code></pre>
 <p>We&#39;ll override this method to allow the <code>moduleId</code> to be either a <strong><code>String</code> or a <code>Function</code></strong>. In the latter case, this function is given a single argument, another function we&#39;ll call <code>cb</code>, which takes the following form:</p>
-<p><a href="https://gist.github.com/add43ae8b5f245b29ec7">See the code on GitHub</a></p>
+<pre tabindex="0" translate="no" data-lang="js"><code class="language-js">function cb(err?: Error, module: Object|Function)</code></pre>
 <p>The <code>cb</code> function should be called with <code>null</code> as the first argument if no error occurred, and the resolved <code>module</code> as the second parameter. This may look familiar to you if you&#39;ve used Node extensively, as it&#39;s the <a href="http://fredkschott.com/post/2014/03/understanding-error-first-callbacks-in-node-js/">standard Node.js callback pattern</a>.</p>
 <p>With this in mind, let&#39;s take a look at the override in full:</p>
-<p><a href="https://gist.github.com/1334186a7973b483d3c7">See the code on GitHub</a></p>
+<pre tabindex="0" translate="no" data-lang="js"><code class="language-js">var system = require('durandal/system');
+
+var acquire = system.acquire;
+system.acquire = function(moduleIdOrModule) {
+    var moduleType = typeof moduleIdOrModule;
+
+    if(moduleType !== 'string') {
+        return system.defer(function(dfd) {
+            // If the moduleId is a funcction...
+            if(moduleIdOrModule instanceof Function) {
+                // Execute the funcction, passing a callback that should be 
+                // called when the (possibly) async operation is finished
+                var result = moduleIdOrModule(function(err, module) {
+                    if(err) { dfd.reject(err); }
+                    dfd.resolve(module);
+                });
+
+                // Also allow shorthand `return` from the funcction, which 
+                // resolves the Promise with whatever was immediately returned
+                if(result !== undefined) {
+                    dfd.resolve(result);
+                }
+            }
+
+            // If the moduleId is actually an object, simply resolve with it
+            else {
+                dfd.resolve(moduleIdOrModule);
+            }
+        });
+    }
+
+    // super()
+    return acquire.apply(this, arguments);
+};</code></pre>
 <p>This may look complex, but basically all it&#39;s allowing you to do is specify <code>moduleId</code> as a <code>Function</code>, which can either return the <code>module</code> directly, or execute a passed callback when you&#39;ve retrieved it asynchronously (more on why we want this later!).</p>
 <h2>viewLocator.locateView</h2>
 <p>The logic for this method is a little more complex, but we&#39;re only interested in the first parameter:</p>
-<p><a href="https://gist.github.com/add43ae8b5f245b29ec7">See the code on GitHub</a></p>
+<pre tabindex="0" translate="no" data-lang="js"><code class="language-js">viewLocator.locateView = function(  
+    viewOrUrlOrId: String|DOMElement,
+    area?: String,
+    elementsToSearch?: DOMElement[]
+) {}</code></pre>
 <p>We&#39;ll need to override this method to allow the <code>viewOrUrlOrId</code> to be a bare HTML string (a <code>String</code> whose first character is a <code>&lt;</code>).</p>
-<p><a href="https://gist.github.com/1334186a7973b483d3c7">See the code on GitHub</a></p>
+<pre tabindex="0" translate="no" data-lang="js"><code class="language-js">var $ = require('jquery');
+var system = require('durandal/system');
+var viewLocator = require('durandal/viewLocator');
+
+// Allow using `function` or bare HTML string as a view
+var locateView = viewLocator.locateView;
+viewLocator.locateView = function(viewOrUrlOrId, area) {
+    var viewId;
+
+    // HTML here will be passed into `processMarkup`
+    if('string' === typeof viewOrUrlOrId &amp;&amp; $.trim(viewOrUrlOrId).charAt(0) === '&lt;') {
+        return system.defer(function(dfd) {
+            dfd.resolve(viewOrUrlOrId);
+        });
+    }
+
+    // super()
+    return locateView.apply(this, arguments);
+};</code></pre>
 <p>First, we check the <code>viewOrUrlOrId</code> parameter to see <em>if it&#39;s both a string <strong>and</strong> starts with a <code>&lt;</code></em>. If it does, we assume it&#39;s actually a view as opposed to a <code>viewUrl</code>, and return it as a resolved <a href="https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>. If it doesn&#39;t, we simply proceed with the normal Durandal functionality, which helps us maintain backwards compatibility.</p>
 <h4>A note on these enhancements</h4>
 <p>You&#39;ll need to include these enhancements before your</p>
@@ -73,15 +128,47 @@
 <h3>ViewModel views</h3>
 <p>Normally, you wouldn&#39;t need to specify the <code>View</code> for a particular <code>ViewModel</code> instance, as it&#39;s inferred by convention by Durandal, depending on the view strategy you&#39;ve got set up. We&#39;ll need to make things more explicit if we want Webpack to bundle our views, however.</p>
 <p>We can specify our views as explicit dependencies directly on the ViewModel instances by setting our <code>getView</code> method to one which returns our <code>require</code>d view HTML:</p>
-<p><a href="https://gist.github.com/add43ae8b5f245b29ec7">See the code on GitHub</a></p>
+<pre tabindex="0" translate="no" data-lang="js"><code class="language-js">var jQuery = require('jquery');
+var viewEngine = require('durandal/viewEngine');
+
+var ViewModel = {  
+    getView: function() {
+        var view = require('./view');
+        return viewEngine.processMarkup(view);
+    }
+};</code></pre>
 <p>Notice we are using the built-in <code>viewEngine.processMarkup</code> method here. Durandal expects the output of a <code>getView</code> call to be a <code>DOMElement</code> instance, so we&#39;ll delegate this parsing operation to Durandal since it&#39;s already included and handles it nicely.</p>
 <p>That&#39;s it. Together with our enhancements this is all that&#39;s needed to allow both Durandal and Webpack to understand the inter-dependency of our <code>View</code> and <code>ViewModel</code>. Durandal composes just like before, and Webpack can bundle our view together with our app. Simples!</p>
 <h3><em>composition</em> Binding Handler</h3>
 <p>The <code>compose</code> binding handler can take various forms, as explained in the <a href="http://durandaljs.com/documentation/Using-Composition.html">Durandal documentation</a>. A sample of these is given below</p>
-<p><a href="https://gist.github.com/add43ae8b5f245b29ec7">See the code on GitHub</a></p>
+<pre tabindex="0" translate="no" data-lang="js"><code class="language-js">//  Locates the view, realizes it, binds it to the parent binding context and composes it into the DOM node on which the binding is declared.
+data-bind="compose: 'myView.html'"
+
+// Uses RequireJS to get the shell module, locates the view conventionally, binds it and injects it into the DOM node on which the binding is declared.
+data-bind="compose: 'shell'"
+
+//  Evaluates the binding to obtain the result of someProperty. If it is a string, assume it's a view, otherwise assume it's a viewmodel, and follow the steps above
+data-bind="compose: someProperty"</code></pre>
 <p>Since we&#39;re not using Require.js, we&#39;ll no longer pass <code>moduleId</code>s or <code>viewUrl</code>s to the <code>compose</code> binding, and will instead always pass a module or HTML instead, respectively. We&#39;ll store these as properties on the <code>ViewModel</code>, using <code>require</code> to retrieve them as static dependencies. For example, amending the previous code sample:</p>
-<p><a href="https://gist.github.com/add43ae8b5f245b29ec7">See the code on GitHub</a></p>
-<p><a href="https://gist.github.com/add43ae8b5f245b29ec7">See the code on GitHub</a></p>
+<pre tabindex="0" translate="no" data-lang="js"><code class="language-js">var jQuery = require('jquery');
+var viewEngine = require('durandal/viewEngine');
+
+var ViewModel = {  
+    myView: require('./myView.html'),
+    myViewModel: require('./myViewModel'),
+
+    getView: function() {
+            var view = require('./view');
+            return viewEngine.processMarkup(view);
+    }
+};
+
+module.exports = ViewModel;</code></pre>
+<pre tabindex="0" translate="no" data-lang="html"><code class="language-html">&lt;!-- Composes and binds the View HTML stored in the `myView` property into this view --&gt;  
+&lt;div data-bind="compose: myView"&gt;&lt;/div&gt;
+
+&lt;!-- Composes the ViewModel stored in the `myViewModel` property into this view --&gt;  
+&lt;div data-bind="compose: myView"&gt;&lt;/div&gt;</code></pre>
 <p>Notice how the dependencies for this <code>ViewModel</code> are immediately visible by simply viewing the <code>viewModel.js</code> file. This is a helpful by-product of this approach and should help you quickly review the top-level dependency graph of your <code>ViewModel</code> without the need to look over your view file.</p>
 <h2>Summary</h2>
 <p>We&#39;ve implemented some enhancements to the core Durandal <code>system.acquire</code> and <code>viewLocator.locateView</code> methods which allow us to pass <code>module</code> and <code>view</code> HTML directly to the <code>composition</code> engine. This lets us specify our dependencies directly on the ViewModel, and allows Webpack to understand and bundle the different parts of our application together in an effective way.</p>
@@ -90,7 +177,7 @@
 </div>
 </article>
 <nav class="sp-pn" aria-label="More posts"><a href="../durandal-and-webpack-part-1-module-format/"><span>← newer</span><b>Durandal and Webpack: Part 1 - Module format</b></a><a class="next" href="../github-pages-and-webpack-2/"><span>older →</span><b>GitHub Pages + Webpack Chunks = output.publicPath</b></a></nav>
-<section class="sp-more" aria-labelledby="sp-more-h"><h2 id="sp-more-h">$ ls blog/</h2><ul><li><a href="../generating-roman-numerals/">generating-roman-numerals.md</a></li><li><a href="../durandal-and-webpack-part-1-module-format/">durandal-and-webpack-part-1-module-format.md</a></li><li><a href="../durandal-and-webpack-part-2-composition/" aria-current="page">durandal-and-webpack-part-2-composition.md</a></li><li><a href="../github-pages-and-webpack-2/">github-pages-and-webpack-2.md</a></li><li><a href="../gulp-watch-less/">gulp-watch-less.md</a></li><li><a href="../less-file-import-list/">less-file-import-list.md</a></li><li><a href="../durandal-type-cast-querystring-parameters/">durandal-type-cast-querystring-parameters.md</a></li><li><a href="../knockout-value-binding-input-number/">knockout-value-binding-input-number.md</a></li><li><a href="../jquery-ui-draggable-exclusive-draggables/">jquery-ui-draggable-exclusive-draggables.md</a></li><li><a href="../ckeditor-key-modifiers/">ckeditor-key-modifiers.md</a></li><li><a href="../qtip2-now-on-jsdelivr/">qtip2-now-on-jsdelivr.md</a></li><li><a href="../60fps-scrolling-using-pointer-events-none/">60fps-scrolling-using-pointer-events-none.md</a></li><li><a href="../qtip2-v2-2-0-released/">qtip2-v2-2-0-released.md</a></li><li><a href="../scratchpad-io/">scratchpad-io.md</a></li><li><a href="../qtip2-pre-release-changes-aka-what-happened-to-my-qtip-styles/">qtip2-pre-release-changes-aka-what-happened-to-my-qtip-styles.md</a></li><li><a href="../var-commas-and-equals/">var-commas-and-equals.md</a></li><li><a href="../qtip2-styles-update/">qtip2-styles-update.md</a></li><li><a href="../where-are-you-using-qtip/">where-are-you-using-qtip.md</a></li></ul></section>
+<section class="sp-more" aria-labelledby="sp-more-h"><h2 id="sp-more-h">$ ls blog/</h2><ul><li><a href="../generating-roman-numerals/">generating-roman-numerals.md</a></li><li><a href="../tether-js-transition-small-changes/">tether-js-transition-small-changes.md</a></li><li><a href="../durandal-and-webpack-introduction/">durandal-and-webpack-introduction.md</a></li><li><a href="../durandal-and-webpack-part-1-module-format/">durandal-and-webpack-part-1-module-format.md</a></li><li><a href="../durandal-and-webpack-part-2-composition/" aria-current="page">durandal-and-webpack-part-2-composition.md</a></li><li><a href="../github-pages-and-webpack-2/">github-pages-and-webpack-2.md</a></li><li><a href="../gulp-watch-less/">gulp-watch-less.md</a></li><li><a href="../less-file-import-list/">less-file-import-list.md</a></li><li><a href="../knockout-bootstrap-3-buttons-and-the-enable-binding/">knockout-bootstrap-3-buttons-and-the-enable-binding.md</a></li><li><a href="../durandal-type-cast-querystring-parameters/">durandal-type-cast-querystring-parameters.md</a></li><li><a href="../knockout-value-binding-input-number/">knockout-value-binding-input-number.md</a></li><li><a href="../jquery-ui-draggable-exclusive-draggables/">jquery-ui-draggable-exclusive-draggables.md</a></li><li><a href="../ckeditor-key-modifiers/">ckeditor-key-modifiers.md</a></li><li><a href="../bootstrap-3-disabled-dropdown-links/">bootstrap-3-disabled-dropdown-links.md</a></li><li><a href="../jquery-ui-draggable-droppables-in-an-iframe/">jquery-ui-draggable-droppables-in-an-iframe.md</a></li><li><a href="../qtip2-now-on-jsdelivr/">qtip2-now-on-jsdelivr.md</a></li><li><a href="../60fps-scrolling-using-pointer-events-none/">60fps-scrolling-using-pointer-events-none.md</a></li><li><a href="../qtip2-v2-2-0-released/">qtip2-v2-2-0-released.md</a></li><li><a href="../scratchpad-io/">scratchpad-io.md</a></li><li><a href="../qtip2-pre-release-changes-aka-what-happened-to-my-qtip-styles/">qtip2-pre-release-changes-aka-what-happened-to-my-qtip-styles.md</a></li><li><a href="../noty-css-themes/">noty-css-themes.md</a></li><li><a href="../qtip2-tips-plugins-dimension-options-changed/">qtip2-tips-plugins-dimension-options-changed.md</a></li><li><a href="../var-commas-and-equals/">var-commas-and-equals.md</a></li><li><a href="../javascript-ios-version-detection/">javascript-ios-version-detection.md</a></li><li><a href="../qtip2-styles-update/">qtip2-styles-update.md</a></li><li><a href="../efficient-javascript-delta-encoding-merging-json-objects/">efficient-javascript-delta-encoding-merging-json-objects.md</a></li></ul></section>
 <aside class="sp-cta" aria-label="About Craig"><p><b>Craig Michael Thompson</b>, Head of Engineering: hands-on, AI-first, from start-up to acquisition. Open to new roles.</p><div><a class="go" href="mailto:craga89@gmail.com">get in touch</a><a class="alt" href="../../#blog">the portfolio</a><a class="alt" href="../../cv/">CV</a></div></aside>
 </main>
 </div>

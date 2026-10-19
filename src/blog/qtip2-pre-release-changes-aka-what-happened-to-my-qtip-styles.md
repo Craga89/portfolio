@@ -1,5 +1,5 @@
 ---
-title: "qTip<sup>2</sup> - Pre-release changes (AKA What happened to my qTip styles!?)"
+title: "qTip2 - Pre-release changes (AKA What happened to my qTip styles!?)"
 date: 2012-11-20
 tags: [plugins, javascript]
 original: https://blog.craigsworks.com/qtip2-pre-release-changes-aka-what-happened-to-my-qtip-styles

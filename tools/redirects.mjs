@@ -16,12 +16,15 @@
 import { readFileSync, writeFileSync, mkdirSync, existsSync, appendFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { loadPosts } from './blog.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const CONF = JSON.parse(readFileSync(join(ROOT, 'redirects', 'old-domains.json'), 'utf8'));
 
 const split = (src) => { const i = src.indexOf('/'); return i < 0 ? [src.toLowerCase(), '/'] : [src.slice(0, i).toLowerCase(), src.slice(i) || '/']; };
-const RULES = CONF.rules.map((r, i) => { const [host, path] = split(r.source); return Object.assign({ i, host, path }, r); });
+// Each recovered blog post redirects from its old address to its new page.
+const postRules = loadPosts().filter((b) => b.original).map((b) => { const u = new URL(b.original); return { source: u.hostname.replace(/^www\./, '') + u.pathname.replace(/\/$/, ''), target: CONF.home + 'blog/' + b.slug + '/', subdomains: !u.hostname.startsWith('blog.'), subpath: true, suffix: false, why: 'blog post: ' + b.title }; });
+const RULES = postRules.concat(CONF.rules).map((r, i) => { const [host, path] = split(r.source); return Object.assign({ i, host, path }, r); });
 
 export function match(input) {
   const u = new URL(input);

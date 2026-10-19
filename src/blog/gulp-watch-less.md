@@ -9,7 +9,26 @@ I've recently released a new plugin aptly named `gulp-watch-less`, which will mo
 
 It's usage is pretty straight forward, using the same signature as the underlying `gulp-watch` plugin:
 
-[See the code on GitHub](https://gist.github.com/25452323fcfc6e4ac949)
+```js
+var gulp = require('gulp');
+var watchLess = require('gulp-watch-less');
+var less = require('gulp-less');
+
+// LESS compilter configuration
+var lessConfig = {
+	paths: ['../imports']
+};
+
+gulp.task('less', function () {
+    return gulp.src('**/*.less')
+        .pipe(watchLess('less/file.less', {
+        	name: 'LESS', // For output nice-ness!
+            less: lessConfig // Passed to LESS parser when generating list of @imports
+        }))
+        .pipe(less(lessConfig))
+        .pipe(gulp.dest('dist'));
+});
+```
 
 Running `gulp less` will compile all .less files, and watch for changes to those watched and their `@imports`. Simple! *It will also monitor the original files for changes to `@import` statements (additions, deletions, path updates etc) to ensure the associated files are watched correctly!*
 

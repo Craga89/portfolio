@@ -11,11 +11,21 @@ archived: https://web.archive.org/web/20180628012752/http://blog.craigsworks.com
 
 Durandal's core is written using the Asynchronous Module Definition pattern, which allows users to define their module and load their dependencies asynchronously, a must have for any web-based application. It takes the following form:
 
-[See the code on GitHub](https://gist.github.com/4f34e9cf972456f505df)
+```js
+define(id?: String, dependencies?: String[], factory: Function|Object);
+```
 
 For example, Durandal's `viewEngine` module has a dependency on it's own `system` module, as well as jQuery, and is written as:
 
-[See the code on GitHub](https://gist.github.com/4f34e9cf972456f505df)
+```js
+define(['durandal/system', 'jquery'], function(system, $) {
+    // Module logic here
+    var viewEngine = { ... };
+    
+    // Exports the viewEngine object
+    return viewEngine;
+});
+```
 
 This syntax will likely comprise the large majority of your existing application code, and whilst *Webpack can understand this format natively*, the benefits on enclosing the whole module within a closure are lost. Since Webpack bundles the modules within the same script, we no longer require an asynchronous definition format, and can instead opt for the simpler CommonJS alternative..
 
@@ -23,7 +33,16 @@ This syntax will likely comprise the large majority of your existing application
 
 The CommonJS module format is the synchronous sibling to AMD, and is the primary module format for Node.js, which I'm sure you'll all be familiar with. It has a slightly different syntax to AMD. For example, here's the previous `viewEngine` module rewritten in CommonJS syntax:
 
-[See the code on GitHub](https://gist.github.com/4f34e9cf972456f505df)
+```js
+var system = require('durandal/system');
+var $ = require('jquery');
+
+// Module logic here
+var viewEngine = { ... };
+
+// Exports the viewEngine object
+module.exports = viewEngine;
+```
 
 Note some of the key differences here:
 

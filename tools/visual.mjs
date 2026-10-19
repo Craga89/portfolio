@@ -36,6 +36,9 @@ const VIEWS = [
   { name: 'stack', w: 1440, h: 900, scheme: 'dark', el: '#stack' },
   { name: 'faq', w: 1440, h: 900, scheme: 'light', el: '#faq' },
   { name: 'cv', w: 1100, h: 900, scheme: 'light', path: 'cv/', full: true },
+  { name: 'blog', w: 1440, h: 900, scheme: 'dark', el: '#blog' },
+  { name: 'blog-post', w: 1100, h: 900, scheme: 'light', path: 'blog/durandal-and-webpack-part-2-composition/' },
+  { name: 'blog-index-mobile', w: 390, h: 844, scheme: 'dark', path: 'blog/', mobile: true },
 ];
 
 const browser = await chromium.launch();

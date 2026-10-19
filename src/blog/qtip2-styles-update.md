@@ -1,5 +1,5 @@
 ---
-title: "qTip<sup>2</sup> - Styles update"
+title: qTip2 - Styles update
 date: 2012-05-13
 tags: [plugins, javascript]
 original: https://blog.craigsworks.com/qtip2-styles-update/

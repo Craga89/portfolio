@@ -1,5 +1,5 @@
 ---
-title: "Knockout `value` binding + HTML5 number input"
+title: "Knockout value binding + HTML5 number input"
 date: 2014-07-17
 tags: [JavaScript, Knockout.js, HTML5]
 original: https://blog.craigsworks.com/knockout-value-binding-input-number/
@@ -17,6 +17,22 @@ Luckily, the specification also provides a means of retrieving the input's value
 
 We can enhance Knockout's `selectExtensions.readValue`, which is utilised by the `value` binding to add support for this feature where possible:
 
-[See the code on GitHub](https://gist.github.com/bb6d8cfa2bdbbfcafb28)
+```js
+// Add `valueAsNumber` support to `value` bindings etc
+ko.selectExtensions.readValue = _.wrap(ko.selectExtensions.readValue, function(read, element) {
+    var result = read.apply(this, _.rest(arguments));
+
+    switch(ko.utils.tagNameLower(element)) {
+        // For input-type `number` elements, check if it has a `valueAsNumber` property and if so, use it
+        case 'input':
+            if(element.type === 'number' && 'valueAsNumber' in element) {
+                result = element.valueAsNumber;
+            }
+            break;
+    }
+
+    return result;
+});
+```
 
 **Note:** A byproduct of this implementation is that it will prevent people typing non-numeric characters! There's no easy way around this unfortunately...

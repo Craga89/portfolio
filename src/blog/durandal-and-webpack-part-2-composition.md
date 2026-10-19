@@ -15,17 +15,56 @@ By default, the `composition` engine deals with what are known in Durandal as `m
 
 The logic for this method is fairly straight forward, taking a single `moduleId` string and returning a [Promise](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Promise) instance that resolves with the `module`:
 
-[See the code on GitHub](https://gist.github.com/add43ae8b5f245b29ec7)
+```js
+system.acquire = function(moduleId: String) {}
+```
 
 We'll override this method to allow the `moduleId` to be either a **`String` or a `Function`**. In the latter case, this function is given a single argument, another function we'll call `cb`, which takes the following form:
 
-[See the code on GitHub](https://gist.github.com/add43ae8b5f245b29ec7)
+```js
+function cb(err?: Error, module: Object|Function)
+```
 
 The `cb` function should be called with `null` as the first argument if no error occurred, and the resolved `module` as the second parameter. This may look familiar to you if you've used Node extensively, as it's the [standard Node.js callback pattern](http://fredkschott.com/post/2014/03/understanding-error-first-callbacks-in-node-js/).
 
 With this in mind, let's take a look at the override in full:
 
-[See the code on GitHub](https://gist.github.com/1334186a7973b483d3c7)
+```js
+var system = require('durandal/system');
+
+var acquire = system.acquire;
+system.acquire = function(moduleIdOrModule) {
+    var moduleType = typeof moduleIdOrModule;
+
+    if(moduleType !== 'string') {
+        return system.defer(function(dfd) {
+            // If the moduleId is a funcction...
+            if(moduleIdOrModule instanceof Function) {
+                // Execute the funcction, passing a callback that should be 
+                // called when the (possibly) async operation is finished
+                var result = moduleIdOrModule(function(err, module) {
+                    if(err) { dfd.reject(err); }
+                    dfd.resolve(module);
+                });
+
+                // Also allow shorthand `return` from the funcction, which 
+                // resolves the Promise with whatever was immediately returned
+                if(result !== undefined) {
+                    dfd.resolve(result);
+                }
+            }
+
+            // If the moduleId is actually an object, simply resolve with it
+            else {
+                dfd.resolve(moduleIdOrModule);
+            }
+        });
+    }
+
+    // super()
+    return acquire.apply(this, arguments);
+};
+```
 
 This may look complex, but basically all it's allowing you to do is specify `moduleId` as a `Function`, which can either return the `module` directly, or execute a passed callback when you've retrieved it asynchronously (more on why we want this later!).
 
@@ -33,11 +72,37 @@ This may look complex, but basically all it's allowing you to do is specify `mod
 
 The logic for this method is a little more complex, but we're only interested in the first parameter:
 
-[See the code on GitHub](https://gist.github.com/add43ae8b5f245b29ec7)
+```js
+viewLocator.locateView = function(  
+    viewOrUrlOrId: String|DOMElement,
+    area?: String,
+    elementsToSearch?: DOMElement[]
+) {}
+```
 
 We'll need to override this method to allow the `viewOrUrlOrId` to be a bare HTML string (a `String` whose first character is a `<`).
 
-[See the code on GitHub](https://gist.github.com/1334186a7973b483d3c7)
+```js
+var $ = require('jquery');
+var system = require('durandal/system');
+var viewLocator = require('durandal/viewLocator');
+
+// Allow using `function` or bare HTML string as a view
+var locateView = viewLocator.locateView;
+viewLocator.locateView = function(viewOrUrlOrId, area) {
+    var viewId;
+
+    // HTML here will be passed into `processMarkup`
+    if('string' === typeof viewOrUrlOrId && $.trim(viewOrUrlOrId).charAt(0) === '<') {
+        return system.defer(function(dfd) {
+            dfd.resolve(viewOrUrlOrId);
+        });
+    }
+
+    // super()
+    return locateView.apply(this, arguments);
+};
+```
 
 First, we check the `viewOrUrlOrId` parameter to see *if it's both a string **and** starts with a `<`*. If it does, we assume it's actually a view as opposed to a `viewUrl`, and return it as a resolved [Promise](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Promise). If it doesn't, we simply proceed with the normal Durandal functionality, which helps us maintain backwards compatibility.
 
@@ -59,7 +124,17 @@ Normally, you wouldn't need to specify the `View` for a particular `ViewModel` i
 
 We can specify our views as explicit dependencies directly on the ViewModel instances by setting our `getView` method to one which returns our `require`d view HTML:
 
-[See the code on GitHub](https://gist.github.com/add43ae8b5f245b29ec7)
+```js
+var jQuery = require('jquery');
+var viewEngine = require('durandal/viewEngine');
+
+var ViewModel = {  
+    getView: function() {
+        var view = require('./view');
+        return viewEngine.processMarkup(view);
+    }
+};
+```
 
 Notice we are using the built-in `viewEngine.processMarkup` method here. Durandal expects the output of a `getView` call to be a `DOMElement` instance, so we'll delegate this parsing operation to Durandal since it's already included and handles it nicely.
 
@@ -69,13 +144,43 @@ That's it. Together with our enhancements this is all that's needed to allow bot
 
 The `compose` binding handler can take various forms, as explained in the [Durandal documentation](http://durandaljs.com/documentation/Using-Composition.html). A sample of these is given below
 
-[See the code on GitHub](https://gist.github.com/add43ae8b5f245b29ec7)
+```js
+//  Locates the view, realizes it, binds it to the parent binding context and composes it into the DOM node on which the binding is declared.
+data-bind="compose: 'myView.html'"
+
+// Uses RequireJS to get the shell module, locates the view conventionally, binds it and injects it into the DOM node on which the binding is declared.
+data-bind="compose: 'shell'"
+
+//  Evaluates the binding to obtain the result of someProperty. If it is a string, assume it's a view, otherwise assume it's a viewmodel, and follow the steps above
+data-bind="compose: someProperty"
+```
 
 Since we're not using Require.js, we'll no longer pass `moduleId`s or `viewUrl`s to the `compose` binding, and will instead always pass a module or HTML instead, respectively. We'll store these as properties on the `ViewModel`, using `require` to retrieve them as static dependencies. For example, amending the previous code sample:
 
-[See the code on GitHub](https://gist.github.com/add43ae8b5f245b29ec7)
+```js
+var jQuery = require('jquery');
+var viewEngine = require('durandal/viewEngine');
 
-[See the code on GitHub](https://gist.github.com/add43ae8b5f245b29ec7)
+var ViewModel = {  
+    myView: require('./myView.html'),
+    myViewModel: require('./myViewModel'),
+
+    getView: function() {
+            var view = require('./view');
+            return viewEngine.processMarkup(view);
+    }
+};
+
+module.exports = ViewModel;
+```
+
+```html
+<!-- Composes and binds the View HTML stored in the `myView` property into this view -->  
+<div data-bind="compose: myView"></div>
+
+<!-- Composes the ViewModel stored in the `myViewModel` property into this view -->  
+<div data-bind="compose: myView"></div>
+```
 
 Notice how the dependencies for this `ViewModel` are immediately visible by simply viewing the `viewModel.js` file. This is a helpful by-product of this approach and should help you quickly review the top-level dependency graph of your `ViewModel` without the need to look over your view file.
 

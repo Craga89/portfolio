@@ -237,6 +237,11 @@ test('mcp tools/call: profile, files, search and errors', async () => {
   const f = await call(rpc('tools/call', { name: 'read_file', arguments: { file: 'ai/platform.md' } }));
   assert.equal(f.body.result.structuredContent.url, 'https://craigthompson.dev/case-studies/ai-platform/');
   assert.ok(f.body.result.structuredContent.text.length > 200);
+  const blog = await call(rpc('tools/call', { name: 'list_files', arguments: { section: 'blog' } }));
+  const posts = toolData(blog.body).files;
+  assert.ok(posts.length > 10 && posts.every((p) => /\/blog\/[\w-]+\/$/.test(p.url)), 'blog posts are listed with their pages');
+  const post = await call(rpc('tools/call', { name: 'read_file', arguments: { file: 'blog/' + posts[0].file } }));
+  assert.ok(toolData(post.body).text.length > 100);
   const miss = await call(rpc('tools/call', { name: 'read_file', arguments: { file: 'nope.md' } }));
   assert.equal(miss.body.result.isError, true);
   assert.match(miss.body.result.content[0].text, /monorepo\.md/);

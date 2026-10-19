@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-19T12:49:25.042Z",
+ "generated": "2026-10-19T13:34:43.425Z",
  "passages": [
   {
    "id": "intro",
@@ -12,7 +12,7 @@
   {
    "id": "profile",
    "title": "Profile",
-   "text": "Craig Michael Thompson Full-stack engineer Newcastle upon Tyne, UK 13: 49 (UTC+1) 13:49 UTC+1 in Newcastle open to new roles. Contact: craga89@gmail.com, github.com/Craga89, linkedin.com/in/craigmichaelthompson.",
+   "text": "Craig Michael Thompson Full-stack engineer Newcastle upon Tyne, UK 14: 34 (UTC+1) 14:34 UTC+1 in Newcastle open to new roles. Contact: craga89@gmail.com, github.com/Craga89, linkedin.com/in/craigmichaelthompson.",
    "href": "#top",
    "kind": "link",
    "key": ""
@@ -452,15 +452,31 @@
   {
    "id": "blog-generating-roman-numerals",
    "title": "generating-roman-numerals.md: Generating Roman Numerals (blog post, 2015)",
-   "text": "A post Craig wrote on his old blog (craigsworks.com) on 2015-12-02, about JavaScript. We've been conducting pair programming exercises at work using the excellent FreeCodeCamp, and came upon an interesting problem to solve using JavaScript. We needed to create a generic function for generating Roman Numeral equivalent for any number within a reasonable range (say, to 10000). This is what we came up with! See the code on GitHub You can use it like so: See the code on GitHub…",
+   "text": "A post Craig wrote on his old blog (craigsworks.com) on 2015-12-02, about JavaScript. We've been conducting pair programming exercises at work using the excellent FreeCodeCamp, and came upon an interesting problem to solve using JavaScript. We needed to create a generic function for generating Roman Numeral equivalent for any number within a reasonable range (say, to 10000). This is what we came up with! You can use it like so:…",
    "href": "blog/generating-roman-numerals/",
    "kind": "blog",
    "key": "generating-roman-numerals"
   },
   {
+   "id": "blog-tether-js-transition-small-changes",
+   "title": "tether-js-transition-small-changes.md: Tether.js - Transition small movements (blog post, 2015)",
+   "text": "A post Craig wrote on his old blog (craigsworks.com) on 2015-09-01. I've been using Tether.js recently, which is a great little utility library for dynamically positioning your elements in relation to other elements on the page (similar to the jQuery UI Position plugin). I've recently added some additional module code, which lets you use CSS3 transitions to animate small movements of the offset nicely, leaving bigger changes to happen instantly. Note: Include this before any .tether() calls, otherwise the classes won't be applied until the next call! By default, any change in offset that is less than 50px in either direction will automatically apply a tether-transition class, which I've got set up to apply some nice transform transitions, like so: Wala! Buttery smooth transitions for your less-than-50px-in-any-direction…",
+   "href": "blog/tether-js-transition-small-changes/",
+   "kind": "blog",
+   "key": "tether-js-transition-small-changes"
+  },
+  {
+   "id": "blog-durandal-and-webpack-introduction",
+   "title": "durandal-and-webpack-introduction.md: Durandal and Webpack: Introduction (blog post, 2015)",
+   "text": "A post Craig wrote on his old blog (craigsworks.com) on 2015-07-26, about Knockout.js, Durandal, jQuery, Webpack, Guide, Require.js. This series of posts will explain how to utilise the power of the Webpack module bundler with an existing (or perhaps new) Durandal application. But first... A bit of background Durandal is a mature SPA framework built atop popular existing libraries: Knockout.js, Require.js and jQuery. It allows users to use a modular, MVC-like approach to SPA development, via it's extensive use of Require.js. This is a great starting workflow, allowing users to quickly create applications with little to no boilerplate outside Durandal itself, which lends itself well to agile development environments. Webpack is \"module bundler\", which allows users to take a given set of modular JavaScript files, and compile them down into a single (or multiple) file(s). Not only that, but it also allows us to bundle in other file formats such as CSS and HTML via the use of module loaders. This effectively allows us to represent the whole application as a single, pre-built, minified file, assets and all. Perfect for production environments that need extensive caching and minimal…",
+   "href": "blog/durandal-and-webpack-introduction/",
+   "kind": "blog",
+   "key": "durandal-and-webpack-introduction"
+  },
+  {
    "id": "blog-durandal-and-webpack-part-1-module-format",
    "title": "durandal-and-webpack-part-1-module-format.md: Durandal and Webpack: Part 1 - Module format (blog post, 2015)",
-   "text": "A post Craig wrote on his old blog (craigsworks.com) on 2015-07-26, about Knockout.js, Durandal, jQuery, Webpack, Guide, Require.js. This post is part of a series of posts entitled Durandal and Webpack. Check-out the Introduction here if you haven't already, as well as the online examples AMD Durandal's core is written using the Asynchronous Module Definition pattern, which allows users to define their module and load their dependencies asynchronously, a must have for any web-based application. It takes the following form: See the code on GitHub For example, Durandal's viewEngine module has a dependency on it's own system module, as well as jQuery, and is written as: See the code on GitHub This syntax will likely comprise the large majority of your existing application code, and whilst Webpack can understand this format natively, the benefits on enclosing the whole module within a closure are lost. Since Webpack bundles the modules within the same script, we no longer require an asynchronous definition format, and can instead opt for the simpler CommonJS alternative.. CommonJS The CommonJS module format is the synchronous sibling to AMD, and is the primary module format for…",
+   "text": "A post Craig wrote on his old blog (craigsworks.com) on 2015-07-26, about Knockout.js, Durandal, jQuery, Webpack, Guide, Require.js. This post is part of a series of posts entitled Durandal and Webpack. Check-out the Introduction here if you haven't already, as well as the online examples AMD Durandal's core is written using the Asynchronous Module Definition pattern, which allows users to define their module and load their dependencies asynchronously, a must have for any web-based application. It takes the following form: For example, Durandal's viewEngine module has a dependency on it's own system module, as well as jQuery, and is written as: This syntax will likely comprise the large majority of your existing application code, and whilst Webpack can understand this format natively, the benefits on enclosing the whole module within a closure are lost. Since Webpack bundles the modules within the same script, we no longer require an asynchronous definition format, and can instead opt for the simpler CommonJS alternative.. CommonJS The CommonJS module format is the synchronous sibling to AMD, and is the primary module format for Node.js, which I'm sure you'll all be familiar with.…",
    "href": "blog/durandal-and-webpack-part-1-module-format/",
    "kind": "blog",
    "key": "durandal-and-webpack-part-1-module-format"
@@ -468,7 +484,7 @@
   {
    "id": "blog-durandal-and-webpack-part-2-composition",
    "title": "durandal-and-webpack-part-2-composition.md: Durandal and Webpack: Part 2 - Composition (blog post, 2015)",
-   "text": "A post Craig wrote on his old blog (craigsworks.com) on 2015-07-26. This post is part of a series of posts entitled Durandal and Webpack. Check-out the Introduction here if you haven't already, as well as the online examples Durandal implements a process known as composition, which allows developers to compose arbitrary Views and ViewModels together into a single output. Much like how React lets you nest Components within your render method. This composition workflow is used extensively in Durandal and is the process by which your ViewModel and View(s) are stitched together to create the basic building blocks of your application. By default, the composition engine deals with what are known in Durandal as moduleIds and viewUrls, which are URLs that point to where the ViewModel or View are situated, respectively. Since Webpack doesn't understand this natively, we'll need to enhance this functionality a little and allow us to directly pass the module, rather than a path pointing to it. system.acquire The logic for this method is fairly straight forward, taking a single moduleId string and returning a Promise instance that resolves with the module: See the code on GitHub We'll…",
+   "text": "A post Craig wrote on his old blog (craigsworks.com) on 2015-07-26. This post is part of a series of posts entitled Durandal and Webpack. Check-out the Introduction here if you haven't already, as well as the online examples Durandal implements a process known as composition, which allows developers to compose arbitrary Views and ViewModels together into a single output. Much like how React lets you nest Components within your render method. This composition workflow is used extensively in Durandal and is the process by which your ViewModel and View(s) are stitched together to create the basic building blocks of your application. By default, the composition engine deals with what are known in Durandal as moduleIds and viewUrls, which are URLs that point to where the ViewModel or View are situated, respectively. Since Webpack doesn't understand this natively, we'll need to enhance this functionality a little and allow us to directly pass the module, rather than a path pointing to it. system.acquire The logic for this method is fairly straight forward, taking a single moduleId string and returning a Promise instance that resolves with the module: We'll override this method to allow…",
    "href": "blog/durandal-and-webpack-part-2-composition/",
    "kind": "blog",
    "key": "durandal-and-webpack-part-2-composition"
@@ -484,7 +500,7 @@
   {
    "id": "blog-gulp-watch-less",
    "title": "gulp-watch-less.md: gulp-watch-less - Watch LESS @imports (blog post, 2014)",
-   "text": "A post Craig wrote on his old blog (craigsworks.com) on 2014-10-12, about Plugins, JavaScript, Gulp, Node. I've recently released a new plugin aptly named gulp-watch-less, which will monitor your .less files using the excellent gulp-watch task, and output changed files to the stream whenever the file itself or any of it's @imports have changed. It's usage is pretty straight forward, using the same signature as the underlying gulp-watch plugin: See the code on GitHub Running gulp less will compile all .less files, and watch for changes to those watched and their @imports. Simple! It will also monitor the original files for changes to @import statements (additions, deletions, path updates etc) to ensure the associated files are watched correctly! You can get the plugin using the usual npm install gulp-watch-less or visit the GitHub project for more documentation or to report an issue. Big thanks to Vsevolod Strukchinsky for the modifying his existing (and awesome!) gulp-watch plugin to make this possible. Happy…",
+   "text": "A post Craig wrote on his old blog (craigsworks.com) on 2014-10-12, about Plugins, JavaScript, Gulp, Node. I've recently released a new plugin aptly named gulp-watch-less, which will monitor your .less files using the excellent gulp-watch task, and output changed files to the stream whenever the file itself or any of it's @imports have changed. It's usage is pretty straight forward, using the same signature as the underlying gulp-watch plugin: Running gulp less will compile all .less files, and watch for changes to those watched and their @imports. Simple! It will also monitor the original files for changes to @import statements (additions, deletions, path updates etc) to ensure the associated files are watched correctly! You can get the plugin using the usual npm install gulp-watch-less or visit the GitHub project for more documentation or to report an issue. Big thanks to Vsevolod Strukchinsky for the modifying his existing (and awesome!) gulp-watch plugin to make this possible. Happy…",
    "href": "blog/gulp-watch-less/",
    "kind": "blog",
    "key": "gulp-watch-less"
@@ -492,23 +508,31 @@
   {
    "id": "blog-less-file-import-list",
    "title": "less-file-import-list.md: LESS - Generate a deep list of all a file's @imports (blog post, 2014)",
-   "text": "A post Craig wrote on his old blog (craigsworks.com) on 2014-10-05, about JavaScript, LESS. Sometimes it's useful to get a list of all @imports for a given .less file, especially if you want to watch those files for changes in your gulp or grunt build steps. We can easily achieve this using the LESS parser itself! See the code on GitHub Disclaimer... this relies on internal implementation details of the LESS.js library and as such could break at any time. That being said, this code should work on all LESS.js versions stretching right back to v1.3! Sample use See the code on GitHub gulp-watch-less I've rolled the above code into a gulp plugin called gulp-watch-less, which works exactly like the gulp-watch plugin but also tracks changes to all @import paths of the files. Neat! Take a look at the official repo for more information on how to use this in your work…",
+   "text": "A post Craig wrote on his old blog (craigsworks.com) on 2014-10-05, about JavaScript, LESS. Sometimes it's useful to get a list of all @imports for a given .less file, especially if you want to watch those files for changes in your gulp or grunt build steps. We can easily achieve this using the LESS parser itself! Disclaimer... this relies on internal implementation details of the LESS.js library and as such could break at any time. That being said, this code should work on all LESS.js versions stretching right back to v1.3! Sample use gulp-watch-less I've rolled the above code into a gulp plugin called gulp-watch-less, which works exactly like the gulp-watch plugin but also tracks changes to all @import paths of the files. Neat! Take a look at the official repo for more information on how to use this in your work…",
    "href": "blog/less-file-import-list/",
    "kind": "blog",
    "key": "less-file-import-list"
   },
   {
+   "id": "blog-knockout-bootstrap-3-buttons-and-the-enable-binding",
+   "title": "knockout-bootstrap-3-buttons-and-the-enable-binding.md: Bootstrap 3 Buttons and the enable binding (blog post, 2014)",
+   "text": "A post Craig wrote on his old blog (craigsworks.com) on 2014-09-17, about JavaScript, Bootstrap, Knockout.js. By default, Knockout's enable (and hence disable binding, since they share identical but opposite logic) simply set/remove the disabled attribute. While this work's great with Bootstrap 3's <button /-type elements, it doesn't go so well when using the alternative <a role='button' / syntax. The problem is that Bootsrap expects an additional disabled class when disabling <a/ elements, which Knockout doesn't add by default. We can remedy this by enhancing the core enable binding like so: This additional logic will toggle the appropriate disabled class on all elements with a btn class when bound with the enable or disable…",
+   "href": "blog/knockout-bootstrap-3-buttons-and-the-enable-binding/",
+   "kind": "blog",
+   "key": "knockout-bootstrap-3-buttons-and-the-enable-binding"
+  },
+  {
    "id": "blog-durandal-type-cast-querystring-parameters",
    "title": "durandal-type-cast-querystring-parameters.md: Durandal - Type cast queryString parameters (blog post, 2014)",
-   "text": "A post Craig wrote on his old blog (craigsworks.com) on 2014-07-28. By default, Durandal's router.parseQueryString method will simply provide all query parameters as strings, which isn't ideal if you're working with data heavily. We can work around this by overwriting and enhancing the parseQueryString method, type casting variables into their correct types. See the code on GitHub This is useful for primitive data types, but as usual YMMV depending on the type of data you're attempting to pass…",
+   "text": "A post Craig wrote on his old blog (craigsworks.com) on 2014-07-28. By default, Durandal's router.parseQueryString method will simply provide all query parameters as strings, which isn't ideal if you're working with data heavily. We can work around this by overwriting and enhancing the parseQueryString method, type casting variables into their correct types. This is useful for primitive data types, but as usual YMMV depending on the type of data you're attempting to pass…",
    "href": "blog/durandal-type-cast-querystring-parameters/",
    "kind": "blog",
    "key": "durandal-type-cast-querystring-parameters"
   },
   {
    "id": "blog-knockout-value-binding-input-number",
-   "title": "knockout-value-binding-input-number.md: Knockout `value` binding + HTML5 number input (blog post, 2014)",
-   "text": "A post Craig wrote on his old blog (craigsworks.com) on 2014-07-17, about JavaScript, Knockout.js, HTML5. Knockout's default value binding is great in most cases, but when using the new HTML5 <input type=\"number\" / element, it will always return an empty string when the input is a non-number i.e. contains anything but 0-9 and a decimal! This is actually a byproduct of the number type's WHATWG specification The value sanitization algorithm is as follows: If the value of the element is not a valid floating-point number, then set it to the empty string instead. Luckily, the specification also provides a means of retrieving the input's value as a number, via the valueAsNumber property. When a non-numeric string is used, this will return NaN. The solution We can enhance Knockout's selectExtensions.readValue, which is utilised by the value binding to add support for this feature where possible: See the code on GitHub Note: A byproduct of this implementation is that it will prevent people typing non-numeric characters! There's no easy way around this…",
+   "title": "knockout-value-binding-input-number.md: Knockout value binding + HTML5 number input (blog post, 2014)",
+   "text": "A post Craig wrote on his old blog (craigsworks.com) on 2014-07-17, about JavaScript, Knockout.js, HTML5. Knockout's default value binding is great in most cases, but when using the new HTML5 <input type=\"number\" / element, it will always return an empty string when the input is a non-number i.e. contains anything but 0-9 and a decimal! This is actually a byproduct of the number type's WHATWG specification The value sanitization algorithm is as follows: If the value of the element is not a valid floating-point number, then set it to the empty string instead. Luckily, the specification also provides a means of retrieving the input's value as a number, via the valueAsNumber property. When a non-numeric string is used, this will return NaN. The solution We can enhance Knockout's selectExtensions.readValue, which is utilised by the value binding to add support for this feature where possible: Note: A byproduct of this implementation is that it will prevent people typing non-numeric characters! There's no easy way around this…",
    "href": "blog/knockout-value-binding-input-number/",
    "kind": "blog",
    "key": "knockout-value-binding-input-number"
@@ -516,18 +540,34 @@
   {
    "id": "blog-jquery-ui-draggable-exclusive-draggables",
    "title": "jquery-ui-draggable-exclusive-draggables.md: ui.draggable.exclusive - Exclusive draggables (blog post, 2014)",
-   "text": "A post Craig wrote on his old blog (craigsworks.com) on 2014-07-14, about Plugins, JavaScript, jQuery, jQuery UI. Shout out to to my friend and colleague Steve Henderson who came up with the original concept behind this idea! UI.Draggable(s)... they're not exclusive! jQuery UI's draggable and droppable component's are great, and are used widely throughout the web to provide consistent, well tested drag/drop functionality across multiple device types. However, one thing that is lacking, is a solid way to make draggable's exclusive i.e. only drop on a single droppable, even if it overlaps multiple droppables! As it stands, any draggable which overlaps a droppable that is marked as active via the accept handler's \"truthyness\" will have a drop event fired if the draggable is released upon it when the drag operation ends. This is problematic if you have say, four closely positioned droppables, only one of which should be dropped upon in a single drag operation. Live demonstration Drag the draggable block below over the numbered droppables. You'll notice that it's possible to drop onto multiple droppables in a single drag operation. Making them exclusive Each draggable operation should…",
+   "text": "A post Craig wrote on his old blog (craigsworks.com) on 2014-07-14, about Plugins, JavaScript, jQuery, jQuery UI. Shout out to a former colleague, who came up with the original concept behind this idea! UI.Draggable(s)... they're not exclusive! jQuery UI's draggable and droppable component's are great, and are used widely throughout the web to provide consistent, well tested drag/drop functionality across multiple device types. However, one thing that is lacking, is a solid way to make draggable's exclusive i.e. only drop on a single droppable, even if it overlaps multiple droppables! As it stands, any draggable which overlaps a droppable that is marked as active via the accept handler's \"truthyness\" will have a drop event fired if the draggable is released upon it when the drag operation ends. This is problematic if you have say, four closely positioned droppables, only one of which should be dropped upon in a single drag operation. Live demonstration Drag the draggable block below over the numbered droppables. You'll notice that it's possible to drop onto multiple droppables in a single drag operation. Making them exclusive Each draggable operation should result in a single drop…",
    "href": "blog/jquery-ui-draggable-exclusive-draggables/",
    "kind": "blog",
    "key": "jquery-ui-draggable-exclusive-draggables"
   },
   {
    "id": "blog-ckeditor-key-modifiers",
-   "title": "ckeditor-key-modifiers.md: CKEDITOR `key` event - modifier keys (blog post, 2014)",
-   "text": "A post Craig wrote on his old blog (craigsworks.com) on 2014-07-03, about Plugins, JavaScript, CKEditor. When subscribing to the key event on a given CKEDITOR instance, the event.data.keyCode property will be the sum of both the associated keyCode and any pressed modifier keyCodes e.g. ctrl/shift/alt keys as noted on the official documentation - keyCode : Number A number representing the key code (or a combination thereof). It is the sum of the current key code and the CKEDITOR.CTRL, CKEDITOR.SHIFT and CKEDITOR.ALT constants, if those are pressed. In order to figure out what key as actually pressed (minus the modifier) we can use a simple sanitizeKeyCode method See the code on GitHub Also included is a handy isModifier method that takes a keyCode and a modifierCode, and rrturns true if the keyCode is a sum of another key and that given…",
+   "title": "ckeditor-key-modifiers.md: CKEDITOR key event - modifier keys (blog post, 2014)",
+   "text": "A post Craig wrote on his old blog (craigsworks.com) on 2014-07-03, about Plugins, JavaScript, CKEditor. When subscribing to the key event on a given CKEDITOR instance, the event.data.keyCode property will be the sum of both the associated keyCode and any pressed modifier keyCodes e.g. ctrl/shift/alt keys as noted on the official documentation - keyCode : Number A number representing the key code (or a combination thereof). It is the sum of the current key code and the CKEDITOR.CTRL, CKEDITOR.SHIFT and CKEDITOR.ALT constants, if those are pressed. In order to figure out what key as actually pressed (minus the modifier) we can use a simple sanitizeKeyCode method Also included is a handy isModifier method that takes a keyCode and a modifierCode, and rrturns true if the keyCode is a sum of another key and that given…",
    "href": "blog/ckeditor-key-modifiers/",
    "kind": "blog",
    "key": "ckeditor-key-modifiers"
+  },
+  {
+   "id": "blog-bootstrap-3-disabled-dropdown-links",
+   "title": "bootstrap-3-disabled-dropdown-links.md: Bootstrap 3 - Disabled dropdown links (blog post, 2014)",
+   "text": "A post Craig wrote on his old blog (craigsworks.com) on 2014-06-02, about JavaScript, CSS, Bootstrap, LESS. Bootstrap 3 has built-in visual support for disabled dropdown menu items as seen from their dropdowns.less file: However, these are simply visual changes and don't actually impact the interactivity of the element itself, meaning it will still be clickable! We can get around this by utilising a combination of the [disabled] attribute (for oldIE support), and the CSS pointer-events: none rule (for evergreen browsers), a technique outlined on StackOverflow. Here's the CSS (or LESS, SASS etc.): Once added to your styles, you can easily disable any dropdown item by applying a [disabled] attribute to the <a/ element itself, and adding the usual .disabled class to the parent <li, as seen below. And that's it! Your links will be truly unclickable. This will work on all evergreen browsers, as well as IE6+, though may have limited support for older versions of Opera. For more information, see the StackOverflow…",
+   "href": "blog/bootstrap-3-disabled-dropdown-links/",
+   "kind": "blog",
+   "key": "bootstrap-3-disabled-dropdown-links"
+  },
+  {
+   "id": "blog-jquery-ui-draggable-droppables-in-an-iframe",
+   "title": "jquery-ui-draggable-droppables-in-an-iframe.md: jQuery UI Draggable - Droppables in an iFrame (blog post, 2014)",
+   "text": "A post Craig wrote on his old blog (craigsworks.com) on 2014-01-02, about Plugins, JavaScript, jQuery, jQuery UI. You've got the usual drag and drop use case, but you want to have your draggables in the top window, and the droppables within an iframe (located on the same domain, ofcourse!). jQuery UI doesn't support this use case, and as such the offset of the container frame element isn't taken into account, causing issues with drop detection! The warning This fix requires the overriding of a core jQuery UI method, but should not be done in the main jquery-ui.js file!. Instead, include this in a new file, and include it after the jQuery UI library script. Obviously if jQuery UI's method changes substantially, or disappears entirely, this fix won't work. But until then... happy dragging! The fix (jQuery UI v1.8+) The fix is fairly straight forward, but requires overriding the $.ui.ddmanager.prepareOffsets method, in order to take into account elements which lie within a different document/frame. Here's the code: The explanation In order for the droppable offets to be calculated correctly, the offset of the containing frame must be taken into account, by adding it to the calculated…",
+   "href": "blog/jquery-ui-draggable-droppables-in-an-iframe/",
+   "kind": "blog",
+   "key": "jquery-ui-draggable-droppables-in-an-iframe"
   },
   {
    "id": "blog-qtip2-now-on-jsdelivr",
@@ -539,7 +579,7 @@
   },
   {
    "id": "blog-60fps-scrolling-using-pointer-events-none",
-   "title": "60fps-scrolling-using-pointer-events-none.md: 60fps scrolling using `pointer-events: none` (blog post, 2013)",
+   "title": "60fps-scrolling-using-pointer-events-none.md: 60fps scrolling using pointer-events: none (blog post, 2013)",
    "text": "A post Craig wrote on his old blog (craigsworks.com) on 2013-11-25. Ryan Seddon just posted a very useful CSS tip to increase your scrolling speeds via use of pointer-events: none, based on Christian Schaefer's tweet: @paul\\irish Easy. Apply \"pointer-events: none\" to the <body on scrollstart and remove it on scrollend. @tabatkins — Christian Schaefer (@derSchepp) November 12, 2013 Read more about it here:…",
    "href": "blog/60fps-scrolling-using-pointer-events-none/",
    "kind": "blog",
@@ -547,7 +587,7 @@
   },
   {
    "id": "blog-qtip2-v2-2-0-released",
-   "title": "qtip2-v2-2-0-released.md: qTip<sup>2</sup> - v2.2.0 released! (blog post, 2013)",
+   "title": "qtip2-v2-2-0-released.md: qTip2 - v2.2.0 released! (blog post, 2013)",
    "text": "A post Craig wrote on his old blog (craigsworks.com) on 2013-11-21, about javascript, release, plugins, qtip2. Where to Download Head over to the Download page to customise your qTip2 download and grab the latest version! Changelog You can see the various changes in the v2.2.0 release on the…",
    "href": "blog/qtip2-v2-2-0-released/",
    "kind": "blog",
@@ -563,35 +603,59 @@
   },
   {
    "id": "blog-qtip2-pre-release-changes-aka-what-happened-to-my-qtip-styles",
-   "title": "qtip2-pre-release-changes-aka-what-happened-to-my-qtip-styles.md: qTip<sup>2</sup> - Pre-release changes (AKA What happened to my qTip styles!?) (blog post, 2012)",
+   "title": "qtip2-pre-release-changes-aka-what-happened-to-my-qtip-styles.md: qTip2 - Pre-release changes (AKA What happened to my qTip styles!?) (blog post, 2012)",
    "text": "A post Craig wrote on his old blog (craigsworks.com) on 2012-11-20, about plugins, javascript. qTip2 is under-going to considerable changes over the next few weeks, with a new website on it’s way, a brand new build system to go along with it, and several new features and documentation updates. However, there are some breaking changes as qTip2 marches on to it’s final 2.0 release, and firmly out of nightly status! As many of you watching GitHub repository will know, the class\\rename branch, which removes dependency upon the ui-tooltip\\ classes used by jQuery UI, has been merged back in the master branch. This means of course, that any of you relying on the old class structure in your code, need to update to the new classes names. A list of old and new class names is listed below to ease this! - #ui-tooltip-<id → #qtip-<id - .ui-tooltip → .qtip - .ui-tooltip-content → .qtip-content - .ui-tooltip-titlebar → .qtip-titlebar - .ui-tooltip-title → .qtip-title - .ui-tooltip-button → .qtip-close - .ui-tooltip-icon → .qtip-icon - .ui-tooltip-focus → .qtip-focus - .ui-tooltip-hover → .qtip-hover - .ui-tooltip-default → .qtip-default As you can see, the ui-tooltip- prefix has simply been…",
    "href": "blog/qtip2-pre-release-changes-aka-what-happened-to-my-qtip-styles/",
    "kind": "blog",
    "key": "qtip2-pre-release-changes-aka-what-happened-to-my-qtip-styles"
   },
   {
+   "id": "blog-noty-css-themes",
+   "title": "noty-css-themes.md: notyfy = noty + CSS themes (blog post, 2012)",
+   "text": "A post Craig wrote on his old blog (craigsworks.com) on 2012-11-01, about Plugins, JavaScript, notyfy, CSS, noty. After finding the beautiful noty plugin by Nedim Arabacı and forking it, I was surprised to see the lack of pure CSS styling available (without needing any JS, that is.). Fortunately it didn’t take too much work to remove the regular JS themes in favour of regular old CSS files. It’s pretty much pure CSS at this point for all stylings :) Take a peek and fork away!…",
+   "href": "blog/noty-css-themes/",
+   "kind": "blog",
+   "key": "noty-css-themes"
+  },
+  {
+   "id": "blog-qtip2-tips-plugins-dimension-options-changed",
+   "title": "qtip2-tips-plugins-dimension-options-changed.md: qTip2 – Tip plugin’s dimension options updated (blog post, 2012)",
+   "text": "A post Craig wrote on his old blog (craigsworks.com) on 2012-08-26, about Plugins, JavaScript. For those of you using the qTip2 nightly builds, as of commit 970cfabacd the tip plugin’s width and height options have changed slightly to become relative to the tips position on the tooltip. \"relative to the tips position\"?! When the position of the tip is on the horizontal sides of the tooltip i.e. the left or right, the width and height are switched. This is done to ensure the tip dimensions stay as you’d expect no matter what position the actual tooltip is in. To demonstrate this, see the jsFiddle example below of the past and current…",
+   "href": "blog/qtip2-tips-plugins-dimension-options-changed/",
+   "kind": "blog",
+   "key": "qtip2-tips-plugins-dimension-options-changed"
+  },
+  {
    "id": "blog-var-commas-and-equals",
    "title": "var-commas-and-equals.md: var, commas and equals (blog post, 2012)",
-   "text": "A post Craig wrote on his old blog (craigsworks.com) on 2012-08-12, about javascript. Working with JavaScript for a while (or any other language for that matter) you tend to pick up on a lot of nuances particular to the language, but even long time users get tripped up every now and again, as did I with a recent namespace issue involving… you guessed it: var, commas and equals! Take for example this: See the code on GitHub At first glance, it might seem as if both foo and bar variables should be declared within the local invoke methods scope, but this alas is not the case, and for good reason! Since statements are evaluated right to left, it first attempts to set the bar variable to “uhoh”, and since no bar variable is defined in our local scope (yet), it travels up the scope chain checking for a defined foo variable, until it gets to the window object, (or possibly some other scope if this is embedded within other methods&hrllip;), and sets foo as a property of that scope… we’ve just polluted the global namespace! Perhaps not what you’d expect upon first glance, and an easy thing to get tripped up on. The solution is simple,and actually a little syntactically nicer (i.e. more…",
+   "text": "A post Craig wrote on his old blog (craigsworks.com) on 2012-08-12, about javascript. Working with JavaScript for a while (or any other language for that matter) you tend to pick up on a lot of nuances particular to the language, but even long time users get tripped up every now and again, as did I with a recent namespace issue involving… you guessed it: var, commas and equals! Take for example this: At first glance, it might seem as if both foo and bar variables should be declared within the local invoke methods scope, but this alas is not the case, and for good reason! Since statements are evaluated right to left, it first attempts to set the bar variable to “uhoh”, and since no bar variable is defined in our local scope (yet), it travels up the scope chain checking for a defined foo variable, until it gets to the window object, (or possibly some other scope if this is embedded within other methods&hrllip;), and sets foo as a property of that scope… we’ve just polluted the global namespace! Perhaps not what you’d expect upon first glance, and an easy thing to get tripped up on. The solution is simple,and actually a little syntactically nicer (i.e. more explicit) in my…",
    "href": "blog/var-commas-and-equals/",
    "kind": "blog",
    "key": "var-commas-and-equals"
   },
   {
+   "id": "blog-javascript-ios-version-detection",
+   "title": "javascript-ios-version-detection.md: JavaScript iOS version detection (blog post, 2012)",
+   "text": "A post Craig wrote on his old blog (craigsworks.com) on 2012-05-29, about javascript, ios, snippet. Small JavaScript snippet to detect the iOS version in use by the user. Note that this relys on the user agent always being correctly set, which it isn’t in some…",
+   "href": "blog/javascript-ios-version-detection/",
+   "kind": "blog",
+   "key": "javascript-ios-version-detection"
+  },
+  {
    "id": "blog-qtip2-styles-update",
-   "title": "qtip2-styles-update.md: qTip<sup>2</sup> - Styles update (blog post, 2012)",
+   "title": "qtip2-styles-update.md: qTip2 - Styles update (blog post, 2012)",
    "text": "A post Craig wrote on his old blog (craigsworks.com) on 2012-05-13, about plugins, javascript. In the recent commit today a re-factoring of the CSS stylesheets took place in order to simply the styles qTip2 uses, as well as changes to the underlying tips code to cope with these changes. 1. The biggest change is the movement of the border and border-radius declarations from the titlebar and content elements to the main ui-tooltip element. Thanks to this, many duplicate styles could be removed from the stylesheet for a 10% size saving! - This will likely effect the styling of your tooltips upon updating, and you may see black borders on your tooltip “tips” until you move the border colour declarations to the top ui-tooltip element. 2. The ui-tooltip-shadow class now only works in IE9+ now because of this modification and removal of the IE9 filter declarations. This was done because applying a filter to any element renders the overflow property useless, as reference from this blog post comment: What I think happens in IE<9 is it “designates” a square where DirectX can render on top of a hasLayout box based on width+height properties, and if content tries to expand outside that box…",
    "href": "blog/qtip2-styles-update/",
    "kind": "blog",
    "key": "qtip2-styles-update"
   },
   {
-   "id": "blog-where-are-you-using-qtip",
-   "title": "where-are-you-using-qtip.md: Craig Michael Thompson (blog post, 2010)",
-   "text": "A post Craig wrote on his old blog (craigsworks.com) on 2010-07-24. So qTip2 is on it’s way out soon, and I’m looking for a whose who of qTip users! If you’re using qTip on your site and want a chance to be featured on the home page, comment here or send in an…",
-   "href": "blog/where-are-you-using-qtip/",
+   "id": "blog-efficient-javascript-delta-encoding-merging-json-objects",
+   "title": "efficient-javascript-delta-encoding-merging-json-objects.md: Efficient JavaScript Delta-encoding – Merging JSON objects (blog post, 2012)",
+   "text": "A post Craig wrote on his old blog (craigsworks.com) on 2012-04-24, about JavaScript, Old, Delta Encoding. NOTE This is a very old blog post and I would not recommend using it in production. Utilising the Function consutrctor in this way, whilst useful, opens up issues of security and XSS issues. Also, there are much better ways of doing this, especially relating to the re-usage of objects (object pooling), discussed here. Preface As I’m now in my 3rd year at Newcastle University, I was expected to produce a 40-page thesis over the last few months on a subject of my choice: 2D Multiplayer game using browser-native HTML5 standards and the Node.js run-time. I decided early on to use the Client-Server architecture after reading up on several articles, particularly Glenn Fiedler’s “What every programmer needs to know about game networking” and Valve’s awesome multiplayer networking overview. However this meant a lot of extra work would be needed to make it playable, including the topic of this post: Delta-encoding. Delta Encoding? Delta encoding is a way of storing or transmitting data in the form of differences between sequential data rather than complete files. That is, instead of…",
+   "href": "blog/efficient-javascript-delta-encoding-merging-json-objects/",
    "kind": "blog",
-   "key": "where-are-you-using-qtip"
+   "key": "efficient-javascript-delta-encoding-merging-json-objects"
   }
  ]
 }

@@ -917,6 +917,13 @@ async function renderPost(md, imgDir) {
   const renderer = new marked.Renderer();
   renderer.heading = ({ tokens, depth }) => { const l = Math.min(6, Math.max(2, depth - shift)); return `<h${l}>${renderer.parser.parseInline(tokens)}</h${l}>\n`; };
   renderer.code = ({ text, lang }) => `<pre tabindex="0" translate="no"${lang ? ` data-lang="${esc(lang)}"` : ''}><code${lang ? ` class="language-${esc(lang)}"` : ''}>${text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code></pre>\n`;
+  // Links between old posts point at their new pages.
+  const slugs = new Set(POSTS.map((b) => b.slug));
+  renderer.link = ({ href, title, tokens }) => {
+    const m = String(href).match(/^https?:\/\/(?:blog\.craigsworks\.com|(?:www\.)?craigsworks\.com\/blog\/\d{4}\/\d{2})\/([\w-]+)\/?(#.*)?$/);
+    const to = m && slugs.has(m[1]) ? `../${m[1]}/${m[2] || ''}` : href;
+    return `<a href="${esc(to)}"${title ? ` title="${esc(title)}"` : ''}>${renderer.parser.parseInline(tokens)}</a>`;
+  };
   renderer.image = ({ href, text }) => { const f = String(href).replace(/^img\//, ''); const m = sizes[f]; return `<img src="../img/${esc(f)}" alt="${esc(text || '')}" loading="lazy" decoding="async"${m ? ` width="${m.width}" height="${m.height}"` : ''}>`; };
   return marked.parse(md, { renderer, gfm: true });
 }
