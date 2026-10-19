@@ -45,6 +45,9 @@ jobs:
               --data "$(jq -n --arg q "$q" '{q: $q}')" || echo 000)
             if [ "$code" = 200 ] && jq -e '.answer | length > 0' out.json >/dev/null; then
               echo "::notice title=$q::$(jq -r '"\(.answer | gsub("\n"; " ")) [sources: \(.sources | join(", "))] [\(.model)]"' out.json)"
+            elif [ "$code" = 503 ] && jq -e '.error == "budget"' out.json >/dev/null 2>&1; then
+              # The day's test allowance is used up (several deploys in a day): the worker refusing is the right answer.
+              echo "::warning title=$q::today's AI test allowance is used up; the worker refused as it should"
             else
               echo "::error title=$q::HTTP $code $(head -c 300 out.json 2>/dev/null)"; fail=1
             fi
@@ -52,7 +55,7 @@ jobs:
           # Reading aloud: a natural voice, or at least one of the fallbacks.
           code=$(curl -sS -m 60 -o speak.mp3 -D speak.h -w '%{http_code}' -X POST "${ASK_URL%/ask}/speak" -H 'origin: https://craigthompson.dev' -H 'content-type: application/json' -H 'x-craga-test: 1' --data '{"text":"Hello from ask.sh."}' || echo 000)
           voice=$(grep -i '^x-voice:' speak.h | tr -d '\r' | cut -d' ' -f2)
-          if [ "$code" = 200 ] && [ "$(stat -c %s speak.mp3)" -gt 1000 ]; then echo "::notice title=Read aloud::voice $voice, $(stat -c %s speak.mp3) bytes"; else echo "::error title=Read aloud::HTTP $code $(head -c 200 speak.mp3)"; fail=1; fi
+          if [ "$code" = 200 ] && [ "$(stat -c %s speak.mp3)" -gt 1000 ]; then echo "::notice title=Read aloud::voice $voice, $(stat -c %s speak.mp3) bytes"; elif [ "$code" = 503 ] && grep -q '"budget"' speak.mp3; then echo "::warning title=Read aloud::today's AI test allowance is used up; the worker refused as it should"; else echo "::error title=Read aloud::HTTP $code $(head -c 200 speak.mp3)"; fail=1; fi
           # MCP: both protocol eras on /mcp.
           MCP_URL="${ASK_URL%/ask}/mcp"
           code=$(curl -sS -m 30 -o init.json -w '%{http_code}' -X POST "$MCP_URL" -H 'content-type: application/json' -H 'accept: application/json, text/event-stream' -H 'x-craga-test: 1' \
