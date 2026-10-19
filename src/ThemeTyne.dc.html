@@ -145,6 +145,8 @@ a{color:var(--acc)}a:hover{color:var(--acc-h)}
 @keyframes c-icon{from{opacity:0;transform:rotate(-90deg) scale(.6)}}
 .c-icon{animation:c-icon .35s ease both}
 .c-theme{transition:border-color .2s ease,color .2s ease}
+html[data-vt-theme] .c-deck-slides,html[data-vt-theme] .c-cs-panels{view-transition-name:none}
+html[data-vt-theme]::view-transition-old(root),html[data-vt-theme]::view-transition-new(root){animation-duration:.35s;animation-timing-function:ease}
 .c-theme:hover{border-color:var(--acc)!important;color:var(--acc)!important}
 .c-theme:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
 @keyframes c-glow{0%,16%{box-shadow:0 0 0 3px rgba(255,178,36,.35);border-color:var(--acc)}32%,100%{box-shadow:0 0 0 0 rgba(255,178,36,0);border-color:var(--line3)}}
@@ -234,9 +236,9 @@ main a:not(.c-btn):hover{text-underline-offset:6px}
 .v2-loc:hover{text-decoration:underline}
 .v2-loc:focus-visible{outline:2px solid var(--acc);outline-offset:2px;border-radius:3px}
 .v2-id b{color:var(--head);font-size:15px;margin-bottom:2px}
-.v2-open{display:inline-flex;align-items:center;gap:8px;margin-top:10px;min-height:24px;width:fit-content;font-size:12.5px;color:var(--ok)!important;text-decoration:none}
+.v2-open{display:inline-flex;align-items:center;gap:6px;margin-top:10px;min-height:24px;width:fit-content;font-size:12.5px;color:var(--ok)!important;text-decoration:none}
 .v2-open:hover{text-decoration:underline;text-underline-offset:3px}
-.v2-open::before{content:'';width:8px;height:8px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 3px var(--ok-bg);animation:v2-glow 3.4s ease-in-out infinite}
+.v2-open::before{content:'';width:8px;height:8px;margin-inline:10px;flex:none;border-radius:50%;background:var(--ok);box-shadow:0 0 0 3px var(--ok-bg);animation:v2-glow 3.4s ease-in-out infinite}
 @keyframes v2-glow{0%,100%{opacity:.45;box-shadow:0 0 0 3px var(--ok-bg)}50%{opacity:1;box-shadow:0 0 0 3px var(--ok-bg),0 0 9px 2px color-mix(in srgb,var(--ok) 45%,transparent)}}
 .still .v2-open::before{animation:none}
 @media (prefers-reduced-motion: reduce){.v2-open::before{animation:none}}
@@ -300,7 +302,6 @@ body:has(.c-light){background:#EDF1EE!important}
 .v2-intro::before{content:"";position:absolute;left:0;right:0;bottom:0;z-index:-1;aspect-ratio:1200/680;pointer-events:none;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 320' preserveAspectRatio='none'%3E%3Cpath d='M0 300 Q600 -40 1200 300' fill='none' stroke='%23E7EEEA' stroke-opacity='.10' stroke-width='3'/%3E%3Cpath d='M60 300 Q600 10 1140 300' fill='none' stroke='%23E7EEEA' stroke-opacity='.06' stroke-width='2'/%3E%3Cg stroke='%23E7EEEA' stroke-opacity='.06' stroke-width='1.5'%3E%3Cpath d='M150 300 L150 220M300 300 L300 140M450 300 L450 95M600 300 L600 80M750 300 L750 95M900 300 L900 140M1050 300 L1050 220'/%3E%3C/g%3E%3Cpath d='M0 300 H1200' stroke='%23E7EEEA' stroke-opacity='.12' stroke-width='3'/%3E%3C/svg%3E") no-repeat center/100% 100%}
 .c-root.c-light .v2-intro::before{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 320' preserveAspectRatio='none'%3E%3Cpath d='M0 300 Q600 -40 1200 300' fill='none' stroke='%231B2A22' stroke-opacity='.10' stroke-width='3'/%3E%3Cpath d='M60 300 Q600 10 1140 300' fill='none' stroke='%231B2A22' stroke-opacity='.06' stroke-width='2'/%3E%3Cg stroke='%231B2A22' stroke-opacity='.06' stroke-width='1.5'%3E%3Cpath d='M150 300 L150 220M300 300 L300 140M450 300 L450 95M600 300 L600 80M750 300 L750 95M900 300 L900 140M1050 300 L1050 220'/%3E%3C/g%3E%3Cpath d='M0 300 H1200' stroke='%231B2A22' stroke-opacity='.12' stroke-width='3'/%3E%3C/svg%3E")}
 .c-cmd{padding-bottom:12px;background:radial-gradient(circle,var(--line3) 2px,transparent 2.5px) left bottom/16px 6px repeat-x}
-.v2-sin{background:radial-gradient(circle at 12px 12px,var(--line3) 2.5px,transparent 3px),radial-gradient(circle at calc(100% - 12px) 12px,var(--line3) 2.5px,transparent 3px)}
 .v2-tree a i::before{font-size:9px;color:var(--line3)}
 .v2-tree a[aria-current="true"] i::before{color:var(--acc)}
 .v2-tree a{border-radius:4px!important}
@@ -355,10 +356,11 @@ html{scroll-padding-top:calc(var(--hdr-h,0px) + 12px);scroll-padding-bottom:72px
 .v2-time>.v2-ico{flex:none;margin-top:.3em!important}
 .v2-time-t{min-width:0}
 .v2-time-v{white-space:nowrap}
+.v2-role{display:flex;align-items:center;gap:6px}
 .v2-loc{align-items:flex-start!important}
 .v2-loc .v2-angel{flex:none;margin-top:.45em}
 .v2-loc,.v2-time-t{text-wrap:balance}
-.v2-time .v2-ico{margin-block:0;margin-inline:7px 6px}
+.v2-time .v2-ico,.v2-role .v2-ico{margin-block:0;margin-inline:7px}
 .v2-ver{font-size:11.5px;color:var(--dim);text-decoration:none;font-family:var(--f-mono,ui-monospace,monospace)}
 .v2-ver:hover{color:var(--head);text-decoration:underline}
 /* ask.sh answer actions */
@@ -768,7 +770,7 @@ html[data-vt-dir="prev"]::view-transition-new(c-rs),html[data-vt-dir="prev"]::vi
 <svg class="c-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"></path></svg>
 </sc-if>
 </button></div>
-<div class="v2-id"><b>Craig Michael Thompson</b><span>Full-stack engineer</span><a class="v2-loc" href="https://www.google.com/maps/search/?api=1&amp;query=Newcastle+upon+Tyne%2C+UK" target="_blank" rel="noopener" title="Open Newcastle upon Tyne in Google Maps"><svg class="v2-ico v2-angel" viewBox="0 5.4 19.94 9.3" width="28" height="13" fill="currentColor" aria-hidden="true"><path d="M19.842,7.215c0-0.143-0.261-0.107-0.261-0.107l-8.789,0.127c-0.047-0.042-0.116-0.084-0.198-0.099c-0.172-0.033-0.36-0.08-0.36-0.08s-0.094-0.217,0-0.391c0.096-0.173,0.188-0.328,0.143-0.564c-0.048-0.235-0.188-0.39-0.408-0.376C9.75,5.712,9.608,5.867,9.562,6.102C9.514,6.338,9.608,6.493,9.703,6.666c0.094,0.173,0,0.391,0,0.391s-0.188,0.047-0.36,0.08C9.262,7.15,9.192,7.193,9.146,7.235L0.278,7.121c0,0-0.183-0.049-0.183,0.094C0.095,7.354,0,8.905,0,8.905s-0.022,0.258,0.353,0.33C0.694,9.3,7.629,9.651,9.24,9.719C9.237,9.744,9.234,9.77,9.232,9.798c-0.062,0.719,0.221,1.519,0.282,1.769c0.063,0.25-0.015,0.312-0.093,0.563c-0.079,0.251-0.079,0.47,0.093,0.971c0.174,0.503,0.141,0.723,0.032,0.831c-0.11,0.109-0.125,0.282-0.125,0.282h1.095c0,0-0.016-0.171-0.125-0.282c-0.105-0.108-0.139-0.328,0.032-0.831c0.172-0.501,0.172-0.72,0.093-0.971c-0.078-0.251-0.156-0.313-0.093-0.563c0.062-0.25,0.345-1.05,0.282-1.769c-0.003-0.028-0.004-0.055-0.01-0.079c1.611-0.069,8.549-0.419,8.891-0.484c0.375-0.072,0.352-0.33,0.352-0.33S19.842,7.354,19.842,7.215zM0.74,7.41C0.488,7.394,0.323,7.513,0.323,7.513s0-0.119,0.046-0.192c0.044-0.075,0.193-0.044,0.193-0.044l8.544,0.117l0.043,0.15C9.15,7.544,0.992,7.425,0.74,7.41zM19.303,7.41c-0.251,0.017-8.41,0.134-8.41,0.134l0.043-0.15l8.546-0.117c0,0,0.149-0.031,0.192,0.046c0.044,0.071,0.044,0.191,0.044,0.191S19.556,7.397,19.303,7.41z"></path></svg>Newcastle upon Tyne, UK</a><sc-if value="{{clockOn}}" hint-placeholder-val="false"><span class="v2-time"><svg class="v2-ico" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg><span class="v2-time-t"><span class="v2-time-v" aria-hidden="true"><span class="v2-hh">{{clockH}}</span><span class="v2-colon">:</span><span class="v2-mm">{{clockM}}</span><span class="v2-off">({{clockOff}})</span></span><span class="c-sr v2-time-sr">{{clockSr}}</span> in Newcastle</span></span></sc-if><a class="v2-open" href="#open-to-roles">open to new roles</a></div>
+<div class="v2-id"><b>Craig Michael Thompson</b><span class="v2-role"><svg class="v2-ico" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m8 7-5 5 5 5"></path><path d="m16 7 5 5-5 5"></path></svg>Full-stack engineer</span><a class="v2-loc" href="https://www.google.com/maps/search/?api=1&amp;query=Newcastle+upon+Tyne%2C+UK" target="_blank" rel="noopener" title="Open Newcastle upon Tyne in Google Maps"><svg class="v2-ico v2-angel" viewBox="0 5.4 19.94 9.3" width="28" height="13" fill="currentColor" aria-hidden="true"><path d="M19.842,7.215c0-0.143-0.261-0.107-0.261-0.107l-8.789,0.127c-0.047-0.042-0.116-0.084-0.198-0.099c-0.172-0.033-0.36-0.08-0.36-0.08s-0.094-0.217,0-0.391c0.096-0.173,0.188-0.328,0.143-0.564c-0.048-0.235-0.188-0.39-0.408-0.376C9.75,5.712,9.608,5.867,9.562,6.102C9.514,6.338,9.608,6.493,9.703,6.666c0.094,0.173,0,0.391,0,0.391s-0.188,0.047-0.36,0.08C9.262,7.15,9.192,7.193,9.146,7.235L0.278,7.121c0,0-0.183-0.049-0.183,0.094C0.095,7.354,0,8.905,0,8.905s-0.022,0.258,0.353,0.33C0.694,9.3,7.629,9.651,9.24,9.719C9.237,9.744,9.234,9.77,9.232,9.798c-0.062,0.719,0.221,1.519,0.282,1.769c0.063,0.25-0.015,0.312-0.093,0.563c-0.079,0.251-0.079,0.47,0.093,0.971c0.174,0.503,0.141,0.723,0.032,0.831c-0.11,0.109-0.125,0.282-0.125,0.282h1.095c0,0-0.016-0.171-0.125-0.282c-0.105-0.108-0.139-0.328,0.032-0.831c0.172-0.501,0.172-0.72,0.093-0.971c-0.078-0.251-0.156-0.313-0.093-0.563c0.062-0.25,0.345-1.05,0.282-1.769c-0.003-0.028-0.004-0.055-0.01-0.079c1.611-0.069,8.549-0.419,8.891-0.484c0.375-0.072,0.352-0.33,0.352-0.33S19.842,7.354,19.842,7.215zM0.74,7.41C0.488,7.394,0.323,7.513,0.323,7.513s0-0.119,0.046-0.192c0.044-0.075,0.193-0.044,0.193-0.044l8.544,0.117l0.043,0.15C9.15,7.544,0.992,7.425,0.74,7.41zM19.303,7.41c-0.251,0.017-8.41,0.134-8.41,0.134l0.043-0.15l8.546-0.117c0,0,0.149-0.031,0.192,0.046c0.044,0.071,0.044,0.191,0.044,0.191S19.556,7.397,19.303,7.41z"></path></svg>Newcastle upon Tyne, UK</a><sc-if value="{{clockOn}}" hint-placeholder-val="false"><span class="v2-time"><svg class="v2-ico" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg><span class="v2-time-t"><span class="v2-time-v" aria-hidden="true"><span class="v2-hh">{{clockH}}</span><span class="v2-colon">:</span><span class="v2-mm">{{clockM}}</span><span class="v2-off">({{clockOff}})</span></span><span class="c-sr v2-time-sr">{{clockSr}}</span> in Newcastle</span></span></sc-if><a class="v2-open" href="#open-to-roles">open to new roles</a></div>
 <div class="v2-exprow"><div class="v2-exp">EXPLORER</div><button type="button" class="v2-pal" onClick="{{palGo}}" aria-haspopup="dialog" aria-label="Search and jump, {{palKeys}}" title="Search and jump ({{palKeys}})"><svg class="v2-ico" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg><kbd>{{palKeys}}</kbd></button></div>
 <nav class="v2-tree" aria-label="Main" translate="no">
 <a href="#top" aria-current="{{spy.top}}"><i>·</i><bdi>README.md</bdi></a>
@@ -2308,14 +2310,13 @@ html[data-vt-dir="prev"]::view-transition-new(c-rs),html[data-vt-dir="prev"]::vi
 </div>
 
 <div style="margin-top: 48px">
-<h3 class="c-cmd" style="margin: 0 0 6px; font-size: clamp(15px, 1.8vw, 18px); font-weight: 500; color: var(--ok)"><span translate="no">$ git log --upstream --merged</span></h3>
-<p style="margin: 0 0 20px; color: var(--mute); font-size: 14px; max-width: 72ch"><strong style="color: var(--head)">{{live.prs}} merged pull requests across {{live.repos}} other projects</strong> since {{live.since}}, usually fixing something I hit in production. A selection:</p>
 <sc-if value="{{heat.on}}" hint-placeholder-val="false"><figure class="c-hm">
 <figcaption class="c-hm-cap">Merged pull requests to other projects, by quarter</figcaption>
 <div class="c-hm-g" role="img" aria-label="{{heat.summary}}" style="{{heat.cols}}"><sc-for list="{{heat.cells}}" as="c" hint-placeholder-count="8"><span class="{{c.cls}}" data-l="{{c.l}}" data-edge="{{c.edge}}" data-v="{{c.v}}">{{c.label}}<sc-if value="{{c.tip}}" hint-placeholder-val="false"><span class="c-hm-t">{{c.tip}}</span></sc-if></span></sc-for></div>
 <div class="c-hm-leg" aria-hidden="true"><span>fewer</span><i data-l="0"></i><i data-l="1"></i><i data-l="2"></i><i data-l="3"></i><i data-l="4"></i><span>more</span><span class="c-hm-note">{{heat.note}}</span></div>
 <details class="c-hm-tb"><summary>as a table</summary><table><thead><tr><th scope="col">year</th><th scope="col">merged</th><th scope="col">projects</th></tr></thead><tbody><sc-for list="{{heat.rows}}" as="r" hint-placeholder-count="3"><tr><td>{{r.y}}</td><td>{{r.n}}</td><td>{{r.repos}}</td></tr></sc-for></tbody></table></details>
 </figure></sc-if>
+<p style="margin: 0 0 20px; color: var(--mute); font-size: 14px; max-width: 72ch"><strong style="color: var(--head)">{{live.prs}} merged pull requests across {{live.repos}} other projects</strong> since {{live.since}}, usually fixing something I hit in production. A selection:</p>
 <div role="table" aria-label="Selected upstream contributions" style="border: 1px solid var(--line2); border-radius: 12px; overflow: hidden">
 <div role="rowgroup">
 <div role="row" class="c-yr" style="display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 18px; padding: 12px 20px; border-bottom: 1px solid var(--line)"><span role="cell" style="flex: 0 1 300px"><a href="https://github.com/better-auth/better-auth/pull/9398">better-auth/better-auth</a></span><span role="cell" style="flex: 1 1 280px; color: var(--text2)">Fixed SAML metadata so an organisation's default SSO provider works</span></div>
@@ -3530,7 +3531,14 @@ class Component extends DCLogic {
     const focusLater = (sel) => setTimeout(() => this.palFocus(document.querySelector(sel)), 80);
     const openUrl = (u) => () => { location.href = u; };
     const copyEmail = () => { this.copyText('craga89@gmail.com').then(() => { this.setState({ copied: true }); this.note('Email address copied'); clearTimeout(this._copyT); this._copyT = setTimeout(() => this.setState({ copied: false }), 2000); }).catch(() => { location.href = 'mailto:craga89@gmail.com'; }); };
-    const toggleTheme = () => this.setState({ theme: light ? 'dark' : 'light' });
+    // Theme switch: one cross-fade of the whole page (a view transition), so every colour, border
+    // and fill changes together; instant where that isn't supported or motion is off.
+    const toggleTheme = () => {
+      const h = document.documentElement;
+      h.setAttribute('data-vt-theme', '');
+      this.vt(() => this.setState({ theme: light ? 'dark' : 'light' }));
+      setTimeout(() => h.removeAttribute('data-vt-theme'), 600);
+    };
     const toggleMotion = () => { const off = !(this.state || {}).motionOff; this.setState({ motionOff: off }); try { localStorage.setItem('motion', off ? 'off' : 'on'); } catch (e) {} this.note(off ? 'Animations paused' : 'Animations on'); };
     const shareGo = () => { try { navigator.share({ title: document.title, text: 'Craig Michael Thompson · Head of Engineering', url: location.origin + location.pathname }).catch(() => {}); } catch (e) {} };
     const palAll = [];

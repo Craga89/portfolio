@@ -2,5 +2,7 @@
 # The build reads each token's origin and the app bundle adds the matching one.
 # WebMCP (Chrome 149-156): register each origin the site is served from at
 # https://developer.chrome.com/origintrials/ and paste its token below.
+# craigthompson.dev
+AxYJqMFT+qN6Uc1EkUiV7DiDt+m17P4bXsYeZgr2o7AWQPC1033hDS3u3rT/+5s+NkPou5B4DSbLjh0KOL69tQsAAABleyJvcmlnaW4iOiJodHRwczovL2NyYWlndGhvbXBzb24uZGV2OjQ0MyIsImZlYXR1cmUiOiJXZWJNQ1AiLCJleHBpcnkiOjE4MDYzNjQ4MDAsImlzVGhpcmRQYXJ0eSI6dHJ1ZX0=
 # craigthompson.io
 A1YpHltUloYXRug5c/55NTq9wL6KprnpcostNrXOqPSxgdwy27nyWrdh6/wsI4Hed/jlUChlb1wkTreKLskPNQsAAABkeyJvcmlnaW4iOiJodHRwczovL2NyYWlndGhvbXBzb24uaW86NDQzIiwiZmVhdHVyZSI6IldlYk1DUCIsImV4cGlyeSI6MTgwNjM2NDgwMCwiaXNUaGlyZFBhcnR5Ijp0cnVlfQ==
