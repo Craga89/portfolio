@@ -34,7 +34,7 @@ test('answers with parsed sources and CORS', async () => {
 
 test('falls through to the next model and strips think blocks', async () => {
   const seen = [];
-  const env = { AI: { run: async (model) => { seen.push(model); if (seen.length === 1) throw new Error('4006: daily free allocation used'); return { choices: [{ message: { content: '<think>hmm</think>He studied at Newcastle University.\n**SOURCES:** recognition' } }] }; } } };
+  const env = { AI: { run: async (model) => { seen.push(model); if (seen.length === 1) throw new Error('3040: Capacity temporarily exceeded'); return { choices: [{ message: { content: '<think>hmm</think>He studied at Newcastle University.\n**SOURCES:** recognition' } }] }; } } };
   const d = await (await worker.fetch(req({ q: 'Where did he study?' }), env)).json();
   assert.equal(seen[1], '@cf/qwen/qwen3-30b-a3b-fp8');
   assert.equal(d.answer, 'He studied at Newcastle University.');
@@ -103,8 +103,24 @@ test('context selection finds the right passages', () => {
   assert.ok(ids('Where has he worked?').includes('career-4'));
 });
 
-// A fake D1 that records statements.
-const fakeDB = () => { const rows = []; return { rows, prepare: (sql) => ({ bind: (...args) => ({ run: async () => { rows.push({ sql, args }); return { success: true }; } }) }) }; };
+// A fake D1 that records statements, and keeps the AI budget (ai_budget) in memory.
+const fakeDB = (spent = {}) => {
+  const rows = [];
+  const budget = { ...spent };
+  return {
+    rows, budget,
+    prepare: (sql) => ({
+      bind: (...args) => ({
+        first: async () => (/FROM ai_budget/.test(sql) ? (args[1] in budget ? { neurons: budget[args[1]] } : null) : null),
+        run: async () => {
+          if (/INTO ai_budget/.test(sql)) { budget[args[1]] = (budget[args[1]] || 0) + args[2]; return { success: true }; }
+          rows.push({ sql, args });
+          return { success: true };
+        },
+      }),
+    }),
+  };
+};
 
 test('questions are logged anonymously, with whether they were answered', async () => {
   const DB = fakeDB();
@@ -236,7 +252,7 @@ test('mcp ask: answers from the model, logs as mcp, and respects the limit', asy
   const logged = [];
   const env = {
     AI: { run: async () => ({ response: 'Yes, he has owned the AWS budget. See budget.md.\nSOURCES: resp-bud' }) },
-    DB: { prepare: (sql) => ({ bind: (...a) => ({ run: async () => { logged.push(a); } }) }) },
+    DB: { prepare: (sql) => ({ bind: (...a) => ({ first: async () => null, run: async () => { if (!/ai_budget/.test(sql)) logged.push(a); } }) }) },
     ASK_LIMITER: { limit: async () => ({ success: true }) },
   };
   const r = await call(rpc('tools/call', { name: 'ask', arguments: { question: 'Has he owned a budget?' } }), env);
@@ -335,6 +351,43 @@ test('visit beacons record the translated language and the offer, nothing else',
   assert.equal(mod.cleanHit({ path: '/', lang: 'xx-evil', offer: 'hack' }, ORIGIN).lang, null);
   assert.equal(mod.cleanHit({ path: '/', lang: 'xx-evil', offer: 'hack' }, ORIGIN).offer, null);
   assert.equal(mod.cleanHit({ path: '/', lang: 'zh-Hant' }, ORIGIN).lang, 'zh-Hant');
+});
+
+test('AI budget: answers and voice are charged to their share, and stop when it is used', async () => {
+  const run = async (model) => (model.includes('deepgram') ? new Uint8Array(4000) : { response: 'He owned the AWS budget. See budget.md.\nSOURCES: resp-bud', usage: { prompt_tokens: 4000, completion_tokens: 150 } });
+  const DB = fakeDB();
+  const env = { DB, AI: { run } };
+  const r = await worker.fetch(req({ q: 'Has he owned a budget?' }), env);
+  assert.equal(r.status, 200);
+  // gemma-4-26b: 4,000 tokens in at 9,091/M and 150 out at 27,273/M.
+  assert.ok(Math.abs(DB.budget.ask - (4000 * 9091 + 150 * 27273) / 1e6) < 0.05, String(DB.budget.ask));
+  const sp = await worker.fetch(req({ text: 'Craig has led engineering teams for twelve years.' }, { path: '/speak' }), env);
+  assert.equal(sp.status, 200);
+  assert.ok(DB.budget.speak > 100 && DB.budget.speak < 160, String(DB.budget.speak)); // ~49 characters at 2.73 each
+  // Over the share: the question gets a 503 'budget' (the page then uses its own search), no model call.
+  let called = 0;
+  const full = { DB: fakeDB({ ask: 5990 }), AI: { run: async (m) => { called++; return run(m); } } };
+  const over = await worker.fetch(req({ q: 'Has he owned a budget?' }), full);
+  assert.equal(over.status, 503);
+  assert.equal((await over.json()).error, 'budget');
+  assert.equal(called, 0);
+  // Read-aloud has its own share: a long answer that won't fit is refused (the page uses the browser's voice).
+  const voiceFull = { DB: fakeDB({ speak: 2400 }), AI: { run } };
+  const v = await worker.fetch(req({ text: 'x'.repeat(200) }, { path: '/speak' }), voiceFull);
+  assert.equal(v.status, 503);
+  assert.equal((await v.json()).error, 'budget');
+  // CI traffic is charged to the test share, not visitors'.
+  const t = fakeDB();
+  await worker.fetch(new Request('https://x/ask', { method: 'POST', headers: { origin: ORIGIN, 'content-type': 'application/json', 'x-craga-test': '1' }, body: '{"q":"Has he owned a budget?"}' }), { DB: t, AI: { run } });
+  assert.ok(t.budget.test > 0 && !t.budget.ask);
+  // Workers AI saying the free allocation is used up closes every share for the day.
+  const closed = fakeDB();
+  const no = await worker.fetch(req({ q: 'Has he owned a budget?' }), { DB: closed, AI: { run: async () => { throw new Error('4006: you have used up your daily free allocation of 10,000 neurons'); } } });
+  assert.equal(no.status, 503);
+  assert.ok(closed.budget.ask >= 6000 && closed.budget.speak >= 2500 && closed.budget.test >= 1000);
+  // No database to check against: AI is off rather than unmetered.
+  const broken = { DB: { prepare: () => ({ bind: () => ({ first: async () => { throw new Error('D1 down'); }, run: async () => {} }) }) }, AI: { run } };
+  assert.equal((await worker.fetch(req({ q: 'Has he owned a budget?' }), broken)).status, 503);
 });
 
 test('page and worker share one search: worker context uses the shared ranking', async () => {

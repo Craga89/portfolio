@@ -5,6 +5,8 @@ import knowledge from '../knowledge.json';
 import agentData from '../agent-data.json';
 import { prepareIndex, rank, ToolError } from '../../shared/agent-tools.js';
 import { handleMcp } from './mcp.js';
+import { check, charge, textCost, voiceCost, exhausted, closeDay, BudgetError, ASK_RESERVE } from './budget.js';
+export { BudgetError };
 
 const MODELS = [
   '@cf/google/gemma-4-26b-a4b-it',
@@ -92,7 +94,9 @@ export function parse(raw, ctx) {
   return { answer: text, sources: [...new Set(sources)].slice(0, 3) };
 }
 
-async function answer(env, q) {
+// kind: which share of the daily AI budget pays for this (ask, or test for CI).
+async function answer(env, q, kind = 'ask') {
+  await check(env, kind, ASK_RESERVE);
   const ctx = pickContext(q);
   const context = ctx.map((p) => `[${p.id}] (file: ${fileOf(p.id) || 'none'}) ${p.title}\n${p.text}`).join('\n\n');
   let lastErr;
@@ -107,11 +111,13 @@ async function answer(env, q) {
         ...(/gemma-4|qwen3/.test(model) ? { chat_template_kwargs: { enable_thinking: false } } : {}),
       });
       const raw = r && (r.response ?? r.choices?.[0]?.message?.content ?? r.result?.response);
+      await charge(env, kind, textCost(model, r && r.usage, SYSTEM.length + user.length, typeof raw === 'string' ? raw.length : 0));
       const out = parse(typeof raw === 'string' ? raw : '', ctx);
       if (out.answer) return { ...out, model };
       lastErr = new Error('empty answer from ' + model);
     } catch (e) {
       lastErr = e;
+      if (exhausted(e)) { await closeDay(env); throw new BudgetError('free allocation used up'); }
     }
   }
   throw lastErr || new Error('no model answered');
@@ -152,15 +158,21 @@ async function audioBytes(result) {
   if (typeof result.audio === 'string') return b64bytes(result.audio);
   return null;
 }
-export async function speak(env, text) {
+export async function speak(env, text, kind = 'speak') {
+  // Priced per character, so check there's room for this answer in the natural voice first.
+  await check(env, kind, voiceCost(VOICES[0][0], text.length));
   let lastErr = null;
   for (const [model, opts] of VOICES) {
     try {
       const input = model.includes('melotts') ? { prompt: text, ...opts } : { text, ...opts };
       const bytes = await audioBytes(await env.AI.run(model, input));
-      if (bytes && bytes.length > 200) return { bytes, model };
+      if (bytes && bytes.length > 200) { await charge(env, kind, voiceCost(model, text.length)); return { bytes, model }; }
       lastErr = new Error(model + ': no audio');
-    } catch (e) { lastErr = e; console.log('voice', model, 'failed:', e && e.message); }
+    } catch (e) {
+      lastErr = e;
+      console.log('voice', model, 'failed:', e && e.message);
+      if (exhausted(e)) { await closeDay(env); throw new BudgetError('free allocation used up'); }
+    }
   }
   throw lastErr || new Error('no voice');
 }
@@ -251,7 +263,7 @@ export function agentSource(env, request, wait = (p) => p) {
         if (!success) throw new ToolError('Too many questions in a minute. Wait a moment, or use search_site and read_file, which have no limit.');
       }
       try {
-        const result = await answer(env, q.slice(0, MAX_Q));
+        const result = await answer(env, q.slice(0, MAX_Q), isTest(request) ? 'test' : 'ask');
         await wait(logQuestion(env, request, q, result, 'mcp'));
         return result;
       } catch (e) {
@@ -286,10 +298,11 @@ export default {
       try { text = speakable((await request.json()).text); } catch (e) { /* fall through */ }
       if (!text) return json({ error: 'missing text' }, 400, h);
       try {
-        const { bytes, model } = await speak(env, text);
+        const { bytes, model } = await speak(env, text, isTest(request) ? 'test' : 'speak');
         return new Response(bytes, { status: 200, headers: { 'content-type': 'audio/mpeg', 'cache-control': 'no-store', 'x-voice': model.split('/').pop(), 'access-control-expose-headers': 'x-voice', ...h } });
       } catch (e) {
-        return json({ error: 'unavailable' }, 503, h);
+        // Over today's budget: the page reads it with the browser's own voice instead.
+        return json({ error: e instanceof BudgetError ? 'budget' : 'unavailable' }, 503, h);
       }
     }
     if (url.pathname === '/mcp') {
@@ -320,13 +333,14 @@ export default {
     if (!q) return json({ error: 'missing q' }, 400, h);
 
     try {
-      const result = await answer(env, q);
+      const result = await answer(env, q, isTest(request) ? 'test' : 'ask');
       await wait(logQuestion(env, request, q, result, via));
       return json(result, 200, h);
     } catch (e) {
       console.log('ask failed:', e && e.message);
-      await wait(logQuestion(env, request, q, null, via));
-      return json({ error: 'unavailable' }, 503, h);
+      await wait(logQuestion(env, request, q, e instanceof BudgetError ? { model: 'over-budget' } : null, via));
+      // The page falls back to its own search; 'budget' tells it why.
+      return json({ error: e instanceof BudgetError ? 'budget' : 'unavailable' }, 503, h);
     }
   },
 };

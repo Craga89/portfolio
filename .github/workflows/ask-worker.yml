@@ -50,7 +50,7 @@ jobs:
             fi
           done
           # Reading aloud: a natural voice, or at least one of the fallbacks.
-          code=$(curl -sS -m 60 -o speak.mp3 -D speak.h -w '%{http_code}' -X POST "${ASK_URL%/ask}/speak" -H 'origin: https://craigthompson.dev' -H 'content-type: application/json' -H 'x-craga-test: 1' --data '{"text":"Craig has led engineering teams for over twelve years. See budget.md."}' || echo 000)
+          code=$(curl -sS -m 60 -o speak.mp3 -D speak.h -w '%{http_code}' -X POST "${ASK_URL%/ask}/speak" -H 'origin: https://craigthompson.dev' -H 'content-type: application/json' -H 'x-craga-test: 1' --data '{"text":"Hello from ask.sh."}' || echo 000)
           voice=$(grep -i '^x-voice:' speak.h | tr -d '\r' | cut -d' ' -f2)
           if [ "$code" = 200 ] && [ "$(stat -c %s speak.mp3)" -gt 1000 ]; then echo "::notice title=Read aloud::voice $voice, $(stat -c %s speak.mp3) bytes"; else echo "::error title=Read aloud::HTTP $code $(head -c 200 speak.mp3)"; fail=1; fi
           # MCP: both protocol eras on /mcp.

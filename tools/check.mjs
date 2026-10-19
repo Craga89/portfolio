@@ -58,7 +58,8 @@ try {
   const segs = page.locator('#responsibilities .c-seg');
   ok('tour segments', (await segs.count()) === 12);
   await segs.nth(4).click();
-  await page.waitForTimeout(200);
+  // The switch cross-fades with a view transition, so wait for it to land.
+  await page.waitForFunction(() => document.querySelectorAll('#responsibilities .c-seg')[4].getAttribute('aria-selected') === 'true', null, { timeout: 3000 }).catch(() => {});
   ok('tour jumps to segment', (await segs.nth(4).getAttribute('aria-selected')) === 'true');
   const det = page.locator('#rp-aiproc details');
   await det.locator('summary').click();
@@ -169,6 +170,37 @@ try {
   ok('webmcp show_section', !ar.show.err && ar.faqInView);
   ok('webmcp tools unregister on pagehide', ar.aborted === 9, String(ar.aborted));
   await ag.close();
+
+  // Read-aloud: the natural voice plays faster with its pitch kept; over the day's AI budget the
+  // browser's own voice takes over; ask.sh says why it's using search.
+  {
+    const wav = (() => { const n = 4000, b = Buffer.alloc(44 + n * 2); b.write('RIFF', 0); b.writeUInt32LE(36 + n * 2, 4); b.write('WAVE', 8); b.write('fmt ', 12); b.writeUInt32LE(16, 16); b.writeUInt16LE(1, 20); b.writeUInt16LE(1, 22); b.writeUInt32LE(8000, 24); b.writeUInt32LE(16000, 28); b.writeUInt16LE(2, 32); b.writeUInt16LE(16, 34); b.write('data', 36); b.writeUInt32LE(n * 2, 40); return b; })();
+    for (const over of [false, true]) {
+      const vc = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+      await vc.addInitScript(() => {
+        window.__spoken = [];
+        const S = window.speechSynthesis;
+        if (S) { S.speak = (u) => { window.__spoken.push({ rate: u.rate, lang: u.lang }); setTimeout(() => { if (u.onstart) u.onstart(); if (u.onend) u.onend(); }, 50); }; S.cancel = () => {}; }
+      });
+      await vc.route(/\/ask(\?|$)/, (r) => r.fulfill(over ? { status: 503, contentType: 'application/json', body: '{"error":"budget"}' } : { status: 200, contentType: 'application/json', body: JSON.stringify({ answer: 'He has led engineering teams for twelve years.', sources: ['intro'] }) }));
+      await vc.route(/\/speak(\?|$)/, (r) => r.fulfill(over ? { status: 503, contentType: 'application/json', body: '{"error":"budget"}' } : { status: 200, contentType: 'audio/wav', body: wav }));
+      const vp = await vc.newPage();
+      await vp.goto(base + '/#ask', { waitUntil: 'networkidle' });
+      await vp.fill('#c-ask-field', 'How long has he led teams?');
+      await vp.press('#c-ask-field', 'Enter');
+      await vp.waitForSelector('.c-ask-log .c-say', { timeout: 10000 });
+      if (over) {
+        const note = await vp.locator('.c-ask-log').innerText();
+        ok("read-aloud: over the AI budget, ask.sh says why it's using search", /today's free AI allowance/.test(note));
+      }
+      await vp.locator('.c-ask-log .c-say').first().click();
+      await vp.waitForTimeout(1200);
+      const v = await vp.evaluate(() => ({ spoken: window.__spoken, rate: window.CRAGA_APP && window.CRAGA_APP.c._audio ? window.CRAGA_APP.c._audio.playbackRate : null, pitch: window.CRAGA_APP && window.CRAGA_APP.c._audio ? window.CRAGA_APP.c._audio.preservesPitch : null, idle: !document.querySelector('.c-say[data-on="true"]') }));
+      if (over) ok('read-aloud: over budget, the browser voice reads it, a little faster', v.spoken.length === 1 && v.spoken[0].rate > 1, JSON.stringify(v.spoken));
+      else ok('read-aloud: natural voice at 1.15×, pitch kept, button resets', v.rate === 1.15 && v.pitch === true && !v.spoken.length && v.idle, JSON.stringify(v));
+      await vc.close();
+    }
+  }
 
   // On-device translation, with a stand-in for the browser's Translator API.
   const done = (pg) => pg.waitForFunction(() => document.querySelector('.tr-bar') && document.querySelector('.tr-bar').dataset.kind === 'done', null, { timeout: 60000 });

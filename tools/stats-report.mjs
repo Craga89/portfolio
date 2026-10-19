@@ -32,6 +32,7 @@ const countries = q(`SELECT COALESCE(country,'?') AS country, COUNT(*) AS visits
 const langs = q(`SELECT COALESCE(lang,'English (original)') AS language, COUNT(*) AS visits FROM visits WHERE at >= ${since} GROUP BY lang ORDER BY visits DESC`);
 const offers = q(`SELECT offer, COUNT(*) AS visits FROM visits WHERE at >= ${since} AND offer IS NOT NULL GROUP BY offer ORDER BY visits DESC`);
 const channels = q(`SELECT COALESCE(via,'site') AS via, COUNT(*) AS questions FROM questions WHERE at >= ${since} GROUP BY via ORDER BY questions DESC`);
+const ai = q(`SELECT day, kind, ROUND(neurons) AS neurons, calls FROM ai_budget WHERE day >= substr(${since},1,10) ORDER BY day DESC, kind`);
 const home = q(`SELECT COUNT(*) AS n FROM visits WHERE at >= ${since} AND path IN ('/','/portfolio/')`)[0].n || 0;
 const reach = ['career', 'responsibilities', 'case-studies', 'stack', 'oss', 'recommendations', 'faq', 'ask'].map((s) => {
   const n = q(`SELECT COUNT(*) AS n FROM visits WHERE at >= ${since} AND path IN ('/','/portfolio/') AND (',' || sections || ',') LIKE '%,${s},%'`)[0].n || 0;
@@ -59,6 +60,8 @@ ${table(countries, ['country', 'visits'])}
 ${table(langs, ['language', 'visits'])}
 ### The translation offer
 ${table(offers, ['offer', 'visits'])}
+### Workers AI use (free allowance: 10,000 neurons a day; shares: ask 6,000, speak 2,500, test 1,000)
+${table(ai, ['day', 'kind', 'neurons', 'calls'])}
 ### Where questions came from (site, WebMCP, MCP)
 ${table(channels, ['via', 'questions'])}
 ### Questions ask.sh couldn't answer (FAQ candidates)

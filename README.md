@@ -60,6 +60,35 @@ Every push to `main` deploys `site/` through `.github/workflows/pages.yml`.
 
 The Pages deploy (on every push, and daily) collects the latest CI results from their report branches into `site/live.json` (`tools/live.mjs`): Lighthouse scores (`lighthouse`), the WCAG suite (`accessibility`), the ask.sh answer tests with each answer (`evals`, from `.github/workflows/evals.yml`) and the open-source counts (`oss`, from `.github/workflows/oss-stats.yml`, weekly via the GitHub API). The page fetches it once it's idle and shows it in the sidebar, the `this-site.md` case study, the open-source section and "how ask.sh is tested"; until then (or offline, or locally) it shows static fallbacks. The service worker always fetches `live.json` from the network first.
 
+### Costs: designed to be free
+
+Nothing on the site needs a paid plan. The services and their free limits:
+
+| Service | Used for | Free limit | Over the limit |
+|---|---|---|---|
+| GitHub Pages and Actions | hosting, CI | free for public repositories | — |
+| Cloudflare Workers (Free plan) | ask.sh, read-aloud, MCP, visit counts | 100,000 requests a day | requests fail until midnight UTC |
+| Workers AI | ask.sh answers, read-aloud voice | 10,000 neurons a day | Free plan: requests fail; Paid plan: billed |
+| D1 | question log, visit counts, AI budget | 5M rows read, 100k written a day | queries fail until midnight UTC |
+| Cloudflare Web Analytics | page views | free | — |
+| The browser's built-in AI (Translator, Language Detector) | translation, ask.sh in other languages | runs on the visitor's device | — |
+
+On the Workers Free plan nothing can be billed: going over a limit makes requests fail, and every AI feature falls back (search answers, the browser's own voice). Keep the account on the Free plan to keep it that way.
+
+On top of that, `worker/src/budget.js` keeps Workers AI inside the free allowance on any plan. Spending is recorded per UTC day in D1 (`ai_budget`), split into shares so one feature can't use up another's:
+
+| Share | Neurons a day | Roughly |
+|---|---|---|
+| `ask`: visitors' ask.sh answers (site, WebMCP, MCP) | 6,000 | ~140 answers (~40 neurons each on Gemma 4) |
+| `speak`: read-aloud in the natural voice | 2,500 | a few answers (Aura 2 is ~2.7 neurons a character); then the browser's voice, which is free |
+| `test`: CI smoke tests and answer tests | 1,000 | about one full test run |
+
+When a share is used up the Worker answers 503 `{"error":"budget"}`: ask.sh says it's used today's free allowance and answers from the site's search, and read-aloud uses the browser's voice. If Workers AI reports the account's free allocation is used up, every share closes for the day. If D1 can't be read, AI is off rather than unmetered. Shares can be changed with `AI_CAP_ASK`, `AI_CAP_SPEAK` and `AI_CAP_TEST` variables. The weekly stats show spending per share.
+
+To keep CI's share small, the answer tests run after a Worker deploy only when the worker's code, prompt, shared search or test cases changed (content-only deploys skip them), and the smoke test's voice check reads a short phrase.
+
+The natural voice plays at 1.15× with its pitch kept (an audio element with `preservesPitch`); the browser's voice reads at 1.1×.
+
 ### On-device translation
 
 Visitors whose browser prefers another language (38 are supported, Arabic and Hebrew right-to-left) are offered the site in it, using the browser's built-in [Translator API](https://developer.chrome.com/docs/ai/translator-api) (Chrome and Edge on desktop). The language model runs on the visitor's computer: nothing is sent anywhere. Anyone else can pick a language from the menu next to "pause animations" (and on the plain CV). Browsers without the API see no change.

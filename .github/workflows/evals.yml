@@ -1,4 +1,4 @@
-# ask.sh answer tests (worker/evals.json): after every Worker deploy, weekly and on demand.
+# ask.sh answer tests (worker/evals.json): after Worker deploys that change answers, weekly and on demand.
 # Results go to the `evals` branch (reports/latest.json); the Pages deploy publishes them in
 # live.json, and the site shows them under "how ask.sh is tested". Fails if any answer is wrong.
 name: ask.sh answer tests
@@ -27,14 +27,27 @@ jobs:
       - uses: actions/setup-node@v5
         with:
           node-version: 22
+      # After a deploy, only when something that changes answers changed: the worker's code, its
+      # prompt and models, the shared search or the test cases. Content-only deploys (every site
+      # build) skip it, since the tests share the day's free AI allowance with visitors.
+      - name: Decide whether to run
+        id: need
+        run: |
+          if [ "${{ github.event_name }}" != "workflow_run" ]; then echo "run=1" >> "$GITHUB_OUTPUT"; exit 0; fi
+          git fetch -q --depth=2 origin "$SHA"
+          if git diff --name-only "$SHA~1" "$SHA" | grep -qE '^(worker/src/|worker/evals\.json|shared/|tools/ask-evals\.mjs)'; then echo "run=1" >> "$GITHUB_OUTPUT"
+          else echo "::notice title=ask.sh answer tests::Skipped: this deploy changed content only. They run weekly and on demand."; echo "run=0" >> "$GITHUB_OUTPUT"; fi
+        env:
+          SHA: ${{ github.event.workflow_run.head_sha }}
       - name: Run the answer tests
+        if: steps.need.outputs.run == '1'
         id: run
         continue-on-error: true
         run: |
           sleep 60 # a fresh deploy's smoke test shares the per-visitor rate limit
           node tools/ask-evals.mjs https://craga-ask.craga89.workers.dev/ask --out evals.json
       - name: Save to the evals branch
-        if: always()
+        if: always() && steps.need.outputs.run == '1'
         run: |
           [ -f evals.json ] || exit 0
           node -e '
@@ -53,5 +66,5 @@ jobs:
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           SHA: ${{ github.event.workflow_run.head_sha || github.sha }}
       - name: Fail if any answer was wrong
-        if: steps.run.outcome != 'success'
+        if: steps.need.outputs.run == '1' && steps.run.outcome != 'success'
         run: exit 1

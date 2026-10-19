@@ -15,6 +15,8 @@ const ORIGIN = 'https://craigthompson.dev';
 const PACE = Number(process.env.EVAL_PACE_MS || 8000);
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 let last = 0;
+// The tests' share of the day's free AI allowance is used up: skip the run rather than fail it.
+class OverBudget extends Error {}
 async function ask(q) {
   for (let tries = 0; ; tries++) {
     const wait = last + PACE - Date.now();
@@ -22,6 +24,7 @@ async function ask(q) {
     last = Date.now();
     const r = await fetch(endpoint, { method: 'POST', headers: { origin: ORIGIN, 'content-type': 'application/json', 'x-craga-test': '1' }, body: JSON.stringify({ q }) });
     if (r.status === 429 && tries < 3) { await sleep(30000); continue; }
+    if (r.status === 503 && (await r.clone().json().catch(() => ({}))).error === 'budget') throw new OverBudget();
     if (!r.ok) throw new Error('HTTP ' + r.status);
     return r.json();
   }
@@ -41,7 +44,10 @@ const rows = [];
 for (const c of cases) {
   let d = null, problems = ['no answer'];
   for (let attempt = 0; attempt < 2 && problems.length; attempt++) {
-    try { d = await ask(c.q); problems = grade(c, d); } catch (e) { problems = [e.message]; }
+    try { d = await ask(c.q); problems = grade(c, d); } catch (e) {
+      if (e instanceof OverBudget) { console.log((process.env.GITHUB_ACTIONS ? '::notice title=ask.sh answer tests::' : '') + "Skipped: today's AI allowance for tests is used up. They'll run again on the next schedule."); process.exit(0); }
+      problems = [e.message];
+    }
   }
   const pass = !problems.length;
   if (!pass) failed++;

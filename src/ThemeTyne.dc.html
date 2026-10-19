@@ -2229,7 +2229,7 @@ html[data-vt-dir="prev"]::view-transition-new(c-rs),html[data-vt-dir="prev"]::vi
 <div style="font-size: 13px; color: var(--mute); margin-bottom: 10px">How a visit works</div>
 <ul class="c-arch" aria-label="How a visit works">
 <li><span class="c-arch-k">the page</span><span class="c-arch-c"><b>Browser</b></span><span class="c-arch-a" aria-hidden="true">→</span><span class="c-arch-c"><b>GitHub Pages</b><small>static, prerendered, works offline</small></span></li>
-<li><span class="c-arch-k">ask.sh</span><span class="c-arch-c"><b>Browser</b></span><span class="c-arch-a" aria-hidden="true">→</span><span class="c-arch-c"><b>Cloudflare Worker</b><small>rate-limited per visitor</small></span><span class="c-arch-a" aria-hidden="true">→</span><span class="c-arch-c"><b>Workers AI</b><small>three models, each a fallback for the one before; answers only from this site</small></span></li>
+<li><span class="c-arch-k">ask.sh</span><span class="c-arch-c"><b>Browser</b></span><span class="c-arch-a" aria-hidden="true">→</span><span class="c-arch-c"><b>Cloudflare Worker</b><small>rate-limited per visitor, and capped within the free daily AI allowance</small></span><span class="c-arch-a" aria-hidden="true">→</span><span class="c-arch-c"><b>Workers AI</b><small>three models, each a fallback for the one before; answers only from this site</small></span></li>
 <li><span class="c-arch-k">counts</span><span class="c-arch-c"><b>Browser</b></span><span class="c-arch-a" aria-hidden="true">→</span><span class="c-arch-c"><b>Cloudflare Worker</b></span><span class="c-arch-a" aria-hidden="true">→</span><span class="c-arch-c"><b>D1</b><small>anonymous question log and visit counts</small></span></li>
 <li><span class="c-arch-k">agents</span><span class="c-arch-c"><b>AI agent</b><small>in the browser</small></span><span class="c-arch-a" aria-hidden="true">→</span><span class="c-arch-c"><b>WebMCP or MCP</b><small>the same tools, on the page or on the Worker: profile, career, files, search and ask.sh</small></span></li>
 <li><span class="c-arch-k">translation</span><span class="c-arch-c"><b>Browser</b><small>its built-in Translator API, when the visitor wants another language</small></span><span class="c-arch-a" aria-hidden="true">→</span><span class="c-arch-c"><b>on the device</b><small>38 languages, right-to-left included; nothing is sent anywhere</small></span></li>
@@ -2750,9 +2750,30 @@ class Component extends DCLogic {
       return this._ac;
     } catch (e) { return null; }
   }
+  // One audio element for the natural voice. Played faster than recorded, with the pitch kept
+  // (Web Audio can't do that). It's unlocked during the click, so browsers that only allow sound
+  // from a tap (iOS Safari) still play it once the audio has arrived.
+  audioEl() {
+    if (typeof Audio === 'undefined') return null;
+    if (!this._audio) {
+      const a = new Audio();
+      a.preload = 'auto';
+      a.preservesPitch = true; a.mozPreservesPitch = true; a.webkitPreservesPitch = true;
+      this._audio = a;
+    }
+    if (!this._audioUnlocked) {
+      this._audioUnlocked = true;
+      try {
+        this._audio.src = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=';
+        const p = this._audio.play();
+        if (p && p.then) p.then(() => this._audio.pause(), () => {});
+      } catch (e) {}
+    }
+    return this._audio;
+  }
   sayStop() {
     this._sayToken = (this._sayToken || 0) + 1;
-    if (this._saySrc) { try { this._saySrc.onended = null; this._saySrc.stop(); } catch (e) {} this._saySrc = null; }
+    if (this._audio) { try { this._audio.onended = null; this._audio.onerror = null; this._audio.pause(); } catch (e) {} }
     try { if (window.speechSynthesis) window.speechSynthesis.cancel(); } catch (e) {}
     const st = this.state || {};
     if (st.sayIdx != null) this.setState({ sayIdx: null, sayBusy: false });
@@ -2773,9 +2794,10 @@ class Component extends DCLogic {
       if (shown) text = shown;
     }
     const token = this._sayToken;
-    const ac = this.audioCtx();
+    const audio = this.audioEl();
+    const RATE = 1.15;
     this.setState({ sayIdx: idx, sayBusy: true });
-    const done = () => { if (this._sayToken === token) { this._saySrc = null; this.setState({ sayIdx: null, sayBusy: false }); } };
+    const done = () => { if (this._sayToken === token) { this.setState({ sayIdx: null, sayBusy: false }); } };
     const browser = () => {
       if (this._sayToken !== token) return;
       try {
@@ -2787,7 +2809,7 @@ class Component extends DCLogic {
         const want = lang ? new RegExp('^' + lang.split('-')[0] + '([-_]|$)', 'i') : /^en([-_]|$)/i;
         const v = (synth.getVoices() || []).filter((x) => want.test(x.lang)).sort((a, b) => score(b) - score(a))[0];
         if (v) { u.voice = v; u.lang = v.lang; } else u.lang = lang || 'en-GB';
-        u.rate = 1;
+        u.rate = 1.1;
         let started = false;
         u.onstart = () => { started = true; };
         u.onend = done; u.onerror = done;
@@ -2797,14 +2819,17 @@ class Component extends DCLogic {
         this.setState({ sayBusy: false });
       } catch (x) { done(); this.note("Reading aloud isn't available in this browser"); }
     };
-    const play = (buf) => {
+    const play = (src) => {
       if (this._sayToken !== token) return;
-      if (!ac) { browser(); return; }
+      if (!audio) { browser(); return; }
       try {
-        const src = ac.createBufferSource();
-        src.buffer = buf; src.connect(ac.destination); src.onended = done;
-        this._saySrc = src; src.start();
-        this.setState({ sayBusy: false });
+        audio.defaultPlaybackRate = RATE;
+        audio.src = src;
+        audio.playbackRate = RATE;
+        audio.onended = done;
+        audio.onerror = () => { audio.onerror = null; browser(); };
+        const p = audio.play();
+        if (p && p.then) p.then(() => this.setState({ sayBusy: false }), () => browser()); else this.setState({ sayBusy: false });
       } catch (x) { browser(); }
     };
     // The site's own voices are English, so other languages use the browser's.
@@ -2813,11 +2838,11 @@ class Component extends DCLogic {
     if (this._sayCache.has(text)) { play(this._sayCache.get(text)); return; }
     const cfg = (typeof window !== 'undefined' && window.CRAGA_ASK) || {};
     const url = cfg.endpoint ? cfg.endpoint.replace(/\/ask$/, '/speak') : '';
-    if (!url || !ac) { browser(); return; }
+    if (!url || !audio) { browser(); return; }
+    // Over today's free AI allowance (503 "budget"), or anything else failing: the browser's voice.
     fetch(url, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ text }) })
-      .then((r) => (r.ok ? r.arrayBuffer() : Promise.reject(new Error('speak ' + r.status))))
-      .then((b) => new Promise((ok, fail) => { const pr = ac.decodeAudioData(b, ok, fail); if (pr && pr.then) pr.then(ok, fail); }))
-      .then((buf) => { this._sayCache.set(text, buf); play(buf); })
+      .then((r) => (r.ok ? r.blob() : Promise.reject(new Error('speak ' + r.status))))
+      .then((b) => { const u = URL.createObjectURL(b); this._sayCache.set(text, u); play(u); })
       .catch(() => browser());
   }
   // Voice dictation into the ask.sh or chat field, using the browser's own speech recognition.
@@ -3096,7 +3121,7 @@ class Component extends DCLogic {
       const ctl = typeof AbortController !== 'undefined' ? new AbortController() : null;
       const timer = setTimeout(() => { if (ctl) ctl.abort(); }, 20000);
       fetch(cfg.endpoint, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ q: qe }), signal: ctl ? ctl.signal : undefined })
-        .then((r) => (r.ok ? r.json() : Promise.reject(new Error('ask ' + r.status))))
+        .then((r) => (r.ok ? r.json() : r.json().catch(() => ({})).then((b) => Promise.reject(new Error(b && b.error === 'budget' ? 'budget' : 'ask ' + r.status)))))
         .then((d) => {
           clearTimeout(timer);
           if (!d || !d.answer) throw new Error('empty');
@@ -3104,7 +3129,7 @@ class Component extends DCLogic {
           if (!src.length) src = this.askSearch(index, qe).sources.slice(0, 2);
           back({ answer: d.answer, sources: src.slice(0, 3), mode: 'ai' });
         })
-        .catch(() => { clearTimeout(timer); viaSearch("The AI isn't available right now, so this is the closest match from the site."); });
+        .catch((e) => { clearTimeout(timer); viaSearch(e && e.message === 'budget' ? "ask.sh has used today's free AI allowance, so this is the closest match from the site. It resets at midnight UTC." : "The AI isn't available right now, so this is the closest match from the site."); });
     }).catch(() => finish({ answer: 'ask.sh needs the live site to run. Try it at craigthompson.dev.', sources: [], mode: 'error' }));
   }
   // A few shell commands in ask.sh, answered locally (no AI call).
