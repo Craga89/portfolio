@@ -61,11 +61,10 @@ function csv(file) {
 async function discover(dir) {
   mkdirSync(dir, { recursive: true });
   const seen = new Map();
+  const skippedAll = [];
   for (const d of CONF.domains) {
     const q = new URL('https://web.archive.org/cdx/search/cdx');
-    Object.entries({ url: d, matchType: 'domain', output: 'json', fl: 'original,statuscode,mimetype,timestamp', collapse: 'urlkey', limit: '50000' }).forEach(([k, v]) => q.searchParams.set(k, v));
-    // Paths with thousands of archived URLs (the old forums) are counted, not listed.
-    for (const skip of CONF.discoverSkip || []) q.searchParams.append('filter', '!original:.*' + skip.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '.*');
+    Object.entries({ url: d, matchType: 'domain', output: 'json', fl: 'original,statuscode,mimetype,timestamp', collapse: 'urlkey', limit: '150000' }).forEach(([k, v]) => q.searchParams.set(k, v));
     let rows = [];
     for (let attempt = 0; attempt < 3; attempt++) {
       try {
@@ -74,9 +73,13 @@ async function discover(dir) {
         const t = await r.text();
         rows = t.trim() ? JSON.parse(t).slice(1) : [];
         break;
-      } catch (e) { console.error(`${d}: ${e.message}${attempt < 2 ? ', retrying' : ''}`); await new Promise((r) => setTimeout(r, 5000 * (attempt + 1))); }
+      } catch (e) { console.log(`${process.env.GITHUB_ACTIONS && attempt === 2 ? '::warning title=Wayback ' + d + '::' : ''}${d}: ${e.message}${attempt < 2 ? ', retrying' : ', giving up'}`); await new Promise((r) => setTimeout(r, 5000 * (attempt + 1))); }
     }
-    console.log(`${d}: ${rows.length} archived URLs`);
+    // Paths with thousands of archived URLs (the old forums) are counted, not listed.
+    const skipped = {};
+    rows = rows.filter(([orig]) => { const k = (CONF.discoverSkip || []).find((p) => orig.toLowerCase().includes(p)); if (k) skipped[k] = (skipped[k] || 0) + 1; return !k; });
+    console.log(`${d}: ${rows.length} archived URLs` + Object.entries(skipped).map(([k, n]) => `, plus ${n} under ${k} (not listed; they go to ${(match('https://' + d + k) || {}).target})`).join(''));
+    skippedAll.push(...Object.entries(skipped).map(([k, n]) => [d + k, n]));
     for (const [orig, status, mime, ts] of rows) {
       let u;
       try { u = new URL(/^https?:\/\//i.test(orig) ? orig : 'http://' + orig); } catch (e) { continue; }
@@ -87,16 +90,9 @@ async function discover(dir) {
       else if (ts < prev.first) prev.first = ts;
     }
   }
-  for (const skip of CONF.discoverSkip || []) {
-    for (const d of CONF.domains) {
-      const q = new URL('https://web.archive.org/cdx/search/cdx');
-      Object.entries({ url: d + skip, matchType: 'prefix', showNumPages: 'true' }).forEach(([k, v]) => q.searchParams.set(k, v));
-      try { const n = (await (await fetch(q)).text()).trim(); if (n && n !== '0') console.log(`${d}${skip}: about ${n} index page(s) of archived URLs, not listed; they go to ${(match('https://' + d + skip) || {}).target}`); } catch (e) {}
-    }
-  }
   const out = [...seen.values()].sort((a, b) => a.url.localeCompare(b.url)).map((x) => { const m = match(x.url); return Object.assign(x, { to: m ? m.target : null, rule: m ? m.rule.source : null }); });
   writeFileSync(join(dir, 'archived.json'), JSON.stringify(out, null, 1) + '\n');
-  const md = ['# Archived URLs on the old domains', '', `${out.length} distinct URLs from the Wayback Machine (${new Date().toISOString().slice(0, 10)}), and where each will redirect.`, '', '| rule | URLs |', '| --- | --- |'];
+  const md = ['# Archived URLs on the old domains', '', `${out.length} distinct URLs from the Wayback Machine (${new Date().toISOString().slice(0, 10)}), and where each will redirect.` + skippedAll.map(([p, n]) => ` Not listed: ${n} under ${p}, which go to ${(match('https://' + p) || {}).target}.`).join(''), '', '| rule | URLs |', '| --- | --- |'];
   const by = {}; out.forEach((x) => { (by[x.rule || 'no rule'] = by[x.rule || 'no rule'] || []).push(x); });
   RULES.map((r) => r.source).concat(['no rule']).forEach((k) => { if (by[k]) md.push(`| \`${k}\` | ${by[k].length} |`); });
   md.push('', '## Going to the home page (catch-all)', '', 'Pages here that people still link to may deserve a rule of their own.', '', '| archived URL | last archived | status | type |', '| --- | --- | --- | --- |');
