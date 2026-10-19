@@ -359,5 +359,227 @@
    "name": "See them all on GitHub →",
    "url": "https://github.com/search?q=author%3ACraga89+type%3Apr+is%3Amerged+-user%3ACraga89&type=pullrequests"
   }
- ]
+ ],
+ "oss": {
+  "at": "2026-10-17T22:21:09.034Z",
+  "prs": 59,
+  "repos": 35,
+  "since": 2012,
+  "qtip": {
+   "stars": 1970,
+   "forks": 458,
+   "commits": 1384
+  },
+  "timeline": [
+   {
+    "y": 2012,
+    "q": 3,
+    "n": 1,
+    "repos": [
+     "andris9/highlight"
+    ]
+   },
+   {
+    "y": 2013,
+    "q": 1,
+    "n": 1,
+    "repos": [
+     "cdnjs/cdnjs"
+    ]
+   },
+   {
+    "y": 2013,
+    "q": 3,
+    "n": 1,
+    "repos": [
+     "cdnjs/cdnjs"
+    ]
+   },
+   {
+    "y": 2013,
+    "q": 4,
+    "n": 4,
+    "repos": [
+     "jsdelivr/jsdelivr",
+     "cdnjs/cdnjs",
+     "Mottie/tablesorter"
+    ]
+   },
+   {
+    "y": 2014,
+    "q": 1,
+    "n": 4,
+    "repos": [
+     "etodanik/veinjs",
+     "itsjavi/bootstrap-colorpicker"
+    ]
+   },
+   {
+    "y": 2014,
+    "q": 2,
+    "n": 7,
+    "repos": [
+     "BlueSpire/Durandal",
+     "dobtco/jquery-resizable-columns",
+     "giggio/npm-nuget"
+    ]
+   },
+   {
+    "y": 2014,
+    "q": 3,
+    "n": 1,
+    "repos": [
+     "jsdelivr/jsdelivr"
+    ]
+   },
+   {
+    "y": 2015,
+    "q": 1,
+    "n": 3,
+    "repos": [
+     "codesuki/react-d3-components",
+     "aurelia/skeleton-navigation",
+     "rniemeyer/knockout-delegatedEvents"
+    ]
+   },
+   {
+    "y": 2015,
+    "q": 3,
+    "n": 4,
+    "repos": [
+     "mbest/knockout.punches",
+     "jakubburkiewicz/uncss-brunch",
+     "BlueSpire/Durandal-Bower"
+    ]
+   },
+   {
+    "y": 2015,
+    "q": 4,
+    "n": 2,
+    "repos": [
+     "cdnjs/cdnjs"
+    ]
+   },
+   {
+    "y": 2016,
+    "q": 1,
+    "n": 2,
+    "repos": [
+     "preactjs/preact",
+     "jakubburkiewicz/uncss-brunch"
+    ]
+   },
+   {
+    "y": 2016,
+    "q": 3,
+    "n": 2,
+    "repos": [
+     "unindented/stats-webpack-plugin",
+     "shipshapecode/tether"
+    ]
+   },
+   {
+    "y": 2016,
+    "q": 4,
+    "n": 2,
+    "repos": [
+     "electrode-io/electrode-webpack-reporter"
+    ]
+   },
+   {
+    "y": 2017,
+    "q": 1,
+    "n": 7,
+    "repos": [
+     "communicator/dockerized-magento",
+     "camwest/react-slot-fill",
+     "robinweser/fela"
+    ]
+   },
+   {
+    "y": 2017,
+    "q": 2,
+    "n": 3,
+    "repos": [
+     "ianstormtaylor/slate"
+    ]
+   },
+   {
+    "y": 2017,
+    "q": 3,
+    "n": 3,
+    "repos": [
+     "KoryNunn/scroll-into-view",
+     "faceyspacey/babel-plugin-dual-import",
+     "lerna/lerna"
+    ]
+   },
+   {
+    "y": 2017,
+    "q": 4,
+    "n": 3,
+    "repos": [
+     "camwest/react-slot-fill",
+     "tomkp/react-split-pane"
+    ]
+   },
+   {
+    "y": 2018,
+    "q": 1,
+    "n": 2,
+    "repos": [
+     "communicator/magento-plugin"
+    ]
+   },
+   {
+    "y": 2018,
+    "q": 2,
+    "n": 1,
+    "repos": [
+     "gregberge/recompact"
+    ]
+   },
+   {
+    "y": 2018,
+    "q": 3,
+    "n": 1,
+    "repos": [
+     "Popmotion/popmotion"
+    ]
+   },
+   {
+    "y": 2019,
+    "q": 3,
+    "n": 1,
+    "repos": [
+     "slefevre/gitin2it"
+    ]
+   },
+   {
+    "y": 2022,
+    "q": 1,
+    "n": 1,
+    "repos": [
+     "swc-project/swc-node"
+    ]
+   },
+   {
+    "y": 2022,
+    "q": 2,
+    "n": 1,
+    "repos": [
+     "buildkite/test-collector-javascript"
+    ]
+   },
+   {
+    "y": 2026,
+    "q": 2,
+    "n": 2,
+    "repos": [
+     "shuding/nextra",
+     "better-auth/better-auth"
+    ]
+   }
+  ]
+ }
 }

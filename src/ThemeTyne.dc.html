@@ -3260,7 +3260,7 @@ class Component extends DCLogic {
       index: () => this.askIndex(),
       live: () => {
         const l = (this.state || {}).live;
-        const snap = window.CRAGA_OSS ? { oss: { timeline: window.CRAGA_OSS.timeline } } : {};
+        const snap = { oss: { timeline: (window.CRAGA_OSS && window.CRAGA_OSS.timeline) || Component.OSS_TIMELINE } };
         if (l && Object.keys(l).length) return Promise.resolve(l);
         return getJson('live.json').then((d) => { if (d && typeof d === 'object' && Object.keys(d).length) { this.setState({ live: d }); return d; } return snap; }).catch(() => snap);
       },

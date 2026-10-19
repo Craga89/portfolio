@@ -5,6 +5,7 @@
 //   cv()        the CV as JSON Resume
 //   index()     the site's passages, prepared with prepareIndex()
 //   live()      the latest live.json (CI results, open-source counts), or {}
+//   oss()       optional: the open-source counts from the last build, for when live.json is unreachable
 //   projects()  open-source projects linked from the site: [{ name, url }]
 //   url(path)   an absolute URL on the site for a path or #section
 //   ask(q, signal)  { answer, sources: [passage ids] } from the ask.sh model; throws if unavailable
@@ -204,7 +205,8 @@ export const TOOLS = [
     inputSchema: NONE,
     readOnly: true,
     async run(a, src) {
-      const o = (await src.live()).oss || {};
+      // live.json is newest; the snapshot from the last build covers it being unreachable.
+      const o = (await src.live()).oss || (src.oss && (await src.oss())) || {};
       const tl = o.timeline || [];
       return {
         merged_pull_requests: o.prs != null ? o.prs : tl.reduce((n, t) => n + t.n, 0), repositories: o.repos, since: o.since, counted_at: o.at,

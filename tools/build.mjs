@@ -617,7 +617,9 @@ async function prerender() {
     writeFileSync(join(ROOT, 'worker', 'knowledge.json'), JSON.stringify(index, null, 1) + '\n');
     // The rest of what the worker's MCP tools serve: the CV and the projects the page links to.
     const projects = await page.evaluate(() => window.CragaAgent.linkedProjects(document));
-    writeFileSync(join(ROOT, 'worker', 'agent-data.json'), JSON.stringify({ cv: JSON.parse(readFileSync(join(SRC, 'cv.json'), 'utf8')), projects }, null, 1) + '\n');
+    // Keep the last open-source snapshot if this build can't read the oss branch.
+    let prevAgent = null; try { prevAgent = JSON.parse(readFileSync(join(ROOT, 'worker', 'agent-data.json'), 'utf8')); } catch (e) {}
+    writeFileSync(join(ROOT, 'worker', 'agent-data.json'), JSON.stringify({ cv: JSON.parse(readFileSync(join(SRC, 'cv.json'), 'utf8')), projects, oss: OSS_SNAPSHOT || (prevAgent && prevAgent.oss) || null }, null, 1) + '\n');
     console.log('ask.sh index:', passages.length, 'passages,', passages.reduce((n, p) => n + p.text.length, 0), 'chars');
     const file = join(OUT, 'index.html');
     writeFileSync(file, readFileSync(file, 'utf8').replace('<!--PRERENDER-->', html).replace('/*CIS*/', cis.join('\n')));

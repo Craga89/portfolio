@@ -196,7 +196,8 @@ const modern = (method, params = {}, extra = {}) => rpc(method, { ...params, _me
 const LIVE = { oss: { prs: 59, repos: 35, since: 2012, qtip: { stars: 1970, forks: 458, commits: 1384 }, timeline: [{ y: 2014, q: 2, n: 7, repos: ['BlueSpire/Durandal'] }], at: '2026-10-17' }, lighthouse: { mobile: { performance: 97 }, desktop: { performance: 100 } }, build: { sha: 'abc123', at: '2026-10-18T00:00:00Z' } };
 const realFetch = globalThis.fetch;
 const liveFetches = [];
-globalThis.fetch = async (u, opts) => { if (String(u).endsWith('/live.json')) { liveFetches.push(String(u)); return new Response(JSON.stringify(LIVE), { headers: { 'content-type': 'application/json' } }); } return realFetch(u, opts); };
+let liveDown = false;
+globalThis.fetch = async (u, opts) => { if (String(u).endsWith('/live.json')) { liveFetches.push(String(u)); if (liveDown) return new Response('not found', { status: 404 }); return new Response(JSON.stringify(LIVE), { headers: { 'content-type': 'application/json' } }); } return realFetch(u, opts); };
 const call = async (r, env = {}) => { const res = await worker.fetch(r, env); const t = await res.text(); return { status: res.status, headers: res.headers, body: t ? JSON.parse(t) : null }; };
 const toolData = (b) => JSON.parse(b.result.content[0].text);
 
@@ -269,6 +270,15 @@ test('mcp ask: answers from the model, logs as mcp, and respects the limit', asy
   assert.equal(down.body.result.structuredContent.via, 'search');
 });
 
+test('mcp live data: open source falls back to the build snapshot when live.json is unreachable', async () => {
+  liveDown = true;
+  try {
+    const o = await call(rpc('tools/call', { name: 'get_open_source', arguments: {} }));
+    const d = o.body.result.structuredContent;
+    assert.ok(d.merged_pull_requests > 0, 'merged count from the snapshot');
+    assert.ok(d.by_quarter.length > 0);
+  } finally { liveDown = false; }
+});
 test('mcp live data: open source and site report read live.json from the site', async () => {
   liveFetches.length = 0;
   const o = await call(rpc('tools/call', { name: 'get_open_source', arguments: {} }), { SITE_URL: 'https://craigthompson.dev/' });

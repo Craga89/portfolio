@@ -252,6 +252,7 @@ export function agentSource(env, request, wait = (p) => p) {
     cv: async () => agentData.cv,
     index: async () => INDEX,
     projects: async () => agentData.projects,
+    oss: async () => agentData.oss || null,
     build: () => null,
     live: () => (liveP = liveP || fetch(site + '/live.json', { cf: { cacheTtl: 300, cacheEverything: true } })
       .then((r) => (r.ok ? r.json() : {}))
