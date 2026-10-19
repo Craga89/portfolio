@@ -15,7 +15,11 @@ if (!IN) { console.log('usage: node tools/blog-import.mjs <import dir>'); proces
 const OUT = join(ROOT, 'src', 'blog');
 mkdirSync(join(OUT, 'img'), { recursive: true });
 
-const posts = JSON.parse(readFileSync(join(IN, 'posts.json'), 'utf8')).filter((p) => p.file);
+// Left out: notices rather than posts (their old addresses redirect to the blog index).
+const SKIP = new Set(['holiday', 'where-are-you-using-qtip']);
+// Names of colleagues stay off the site.
+const EDITS = { 'jquery-ui-draggable-exclusive-draggables': [[/Shout out to to my friend and colleague \[[^\]]+\]\([^)]*\) who came up/, 'Shout out to a former colleague, who came up']] };
+const posts = JSON.parse(readFileSync(join(IN, 'posts.json'), 'utf8')).filter((p) => p.file && !SKIP.has(p.slug));
 const gists = {};
 if (existsSync(join(IN, 'gists'))) for (const f of readdirSync(join(IN, 'gists'))) { const g = JSON.parse(readFileSync(join(IN, 'gists', f), 'utf8')); gists[g.id] = g; }
 
@@ -32,7 +36,8 @@ for (const p of posts) {
     const meta = (k) => { const m = document.querySelector(`meta[property="${k}"],meta[name="${k}"]`); return m ? m.getAttribute('content') : ''; };
     const body = $('.post-content') || $('.entry-content') || $('.post .entry') || $('.entry');
     if (!body) return null;
-    const title = (meta('og:title') || ($('.post-title, .entry-title, .post h2.title, h1') || {}).textContent || document.title).replace(/\s*[|·–-]\s*craigsworks.*$/i, '').trim();
+    const pick = (...sels) => { for (const x of sels) { const n = $(x); if (n && n.textContent.trim()) return n.textContent; } return ''; };
+    const title = (meta('og:title') || pick('.post-title', '.entry-title', '.post h2.title', 'article h1', 'h1') || document.title).replace(/\s*[|·–-]\s*craigsworks.*$/i, '').trim();
     let date = meta('article:published_time') || (($('time[datetime]') || {}).getAttribute ? $('time[datetime]').getAttribute('datetime') : '');
     if (!date) { const m = orig.match(/\/(\d{4})\/(\d{2})\//); const d = ($('.post-meta, .date, .post-date') || {}).textContent || ''; const day = (d.match(/\b(\d{1,2})(?:st|nd|rd|th)?\b/) || [])[1]; if (m) date = `${m[1]}-${m[2]}-${String(day || 1).padStart(2, '0')}`; }
     const tags = [...document.querySelectorAll('meta[property="article:tag"]')].map((m) => m.getAttribute('content'));
@@ -56,7 +61,7 @@ for (const p of posts) {
     };
     const gist = (n) => {
       const src = n.getAttribute('src') || '';
-      const id = (src.match(/([0-9a-f]{12,})(?:\.js)?/) || [])[1], file = (src.match(/[?&]file=([^&]+)/) || [])[1];
+      const id = (src.match(/\/([0-9a-f]{12,}|\d{5,})\.js/) || [])[1], file = (src.match(/[?&]file=([^&]+)/) || [])[1];
       const g = gists[id];
       if (!g) return `[See the code on GitHub](https://gist.github.com/${id})`;
       const files = Object.entries(g.files).filter(([name]) => !file || name === decodeURIComponent(file));
@@ -85,6 +90,10 @@ for (const p of posts) {
     return { title, date: (date || '').slice(0, 10), tags: [...new Set(tags)], md };
   }, { orig: p.from, imgMap, gists });
   if (!r || !r.md) { console.log(`${p.slug}: no post body found`); continue; }
+  // Old "Flattr this" buttons and empty links go; titles lose their markup.
+  r.md = r.md.replace(/\[!\[[^\]]*flattr[^\]]*\]\([^)]*\)\]\([^)]*\)\s*/gi, '').replace(/\n{3,}/g, '\n\n').trim();
+  r.title = r.title.replace(/<[^>]+>/g, '').replace(/`/g, '').replace(/\s+/g, ' ').trim();
+  for (const [re, to] of EDITS[p.slug] || []) { if (!re.test(r.md)) console.log(`${p.slug}: edit didn't apply: ${re}`); r.md = r.md.replace(re, to); }
   for (const i of p.images || []) if (i.file && r.md.includes(`img/${i.file}`)) copyFileSync(join(IN, 'img', i.file), join(OUT, 'img', i.file));
   const original = p.urls.find((u) => u.includes(p.slug)) || p.urls[0];
   const fm = ['---', `title: ${yaml(r.title)}`, `date: ${r.date}`, `tags: [${r.tags.map(yaml).join(', ')}]`, `original: ${original}`, `archived: https://web.archive.org/web/${p.snapshot}/${p.from}`, '---', ''].join('\n');

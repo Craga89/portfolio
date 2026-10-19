@@ -110,7 +110,7 @@ for (const p of posts.values()) {
 // Code embedded from GitHub gists: the archive doesn't run the embed, so fetch the gist itself.
 mkdirSync(join(OUT, 'gists'), { recursive: true });
 const gistIds = new Set();
-for (const p of out) if (p.file) for (const m of readFileSync(join(OUT, p.file), 'utf8').matchAll(/gist\.github\.com\/(?:[\w-]+\/)?([0-9a-f]{12,})(?:\.js)?/gi)) gistIds.add(m[1]);
+for (const p of out) if (p.file) for (const m of readFileSync(join(OUT, p.file), 'utf8').matchAll(/gist\.github\.com\/(?:[\w-]+\/)?([0-9a-f]{12,}|\d{5,})(?:\.js)?/gi)) gistIds.add(m[1]);
 for (const id of gistIds) {
   try {
     const r = await get(`https://api.github.com/gists/${id}`, 3);
