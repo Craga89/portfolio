@@ -16,12 +16,13 @@ if (!archivedFile || !OUT) { console.log('usage: node tools/blog-fetch.mjs <arch
 mkdirSync(join(OUT, 'html'), { recursive: true });
 mkdirSync(join(OUT, 'img'), { recursive: true });
 const UA = { 'user-agent': 'craigthompson.dev blog recovery (github.com/Craga89/portfolio)' };
+const GH = process.env.GITHUB_TOKEN ? { authorization: 'Bearer ' + process.env.GITHUB_TOKEN } : {};
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 async function get(url, tries = 5) {
   for (let i = 0; i < tries; i++) {
     try {
-      const r = await fetch(url, { headers: UA });
+      const r = await fetch(url, { headers: Object.assign({}, UA, /api\.github\.com/.test(url) ? GH : {}) });
       if (r.status === 429 || r.status >= 500) throw new Error('HTTP ' + r.status);
       return r;
     } catch (e) { if (i === tries - 1) throw e; await sleep(4000 * (i + 1)); }
@@ -101,5 +102,18 @@ for (const p of posts.values()) {
   out.push({ slug: p.slug, host: p.host, urls, snapshot: saved.ts, from: saved.orig, file: 'html/' + p.slug + '.html', images: imgs });
   console.log(`${p.slug}: snapshot ${saved.ts}, ${imgs.filter((i) => i.file).length}/${imgs.length} images`);
 }
+// Code embedded from GitHub gists: the archive doesn't run the embed, so fetch the gist itself.
+mkdirSync(join(OUT, 'gists'), { recursive: true });
+const gistIds = new Set();
+for (const p of out) if (p.file) for (const m of readFileSync(join(OUT, p.file), 'utf8').matchAll(/gist\.github\.com\/(?:[\w-]+\/)?([0-9a-f]{12,})(?:\.js)?/gi)) gistIds.add(m[1]);
+for (const id of gistIds) {
+  try {
+    const r = await get(`https://api.github.com/gists/${id}`, 3);
+    if (!r.ok) { console.log(`::warning title=gist ${id}::HTTP ${r.status}`); continue; }
+    const g = await r.json();
+    writeFileSync(join(OUT, 'gists', id + '.json'), JSON.stringify({ id, url: g.html_url, description: g.description, files: Object.fromEntries(Object.values(g.files).map((f) => [f.filename, { language: f.language, content: f.content }])) }, null, 1));
+  } catch (e) { console.log(`::warning title=gist ${id}::${e.message}`); }
+}
+console.log(`${gistIds.size} gists`);
 writeFileSync(join(OUT, 'posts.json'), JSON.stringify(out, null, 1) + '\n');
 console.log(`saved ${out.filter((p) => p.snapshot).length} of ${out.length} posts`);

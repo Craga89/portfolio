@@ -22,6 +22,8 @@ jobs:
           git fetch -q --depth=1 origin redirect-data:refs/remotes/origin/redirect-data
           git show origin/redirect-data:archive/archived.json > archived.json
           node tools/blog-fetch.mjs archived.json out
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
       - name: Save to the blog-import branch
         run: |
           git config user.name "github-actions[bot]"
