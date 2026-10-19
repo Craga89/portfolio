@@ -1,9 +1,11 @@
 craigsworks.com/projects/qtip2,https://qtip2.com,301,TRUE,TRUE,TRUE,TRUE
 craigsworks.com/projects/qtip,https://qtip1.com,301,TRUE,TRUE,TRUE,TRUE
+craigsworks.com/projects/forums,https://qtip2.com/,301,FALSE,TRUE,TRUE,FALSE
 craigsworks.com/projects/simpletip/download,https://cdn.jsdelivr.net/gh/Craga89/simpletip@master/download,301,FALSE,TRUE,TRUE,TRUE
 craigsworks.com/projects/simpletip,https://github.com/Craga89/simpletip,301,FALSE,TRUE,TRUE,FALSE
 craigsworks.com/projects,https://craigthompson.dev/#oss,301,FALSE,TRUE,TRUE,FALSE
 craigsworks.com/cv.pdf,https://craigthompson.dev/cv.pdf,301,FALSE,TRUE,FALSE,FALSE
+craigsworks.com/CV.pdf,https://craigthompson.dev/cv.pdf,301,FALSE,TRUE,FALSE,FALSE
 craigsworks.com/,https://craigthompson.dev/,301,FALSE,TRUE,TRUE,FALSE
 craigs.works/,https://craigthompson.dev/,301,FALSE,TRUE,TRUE,FALSE
 craigswork.com/,https://craigthompson.dev/,301,FALSE,TRUE,TRUE,FALSE

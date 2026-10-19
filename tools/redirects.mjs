@@ -63,7 +63,9 @@ async function discover(dir) {
   const seen = new Map();
   for (const d of CONF.domains) {
     const q = new URL('https://web.archive.org/cdx/search/cdx');
-    Object.entries({ url: d, matchType: 'domain', output: 'json', fl: 'original,statuscode,mimetype,timestamp', collapse: 'urlkey', limit: '20000' }).forEach(([k, v]) => q.searchParams.set(k, v));
+    Object.entries({ url: d, matchType: 'domain', output: 'json', fl: 'original,statuscode,mimetype,timestamp', collapse: 'urlkey', limit: '50000' }).forEach(([k, v]) => q.searchParams.set(k, v));
+    // Paths with thousands of archived URLs (the old forums) are counted, not listed.
+    for (const skip of CONF.discoverSkip || []) q.searchParams.append('filter', '!original:.*' + skip.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '.*');
     let rows = [];
     for (let attempt = 0; attempt < 3; attempt++) {
       try {
@@ -83,6 +85,13 @@ async function discover(dir) {
       const prev = seen.get(key);
       if (!prev || ts > prev.last) seen.set(key, { url: u.href, status: Number(status) || null, mime, last: ts, first: prev ? prev.first : ts });
       else if (ts < prev.first) prev.first = ts;
+    }
+  }
+  for (const skip of CONF.discoverSkip || []) {
+    for (const d of CONF.domains) {
+      const q = new URL('https://web.archive.org/cdx/search/cdx');
+      Object.entries({ url: d + skip, matchType: 'prefix', showNumPages: 'true' }).forEach(([k, v]) => q.searchParams.set(k, v));
+      try { const n = (await (await fetch(q)).text()).trim(); if (n && n !== '0') console.log(`${d}${skip}: about ${n} index page(s) of archived URLs, not listed; they go to ${(match('https://' + d + skip) || {}).target}`); } catch (e) {}
     }
   }
   const out = [...seen.values()].sort((a, b) => a.url.localeCompare(b.url)).map((x) => { const m = match(x.url); return Object.assign(x, { to: m ? m.target : null, rule: m ? m.rule.source : null }); });
