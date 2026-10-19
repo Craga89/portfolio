@@ -153,12 +153,11 @@ While the content is being finished, the build keeps the site out of search engi
 
 ## Old domains (craigsworks.com and others)
 
-`redirects/old-domains.json` lists where each old address goes: the domains, the rules, and test URLs. The craigsworks.com rules carry over what the old site's `.htaccess` files did ([Craga89/craigsworks](https://github.com/Craga89/craigsworks)): `/projects/qtip2/…` to qtip2.com and `/projects/qtip/…` to qtip1.com, keeping the rest of the path. Simpletip's page goes to its repository, and its script files (`/projects/simpletip/download/…`) go to the same files through jsDelivr, so old sites that still load them keep working. `/projects/` goes to the open-source section, `/cv.pdf` to the CV, and everything else (www, blog and the other domains) goes to the home page. All are permanent (301) redirects.
+`redirects/old-domains.json` lists where each old address goes: the domains, the rules, and test URLs. The craigsworks.com rules carry over what the old site's `.htaccess` files did ([Craga89/craigsworks](https://github.com/Craga89/craigsworks)): `/projects/qtip2/…` and `/projects/qtip/…` (which went to qtip2.com and qtip1.com, both now offline) go to the qTip2 and qTip 1 GitHub projects, as do the old qTip forums. Simpletip's page goes to its repository, and its script files (`/projects/simpletip/download/…`) go to the same files through jsDelivr, so old sites that still load them keep working. `/projects/` goes to the open-source section, `/cv.pdf` to the CV, and everything else (www, blog and the other domains) goes to the home page. All are permanent (301) redirects.
 
 - `node tools/redirects.mjs csv` writes `redirects/cloudflare-bulk.csv` for Cloudflare Bulk Redirects (Rules → Bulk Redirects: create a list from the CSV, then a rule that uses it). Each old domain has to be added to Cloudflare with proxied DNS records (a placeholder such as `A 192.0.2.1`, proxied, for the bare domain and `www`; also `blog` for craigsworks.com).
 - `node tools/redirects.mjs match <url>` shows which rule a URL hits, offline.
 - The **Old-domain redirects** workflow (run it from the Actions tab): `discover` lists every URL the Wayback Machine has archived on the old domains and where each will go (saved to the `redirect-data` branch; `archive/archived.md` lists the ones going to the home page, to review). `check` requests the test URLs and every archived URL, and checks each gives a single 301 to the right place and that the destination loads.
-- qtip2.com and qtip1.com must stay up wherever they're hosted, or those redirects lead nowhere.
 
 ## ask.sh
 

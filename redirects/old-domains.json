@@ -12,77 +12,75 @@
   "rules": [
     {
       "source": "craigsworks.com/projects/qtip2/forum",
-      "target": "https://qtip2.com/",
+      "target": "https://github.com/qTip2/qTip2",
       "subdomains": true,
       "subpath": true,
       "suffix": false,
-      "why": "qTip2 forum pages (gone): qTip's site"
+      "why": "qTip2 forum pages (gone): qTip2's GitHub project"
     },
     {
       "source": "craigsworks.com/projects/qtip2/forums",
-      "target": "https://qtip2.com/",
+      "target": "https://github.com/qTip2/qTip2",
       "subdomains": true,
       "subpath": true,
       "suffix": false,
-      "why": "qTip2 forum pages (gone): qTip's site"
+      "why": "qTip2 forum pages (gone): qTip2's GitHub project"
     },
     {
       "source": "craigsworks.com/projects/qtip/forum",
-      "target": "https://qtip2.com/",
+      "target": "https://github.com/qTip2/qTip2",
       "subdomains": true,
       "subpath": true,
       "suffix": false,
-      "why": "the qTip 1 forum (about 6,800 archived URLs, gone): qTip's site"
+      "why": "the qTip 1 forum (about 6,800 archived URLs, gone): qTip2's GitHub project"
     },
     {
       "source": "craigsworks.com/projects/qtip2docs",
-      "target": "https://qtip2.com/docs",
+      "target": "https://github.com/qTip2/qTip2",
       "subdomains": true,
       "subpath": true,
-      "suffix": true,
-      "why": "early qTip2 docs; the old .htaccess sent these to qtip2.com/docs/…"
+      "suffix": false,
+      "why": "early qTip2 docs: its GitHub project"
     },
     {
       "source": "craigsworks.com/projects/qtip_new",
-      "target": "https://qtip2.com/",
+      "target": "https://github.com/qTip2/qTip2",
       "subdomains": true,
       "subpath": true,
       "suffix": false,
-      "why": "the qTip2 beta (2009-10, about 320 archived URLs): qTip2's site"
+      "why": "the qTip2 beta (2009-10, about 320 archived URLs): qTip2's GitHub project"
     },
     {
       "source": "craigsworks.com/projects/qtip1",
-      "target": "https://qtip1.com",
-      "subdomains": true,
-      "subpath": true,
-      "suffix": true,
-      "why": "qTip 1 under another name: qtip1.com"
-    },
-    {
-      "source": "craigsworks.com/projects/qtip2",
-      "target": "https://qtip2.com",
-      "subdomains": true,
-      "subpath": true,
-      "suffix": true,
-      "query": true,
-      "why": "old .htaccess: projects/qtip2/* → qtip2.com/*"
-    },
-    {
-      "source": "craigsworks.com/projects/qtip",
-      "target": "https://qtip1.com",
-      "subdomains": true,
-      "subpath": true,
-      "suffix": true,
-      "query": true,
-      "why": "old .htaccess: projects/qtip/* → qtip1.com/*"
-    },
-    {
-      "source": "craigsworks.com/projects/forums",
-      "target": "https://qtip2.com/",
+      "target": "https://github.com/Craga89/qTip1",
       "subdomains": true,
       "subpath": true,
       "suffix": false,
-      "why": "the old qTip support forums (2010-13, about 20,000 archived URLs, gone since): qTip's site and docs"
+      "why": "qTip 1 under another name: qTip 1's GitHub project"
+    },
+    {
+      "source": "craigsworks.com/projects/qtip2",
+      "target": "https://github.com/qTip2/qTip2",
+      "subdomains": true,
+      "subpath": true,
+      "suffix": false,
+      "why": "qTip2 (the old .htaccess sent these to qtip2.com, which is offline): its GitHub project"
+    },
+    {
+      "source": "craigsworks.com/projects/qtip",
+      "target": "https://github.com/Craga89/qTip1",
+      "subdomains": true,
+      "subpath": true,
+      "suffix": false,
+      "why": "qTip 1 (the old .htaccess sent these to qtip1.com, which is offline): its GitHub project"
+    },
+    {
+      "source": "craigsworks.com/projects/forums",
+      "target": "https://github.com/qTip2/qTip2",
+      "subdomains": true,
+      "subpath": true,
+      "suffix": false,
+      "why": "the old qTip support forums (2010-13, about 20,000 archived URLs, gone since): qTip2's GitHub project"
     },
     {
       "source": "craigsworks.com/projects/simpletip/download",
@@ -164,19 +162,19 @@
     ],
     [
       "http://craigsworks.com/projects/qtip2/",
-      "https://qtip2.com/"
+      "https://github.com/qTip2/qTip2"
     ],
     [
       "http://craigsworks.com/projects/qtip2/download/",
-      "https://qtip2.com/download/"
+      "https://github.com/qTip2/qTip2"
     ],
     [
       "http://craigsworks.com/projects/qtip/",
-      "https://qtip1.com/"
+      "https://github.com/Craga89/qTip1"
     ],
     [
       "http://craigsworks.com/projects/qtip/docs/",
-      "https://qtip1.com/docs/"
+      "https://github.com/Craga89/qTip1"
     ],
     [
       "https://craigsworks.com/projects/simpletip",
@@ -192,15 +190,15 @@
     ],
     [
       "http://craigsworks.com/projects/qtip/forum/showthread.php?t=1234",
-      "https://qtip2.com/"
+      "https://github.com/qTip2/qTip2"
     ],
     [
       "http://craigsworks.com/projects/qtip2docs/core/",
-      "https://qtip2.com/docs/core/"
+      "https://github.com/qTip2/qTip2"
     ],
     [
       "http://craigsworks.com/projects/qtip_new/demos/ajax",
-      "https://qtip2.com/"
+      "https://github.com/qTip2/qTip2"
     ],
     [
       "http://craigsworks.com/simpletip/docs/",
@@ -220,11 +218,11 @@
     ],
     [
       "http://craigsworks.com/projects/forums/archive/index.php/forum-10.html",
-      "https://qtip2.com/"
+      "https://github.com/qTip2/qTip2"
     ],
     [
       "https://www.craigsworks.com/projects/qtip2/demos/",
-      "https://qtip2.com/demos/"
+      "https://github.com/qTip2/qTip2"
     ],
     [
       "https://blog.craigsworks.com/",
