@@ -18,7 +18,7 @@ mkdirSync(join(OUT, 'img'), { recursive: true });
 const UA = { 'user-agent': 'craigthompson.dev blog recovery (github.com/Craga89/portfolio)' };
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
-async function get(url, tries = 3) {
+async function get(url, tries = 5) {
   for (let i = 0; i < tries; i++) {
     try {
       const r = await fetch(url, { headers: UA });
@@ -68,19 +68,21 @@ for (const p of posts.values()) {
   snaps.sort((a, b) => b[0].localeCompare(a[0]));
   const seen = new Set(); snaps = snaps.filter((s) => (seen.has(s[0]) ? false : seen.add(s[0])));
   let saved = null;
-  for (const [ts, orig] of snaps.slice(0, 4)) {
+  const why = [];
+  for (const [ts, orig] of snaps.slice(0, 15)) {
     try {
       const r = await get(`https://web.archive.org/web/${ts}id_/${orig}`);
-      if (!r.ok) continue;
+      if (!r.ok) { why.push(`${ts}: HTTP ${r.status}`); continue; }
       const html = await r.text();
-      if (html.length < 1500 || !/<(article|div)[^>]+(post|entry)/i.test(html)) continue; // an error page or a stub
+      // An error page or a stub, not the post.
+      if (html.length < 1500 || !/<(article|div)[^>]+(post|entry)/i.test(html)) { why.push(`${ts}: ${html.length} bytes, "${((html.match(/<title>([^<]*)/i) || [])[1] || '').trim().slice(0, 60)}"`); continue; }
       writeFileSync(join(OUT, 'html', p.slug + '.html'), html);
       saved = { ts, orig, html };
       break;
     } catch (e) { console.log(`::warning title=${p.slug}::${e.message}`); }
     await sleep(800);
   }
-  if (!saved) { console.log(`::warning title=${p.slug}::no usable snapshot (${snaps.length} listed)`); out.push({ slug: p.slug, host: p.host, urls, snapshot: null }); continue; }
+  if (!saved) { console.log(`::warning title=${p.slug}::no usable snapshot (${snaps.length} listed): ${why.slice(0, 4).join('; ')}`); out.push({ slug: p.slug, host: p.host, urls, snapshot: null }); continue; }
   // Images in the post (not the theme's): saved from the same moment in the archive.
   const imgs = [];
   for (const m of saved.html.matchAll(/<img[^>]+src=["']([^"']+)["']/gi)) {
