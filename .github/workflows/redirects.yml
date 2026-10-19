@@ -1,0 +1,51 @@
+# Old-domain redirects (redirects/old-domains.json, tools/redirects.mjs).
+#   discover: list every URL the Wayback Machine has archived on the old domains, and where
+#             each will go; saved to the redirect-data branch (archived.md is the readable one).
+#   check:    request the test URLs and every archived URL, and check each redirects once,
+#             permanently, to the right place, and that the destination loads.
+name: Old-domain redirects
+
+on:
+  workflow_dispatch:
+    inputs:
+      task:
+        description: discover or check
+        type: choice
+        options: [discover, check]
+        default: check
+
+permissions:
+  contents: write
+
+concurrency:
+  group: redirects
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Discover archived URLs
+        if: inputs.task == 'discover'
+        run: |
+          node tools/redirects.mjs discover out
+          head -c 3000 out/archived.md
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git switch --orphan redirect-data
+          git rm -rq --cached . || true
+          mkdir -p archive && cp out/archived.json out/archived.md archive/
+          git add archive
+          git commit -qm "Archived URLs on the old domains, $(date -u +%F)"
+          git push -qf origin HEAD:redirect-data
+      - name: Check the live redirects
+        if: inputs.task == 'check'
+        run: |
+          git fetch -q --depth=1 origin redirect-data:refs/remotes/origin/redirect-data || true
+          git show origin/redirect-data:archive/archived.json > archived.json 2>/dev/null || rm -f archived.json
+          node tools/redirects.mjs check $( [ -s archived.json ] && echo archived.json )
