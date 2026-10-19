@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<title>Durandal and Webpack: Part 2 - Composition</title>
+	<meta name="description" content="" />
+	<meta name="keywords" content="">
+	<meta name="viewport" content="width=device-width, minimum-scale=1, maximum-scale=1, user-scalable=no" />
+	<!-- fav icons -->
+	<link rel="shortcut icon" href="//craigsworks.com/favicon.ico">
+	<link rel="apple-touch-icon" href="/assets/images/apple-touch-icon.png?v=5ccb861762">
+	<link rel="apple-touch-icon" sizes="72x72" href="/assets/images/apple-touch-icon-72x72.png?v=5ccb861762">
+	<link rel="apple-touch-icon" sizes="114x114" href="/assets/images/apple-touch-icon-114x114.png?v=5ccb861762">
+	<!-- stylesheets -->
+	<title>Document</title>
+	<link href='//fonts.googleapis.com/css?family=Open+Sans:400,600|Roboto:400,100,300' rel='stylesheet' type='text/css'>
+	<link rel="stylesheet" href="/assets/css/bootstrap.min.css?v=5ccb861762">
+	<link rel="stylesheet" href="/assets/css/font-awesome.min.css?v=5ccb861762">
+	<link rel="stylesheet" type="text/css" href="/assets/css/hl-styles/monokai_sublime.css?v=5ccb861762">
+	<link rel="stylesheet" type="text/css" href="/assets/css/screen.css?v=5ccb861762">
+	<script>
+/*====================================================
+  THEME SETTINGS & GLOBAL VARIABLES
+====================================================*/
+//  1. Disqus comment settings
+var disqus_shortname = 'craigsworks'; // required: replace example with your forum shortname
+
+//  2. Recent Post count
+var recent_post_count = 3;
+
+//	3. Facebook Page Setting
+var facebook_page_url = 'https://www.facebook.com/craigsworks';
+
+//	4. Twitter Setting
+var twitter_url = 'https://twitter.com/craigsworks';
+var twitter_widget_id = '624328164261629952';
+var number_of_tweet = 3;
+
+//	5. Mailchimp signup form Setting
+var mailchimp_form_url = '';
+var success_message = "Please check your inbox and confirm your email address. Thanks!";
+</script>
+    <link rel="canonical" href="http://blog.craigsworks.com/durandal-and-webpack-part-2-composition/" />
+    
+    <meta property="og:site_name" content="Blog of Craig Michael Thompson - a Front-end Developer / Consultant" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Durandal and Webpack: Part 2 - Composition" />
+    <meta property="og:description" content="This post is part of a series of posts entitled Durandal and Webpack. Check-out the Introduction here if you haven&#x27;t already, as well as the online examples Durandal implements a process known as composition, which allows developers to compose arbitrary..." />
+    <meta property="og:url" content="http://blog.craigsworks.com/durandal-and-webpack-part-2-composition/" />
+    <meta property="article:published_time" content="2015-07-26T22:22:15.000Z" />
+    <meta property="article:modified_time" content="2015-07-27T11:13:00.000Z" />
+    
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Durandal and Webpack: Part 2 - Composition" />
+    <meta name="twitter:description" content="This post is part of a series of posts entitled Durandal and Webpack. Check-out the Introduction here if you haven&#x27;t already, as well as the online examples Durandal implements a process known as composition, which allows developers to compose arbitrary..." />
+    <meta name="twitter:url" content="http://blog.craigsworks.com/durandal-and-webpack-part-2-composition/" />
+    
+    <script type="application/ld+json">
+{
+    "@context": "http://schema.org",
+    "@type": "Article",
+    "publisher": "Blog of Craig Michael Thompson - a Front-end Developer / Consultant",
+    "author": {
+        "@type": "Person",
+        "name": "Craig Michael Thompson",
+        "image": "http://blog.craigsworks.com/content/images/2015/07/me.jpg",
+        "url": "http://blog.craigsworks.com/author/craga89",
+        "sameAs": "http://craigsworks.com",
+        "description": "Hi. My names Craig and I'm a Front-end Web Developer / Consultant primarily interested in jQuery/JavaScript development with HTML5/CSS3 and emerging W3C standards."
+    },
+    "headline": "Durandal and Webpack: Part 2 - Composition",
+    "url": "http://blog.craigsworks.com/durandal-and-webpack-part-2-composition/",
+    "datePublished": "2015-07-26T22:22:15.000Z",
+    "dateModified": "2015-07-27T11:13:00.000Z",
+    "description": "This post is part of a series of posts entitled Durandal and Webpack. Check-out the Introduction here if you haven&#x27;t already, as well as the online examples Durandal implements a process known as composition, which allows developers to compose arbitrary..."
+}
+    </script>
+
+    <meta name="generator" content="Ghost 0.6" />
+    <link rel="alternate" type="application/rss+xml" title="Blog of Craig Michael Thompson - a Front-end Developer / Consultant" href="http://blog.craigsworks.com/rss/" />
+</head>
+<body class="post-template">
+	<div class="page-wrap no-image" >
+	<div class="overlay">
+		<!-- start header -->
+		<header class="main-header">
+			<!-- start navbar -->
+			<div class="navbar-wrap navbar-fixed-top">
+				<div class="container">
+					<div class="row">
+					<div class="main-nav">
+						<div class="navbar-header">
+							<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+								<span class="sr-only">Toggle navigation</span>
+								<span class="icon-bar"></span>
+								<span class="icon-bar"></span>
+								<span class="icon-bar"></span>
+			            	</button>
+			            	</div>
+		            	<div id="navbar" class="navbar-collapse collapse">
+	<ul class="nav navbar-nav">
+		<li class="portfolio "><a href="http://craigsworks.com/">Portfolio</a></li>
+		<li class="blog "><a href="http://blog.craigsworks.com/">Blog</a></li>
+		<li class="github "><a href="http://github.com/Craga89">GitHub</a></li>
+		<li class="linkedin "><a href="http://linkedin.com/in/craigmichaelthompson">LinkedIn</a></li>
+	</ul>
+</div>
+						<a class="search-open" href="#"><i class="fa fa-search"></i></a>
+<div class="search-wrap">
+	<a class="search-close" href="#"><i class="fa fa-close"></i></a>
+	<form class="search-form">
+		<input id="search-field" type="text" placeholder="SEARCH" class="search-input">
+	</form>
+</div>
+<div id="search-result"></div>					</div>
+					</div>
+				</div>
+			</div>
+			<!-- end navbar -->
+			<div class="container">
+				<div class="row branding">
+					<div class="logo-wrap">
+						<!-- start logo -->
+						<a class="logo image-logo" href="http://blog.craigsworks.com"><img src="/content/images/2015/07/cover-2.png" alt="Blog of Craig Michael Thompson - a Front-end Developer / Consultant"></a>
+						<!-- end logo -->
+					</div>
+					<div class="intro"></div>
+				</div>
+			</div>
+		</header>
+		<!-- end header -->
+
+	
+<!-- start main content area -->
+<div class="container">
+	<div class="single-post-container clearfix">
+		<div class="single-content-wrap">
+		<!-- start article -->
+		<article id="24" class="post-wrap post featured">
+			<div class="featured">
+				<i class="fa fa-star"></i>
+			</div>
+			<header class="post-header">
+				<div class="post-meta">
+					<span class="date">Jul 26, 2015</span> &#45;
+					<span class="author">By <a href="/author/craga89/" title="Craig Michael Thompson">Craig Michael Thompson</a></span>
+				</div>
+				<h2 class="post-title"><a href="/durandal-and-webpack-part-2-composition/">Durandal and Webpack: Part 2 - Composition</a></h2>
+			</header>
+			<div class="post-content">
+				<p><em>This post is part of a series of posts entitled <strong>Durandal and Webpack</strong>. Check-out the <a href="/durandal-and-webpack-introduction">Introduction</a> here if you haven't already, as well as the <a href="//craga89.github.io/durandal-webpack">online examples</a></em></p>
+
+<p><a href="http://durandaljs.com">Durandal</a> implements a process known as <a href="http://durandaljs.com/documentation/Using-Composition.html">composition</a>, which allows developers to compose arbitrary Views and ViewModels         together into a single output. Much like how <a href="https://facebook.github.io/react/">React</a> lets you nest Components within your <code>render</code> method. This <code>composition</code> workflow is used extensively in Durandal and is the process by which your <code>ViewModel</code> and <code>View</code>(s) are stitched together to create the basic building blocks of your application.</p>
+
+<p>By default, the <code>composition</code> engine deals with what are known in Durandal as <code>moduleId</code>s and <code>viewUrl</code>s, which are URLs that point to where the <code>ViewModel</code> or <code>View</code> are situated, respectively. Since Webpack doesn't understand this natively, we'll need to enhance this functionality a little and <strong>allow us to directly pass the module, rather than a path pointing to it</strong>.</p>
+
+<h3 id="systemacquire">system.acquire</h3>
+
+<p>The logic for this method is fairly straight forward, taking a single <code>moduleId</code> string and returning a <a href="https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a> instance that resolves with the <code>module</code>:</p>
+
+<script src="https://gist.github.com/Craga89/add43ae8b5f245b29ec7.js?file=system.acquire.js"></script>
+
+<p>We'll override this method to allow the <code>moduleId</code> to be either a <strong><code>String</code> or a <code>Function</code></strong>. In the latter case, this function is given a single argument, another function we'll call <code>cb</code>, which takes the following form:</p>
+
+<script src="https://gist.github.com/Craga89/add43ae8b5f245b29ec7.js?file=system.acquire.callback.js"></script>
+
+<p>The <code>cb</code> function should be called with <code>null</code> as the first argument if no error occurred, and the resolved <code>module</code> as the second parameter. This may look familiar to you if you've used Node extensively, as it's the <a href="http://fredkschott.com/post/2014/03/understanding-error-first-callbacks-in-node-js/">standard Node.js callback pattern</a>. </p>
+
+<p>With this in mind, let's take a look at the override in full:</p>
+
+<script src="https://gist.github.com/Craga89/1334186a7973b483d3c7.js?file=system.js"></script>
+
+<p>This may look complex, but basically all it's allowing you to do is specify <code>moduleId</code> as a <code>Function</code>, which can either return the <code>module</code> directly, or execute a passed callback when you've retrieved it asynchronously (more on why we want this later!).</p>
+
+<h3 id="viewlocatorlocateview">viewLocator.locateView</h3>
+
+<p>The logic for this method is a little more complex, but we're only interested in the first parameter:</p>
+
+<script src="https://gist.github.com/Craga89/add43ae8b5f245b29ec7.js?file=viewLocator.locateView.js"></script>
+
+<p>We'll need to override this method to allow the <code>viewOrUrlOrId</code> to be a bare HTML string (a <code>String</code> whose first character is a <code>&lt;</code>).</p>
+
+<script src="https://gist.github.com/Craga89/1334186a7973b483d3c7.js?file=viewLocator.js"></script>
+
+<p>First, we check the <code>viewOrUrlOrId</code> parameter to see <em>if it's both a string <strong>and</strong> starts with a <code>&lt;</code></em>. If it does, we assume it's actually a view as opposed to a <code>viewUrl</code>, and return it as a resolved <a href="https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>. If it doesn't, we simply proceed with the normal Durandal functionality, which helps us maintain backwards compatibility.</p>
+
+<div class="well">  
+<h5>A note on these enhancements</h5>  
+You'll need to include these enhancements before your <code>app.setRoot()</code> call, to ensure any calls are intercepted by the new functionality. Otherwise, things may not work as expected  
+</div>
+
+<h3 id="sampleusage">Sample usage</h3>
+
+<p>Now we've got our new functionality in place via our enhancements, let's see a practical example of how to use this new functionality with Durandal, so Webpack can bundle our <code>Views</code> and <code>ViewModels</code>!</p>
+
+<h4 id="viewmodelviews">ViewModel views</h4>
+
+<p>Normally, you wouldn't need to specify the <code>View</code> for a particular <code>ViewModel</code> instance, as it's inferred by convention by Durandal, depending on the view strategy you've got set up. We'll need to make things more explicit if we want Webpack to bundle our views, however.</p>
+
+<p>We can specify our views as explicit dependencies directly on the ViewModel instances by setting our <code>getView</code> method to one which returns our <code>require</code>d view HTML:</p>
+
+<script src="https://gist.github.com/Craga89/add43ae8b5f245b29ec7.js?file=getView.sample.js"></script>
+
+<p>Notice we are using the built-in <code>viewEngine.processMarkup</code> method here. Durandal expects the output of a <code>getView</code> call to be a <code>DOMElement</code> instance, so we'll delegate this parsing operation to Durandal since it's already included and handles it nicely.</p>
+
+<p>That's it. Together with our enhancements this is all that's needed to allow both Durandal and Webpack to understand the inter-dependency of our <code>View</code> and <code>ViewModel</code>. Durandal composes just like before, and Webpack can bundle our view together with our app. Simples!</p>
+
+<h4 id="compositionbindinghandler"><em>composition</em> Binding Handler</h4>
+
+<p>The <code>compose</code> binding handler can take various forms, as explained in the <a href="http://durandaljs.com/documentation/Using-Composition.html">Durandal documentation</a>. A sample of these is given below</p>
+
+<script src="https://gist.github.com/Craga89/add43ae8b5f245b29ec7.js?file=durandal.composition.js"></script>
+
+<p>Since we're not using Require.js, we'll no longer pass <code>moduleId</code>s or <code>viewUrl</code>s to the <code>compose</code> binding, and will instead always pass a module or HTML instead, respectively. We'll store these as properties on the <code>ViewModel</code>, using <code>require</code> to retrieve them as static dependencies. For example, amending the previous code sample:</p>
+
+<script src="https://gist.github.com/Craga89/add43ae8b5f245b29ec7.js?file=viewModel.sample.js"></script>
+
+<script src="https://gist.github.com/Craga89/add43ae8b5f245b29ec7.js?file=view.sample.html"></script>
+
+<p>Notice how the dependencies for this <code>ViewModel</code> are immediately visible by simply viewing the <code>viewModel.js</code> file. This is a helpful by-product of this approach and should help you quickly review the top-level dependency graph of your <code>ViewModel</code> without the need to look over your view file.</p>
+
+<h3 id="summary">Summary</h3>
+
+<p>We've implemented some enhancements to the core Durandal <code>system.acquire</code> and <code>viewLocator.locateView</code> methods which allow us to pass <code>module</code> and <code>view</code> HTML directly to the <code>composition</code> engine. This lets us specify our dependencies directly on the ViewModel, and allows Webpack to understand and bundle the different parts of our application together in an effective way.</p>
+
+<p>For a more hands-on approach, or for those of you who'd simply like to look over the code in action, take a look at the <a href="https://github.com/craga89/durandal-webpack">durandal-webpack</a> repository and the  <a href="https://craga89.github.io/durandal-webpack">online example</a>. </p>
+
+<p><br />  </p>
+
+<h5 id="nextchaptercomingsoondurandalandwebpackpart3router">Next Chapter (coming soon!): <strong>Durandal and Webpack: Part 3 - Router</strong></h5>
+			</div>
+			<footer class="post-footer clearfix">
+				<div class="pull-left share-wrap">
+	<i class="fa fa-share-alt"></i>
+	<span class="hidden post-url">http://blog.craigsworks.com/durandal-and-webpack-part-2-composition/</span>
+	<a href="" class="share-text"><span class="share-count">0</span> Share</a>
+	<div class="share-links">
+		<!-- facebook -->
+		<a href="https://www.facebook.com/sharer/sharer.php?u=http://blog.craigsworks.com/durandal-and-webpack-part-2-composition/" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;"><i class="fa fa-facebook"></i></a>
+		<!-- twitter -->
+		<a href="https://twitter.com/share?text=Durandal%20and%20Webpack%3A%20Part%202%20-%20Composition&amp;url=http://blog.craigsworks.com/durandal-and-webpack-part-2-composition/" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;"><i class="fa fa-twitter"></i></a>
+		<!-- pinterest -->
+		<a href="javascript:void((function()%7Bvar%20e=document.createElement('script');e.setAttribute('type','text/javascript');e.setAttribute('charset','UTF-8');e.setAttribute('src','http://assets.pinterest.com/js/pinmarklet.js?r='+Math.random()*99999999);document.body.appendChild(e)%7D)());"><i class="fa fa-pinterest-p"></i></a>
+	</div>
+</div>				<div class="pull-right comment-count">
+					<i class="fa fa-comment-o"></i>
+					<a href="/durandal-and-webpack-part-2-composition/#disqus_thread">0 Comments</a>
+				</div>
+			</footer>
+		</article>
+		<!-- end article -->
+		<!-- start about author -->
+		<div class="about-author-wrap">
+			<!-- start about the author -->
+<div class="about-author clearfix">
+		<a href="/author/craga89/"><img src="/content/images/2015/07/me.jpg" alt="Author image" class="avatar pull-left"></a>
+	<div class="details">
+		<div class="author">
+			<a href="/author/craga89/">Craig Michael Thompson</a>
+		</div>
+		<div class="bio">
+			Hi. My names Craig and I&#x27;m a Front-end Web Developer / Consultant primarily interested in jQuery/JavaScript development with HTML5/CSS3 and emerging W3C standards.
+		</div>
+		<div class="meta-info">
+			<span class="location"><i class="fa fa-map-marker fa-fw"></i>Newcastle Upon Tyne, United Kingdom</span>
+			<span class="website"><i class="fa fa-link fa-fw"></i><a href="http://craigsworks.com" targer="_BLANK">Website</a></span>
+		</div>
+	</div>
+</div>
+<!-- end about the author -->		</div>
+		<!-- end about author -->
+
+		<!-- start comment -->
+		<div class="comment-wrap">	
+			<!-- start disqus comment -->
+<div class="disqus-container">
+	<div id="disqus_thread"></div>
+	    <script type="text/javascript">
+	        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+	        var disqus_shortname = disqus_shortname; // required: replace example with your forum shortname
+
+	        /* * * DON'T EDIT BELOW THIS LINE * * */
+	        (function() {
+	            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+	            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+	            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+	        })();
+	    </script>
+	    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+<!-- end disqus comment -->		</div>
+		<!-- end comment -->
+		</div>
+		<div class="sidebar-wrap">
+	<!-- start widget -->
+<div class="widget">
+	<h3 class="title">Recent Post</h3>
+	<div class="content recent-post"></div>
+</div>
+<!-- end widget -->	<!-- start tag cloud widget -->
+<div class="widget">
+	<h3 class="title">Tags</h3>
+	<div class="content tag-cloud"></div>
+</div>
+<!-- end tag cloud widget -->	<!-- start widget -->
+<div class="widget">
+	<h3 class="title">Twitter</h3>
+	<div class="content twitter"></div>
+</div>
+<!-- end widget --></div>
+		
+	</div>
+</div>
+<!-- end main content area -->
+
+
+	<!-- start footer -->
+			<footer class="main-footer">
+				<div class="container">
+					<div class="row">
+						<div class="social">
+	<ul class="social-icons">
+		<li><a title="LinkedIn Profile" href="//linkedin.com/in/craigmichaelthompson"><i class="fa fa-linkedin"></i></a></li>
+		<li><a title="GitHub Profile" href="//github.com/Craga89"><i class="fa fa-github"></i></a></li>
+		<li><a title="Twitter Feed" href="//twitter.com/craigsworks"><i class="fa fa-twitter"></i></a></li>
+		<li><a title="Download CV" href="//craigsworks.com/cv.pdf"><i class="fa fa-file-pdf-o"></i></a></li>
+		<li><a title="Blog RSS Feed" href="/rss"><i class="fa fa-rss"></i></a></li>
+	</ul>
+</div>
+						<div class="copyright">
+	Copyright &copy; 2018, <a href="http://blog.craigsworks.com">Blog of Craig Michael Thompson - a Front-end Developer / Consultant</a>. All Right Reserved.
+</div>					</div>
+				</div>
+			</footer>
+			<!-- end footer -->
+		</div>
+	</div>
+	<script src="/public/jquery.js?v=5ccb861762"></script> <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-5228245-11', 'auto');
+  ga('send', 'pageview');
+
+</script>
+	<script src="/assets/js/jquery-1.11.3.min.js?v=5ccb861762"></script>
+	<script src="/assets/js/bootstrap.min.js?v=5ccb861762"></script>
+	<script src="/assets/js/imagesloaded.pkgd.min.js?v=5ccb861762"></script>
+	<script src="/assets/js/masonry.pkgd.min.js?v=5ccb861762"></script>
+	<script src="/assets/js/jquery.fitvids.js?v=5ccb861762"></script>
+	<script src="/assets/js/highlight.pack.js?v=5ccb861762"></script>
+	<script src="/assets/js/jquery.ghostHunter.min.js?v=5ccb861762"></script>
+	<script src="/assets/js/main.js?v=5ccb861762"></script>
+</body>
+</html>

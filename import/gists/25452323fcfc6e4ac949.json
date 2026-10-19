@@ -1,0 +1,11 @@
+{
+ "id": "25452323fcfc6e4ac949",
+ "url": "https://gist.github.com/Craga89/25452323fcfc6e4ac949",
+ "description": "gulp-watch-less - Watch LESS files and their @imports for changes",
+ "files": {
+  "gulp-watch-less-example.js": {
+   "language": "JavaScript",
+   "content": "var gulp = require('gulp');\nvar watchLess = require('gulp-watch-less');\nvar less = require('gulp-less');\n\n// LESS compilter configuration\nvar lessConfig = {\n\tpaths: ['../imports']\n};\n\ngulp.task('less', function () {\n    return gulp.src('**/*.less')\n        .pipe(watchLess('less/file.less', {\n        \tname: 'LESS', // For output nice-ness!\n            less: lessConfig // Passed to LESS parser when generating list of @imports\n        }))\n        .pipe(less(lessConfig))\n        .pipe(gulp.dest('dist'));\n});"
+  }
+ }
+}

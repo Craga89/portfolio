@@ -1,0 +1,11 @@
+{
+ "id": "ce3da86df793b677b0c2",
+ "url": "https://gist.github.com/Craga89/ce3da86df793b677b0c2",
+ "description": "Knockout + Bootstrap 3 - Buttons and the `enable` binding",
+ "files": {
+  "knockout-boostrap-enable-btn.js": {
+   "language": "JavaScript",
+   "content": "/**\nEnhanced `enable` binding that adds disabled attribute to .btn elements\nto support Bootstrap styling.\n\nNOTE: This also effects the `disable` binding handler, since it simply\n      inverts the `enable` bindings logic internally.\n\n@static\n@class Enable\n@namespace Base.BindingHandlers\n**/\nvar oldEnable = ko.bindingHandlers.enable,\n      rIsBtn = /\\bbtn\\b/;\n\nko.bindingHandlers.enable = {\n    update: function (element, valueAccessor) {\n        var result = oldEnable.update.apply(this, arguments),\n            enabled = ko.unwrap(valueAccessor());\n\n        // Toggle `disabled` class on all `btn` elements\n        if(rIsBtn.test(element.className)) {\n            if(enabled) {\n                element.className.replace(/\\bdisabled\\b/gi, '');\n            }\n            else {\n                element.className += ' disabled';\n            }\n        }\n\n        return result;\n    }\n};"
+  }
+ }
+}

@@ -1,0 +1,11 @@
+{
+ "id": "2466525",
+ "url": "https://gist.github.com/Craga89/2466525",
+ "description": "Efficient JavaScript Delta-encoding merge method",
+ "files": {
+  "gistfile1.js": {
+   "language": "JavaScript",
+   "content": "var Entity = function(params) {\n\tthis.merge(Entity.defaults);\n\tthis.merge(params);\n};\n\nEntity.defaults = {\n\tposition: [0, 0],\n\tvelocity: [0, 0],\n\tacceleration: [1, 1]\n};\n\nEntity.merge = function(obj1, obj2) {\n\tvar cons = obj1.constructor,\n\t\tfunc = obj1._mergeFunc, props, p, i;\n\n\t// Create the merge function if one isn't already defined\n\tif(!func) {\n\t\tfunc = '';\n\n\t\t// Loop over the first objects default properties and create our merge function\n\t\tif((props = cons.defaults)) {\n\t\t\tfor(p in props) {\n\t\t\t\tfunc += 'if(typeof obj2.'+p+' !== \"undefined\") {' +\n\t\t\t\t\t'obj.'+p+' = obj2.'+p+';' +\n\t\t\t\t'} ';\n\t\t\t}\n\t\t}\n\n\t\t// Create and store the new function\n\t\tfunc = cons._mergeFunc = new Function('obj', 'obj2', func);\n\t}\n\n\t// Run the merge function and return the first object\n\treturn func(obj1, obj2), obj1;\n};\n\nEntity.prototype.merge = function(obj) {\n\treturn obj ? Entity.merge(this, obj) : false;\n}"
+  }
+ }
+}

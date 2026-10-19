@@ -1,0 +1,19 @@
+{
+ "id": "4f34e9cf972456f505df",
+ "url": "https://gist.github.com/Craga89/4f34e9cf972456f505df",
+ "description": "Durandal + Webpack: Part 1 - Module Format",
+ "files": {
+  "define.js": {
+   "language": "JavaScript",
+   "content": "define(id?: String, dependencies?: String[], factory: Function|Object);"
+  },
+  "viewEngine.common.js": {
+   "language": "JavaScript",
+   "content": "var system = require('durandal/system');\nvar $ = require('jquery');\n\n// Module logic here\nvar viewEngine = { ... };\n\n// Exports the viewEngine object\nmodule.exports = viewEngine; "
+  },
+  "viewEngine.js": {
+   "language": "JavaScript",
+   "content": "define(['durandal/system', 'jquery'], function(system, $) {\n    // Module logic here\n    var viewEngine = { ... };\n    \n    // Exports the viewEngine object\n    return viewEngine;\n});"
+  }
+ }
+}

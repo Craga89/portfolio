@@ -1,0 +1,11 @@
+{
+ "id": "3360337",
+ "url": "https://gist.github.com/Craga89/3360337",
+ "description": "var, commas and equals - the fix",
+ "files": {
+  "varcommasequals-fix.js": {
+   "language": "JavaScript",
+   "content": "function pollute() {\n\tvar foo = 'uhoh',\n\t    bar = foo; // bar is in local scope, no pollution!\n}\npollute(); // Execute the pollution..?"
+  }
+ }
+}

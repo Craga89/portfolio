@@ -1,0 +1,11 @@
+{
+ "id": "a3f11a458c8b662e9046",
+ "url": "https://gist.github.com/Craga89/a3f11a458c8b662e9046",
+ "description": "Durandal - Type cast queryString parameters. See http://blog.craigsworks.com/durandal-type-cast-querystring-parameters/",
+ "files": {
+  "router.parseQueryString.js": {
+   "language": "JavaScript",
+   "content": "/**\nAMD module, **to be included before the rest of your durandal app**, that enhances\nthe native `router.parseQueryString` method, providing query parameters in their\ncorrect primitive type, rather than always as strings.\n\n@module Durandal.Router.Addons \n**/\ndefine('plugins/router', function(router) {\n    /**\n    Parses a query string into an object, attempting to parse each query string param\n    into a proper type\n    \n    @method parseQueryString\n    @for Durandal.Router\n    @param {String} queryString The query string to parse.\n    @return {Object} An object keyed according to the query string parameters.\n    **/\n    var _parseQueryString = router.parseQueryString;\n    router.parseQueryString = function () {\n        var queryObject = _parseQueryString.apply(this, _.rest(arguments)),\n            val, key;\n    \n        for(key in queryObject) {\n            val = queryObject[key];\n    \n            // Float\n            if (/^[+-]?[0-9]+\\.[0-9]*$/.test(val)) {\n                val = parseFloat(val);\n            }\n    \n            // Integer\n            else if (/^[+-]?[0-9]+$/.test(val)) {// simple int regex\n                val = parseInt(val, 10);\n            }\n    \n            // Booleans\n            val = (!val && val !== 0) ? true : val;\n            (val === 'true') && (val = true);\n            (val === 'false') && (val = false);\n    \n            // Couldn't convert it, use the original value!\n            if (val !== false && val !== true && !_.isNumber(val)) {\n                val = val;\n            }\n    \n            // Set the new value\n            queryObject[key] = val;\n        }\n    \n        return queryObject;\n    };\n});"
+  }
+ }
+}

@@ -1,0 +1,15 @@
+{
+ "id": "b35f8bbe83e8e0e7a2a7",
+ "url": "https://gist.github.com/Craga89/b35f8bbe83e8e0e7a2a7",
+ "description": "Tether.js - Transition small movements",
+ "files": {
+  "tether.transition.css": {
+   "language": "CSS",
+   "content": ".tether.tether-transition {\n\ttransition: -webkit-transform 100ms ease-in-out;\n\ttransition: transform 100ms ease-in-out;\n}"
+  },
+  "tether.transition.js": {
+   "language": "JavaScript",
+   "content": "var transitionModule = {\n\tclassName: 'transition',\n\tthresholdX: 50,\n\tthresholdY: 50,\n\n\tposition: function(props) {\n\t\tvar className = this.options.classPrefix + '-' + transitionModule.className,\n\t\t\thasClass = Tether.Utils.hasClass(this.element, className),\n\t\t\tlastOffset = this._cacheOffset;\n\n\t\tvar shouldAddClass = lastOffset &&\n\t\t\tMath.abs(props.left - lastOffset[0]) <= transitionModule.thresholdX &&\n\t\t\tMath.abs(props.top - lastOffset[1]) <= transitionModule.thresholdY;\n\n\t\tif(!hasClass && shouldAddClass) {\n\t\t\tTether.Utils.addClass(this.element, className);\n\t\t}\n\t\telse if(hasClass && !shouldAddClass) {\n\t\t\tTether.Utils.removeClass(this.element, className);\n\t\t}\n\n\t\t// Cache the offset\n\t\tthis._cacheOffset = [props.left, props.top];\n\t}\n};\n\nTether.modules.push(transitionModule);"
+  }
+ }
+}

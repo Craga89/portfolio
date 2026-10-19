@@ -1,0 +1,23 @@
+{
+ "id": "96f7fcad1f35b08bf88d",
+ "url": "https://gist.github.com/Craga89/96f7fcad1f35b08bf88d",
+ "description": "LESS - Generate a deep list of all a file's @imports",
+ "files": {
+  "gulp-task.js": {
+   "language": "JavaScript",
+   "content": "var gulp = require('gulp'),\n\twatch = require('gulp-watch'),\n\tgetImports = require('./lessImportList');\n\ngulp.task('less', function(done) {\n\tgetImports(['less/themes/default/app.less'], function(imports) {\n\t\twatch(imports)\n\t\t\t.pipe(/* Task logic here */)\n\t});\n});"
+  },
+  "gulp-watch-less.js": {
+   "language": "JavaScript",
+   "content": "var through = require('through2'),\n    fs = require('fs'),\n    gulp = require('gulp'),\n    gutil = require('gulp-util'),\n    watch = require('gulp-watch'),\n    gulpLess = require('gulp-less'),\n    less = require('less'),\n    PluginError = gutil.PluginError;\n\nconst PLUGIN_NAME = 'gulp-watch-less';\n\nfunction getImportsList(file, options, cb) {\n    // Parse options\n    if (!options) options = {};\n    options.filename = file.path;\n\n    // Create new parser instance\n    var parser = new less.Parser(options);\n\n    // Parse the source into AST tree via LESS\n    parser.parse(file.contents.toString('utf8'), function (err, tree) {\n        if (err) { throw new PluginError(PLUGIN_NAME, err); } \n\n        // Return array of all `@import`ed files via the parsers `imports` object!\n        cb(Object.keys(parser.imports.files));\n    });\n}\n\nfunction gulpWatchLess(glob, options, cb) {\n    var watchFiles = [],\n        watchStream;\n\n    // Handles (glob, cb) signature\n    if (typeof options === 'function') {\n        cb = options;\n        options = {};\n    }\n    if (!options) options = {};\n\n    // Setup watch steam on the provided globs\n    watchStream = watch(glob, options, cb);\n\n    // Grab reference to all files in the provided glob via `gulp-src`\n    gulp.src(glob).pipe(\n        // Create a pass-through stream\n        through.obj(function(file, enc, cb) {\n            // Null files passthrough\n            if(file.isNull()) { return cb(); }\n\n            // Don't support streams\n            else if(file.isStream()) {\n                throw new PluginError(PLUGIN_NAME, 'Streams not supported!');\n            }\n\n            // Grab the list of imports, passing throuh less options if defined\n            getImportsList(file, options.less, function(imports) {\n                // Push returned imports list onto the watched files array\n                watchFiles = watchFiles.concat(imports);\n\n                cb();\n            });\n\n            // Passthrough file\n            this.push(file);\n        },\n\n        // On stream end, watch the files and pipe to output stream\n        function(cb) { watch(watchFiles).pipe(watchStream); })\n    );\n\n    return watchStream;\n}\n\nmodule.exports = gulpWatchLess;"
+  },
+  "lessImportList.js": {
+   "language": "JavaScript",
+   "content": "var fs = require('fs'),\n\tless = require('less');\n\nmodule.exports = function(path, opts, cb) {\n\t// Support (path, cb) signature\n\tif(typeof opts === 'function') {\n\t\tcb = opts; opts = null;\n\t}\n\n\t// Read the file (async)\n\tfs.readFile(path, function(err, source) {\n\t\tif(err) { throw new Error(err); }\n\n\t\t// Setup options\n\t\topts || (opts = {});\n\t\topts.filename = path;\n\n\t\t// Create new parser instance\n\t\tparser = new less.Parser(opts);\n\n\t\t// Parse the source into AST tree via LESS\n\t\tparser.parse(source.toString('utf8'), function (err, tree) {\n\t\t\tif (err) { throw new Error(err); } \n\n\t\t\t// Return array of all `@import`ed files via the parsers `imports` object!\n\t\t\tcb(Object.keys(parser.imports.files));\n\t\t});\n\t});\n};"
+  },
+  "usage.js": {
+   "language": "JavaScript",
+   "content": "var getImports = require('./lessImportList');\n\n// Sample usage - log all @import paths to the console :)\ngetImports('less/themes/default/app.less', function(imports) {\n\tconsole.log(imports); // Log to the console\n});"
+  }
+ }
+}

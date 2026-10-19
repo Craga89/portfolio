@@ -1,0 +1,11 @@
+{
+ "id": "bb6d8cfa2bdbbfcafb28",
+ "url": "https://gist.github.com/Craga89/bb6d8cfa2bdbbfcafb28",
+ "description": "Add `valueAsNumber` support to Knockout `value` binding. More information here: http://blog.craigsworks.com/knockout-value-binding-input-number",
+ "files": {
+  "knockout-valueAsNumber-support.js": {
+   "language": "JavaScript",
+   "content": "// Add `valueAsNumber` support to `value` bindings etc\nko.selectExtensions.readValue = _.wrap(ko.selectExtensions.readValue, function(read, element) {\n    var result = read.apply(this, _.rest(arguments));\n\n    switch(ko.utils.tagNameLower(element)) {\n        // For input-type `number` elements, check if it has a `valueAsNumber` property and if so, use it\n        case 'input':\n            if(element.type === 'number' && 'valueAsNumber' in element) {\n                result = element.valueAsNumber;\n            }\n            break;\n    }\n\n    return result;\n});"
+  }
+ }
+}

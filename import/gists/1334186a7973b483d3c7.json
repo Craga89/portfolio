@@ -1,0 +1,19 @@
+{
+ "id": "1334186a7973b483d3c7",
+ "url": "https://gist.github.com/Craga89/1334186a7973b483d3c7",
+ "description": "Durandal + Webpack - overrides",
+ "files": {
+  "system.js": {
+   "language": "JavaScript",
+   "content": "var system = require('durandal/system');\n\nvar acquire = system.acquire;\nsystem.acquire = function(moduleIdOrModule) {\n    var moduleType = typeof moduleIdOrModule;\n\n    if(moduleType !== 'string') {\n        return system.defer(function(dfd) {\n            // If the moduleId is a funcction...\n            if(moduleIdOrModule instanceof Function) {\n                // Execute the funcction, passing a callback that should be \n                // called when the (possibly) async operation is finished\n                var result = moduleIdOrModule(function(err, module) {\n                    if(err) { dfd.reject(err); }\n                    dfd.resolve(module);\n                });\n\n                // Also allow shorthand `return` from the funcction, which \n                // resolves the Promise with whatever was immediately returned\n                if(result !== undefined) {\n                    dfd.resolve(result);\n                }\n            }\n\n            // If the moduleId is actually an object, simply resolve with it\n            else {\n                dfd.resolve(moduleIdOrModule);\n            }\n        });\n    }\n\n    // super()\n    return acquire.apply(this, arguments);\n};\n"
+  },
+  "viewLocator.js": {
+   "language": "JavaScript",
+   "content": "var $ = require('jquery');\nvar system = require('durandal/system');\nvar viewLocator = require('durandal/viewLocator');\n\n// Allow using `function` or bare HTML string as a view\nvar locateView = viewLocator.locateView;\nviewLocator.locateView = function(viewOrUrlOrId, area) {\n    var viewId;\n\n    // HTML here will be passed into `processMarkup`\n    if('string' === typeof viewOrUrlOrId && $.trim(viewOrUrlOrId).charAt(0) === '<') {\n        return system.defer(function(dfd) {\n            dfd.resolve(viewOrUrlOrId);\n        });\n    }\n\n    // super()\n    return locateView.apply(this, arguments);\n};\n"
+  },
+  "widget.js": {
+   "language": "JavaScript",
+   "content": "var widget = require('plugins/widget');\n\n// Import the widgets index module, which should export an object\n// whose keys are the names of the Widgets to register and the\n// values the Widget modules\nvar widgets = require('widgets/index');\n\n// Widgets usually require a `moduleId` to resolve. We'll override this so\n// we return the ViewModel class directly, by looking it up in the `widgets/index`\n// file by key. \nwidget.convertKindToModulePath = function(name) {\n    var widget = widgets[ name ];\n    if(!widget) {\n        console.error('Missing or invalid widget requested: ' + name);\n    }\n    \n    return widget;\n};\n\n// By default, Durandal will attempt to retrieve the view for a widget using\n// the `mapKindToViewId` and pass it along to the `composition` engine. We'll\n// do away with this, and force it to use the notmal `getView` method instead.\nwidget.mapKindToViewId = function() { };"
+  }
+ }
+}

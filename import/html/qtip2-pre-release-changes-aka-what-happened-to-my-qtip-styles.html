@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html" charset="UTF-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+	<title>qTip&lt;sup&gt;2&lt;/sup&gt; - Pre-release changes (AKA What happened to my qTip styles!?)</title>
+	<meta name="description" content="" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link href="//fonts.googleapis.com/css?family=Roboto:400,400italic,700,700italic|Oswald" rel="stylesheet" type="text/css">
+	<link href="//netdna.bootstrapcdn.com/font-awesome/4.0.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+	<link rel="stylesheet" href="/assets/css/screen.css">
+	
+	<link rel="stylesheet" href="/assets/css/color-mono.css">
+
+	<meta name="generator" content="Ghost 0.5" />
+<link rel="alternate" type="application/rss+xml" title="craigsworks :: blog" href="/rss/">
+<link rel="canonical" href="http://blog.craigsworks.com/qtip2-pre-release-changes-aka-what-happened-to-my-qtip-styles/" />
+
+</head>
+<body class="post-template tag-plugins tag-javascript">
+	<!--[if lt IE 7]>
+		<p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+	<![endif]-->
+
+	<div class="site">
+
+			<div class="top-bar">
+				<header class="site-header container animated fadeInDown">
+						
+					<h2 class="site-description">The outward ramblings of a Front-end Developer, complete with code samples and witty remarks!</h2>
+										
+					<div class="social-links">
+						<a href="http://twitter.com/craigsworks"><i class="fa fa-twitter-square"></i></a>
+						<a href="http://plus.google.com/+CraigMichaelThompson/posts"><i class="fa fa-google-plus-square"></i></a>
+						<a href="http://blog.craigsworks.com/rss/"><i class="fa fa-rss-square"></i></a>
+					</div>
+					
+				</header>
+			</div><!-- .top-bar -->
+
+		
+<div id="site-cover-container" class="site-cover">
+	<div class="branding animated fadeInDownBig">
+		<a href="http://blog.craigsworks.com">
+			<img src="/content/images/2013/Nov/logo_name_white.png" alt="Blog Logo" class="site-logo" />
+		</a>
+	</div>
+</div>
+<div class="site-content container">
+
+
+		<article class="post tag-plugins tag-javascript">
+			<header class="post-header">
+				<h1 class="post-title">qTip&lt;sup&gt;2&lt;/sup&gt; - Pre-release changes (AKA What happened to my qTip styles!?)</h1>
+				<time class="post-time lined-block" datetime="2012-11-20"><span><i class="fa fa-clock-o"></i>20 Nov 2012</span></time>
+			</header>
+			<div class="post-content">
+				<p>qTip2 is under-going to considerable changes over the next few weeks, with a new website on it’s way, a brand new build system to go along with it, and several new features and documentation updates. However, there are some breaking changes as qTip2 marches on to it’s final <code>2.0</code> release, and firmly out of nightly status!</p>
+
+<p>As many of you watching GitHub repository will know, the class_rename branch, which removes dependency upon the <code>ui-tooltip\*</code> classes used by jQuery UI, has been merged back in the master branch. This means of course, that any of you relying on the old class structure in your code, need to update to the new classes names. </p>
+
+<p>A list of old and new class names is listed below to ease this!</p>
+
+<ul>
+<li>#ui-tooltip-&lt;id&gt; &rarr; #qtip-&lt;id&gt;</li>
+<li><strong>.</strong>ui-tooltip  &rarr; <strong>.</strong>qtip</li>
+<li><strong>.</strong>ui-tooltip-content  &rarr; <strong>.</strong>qtip-content</li>
+<li><strong>.</strong>ui-tooltip-titlebar  &rarr; <strong>.</strong>qtip-titlebar</li>
+<li><strong>.</strong>ui-tooltip-title  &rarr; <strong>.</strong>qtip-title</li>
+<li><strong>.</strong>ui-tooltip-button  &rarr; <strong>.</strong>qtip-close</li>
+<li><strong>.</strong>ui-tooltip-icon  &rarr; <strong>.</strong>qtip-icon</li>
+<li><strong>.</strong>ui-tooltip-focus  &rarr; <strong>.</strong>qtip-focus</li>
+<li><strong>.</strong>ui-tooltip-hover  &rarr; <strong>.</strong>qtip-hover</li>
+<li><strong>.</strong>ui-tooltip-default  &rarr; <strong>.</strong>qtip-default</li>
+</ul>
+
+<p>As you can see, the <code>ui-tooltip-</code> prefix has simply been replace with the <code>qtip-</code> prefix. This applies to every in-built and CSS3 style too (in <code>basic.css</code> and <code>css3.css</code> respectively).</p>
+
+<p>A full list of changes is forth-coming, but for now this is the only breaking change you’re likely to encounter. Let me know via the issue tracker if you notice any more!</p>
+			</div>
+			<footer class="post-meta">
+
+				<div class="post-author">
+					<p><i class="fa fa-user"></i> Craig Michael Thompson</p>
+					<div class="author-info">
+						<img src="" alt="Craig Michael Thompson" title="Craig Michael Thompson">
+						<p><i class="fa fa-envelope"></i> <a href="mailto:"></a></p>
+						<p>Hi. My names Craig and I&#x27;m a Front-end Web Developer / Consultant primarily interested in jQuery/JavaScript development with HTML5/CSS3 and emerging W3C standards.</p>
+					</div>
+				</div>
+
+				<p class="post-tags"><i class="fa fa-tags"></i> <a href="/tag/plugins/">Plugins</a>, <a href="/tag/javascript/">JavaScript</a></p>
+			
+				<p class="post-share">
+					Share this:
+					<a href="http://twitter.com/share?text=qTip&lt;sup&gt;2&lt;/sup&gt; - Pre-release changes (AKA What happened to my qTip styles!?)&url=http://blog.craigsworks.com/qtip2-pre-release-changes-aka-what-happened-to-my-qtip-styles/" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+						<i class="fa fa-twitter"></i>
+					</a>
+					<a href="https://www.facebook.com/sharer/sharer.php?u=http://blog.craigsworks.com/qtip2-pre-release-changes-aka-what-happened-to-my-qtip-styles/" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+						<i class="fa fa-facebook"></i>
+					</a>
+					<a href="https://plus.google.com/share?url=http://blog.craigsworks.com/qtip2-pre-release-changes-aka-what-happened-to-my-qtip-styles/" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+						<i class="fa fa-google-plus"></i>
+					</a>
+				</p>
+			</footer>
+		</article><!-- .post -->		
+
+
+</div><!-- .site-content -->
+
+			<footer class="site-footer container">
+				<p>&copy; <a href="/">craigsworks :: blog</a> | Powered by <a href="http://ghost.org">Ghost</a></p>
+			</footer>
+		
+			
+
+	</div><!-- .site -->
+
+	<script src="/public/jquery.js?v=6bd8f65ab3"></script>
+
+	<!-- Include Scripts -->
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+        <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.10.2.min.js"><\/script>')</script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/masonry/3.1.1/masonry.pkgd.js"></script>
+	<script src="/assets/js/jquery.fitvids.js"></script>
+		<script src="/assets/js/jquery.backstretch.min.js"></script>
+
+	<script>
+		(function($) {
+		"use strict";
+			
+			$(".post-content").fitVids();
+
+				$("#site-cover-container").backstretch("/content/images/2013/Nov/header_gplus.png");
+
+			$('.site-content').masonry({
+				columnWidth: $('.post:eq(1)')[0],
+				itemSelector: '.post-container'
+			});
+
+		})(jQuery);
+	</script>
+
+	<script>
+		(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+		(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+		m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+		})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+		ga('create', 'UA-5228245-11', 'auto');
+		ga('send', 'pageview');
+	</script>
+</body>
+</html>

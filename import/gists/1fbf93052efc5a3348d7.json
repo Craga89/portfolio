@@ -1,0 +1,15 @@
+{
+ "id": "1fbf93052efc5a3348d7",
+ "url": "https://gist.github.com/Craga89/1fbf93052efc5a3348d7",
+ "description": "Generic method for generating Roman Numerals for numbers 0 - 1M",
+ "files": {
+  "romanNumerals-usage.js": {
+   "language": "JavaScript",
+   "content": "romanNumeral(5) // \"V\"\nromanNumeral(9) // \"IX\"\nromanNumeral(46) // \"XL\"\nromanNumeral(2015) // \"MMXV\"\n"
+  },
+  "romanNumerals.js": {
+   "language": "JavaScript",
+   "content": "var numeralsMap = {\n\t1: 'I',\n\t5: 'V',\n\t10: 'X',\n\t50: 'L',\n\t100: 'C',\n\t500: 'D',\n\t1000: 'M',\n\t5000: 'V`',\n\t10000: 'X`',\n\t50000: 'L`',\n\t100000: 'C`',\n\t500000: 'D`',\n\t1000000: 'M`'\n};\n\n// Retrieves the most significant number of a given number\n// i.e. the left-hand most number: 5474 -> 5, 4111 -> 4 etc.\nfunction mostSignificantNumber(num) {\n\treturn Number(String(num).charAt(0));\n}\n\n// Generates the Roman Numeral for a given one, tens, hundreds\n// etc. number. padded by zeroes that signify it's column\nfunction partialRomanNumeral(num) {\n\tvar letter = numeralsMap[num];\n\tif (letter) {\n\t\treturn letter;\n\t}\n\n\tvar places = String(num).length;\n\tvar multiplier = Math.pow(10, places - 1);\n\tvar low = 1 * multiplier;\n\tvar mid = (5 - 1) * multiplier;\n\tvar high = (10 - 1) * multiplier;\n\tvar repeat;\n\n\t// I -> III\n\tif (num < mid) {\n\t\trepeat = mostSignificantNumber(num);\n\t\treturn numeralsMap[low].repeat(repeat);\n\t}\n\t// IV\n\telse if (num === mid) {\n\t\treturn numeralsMap[low] + numeralsMap[mid + low];\n\t}\n\t// V -> VIII\n\telse if(num < high) {\n\t\trepeat = mostSignificantNumber(num - (mid + multiplier));\n\t\treturn numeralsMap[mid + low] + numeralsMap[low].repeat(repeat);\n\t}\n\t// IX\n\telse {\n\t\treturn numeralsMap[low] + numeralsMap[high + low];\n\t}\n}\n\n// Generates the Roman numeral for any given number by splitting it\n// into individual ones, tens, hundreds etc. numbers, and combining\n// each individual columns Roman Numeral right-to-left.\n//\n// romanNumeral(51) -> partialRomanNumeral(1) + partialRomanNumeral(50)\n//\nfunction romanNumeral(num) {\n\tif (num > 1000000) {\n\t\tthrow new Error('Number too large');\n\t}\n\n\treturn Array.prototype.reduce.call(String(num), function(memo, n, i) {\n\t\tvar power = Math.pow(10, i + 1);\n\t\tvar numeral = num % power - num % (power / 10);\n\n\t\treturn partialRomanNumeral(numeral) + memo;\n\t},\n\t'');\n}\n\n"
+  }
+ }
+}

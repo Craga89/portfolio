@@ -1,0 +1,19 @@
+{
+ "id": "7958139ef4ca1edad786",
+ "url": "https://gist.github.com/Craga89/7958139ef4ca1edad786",
+ "description": "Bootstrap 3 - Disabled dropdown links",
+ "files": {
+  "bootstrap3-disabled-dropdown-links.css": {
+   "language": "CSS",
+   "content": "/**\nBootstrap 3 - Disabled dropdown links\n\nBootstrap 3 has built-in visual support for disabled dropdown menu items, however these are simply \nvisual changes and don't actually impact the interactivity of the element itself.\n\nOnce this is added to your styles, you can easily disable any dropdown item by applying a [disabled] attribute \nto the <a/> element itself, and adding the usual .disabled class to the parent <li>.\n\nMore information here: http://blog.craigsworks.com/bootstrap-3-disabled-dropdown-links/\n**/\n\n/*\nMimic cursor style from native .dropdown-menu > .disabled > a{} styles,\nsince `pointer-events: none` kills the cursor state, too. \n*/\n.dropdown-menu > .disabled{\n cursor: not-allowed; \n}\n\n/* The real magic ;) */\n.dropdown-menu > .disabled > a{\n pointer-events: none;\n}"
+  },
+  "bootstrap3-dropdown-menu.html": {
+   "language": "HTML",
+   "content": "<ul class=\"dropdown-menu\">  \n <li class=\"disbled\"> <!-- Disabled class here -->\n  <a disabled>Item 1</a> <!-- Disabled attribute here -->\n </li>\n</ul>"
+  },
+  "bootstrap3-dropdowns.less": {
+   "language": "Less",
+   "content": ".dropdown-menu > .disabled > a {\n  &,\n  &:hover,\n  &:focus {\n    color: @dropdown-link-disabled-color;\n  }\n}\n// Nuke hover/focus effects\n.dropdown-menu > .disabled > a {\n  &:hover,\n  &:focus {\n    text-decoration: none;\n    background-color: transparent;\n    background-image: none; // Remove CSS gradient\n    .reset-filter();\n    cursor: not-allowed;\n  }\n}"
+  }
+ }
+}

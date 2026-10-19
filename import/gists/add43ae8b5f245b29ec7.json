@@ -1,0 +1,35 @@
+{
+ "id": "add43ae8b5f245b29ec7",
+ "url": "https://gist.github.com/Craga89/add43ae8b5f245b29ec7",
+ "description": "Durandal + Webpack: Part 2 - Composition",
+ "files": {
+  "durandal.composition.js": {
+   "language": "JavaScript",
+   "content": "//  Locates the view, realizes it, binds it to the parent binding context and composes it into the DOM node on which the binding is declared.\ndata-bind=\"compose: 'myView.html'\"\n\n// Uses RequireJS to get the shell module, locates the view conventionally, binds it and injects it into the DOM node on which the binding is declared.\ndata-bind=\"compose: 'shell'\"\n\n//  Evaluates the binding to obtain the result of someProperty. If it is a string, assume it's a view, otherwise assume it's a viewmodel, and follow the steps above\ndata-bind=\"compose: someProperty\"  "
+  },
+  "getView.sample.js": {
+   "language": "JavaScript",
+   "content": "var jQuery = require('jquery');\nvar viewEngine = require('durandal/viewEngine');\n\nvar ViewModel = {  \n    getView: function() {\n        var view = require('./view');\n        return viewEngine.processMarkup(view);\n    }\n};"
+  },
+  "system.acquire.callback.js": {
+   "language": "JavaScript",
+   "content": "function cb(err?: Error, module: Object|Function)"
+  },
+  "system.acquire.js": {
+   "language": "JavaScript",
+   "content": "system.acquire = function(moduleId: String) {}"
+  },
+  "view.sample.html": {
+   "language": "HTML",
+   "content": "<!-- Composes and binds the View HTML stored in the `myView` property into this view -->  \n<div data-bind=\"compose: myView\"></div>\n\n<!-- Composes the ViewModel stored in the `myViewModel` property into this view -->  \n<div data-bind=\"compose: myView\"></div>  "
+  },
+  "viewLocator.locateView.js": {
+   "language": "JavaScript",
+   "content": "viewLocator.locateView = function(  \n    viewOrUrlOrId: String|DOMElement,\n    area?: String,\n    elementsToSearch?: DOMElement[]\n) {}"
+  },
+  "viewModel.sample.js": {
+   "language": "JavaScript",
+   "content": "var jQuery = require('jquery');\nvar viewEngine = require('durandal/viewEngine');\n\nvar ViewModel = {  \n    myView: require('./myView.html'),\n    myViewModel: require('./myViewModel'),\n\n    getView: function() {\n            var view = require('./view');\n            return viewEngine.processMarkup(view);\n    }\n};\n\nmodule.exports = ViewModel;  "
+  }
+ }
+}

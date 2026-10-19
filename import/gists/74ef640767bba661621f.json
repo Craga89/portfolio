@@ -1,0 +1,11 @@
+{
+ "id": "74ef640767bba661621f",
+ "url": "https://gist.github.com/Craga89/74ef640767bba661621f",
+ "description": "CKEditor utilities",
+ "files": {
+  "ckeditor-key-utilities.js": {
+   "language": "JavaScript",
+   "content": "/**\n * Takes a CKEDITOR keyCode and returns a sanitized keyCode with any modifiers\n * removed i.e. CKEDITOR.CTRL, CKEDITOR.ALT, CKEDITOR.SHIFT\n * \n * @param keyCode {Number} CKEDITOR keyCode to check modifier on\n * @return {Number} Sanitized keyCode (minus the modifier keyCodes)\n **/\nfunction sanitizeKeyCode(keyCode) {\n  return Math.min(keyCode, \n    Math.max(keyCode - CKEDITOR.CTRL, 0) || keyCode,\n    Math.max(keyCode - CKEDITOR.SHIFT, 0) || keyCode,\n    Math.max(keyCode - CKEDITOR.ALT, 0) || keyCode\n  );\n}\n\n/**\n * Determines if a given modifier key is present in CKEDITOR keyCode\n * \n * @example\n *  // CTRL=1114112, ALT=4456448, SHIFT=2228224\n *  isModifier(2228261, CKEDITOR.SHIFT); // True (SHIFT+leftKey)\n *  isModifier(1114177, CKEDITOR.CTRL); // True (CTRL+a)\n * \n * @param keyCode {Number} CKEDITOR keyCode to check modifier on\n * @param modifier {Number} CKEDITOR.CTRL, CKEDITOR.ALT or CKEDITOR.SHIFT\n * @return {Boolean} True if given modifier was present in given keyCode\n **/\nfunction isModifier(keyCode, modifier) {\n  return Math.min(keyCode, Math.max(keyCode - modifier) || keyCode) !== keyCode;\n}"
+  }
+ }
+}

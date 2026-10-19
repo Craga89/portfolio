@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<title>Generating Roman Numerals</title>
+	<meta name="description" content="" />
+	<meta name="keywords" content="">
+	<meta name="viewport" content="width=device-width, minimum-scale=1, maximum-scale=1, user-scalable=no" />
+	<!-- fav icons -->
+	<link rel="shortcut icon" href="//craigsworks.com/favicon.ico">
+	<link rel="apple-touch-icon" href="/assets/images/apple-touch-icon.png?v=5ccb861762">
+	<link rel="apple-touch-icon" sizes="72x72" href="/assets/images/apple-touch-icon-72x72.png?v=5ccb861762">
+	<link rel="apple-touch-icon" sizes="114x114" href="/assets/images/apple-touch-icon-114x114.png?v=5ccb861762">
+	<!-- stylesheets -->
+	<title>Document</title>
+	<link href='//fonts.googleapis.com/css?family=Open+Sans:400,600|Roboto:400,100,300' rel='stylesheet' type='text/css'>
+	<link rel="stylesheet" href="/assets/css/bootstrap.min.css?v=5ccb861762">
+	<link rel="stylesheet" href="/assets/css/font-awesome.min.css?v=5ccb861762">
+	<link rel="stylesheet" type="text/css" href="/assets/css/hl-styles/monokai_sublime.css?v=5ccb861762">
+	<link rel="stylesheet" type="text/css" href="/assets/css/screen.css?v=5ccb861762">
+	<script>
+/*====================================================
+  THEME SETTINGS & GLOBAL VARIABLES
+====================================================*/
+//  1. Disqus comment settings
+var disqus_shortname = 'craigsworks'; // required: replace example with your forum shortname
+
+//  2. Recent Post count
+var recent_post_count = 3;
+
+//	3. Facebook Page Setting
+var facebook_page_url = 'https://www.facebook.com/craigsworks';
+
+//	4. Twitter Setting
+var twitter_url = 'https://twitter.com/craigsworks';
+var twitter_widget_id = '624328164261629952';
+var number_of_tweet = 3;
+
+//	5. Mailchimp signup form Setting
+var mailchimp_form_url = '';
+var success_message = "Please check your inbox and confirm your email address. Thanks!";
+</script>
+    <link rel="canonical" href="http://blog.craigsworks.com/generating-roman-numerals/" />
+    
+    <meta property="og:site_name" content="Blog of Craig Michael Thompson - a Front-end Developer / Consultant" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Generating Roman Numerals" />
+    <meta property="og:description" content="We&#x27;ve been conducting pair programming exercises at work using the excellent FreeCodeCamp, and came upon an interesting problem to solve using JavaScript. We needed to create a generic function for generating Roman Numeral equivalent for any number within a reasonable..." />
+    <meta property="og:url" content="http://blog.craigsworks.com/generating-roman-numerals/" />
+    <meta property="article:published_time" content="2015-12-02T14:33:17.000Z" />
+    <meta property="article:modified_time" content="2015-12-02T14:35:18.000Z" />
+    <meta property="article:tag" content="JavaScript" />
+    
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Generating Roman Numerals" />
+    <meta name="twitter:description" content="We&#x27;ve been conducting pair programming exercises at work using the excellent FreeCodeCamp, and came upon an interesting problem to solve using JavaScript. We needed to create a generic function for generating Roman Numeral equivalent for any number within a reasonable..." />
+    <meta name="twitter:url" content="http://blog.craigsworks.com/generating-roman-numerals/" />
+    
+    <script type="application/ld+json">
+{
+    "@context": "http://schema.org",
+    "@type": "Article",
+    "publisher": "Blog of Craig Michael Thompson - a Front-end Developer / Consultant",
+    "author": {
+        "@type": "Person",
+        "name": "Craig Michael Thompson",
+        "image": "http://blog.craigsworks.com/content/images/2015/07/me.jpg",
+        "url": "http://blog.craigsworks.com/author/craga89",
+        "sameAs": "http://craigsworks.com",
+        "description": "Hi. My names Craig and I'm a Front-end Web Developer / Consultant primarily interested in jQuery/JavaScript development with HTML5/CSS3 and emerging W3C standards."
+    },
+    "headline": "Generating Roman Numerals",
+    "url": "http://blog.craigsworks.com/generating-roman-numerals/",
+    "datePublished": "2015-12-02T14:33:17.000Z",
+    "dateModified": "2015-12-02T14:35:18.000Z",
+    "keywords": "JavaScript",
+    "description": "We&#x27;ve been conducting pair programming exercises at work using the excellent FreeCodeCamp, and came upon an interesting problem to solve using JavaScript. We needed to create a generic function for generating Roman Numeral equivalent for any number within a reasonable..."
+}
+    </script>
+
+    <meta name="generator" content="Ghost 0.6" />
+    <link rel="alternate" type="application/rss+xml" title="Blog of Craig Michael Thompson - a Front-end Developer / Consultant" href="http://blog.craigsworks.com/rss/" />
+</head>
+<body class="post-template tag-javascript">
+	<div class="page-wrap no-image" >
+	<div class="overlay">
+		<!-- start header -->
+		<header class="main-header">
+			<!-- start navbar -->
+			<div class="navbar-wrap navbar-fixed-top">
+				<div class="container">
+					<div class="row">
+					<div class="main-nav">
+						<div class="navbar-header">
+							<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+								<span class="sr-only">Toggle navigation</span>
+								<span class="icon-bar"></span>
+								<span class="icon-bar"></span>
+								<span class="icon-bar"></span>
+			            	</button>
+			            	</div>
+		            	<div id="navbar" class="navbar-collapse collapse">
+	<ul class="nav navbar-nav">
+		<li class="portfolio "><a href="http://craigsworks.com/">Portfolio</a></li>
+		<li class="blog "><a href="http://blog.craigsworks.com/">Blog</a></li>
+		<li class="github "><a href="http://github.com/Craga89">GitHub</a></li>
+		<li class="linkedin "><a href="http://linkedin.com/in/craigmichaelthompson">LinkedIn</a></li>
+	</ul>
+</div>
+						<a class="search-open" href="#"><i class="fa fa-search"></i></a>
+<div class="search-wrap">
+	<a class="search-close" href="#"><i class="fa fa-close"></i></a>
+	<form class="search-form">
+		<input id="search-field" type="text" placeholder="SEARCH" class="search-input">
+	</form>
+</div>
+<div id="search-result"></div>					</div>
+					</div>
+				</div>
+			</div>
+			<!-- end navbar -->
+			<div class="container">
+				<div class="row branding">
+					<div class="logo-wrap">
+						<!-- start logo -->
+						<a class="logo image-logo" href="http://blog.craigsworks.com"><img src="/content/images/2015/07/cover-2.png" alt="Blog of Craig Michael Thompson - a Front-end Developer / Consultant"></a>
+						<!-- end logo -->
+					</div>
+					<div class="intro"></div>
+				</div>
+			</div>
+		</header>
+		<!-- end header -->
+
+	
+<!-- start main content area -->
+<div class="container">
+	<div class="single-post-container clearfix">
+		<div class="single-content-wrap">
+		<!-- start article -->
+		<article id="29" class="post-wrap post tag-javascript">
+			<header class="post-header">
+				<div class="post-meta">
+					<span class="date">Dec 02, 2015</span> &#45;
+					<span class="author">By <a href="/author/craga89/" title="Craig Michael Thompson">Craig Michael Thompson</a></span>
+				</div>
+				<h2 class="post-title"><a href="/generating-roman-numerals/">Generating Roman Numerals</a></h2>
+			</header>
+			<div class="post-content">
+				<p>We've been conducting pair programming exercises at work using the excellent <a href="http://www.freecodecamp.com/">FreeCodeCamp</a>, and came upon an interesting problem to solve using JavaScript. We needed to create a generic function for generating <a href="https://en.wikipedia.org/wiki/Roman_numerals">Roman Numeral</a> equivalent for any number within a reasonable range (say, to 10000). This is what we came up with!</p>
+
+<script src="https://gist.github.com/Craga89/1fbf93052efc5a3348d7.js?file=romanNumerals.js"></script>
+
+<p>You can use it like so:</p>
+
+<script src="https://gist.github.com/Craga89/1fbf93052efc5a3348d7.js?file=romanNumerals-usage.js"></script>
+
+<p>Enjoy!</p>
+			</div>
+			<div class="tag-list">
+				
+				Tags:&nbsp;<a href="/tag/javascript/">JavaScript</a>
+			</div>
+			<footer class="post-footer clearfix">
+				<div class="pull-left share-wrap">
+	<i class="fa fa-share-alt"></i>
+	<span class="hidden post-url">http://blog.craigsworks.com/generating-roman-numerals/</span>
+	<a href="" class="share-text"><span class="share-count">0</span> Share</a>
+	<div class="share-links">
+		<!-- facebook -->
+		<a href="https://www.facebook.com/sharer/sharer.php?u=http://blog.craigsworks.com/generating-roman-numerals/" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;"><i class="fa fa-facebook"></i></a>
+		<!-- twitter -->
+		<a href="https://twitter.com/share?text=Generating%20Roman%20Numerals&amp;url=http://blog.craigsworks.com/generating-roman-numerals/" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;"><i class="fa fa-twitter"></i></a>
+		<!-- pinterest -->
+		<a href="javascript:void((function()%7Bvar%20e=document.createElement('script');e.setAttribute('type','text/javascript');e.setAttribute('charset','UTF-8');e.setAttribute('src','http://assets.pinterest.com/js/pinmarklet.js?r='+Math.random()*99999999);document.body.appendChild(e)%7D)());"><i class="fa fa-pinterest-p"></i></a>
+	</div>
+</div>				<div class="pull-right comment-count">
+					<i class="fa fa-comment-o"></i>
+					<a href="/generating-roman-numerals/#disqus_thread">0 Comments</a>
+				</div>
+			</footer>
+		</article>
+		<!-- end article -->
+		<!-- start about author -->
+		<div class="about-author-wrap">
+			<!-- start about the author -->
+<div class="about-author clearfix">
+		<a href="/author/craga89/"><img src="/content/images/2015/07/me.jpg" alt="Author image" class="avatar pull-left"></a>
+	<div class="details">
+		<div class="author">
+			<a href="/author/craga89/">Craig Michael Thompson</a>
+		</div>
+		<div class="bio">
+			Hi. My names Craig and I&#x27;m a Front-end Web Developer / Consultant primarily interested in jQuery/JavaScript development with HTML5/CSS3 and emerging W3C standards.
+		</div>
+		<div class="meta-info">
+			<span class="location"><i class="fa fa-map-marker fa-fw"></i>Newcastle Upon Tyne, United Kingdom</span>
+			<span class="website"><i class="fa fa-link fa-fw"></i><a href="http://craigsworks.com" targer="_BLANK">Website</a></span>
+		</div>
+	</div>
+</div>
+<!-- end about the author -->		</div>
+		<!-- end about author -->
+
+		<!-- start comment -->
+		<div class="comment-wrap">	
+			<!-- start disqus comment -->
+<div class="disqus-container">
+	<div id="disqus_thread"></div>
+	    <script type="text/javascript">
+	        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+	        var disqus_shortname = disqus_shortname; // required: replace example with your forum shortname
+
+	        /* * * DON'T EDIT BELOW THIS LINE * * */
+	        (function() {
+	            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+	            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+	            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+	        })();
+	    </script>
+	    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+<!-- end disqus comment -->		</div>
+		<!-- end comment -->
+		</div>
+		<div class="sidebar-wrap">
+	<!-- start widget -->
+<div class="widget">
+	<h3 class="title">Recent Post</h3>
+	<div class="content recent-post"></div>
+</div>
+<!-- end widget -->	<!-- start tag cloud widget -->
+<div class="widget">
+	<h3 class="title">Tags</h3>
+	<div class="content tag-cloud"></div>
+</div>
+<!-- end tag cloud widget -->	<!-- start widget -->
+<div class="widget">
+	<h3 class="title">Twitter</h3>
+	<div class="content twitter"></div>
+</div>
+<!-- end widget --></div>
+		
+	</div>
+</div>
+<!-- end main content area -->
+
+
+	<!-- start footer -->
+			<footer class="main-footer">
+				<div class="container">
+					<div class="row">
+						<div class="social">
+	<ul class="social-icons">
+		<li><a title="LinkedIn Profile" href="//linkedin.com/in/craigmichaelthompson"><i class="fa fa-linkedin"></i></a></li>
+		<li><a title="GitHub Profile" href="//github.com/Craga89"><i class="fa fa-github"></i></a></li>
+		<li><a title="Twitter Feed" href="//twitter.com/craigsworks"><i class="fa fa-twitter"></i></a></li>
+		<li><a title="Download CV" href="//craigsworks.com/cv.pdf"><i class="fa fa-file-pdf-o"></i></a></li>
+		<li><a title="Blog RSS Feed" href="/rss"><i class="fa fa-rss"></i></a></li>
+	</ul>
+</div>
+						<div class="copyright">
+	Copyright &copy; 2018, <a href="http://blog.craigsworks.com">Blog of Craig Michael Thompson - a Front-end Developer / Consultant</a>. All Right Reserved.
+</div>					</div>
+				</div>
+			</footer>
+			<!-- end footer -->
+		</div>
+	</div>
+	<script src="/public/jquery.js?v=5ccb861762"></script> <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-5228245-11', 'auto');
+  ga('send', 'pageview');
+
+</script>
+	<script src="/assets/js/jquery-1.11.3.min.js?v=5ccb861762"></script>
+	<script src="/assets/js/bootstrap.min.js?v=5ccb861762"></script>
+	<script src="/assets/js/imagesloaded.pkgd.min.js?v=5ccb861762"></script>
+	<script src="/assets/js/masonry.pkgd.min.js?v=5ccb861762"></script>
+	<script src="/assets/js/jquery.fitvids.js?v=5ccb861762"></script>
+	<script src="/assets/js/highlight.pack.js?v=5ccb861762"></script>
+	<script src="/assets/js/jquery.ghostHunter.min.js?v=5ccb861762"></script>
+	<script src="/assets/js/main.js?v=5ccb861762"></script>
+</body>
+</html>

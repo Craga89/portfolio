@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<title>Durandal and Webpack: Introduction</title>
+	<meta name="description" content="" />
+	<meta name="keywords" content="">
+	<meta name="viewport" content="width=device-width, minimum-scale=1, maximum-scale=1, user-scalable=no" />
+	<!-- fav icons -->
+	<link rel="shortcut icon" href="//craigsworks.com/favicon.ico">
+	<link rel="apple-touch-icon" href="/assets/images/apple-touch-icon.png?v=5ccb861762">
+	<link rel="apple-touch-icon" sizes="72x72" href="/assets/images/apple-touch-icon-72x72.png?v=5ccb861762">
+	<link rel="apple-touch-icon" sizes="114x114" href="/assets/images/apple-touch-icon-114x114.png?v=5ccb861762">
+	<!-- stylesheets -->
+	<title>Document</title>
+	<link href='//fonts.googleapis.com/css?family=Open+Sans:400,600|Roboto:400,100,300' rel='stylesheet' type='text/css'>
+	<link rel="stylesheet" href="/assets/css/bootstrap.min.css?v=5ccb861762">
+	<link rel="stylesheet" href="/assets/css/font-awesome.min.css?v=5ccb861762">
+	<link rel="stylesheet" type="text/css" href="/assets/css/hl-styles/monokai_sublime.css?v=5ccb861762">
+	<link rel="stylesheet" type="text/css" href="/assets/css/screen.css?v=5ccb861762">
+	<script>
+/*====================================================
+  THEME SETTINGS & GLOBAL VARIABLES
+====================================================*/
+//  1. Disqus comment settings
+var disqus_shortname = 'craigsworks'; // required: replace example with your forum shortname
+
+//  2. Recent Post count
+var recent_post_count = 3;
+
+//	3. Facebook Page Setting
+var facebook_page_url = 'https://www.facebook.com/craigsworks';
+
+//	4. Twitter Setting
+var twitter_url = 'https://twitter.com/craigsworks';
+var twitter_widget_id = '624328164261629952';
+var number_of_tweet = 3;
+
+//	5. Mailchimp signup form Setting
+var mailchimp_form_url = '';
+var success_message = "Please check your inbox and confirm your email address. Thanks!";
+</script>
+    <link rel="canonical" href="http://blog.craigsworks.com/durandal-and-webpack-introduction/" />
+    
+    <meta property="og:site_name" content="Blog of Craig Michael Thompson - a Front-end Developer / Consultant" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Durandal and Webpack: Introduction" />
+    <meta property="og:description" content="This series of posts will explain how to utilise the power of the Webpack module bundler with an existing (or perhaps new) Durandal application. But first... A bit of background Durandal is a mature SPA framework built atop popular existing..." />
+    <meta property="og:url" content="http://blog.craigsworks.com/durandal-and-webpack-introduction/" />
+    <meta property="article:published_time" content="2015-07-26T22:20:10.000Z" />
+    <meta property="article:modified_time" content="2015-07-27T06:59:52.000Z" />
+    <meta property="article:tag" content="Knockout.js" />
+    <meta property="article:tag" content="Durandal" />
+    <meta property="article:tag" content="jQuery" />
+    <meta property="article:tag" content="Webpack" />
+    <meta property="article:tag" content="Guide" />
+    <meta property="article:tag" content="Require.js" />
+    
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Durandal and Webpack: Introduction" />
+    <meta name="twitter:description" content="This series of posts will explain how to utilise the power of the Webpack module bundler with an existing (or perhaps new) Durandal application. But first... A bit of background Durandal is a mature SPA framework built atop popular existing..." />
+    <meta name="twitter:url" content="http://blog.craigsworks.com/durandal-and-webpack-introduction/" />
+    
+    <script type="application/ld+json">
+{
+    "@context": "http://schema.org",
+    "@type": "Article",
+    "publisher": "Blog of Craig Michael Thompson - a Front-end Developer / Consultant",
+    "author": {
+        "@type": "Person",
+        "name": "Craig Michael Thompson",
+        "image": "http://blog.craigsworks.com/content/images/2015/07/me.jpg",
+        "url": "http://blog.craigsworks.com/author/craga89",
+        "sameAs": "http://craigsworks.com",
+        "description": "Hi. My names Craig and I'm a Front-end Web Developer / Consultant primarily interested in jQuery/JavaScript development with HTML5/CSS3 and emerging W3C standards."
+    },
+    "headline": "Durandal and Webpack: Introduction",
+    "url": "http://blog.craigsworks.com/durandal-and-webpack-introduction/",
+    "datePublished": "2015-07-26T22:20:10.000Z",
+    "dateModified": "2015-07-27T06:59:52.000Z",
+    "keywords": "Knockout.js, Durandal, jQuery, Webpack, Guide, Require.js",
+    "description": "This series of posts will explain how to utilise the power of the Webpack module bundler with an existing (or perhaps new) Durandal application. But first... A bit of background Durandal is a mature SPA framework built atop popular existing..."
+}
+    </script>
+
+    <meta name="generator" content="Ghost 0.6" />
+    <link rel="alternate" type="application/rss+xml" title="Blog of Craig Michael Thompson - a Front-end Developer / Consultant" href="http://blog.craigsworks.com/rss/" />
+</head>
+<body class="post-template tag-knockout-js tag-durandal tag-jquery tag-webpack tag-guide tag-require-js">
+	<div class="page-wrap no-image" >
+	<div class="overlay">
+		<!-- start header -->
+		<header class="main-header">
+			<!-- start navbar -->
+			<div class="navbar-wrap navbar-fixed-top">
+				<div class="container">
+					<div class="row">
+					<div class="main-nav">
+						<div class="navbar-header">
+							<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+								<span class="sr-only">Toggle navigation</span>
+								<span class="icon-bar"></span>
+								<span class="icon-bar"></span>
+								<span class="icon-bar"></span>
+			            	</button>
+			            	</div>
+		            	<div id="navbar" class="navbar-collapse collapse">
+	<ul class="nav navbar-nav">
+		<li class="portfolio "><a href="http://craigsworks.com/">Portfolio</a></li>
+		<li class="blog "><a href="http://blog.craigsworks.com/">Blog</a></li>
+		<li class="github "><a href="http://github.com/Craga89">GitHub</a></li>
+		<li class="linkedin "><a href="http://linkedin.com/in/craigmichaelthompson">LinkedIn</a></li>
+	</ul>
+</div>
+						<a class="search-open" href="#"><i class="fa fa-search"></i></a>
+<div class="search-wrap">
+	<a class="search-close" href="#"><i class="fa fa-close"></i></a>
+	<form class="search-form">
+		<input id="search-field" type="text" placeholder="SEARCH" class="search-input">
+	</form>
+</div>
+<div id="search-result"></div>					</div>
+					</div>
+				</div>
+			</div>
+			<!-- end navbar -->
+			<div class="container">
+				<div class="row branding">
+					<div class="logo-wrap">
+						<!-- start logo -->
+						<a class="logo image-logo" href="http://blog.craigsworks.com"><img src="/content/images/2015/07/cover-2.png" alt="Blog of Craig Michael Thompson - a Front-end Developer / Consultant"></a>
+						<!-- end logo -->
+					</div>
+					<div class="intro"></div>
+				</div>
+			</div>
+		</header>
+		<!-- end header -->
+
+	
+<!-- start main content area -->
+<div class="container">
+	<div class="single-post-container clearfix">
+		<div class="single-content-wrap">
+		<!-- start article -->
+		<article id="22" class="post-wrap post tag-knockout-js tag-durandal tag-jquery tag-webpack tag-guide tag-require-js featured">
+			<div class="featured">
+				<i class="fa fa-star"></i>
+			</div>
+			<header class="post-header">
+				<div class="post-meta">
+					<span class="date">Jul 26, 2015</span> &#45;
+					<span class="author">By <a href="/author/craga89/" title="Craig Michael Thompson">Craig Michael Thompson</a></span>
+				</div>
+				<h2 class="post-title"><a href="/durandal-and-webpack-introduction/">Durandal and Webpack: Introduction</a></h2>
+			</header>
+			<div class="post-content">
+				<p>This series of posts will explain how to utilise the power of the <a href="http://webpack.github.io/">Webpack</a> module bundler with an existing (or perhaps new) <a href="http://durandaljs.com/">Durandal</a> application. But first...</p>
+
+<h3 id="abitofbackground">A bit of background</h3>
+
+<p><a href="http://durandaljs.com/">Durandal</a> is a mature SPA framework built atop popular existing libraries: <a href="http://knockoutjs.com/">Knockout.js</a>, <a href="http://requirejs.org/">Require.js</a> and <a href="http://jquery.com">jQuery</a>. It allows users to use a modular, MVC-like approach to SPA development, via it's extensive use of Require.js. This is a great starting workflow, allowing users to quickly create applications with little to no boilerplate outside Durandal itself, which lends itself well to agile development environments.</p>
+
+<p><a href="http://webpack.github.io/">Webpack</a> is "module bundler", which allows users to take a given set of modular JavaScript files, and compile them down into a single (or multiple) file(s). Not only that, but it also allows us to bundle in other file formats such as <code>CSS</code> and <code>HTML</code> via the use of <a href="https://webpack.github.io/docs/loaders.html">module loaders</a>. This effectively allows us to represent the whole application as a single, pre-built, minified file, assets and all. Perfect for production environments that need extensive caching and minimal network activity!</p>
+
+<h3 id="usingthemtogether">Using them together</h3>
+
+<p>Durandal already supports bundling your app via the <a href="http://requirejs.org/docs/optimization.html">r.js</a> bundler, but it's more than possible to utilise the advanced features of Webpack in place of this, and gain a lot more freedom in the process, particuarly relating to bundling other CSS and HTML assets!</p>
+
+<p>One exciting possibility is the use of <a href="http://es6-features.org/#Constants">ES6/7 code</a> within your Durandal application via the use of <a href="https://babeljs.io/">Babel</a> and Webpacks <a href="https://github.com/babel/babel-loader">babel-loader</a> which, while not covered in this blog series, is an exciting step forward for developers and applications alike.  <a href="http://www.2ality.com/2015/04/webpack-es6.html">Make sure to look into this!</a></p>
+
+<h3 id="okaythenhow">Okay... then how?</h3>
+
+<p>Using Webpack with Durandal requires some changes not only to our code, but to our workflow. Durandal was originally designed for use within an <a href="http://requirejs.org/docs/whyamd.html">AMD</a> environment, as opposed to the <a href="http://requirejs.org/docs/commonjs.html">CommonJS</a> approach those of you with <a href="http://nodejs.org/">Node.js</a> experience will be familiar with. We'll need to adapt our existing code to fit within this CommonJS syntax, and hopefully make things more readable in the process!</p>
+
+<p>Along with this, we'll need to <a href="http://github.com/Craga89/durandal-webpack/tree/master/app/overrides">monkey-patch</a> Durandal's internals with some additional functionality, which will let us use static dependencies for our Views, Dialogs, and Router(s). Don't worry, this functionality is entirely backwards compatible, and can be used for new features going forward, whilst still maintaining compatibility with old code!</p>
+
+<h3 id="showmethemoney">Show me the money!</h3>
+
+<p>If you're a code monkey and prefer to dredge through the code yourself, checkout the <a href="http://github.com/Craga89/durandal-webpack">durandal-webpack</a> GitHub repository, as well as the <a href="http://Craga89.github.io/durandal-webpack">Online examples</a> produced via it's <code>gh-pages</code> branch.</p>
+
+<p><br />  </p>
+
+<h5 id="nextchapterdurandalandwebpackpart1moduleformatdurandalandwebpackpart1moduleformat">Next Chapter: <a href="/durandal-and-webpack-part-1-module-format">Durandal and Webpack: Part 1 - Module Format</a></h5>
+			</div>
+			<div class="tag-list">
+				
+				Tags:&nbsp;<a href="/tag/knockout-js/">Knockout.js</a>, <a href="/tag/durandal/">Durandal</a>, <a href="/tag/jquery/">jQuery</a>, <a href="/tag/webpack/">Webpack</a>, <a href="/tag/guide/">Guide</a>, <a href="/tag/require-js/">Require.js</a>
+			</div>
+			<footer class="post-footer clearfix">
+				<div class="pull-left share-wrap">
+	<i class="fa fa-share-alt"></i>
+	<span class="hidden post-url">http://blog.craigsworks.com/durandal-and-webpack-introduction/</span>
+	<a href="" class="share-text"><span class="share-count">0</span> Share</a>
+	<div class="share-links">
+		<!-- facebook -->
+		<a href="https://www.facebook.com/sharer/sharer.php?u=http://blog.craigsworks.com/durandal-and-webpack-introduction/" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;"><i class="fa fa-facebook"></i></a>
+		<!-- twitter -->
+		<a href="https://twitter.com/share?text=Durandal%20and%20Webpack%3A%20Introduction&amp;url=http://blog.craigsworks.com/durandal-and-webpack-introduction/" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;"><i class="fa fa-twitter"></i></a>
+		<!-- pinterest -->
+		<a href="javascript:void((function()%7Bvar%20e=document.createElement('script');e.setAttribute('type','text/javascript');e.setAttribute('charset','UTF-8');e.setAttribute('src','http://assets.pinterest.com/js/pinmarklet.js?r='+Math.random()*99999999);document.body.appendChild(e)%7D)());"><i class="fa fa-pinterest-p"></i></a>
+	</div>
+</div>				<div class="pull-right comment-count">
+					<i class="fa fa-comment-o"></i>
+					<a href="/durandal-and-webpack-introduction/#disqus_thread">0 Comments</a>
+				</div>
+			</footer>
+		</article>
+		<!-- end article -->
+		<!-- start about author -->
+		<div class="about-author-wrap">
+			<!-- start about the author -->
+<div class="about-author clearfix">
+		<a href="/author/craga89/"><img src="/content/images/2015/07/me.jpg" alt="Author image" class="avatar pull-left"></a>
+	<div class="details">
+		<div class="author">
+			<a href="/author/craga89/">Craig Michael Thompson</a>
+		</div>
+		<div class="bio">
+			Hi. My names Craig and I&#x27;m a Front-end Web Developer / Consultant primarily interested in jQuery/JavaScript development with HTML5/CSS3 and emerging W3C standards.
+		</div>
+		<div class="meta-info">
+			<span class="location"><i class="fa fa-map-marker fa-fw"></i>Newcastle Upon Tyne, United Kingdom</span>
+			<span class="website"><i class="fa fa-link fa-fw"></i><a href="http://craigsworks.com" targer="_BLANK">Website</a></span>
+		</div>
+	</div>
+</div>
+<!-- end about the author -->		</div>
+		<!-- end about author -->
+
+		<!-- start comment -->
+		<div class="comment-wrap">	
+			<!-- start disqus comment -->
+<div class="disqus-container">
+	<div id="disqus_thread"></div>
+	    <script type="text/javascript">
+	        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+	        var disqus_shortname = disqus_shortname; // required: replace example with your forum shortname
+
+	        /* * * DON'T EDIT BELOW THIS LINE * * */
+	        (function() {
+	            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+	            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+	            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+	        })();
+	    </script>
+	    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+<!-- end disqus comment -->		</div>
+		<!-- end comment -->
+		</div>
+		<div class="sidebar-wrap">
+	<!-- start widget -->
+<div class="widget">
+	<h3 class="title">Recent Post</h3>
+	<div class="content recent-post"></div>
+</div>
+<!-- end widget -->	<!-- start tag cloud widget -->
+<div class="widget">
+	<h3 class="title">Tags</h3>
+	<div class="content tag-cloud"></div>
+</div>
+<!-- end tag cloud widget -->	<!-- start widget -->
+<div class="widget">
+	<h3 class="title">Twitter</h3>
+	<div class="content twitter"></div>
+</div>
+<!-- end widget --></div>
+		
+	</div>
+</div>
+<!-- end main content area -->
+
+
+	<!-- start footer -->
+			<footer class="main-footer">
+				<div class="container">
+					<div class="row">
+						<div class="social">
+	<ul class="social-icons">
+		<li><a title="LinkedIn Profile" href="//linkedin.com/in/craigmichaelthompson"><i class="fa fa-linkedin"></i></a></li>
+		<li><a title="GitHub Profile" href="//github.com/Craga89"><i class="fa fa-github"></i></a></li>
+		<li><a title="Twitter Feed" href="//twitter.com/craigsworks"><i class="fa fa-twitter"></i></a></li>
+		<li><a title="Download CV" href="//craigsworks.com/cv.pdf"><i class="fa fa-file-pdf-o"></i></a></li>
+		<li><a title="Blog RSS Feed" href="/rss"><i class="fa fa-rss"></i></a></li>
+	</ul>
+</div>
+						<div class="copyright">
+	Copyright &copy; 2018, <a href="http://blog.craigsworks.com">Blog of Craig Michael Thompson - a Front-end Developer / Consultant</a>. All Right Reserved.
+</div>					</div>
+				</div>
+			</footer>
+			<!-- end footer -->
+		</div>
+	</div>
+	<script src="/public/jquery.js?v=5ccb861762"></script> <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-5228245-11', 'auto');
+  ga('send', 'pageview');
+
+</script>
+	<script src="/assets/js/jquery-1.11.3.min.js?v=5ccb861762"></script>
+	<script src="/assets/js/bootstrap.min.js?v=5ccb861762"></script>
+	<script src="/assets/js/imagesloaded.pkgd.min.js?v=5ccb861762"></script>
+	<script src="/assets/js/masonry.pkgd.min.js?v=5ccb861762"></script>
+	<script src="/assets/js/jquery.fitvids.js?v=5ccb861762"></script>
+	<script src="/assets/js/highlight.pack.js?v=5ccb861762"></script>
+	<script src="/assets/js/jquery.ghostHunter.min.js?v=5ccb861762"></script>
+	<script src="/assets/js/main.js?v=5ccb861762"></script>
+</body>
+</html>

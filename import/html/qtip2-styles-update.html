@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html" charset="UTF-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+	<title>qTip&lt;sup&gt;2&lt;/sup&gt; - Styles update</title>
+	<meta name="description" content="" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link href="//fonts.googleapis.com/css?family=Roboto:400,400italic,700,700italic|Oswald" rel="stylesheet" type="text/css">
+	<link href="//netdna.bootstrapcdn.com/font-awesome/4.0.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+	<link rel="stylesheet" href="/assets/css/screen.css">
+	
+	<link rel="stylesheet" href="/assets/css/color-mono.css">
+
+	<meta name="generator" content="Ghost 0.5" />
+<link rel="alternate" type="application/rss+xml" title="craigsworks :: blog" href="/rss/">
+<link rel="canonical" href="http://blog.craigsworks.com/qtip2-styles-update/" />
+
+</head>
+<body class="post-template tag-plugins tag-javascript">
+	<!--[if lt IE 7]>
+		<p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+	<![endif]-->
+
+	<div class="site">
+
+			<div class="top-bar">
+				<header class="site-header container animated fadeInDown">
+						
+					<h2 class="site-description">The outward ramblings of a Front-end Developer, complete with code samples and witty remarks!</h2>
+										
+					<div class="social-links">
+						<a href="http://twitter.com/craigsworks"><i class="fa fa-twitter-square"></i></a>
+						<a href="http://plus.google.com/+CraigMichaelThompson/posts"><i class="fa fa-google-plus-square"></i></a>
+						<a href="http://blog.craigsworks.com/rss/"><i class="fa fa-rss-square"></i></a>
+					</div>
+					
+				</header>
+			</div><!-- .top-bar -->
+
+		
+<div id="site-cover-container" class="site-cover">
+	<div class="branding animated fadeInDownBig">
+		<a href="http://blog.craigsworks.com">
+			<img src="/content/images/2013/Nov/logo_name_white.png" alt="Blog Logo" class="site-logo" />
+		</a>
+	</div>
+</div>
+<div class="site-content container">
+
+
+		<article class="post tag-plugins tag-javascript">
+			<header class="post-header">
+				<h1 class="post-title">qTip&lt;sup&gt;2&lt;/sup&gt; - Styles update</h1>
+				<time class="post-time lined-block" datetime="2012-05-13"><span><i class="fa fa-clock-o"></i>13 May 2012</span></time>
+			</header>
+			<div class="post-content">
+				<p>In the <a href="https://github.com/Craga89/qTip2/commit/563329f7198708c7c4d4ab28b41d4c6642275796">recent commit today</a> a re-factoring of the CSS stylesheets took place in order to simply the styles qTip<sup>2</sup> uses, as well as changes  to the underlying tips code to cope with these changes. </p>
+
+<ol>
+<li><p>The biggest change is the movement of the <code>border</code> and <code>border-radius</code> declarations from the <em>titlebar and content elements</em> to the main <code>ui-tooltip</code> element. Thanks to this, many duplicate styles could be  <strong>removed from the stylesheet for a <em>10% size saving!</em></strong></p>
+
+<ul><li>This will likely effect the styling of your tooltips upon updating, and you may see black borders on your tooltip “tips” until you move the border colour declarations to the top ui-tooltip element.</li></ul></li>
+<li><p>The <code>ui-tooltip-shadow</code> class now <em>only works in IE9+ now</em> because of this modification and removal of the IE9> <code>filter</code> declarations. This was done because applying a filter to any element renders the overflow property useless, as reference from this <a href="http://labs.thesedays.com/blog/2011/06/02/ie-alpha-overflow-hidden-bug/#comment-291">blog post comment</a>:</p>
+
+<blockquote>
+  <p>What I think happens in IE&lt;9 is it “designates” a square where DirectX can render on top of a hasLayout box based on <code>width</code>+<code>height</code> properties, and if content tries to expand outside that box then it’ll be cut off. I think that in block elements which have filters in them that everything in them is also rendered by DirectX. (As a side effect which you may already be aware of, text rendered by DirectX wasn’t ClearType aware and so in particular bolded text rendered garbled in IE6, leading to the devs to turn off ClearType entirely in filtered elements in IE7-8.)</p>
+</blockquote>
+
+<p>It sucks, but if you want native shadows in IE you’re going to need to do some hacking! Sorry guys!</p></li>
+</ol>
+
+<p>Thanks to <a href="https://github.com/tkrotoff">Tanguy Krotoff</a> for the motivation and bug reports behind this!</p>
+			</div>
+			<footer class="post-meta">
+
+				<div class="post-author">
+					<p><i class="fa fa-user"></i> Craig Michael Thompson</p>
+					<div class="author-info">
+						<img src="" alt="Craig Michael Thompson" title="Craig Michael Thompson">
+						<p><i class="fa fa-envelope"></i> <a href="mailto:"></a></p>
+						<p>Hi. My names Craig and I&#x27;m a Front-end Web Developer / Consultant primarily interested in jQuery/JavaScript development with HTML5/CSS3 and emerging W3C standards.</p>
+					</div>
+				</div>
+
+				<p class="post-tags"><i class="fa fa-tags"></i> <a href="/tag/plugins/">Plugins</a>, <a href="/tag/javascript/">JavaScript</a></p>
+			
+				<p class="post-share">
+					Share this:
+					<a href="http://twitter.com/share?text=qTip&lt;sup&gt;2&lt;/sup&gt; - Styles update&url=http://blog.craigsworks.com/qtip2-styles-update/" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+						<i class="fa fa-twitter"></i>
+					</a>
+					<a href="https://www.facebook.com/sharer/sharer.php?u=http://blog.craigsworks.com/qtip2-styles-update/" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+						<i class="fa fa-facebook"></i>
+					</a>
+					<a href="https://plus.google.com/share?url=http://blog.craigsworks.com/qtip2-styles-update/" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+						<i class="fa fa-google-plus"></i>
+					</a>
+				</p>
+			</footer>
+		</article><!-- .post -->		
+
+
+</div><!-- .site-content -->
+
+			<footer class="site-footer container">
+				<p>&copy; <a href="/">craigsworks :: blog</a> | Powered by <a href="http://ghost.org">Ghost</a></p>
+			</footer>
+		
+			
+
+	</div><!-- .site -->
+
+	<script src="/public/jquery.js?v=6bd8f65ab3"></script>
+
+	<!-- Include Scripts -->
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+        <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.10.2.min.js"><\/script>')</script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/masonry/3.1.1/masonry.pkgd.js"></script>
+	<script src="/assets/js/jquery.fitvids.js"></script>
+		<script src="/assets/js/jquery.backstretch.min.js"></script>
+
+	<script>
+		(function($) {
+		"use strict";
+			
+			$(".post-content").fitVids();
+
+				$("#site-cover-container").backstretch("/content/images/2013/Nov/header_gplus.png");
+
+			$('.site-content').masonry({
+				columnWidth: $('.post:eq(1)')[0],
+				itemSelector: '.post-container'
+			});
+
+		})(jQuery);
+	</script>
+
+	<script>
+		(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+		(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+		m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+		})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+		ga('create', 'UA-5228245-11', 'auto');
+		ga('send', 'pageview');
+	</script>
+</body>
+</html>

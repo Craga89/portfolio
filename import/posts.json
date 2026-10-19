@@ -1,0 +1,536 @@
+[
+ {
+  "slug": "60fps-scrolling-using-pointer-events-none",
+  "host": "blog.craigsworks.com",
+  "urls": [
+   "https://blog.craigsworks.com/60fps-scrolling-using-pointer-events-none/"
+  ],
+  "snapshot": "20150320000811",
+  "from": "http://blog.craigsworks.com/60fps-scrolling-using-pointer-events-none/",
+  "file": "html/60fps-scrolling-using-pointer-events-none.html",
+  "images": []
+ },
+ {
+  "slug": "bootstrap-3-disabled-dropdown-links",
+  "host": "blog.craigsworks.com",
+  "urls": [
+   "https://blog.craigsworks.com/bootstrap-3-disabled-dropdown-links/"
+  ],
+  "snapshot": "20180712090533",
+  "from": "http://blog.craigsworks.com:80/bootstrap-3-disabled-dropdown-links/",
+  "file": "html/bootstrap-3-disabled-dropdown-links.html",
+  "images": [
+   {
+    "src": "http://blog.craigsworks.com/content/images/2015/07/cover-2.png",
+    "file": "5cabf3ba7c.png",
+    "type": "image/png"
+   },
+   {
+    "src": "http://blog.craigsworks.com/content/images/2015/07/me.jpg",
+    "file": "7e7bf10770.jpg",
+    "type": "image/jpeg"
+   }
+  ]
+ },
+ {
+  "slug": "ckeditor-key-modifiers",
+  "host": "blog.craigsworks.com",
+  "urls": [
+   "https://blog.craigsworks.com/ckeditor-key-modifiers/"
+  ],
+  "snapshot": "20161104142346",
+  "from": "http://blog.craigsworks.com:80/ckeditor-key-modifiers/",
+  "file": "html/ckeditor-key-modifiers.html",
+  "images": [
+   {
+    "src": "http://blog.craigsworks.com/content/images/2015/07/cover-2.png",
+    "file": "5cabf3ba7c.png",
+    "type": "image/png"
+   },
+   {
+    "src": "http://blog.craigsworks.com/content/images/2015/07/me.jpg",
+    "file": "7e7bf10770.jpg",
+    "type": "image/jpeg"
+   }
+  ]
+ },
+ {
+  "slug": "durandal-and-webpack-introduction",
+  "host": "blog.craigsworks.com",
+  "urls": [
+   "https://blog.craigsworks.com/durandal-and-webpack-introduction"
+  ],
+  "snapshot": "20180727075201",
+  "from": "http://blog.craigsworks.com:80/durandal-and-webpack-introduction/",
+  "file": "html/durandal-and-webpack-introduction.html",
+  "images": [
+   {
+    "src": "http://blog.craigsworks.com/content/images/2015/07/cover-2.png",
+    "file": "5cabf3ba7c.png",
+    "type": "image/png"
+   },
+   {
+    "src": "http://blog.craigsworks.com/content/images/2015/07/me.jpg",
+    "file": "7e7bf10770.jpg",
+    "type": "image/jpeg"
+   }
+  ]
+ },
+ {
+  "slug": "durandal-and-webpack-part-1-module-format",
+  "host": "blog.craigsworks.com",
+  "urls": [
+   "https://blog.craigsworks.com/durandal-and-webpack-part-1-module-format/"
+  ],
+  "snapshot": "20180628012752",
+  "from": "http://blog.craigsworks.com/durandal-and-webpack-part-1-module-format/",
+  "file": "html/durandal-and-webpack-part-1-module-format.html",
+  "images": [
+   {
+    "src": "http://blog.craigsworks.com/content/images/2015/07/cover-2.png",
+    "file": "5cabf3ba7c.png",
+    "type": "image/png"
+   },
+   {
+    "src": "http://blog.craigsworks.com/content/images/2015/07/me.jpg",
+    "file": "7e7bf10770.jpg",
+    "type": "image/jpeg"
+   }
+  ]
+ },
+ {
+  "slug": "durandal-and-webpack-part-2-composition",
+  "host": "blog.craigsworks.com",
+  "urls": [
+   "https://blog.craigsworks.com/durandal-and-webpack-part-2-composition/"
+  ],
+  "snapshot": "20180628012739",
+  "from": "http://blog.craigsworks.com/durandal-and-webpack-part-2-composition/",
+  "file": "html/durandal-and-webpack-part-2-composition.html",
+  "images": [
+   {
+    "src": "http://blog.craigsworks.com/content/images/2015/07/cover-2.png",
+    "file": null,
+    "error": "fetch failed"
+   },
+   {
+    "src": "http://blog.craigsworks.com/content/images/2015/07/me.jpg",
+    "file": "7e7bf10770.jpg",
+    "type": "image/jpeg"
+   }
+  ]
+ },
+ {
+  "slug": "durandal-type-cast-querystring-parameters",
+  "host": "blog.craigsworks.com",
+  "urls": [
+   "https://blog.craigsworks.com/durandal-type-cast-querystring-parameters/"
+  ],
+  "snapshot": "20150315021447",
+  "from": "http://blog.craigsworks.com/durandal-type-cast-querystring-parameters/",
+  "file": "html/durandal-type-cast-querystring-parameters.html",
+  "images": []
+ },
+ {
+  "slug": "efficient-javascript-delta-encoding-merging-json-objects",
+  "host": "blog.craigsworks.com",
+  "urls": [
+   "https://blog.craigsworks.com/efficient-javascript-delta-encoding-merging-json-objects/"
+  ],
+  "snapshot": "20170630123519",
+  "from": "http://blog.craigsworks.com/efficient-javascript-delta-encoding-merging-json-objects/",
+  "file": "html/efficient-javascript-delta-encoding-merging-json-objects.html",
+  "images": [
+   {
+    "src": "http://blog.craigsworks.com/content/images/2015/07/cover-2.png",
+    "file": "5cabf3ba7c.png",
+    "type": "image/png"
+   },
+   {
+    "src": "http://blog.craigsworks.com/content/images/2015/07/me.jpg",
+    "file": "7e7bf10770.jpg",
+    "type": "image/jpeg"
+   }
+  ]
+ },
+ {
+  "slug": "generating-roman-numerals",
+  "host": "blog.craigsworks.com",
+  "urls": [
+   "https://blog.craigsworks.com/generating-roman-numerals/"
+  ],
+  "snapshot": "20180628012730",
+  "from": "http://blog.craigsworks.com/generating-roman-numerals/",
+  "file": "html/generating-roman-numerals.html",
+  "images": [
+   {
+    "src": "http://blog.craigsworks.com/content/images/2015/07/cover-2.png",
+    "file": "5cabf3ba7c.png",
+    "type": "image/png"
+   },
+   {
+    "src": "http://blog.craigsworks.com/content/images/2015/07/me.jpg",
+    "file": "7e7bf10770.jpg",
+    "type": "image/jpeg"
+   }
+  ]
+ },
+ {
+  "slug": "github-pages-and-webpack-2",
+  "host": "blog.craigsworks.com",
+  "urls": [
+   "https://blog.craigsworks.com/github-pages-and-webpack-2"
+  ],
+  "snapshot": "20160817033812",
+  "from": "http://blog.craigsworks.com/github-pages-and-webpack-2/",
+  "file": "html/github-pages-and-webpack-2.html",
+  "images": [
+   {
+    "src": "http://blog.craigsworks.com/content/images/2015/07/cover-2.png",
+    "file": "5cabf3ba7c.png",
+    "type": "image/png"
+   },
+   {
+    "src": "http://blog.craigsworks.com/content/images/2015/07/me.jpg",
+    "file": "7e7bf10770.jpg",
+    "type": "image/jpeg"
+   }
+  ]
+ },
+ {
+  "slug": "gulp-watch-less",
+  "host": "blog.craigsworks.com",
+  "urls": [
+   "https://blog.craigsworks.com/gulp-watch-less"
+  ],
+  "snapshot": "20161106041715",
+  "from": "http://blog.craigsworks.com:80/gulp-watch-less/",
+  "file": "html/gulp-watch-less.html",
+  "images": [
+   {
+    "src": "http://blog.craigsworks.com/content/images/2015/07/cover-2.png",
+    "file": null,
+    "error": "fetch failed"
+   },
+   {
+    "src": "http://blog.craigsworks.com/content/images/2015/07/me.jpg",
+    "file": null,
+    "error": "fetch failed"
+   }
+  ]
+ },
+ {
+  "slug": "holiday",
+  "host": "blog.craigsworks.com",
+  "urls": [
+   "https://blog.craigsworks.com/holiday/"
+  ],
+  "snapshot": "20130801050635",
+  "from": "http://blog.craigsworks.com:80/holiday/",
+  "file": "html/holiday.html",
+  "images": [
+   {
+    "src": "http://blog.craigsworks.com/wp-content/plugins/flattr/img/flattr-badge-large.png",
+    "file": "effbd592ef.png",
+    "type": "image/png"
+   },
+   {
+    "src": "http://blog.craigsworks.com/wp-content/plugins/jetpack/modules/sharedaddy/images/loading.gif",
+    "file": "5a0fba64ed.gif",
+    "type": "image/gif"
+   }
+  ]
+ },
+ {
+  "slug": "javascript-ios-version-detection",
+  "host": "blog.craigsworks.com",
+  "urls": [
+   "https://blog.craigsworks.com/javascript-ios-version-detection"
+  ],
+  "snapshot": "20150708113249",
+  "from": "http://blog.craigsworks.com:80/javascript-ios-version-detection/",
+  "file": "html/javascript-ios-version-detection.html",
+  "images": []
+ },
+ {
+  "slug": "jquery-ui-draggable-droppables-in-an-iframe",
+  "host": "blog.craigsworks.com",
+  "urls": [
+   "https://blog.craigsworks.com/jquery-ui-draggable-droppables-in-an-iframe"
+  ],
+  "snapshot": "20180708060346",
+  "from": "http://blog.craigsworks.com:80/jquery-ui-draggable-droppables-in-an-iframe/",
+  "file": "html/jquery-ui-draggable-droppables-in-an-iframe.html",
+  "images": [
+   {
+    "src": "http://blog.craigsworks.com/content/images/2015/07/cover-2.png",
+    "file": "5cabf3ba7c.png",
+    "type": "image/png"
+   },
+   {
+    "src": "http://blog.craigsworks.com/content/images/2015/07/me.jpg",
+    "file": "7e7bf10770.jpg",
+    "type": "image/jpeg"
+   }
+  ]
+ },
+ {
+  "slug": "jquery-ui-draggable-exclusive-draggables",
+  "host": "blog.craigsworks.com",
+  "urls": [
+   "https://blog.craigsworks.com/jquery-ui-draggable-exclusive-draggables/"
+  ],
+  "snapshot": "20161103025753",
+  "from": "http://blog.craigsworks.com:80/jquery-ui-draggable-exclusive-draggables/",
+  "file": "html/jquery-ui-draggable-exclusive-draggables.html",
+  "images": [
+   {
+    "src": "http://blog.craigsworks.com/content/images/2015/07/cover-2.png",
+    "file": "5cabf3ba7c.png",
+    "type": "image/png"
+   },
+   {
+    "src": "http://youlovemath.edublogs.org/files/2011/05/math-nbpty0.png",
+    "file": null,
+    "error": "fetch failed"
+   },
+   {
+    "src": "http://blog.craigsworks.com/content/images/2015/07/me.jpg",
+    "file": "7e7bf10770.jpg",
+    "type": "image/jpeg"
+   }
+  ]
+ },
+ {
+  "slug": "knockout-bootstrap-3-buttons-and-the-enable-binding",
+  "host": "blog.craigsworks.com",
+  "urls": [
+   "https://blog.craigsworks.com/knockout-bootstrap-3-buttons-and-the-enable-binding/"
+  ],
+  "snapshot": "20180712085934",
+  "from": "http://blog.craigsworks.com:80/knockout-bootstrap-3-buttons-and-the-enable-binding/",
+  "file": "html/knockout-bootstrap-3-buttons-and-the-enable-binding.html",
+  "images": [
+   {
+    "src": "http://blog.craigsworks.com/content/images/2015/07/cover-2.png",
+    "file": "5cabf3ba7c.png",
+    "type": "image/png"
+   },
+   {
+    "src": "http://blog.craigsworks.com/content/images/2015/07/me.jpg",
+    "file": "7e7bf10770.jpg",
+    "type": "image/jpeg"
+   }
+  ]
+ },
+ {
+  "slug": "knockout-value-binding-input-number",
+  "host": "blog.craigsworks.com",
+  "urls": [
+   "https://blog.craigsworks.com/knockout-value-binding-input-number/"
+  ],
+  "snapshot": "20180131164629",
+  "from": "http://blog.craigsworks.com:80/knockout-value-binding-input-number/",
+  "file": "html/knockout-value-binding-input-number.html",
+  "images": [
+   {
+    "src": "http://blog.craigsworks.com/content/images/2015/07/cover-2.png",
+    "file": "5cabf3ba7c.png",
+    "type": "image/png"
+   },
+   {
+    "src": "http://blog.craigsworks.com/content/images/2015/07/me.jpg",
+    "file": "7e7bf10770.jpg",
+    "type": "image/jpeg"
+   }
+  ]
+ },
+ {
+  "slug": "less-file-import-list",
+  "host": "blog.craigsworks.com",
+  "urls": [
+   "https://blog.craigsworks.com/less-file-import-list/"
+  ],
+  "snapshot": "20170805024745",
+  "from": "http://blog.craigsworks.com:80/less-file-import-list/",
+  "file": "html/less-file-import-list.html",
+  "images": [
+   {
+    "src": "http://blog.craigsworks.com/content/images/2015/07/cover-2.png",
+    "file": "5cabf3ba7c.png",
+    "type": "image/png"
+   },
+   {
+    "src": "http://blog.craigsworks.com/content/images/2015/07/me.jpg",
+    "file": "7e7bf10770.jpg",
+    "type": "image/jpeg"
+   }
+  ]
+ },
+ {
+  "slug": "noty-css-themes",
+  "host": "blog.craigsworks.com",
+  "urls": [
+   "https://blog.craigsworks.com/noty-css-themes/"
+  ],
+  "snapshot": "20180708043550",
+  "from": "http://blog.craigsworks.com:80/noty-css-themes/",
+  "file": "html/noty-css-themes.html",
+  "images": [
+   {
+    "src": "http://blog.craigsworks.com/content/images/2015/07/cover-2.png",
+    "file": "5cabf3ba7c.png",
+    "type": "image/png"
+   },
+   {
+    "src": "http://blog.craigsworks.com/content/images/2015/07/me.jpg",
+    "file": "7e7bf10770.jpg",
+    "type": "image/jpeg"
+   }
+  ]
+ },
+ {
+  "slug": "qtip2-now-on-jsdelivr",
+  "host": "blog.craigsworks.com",
+  "urls": [
+   "https://blog.craigsworks.com/qtip2-now-on-jsdelivr"
+  ],
+  "snapshot": "20180628012609",
+  "from": "http://blog.craigsworks.com/qtip2-now-on-jsdelivr/",
+  "file": "html/qtip2-now-on-jsdelivr.html",
+  "images": [
+   {
+    "src": "http://blog.craigsworks.com/content/images/2015/07/cover-2.png",
+    "file": null,
+    "error": "fetch failed"
+   },
+   {
+    "src": "http://blog.craigsworks.com/content/images/2015/07/me.jpg",
+    "file": null,
+    "error": "fetch failed"
+   }
+  ]
+ },
+ {
+  "slug": "qtip2-pre-release-changes-aka-what-happened-to-my-qtip-styles",
+  "host": "blog.craigsworks.com",
+  "urls": [
+   "https://blog.craigsworks.com/qtip2-pre-release-changes-aka-what-happened-to-my-qtip-styles"
+  ],
+  "snapshot": "20150320043320",
+  "from": "http://blog.craigsworks.com/qtip2-pre-release-changes-aka-what-happened-to-my-qtip-styles/",
+  "file": "html/qtip2-pre-release-changes-aka-what-happened-to-my-qtip-styles.html",
+  "images": []
+ },
+ {
+  "slug": "qtip2-styles-update",
+  "host": "blog.craigsworks.com",
+  "urls": [
+   "https://blog.craigsworks.com/qtip2-styles-update/"
+  ],
+  "snapshot": "20150320043254",
+  "from": "http://blog.craigsworks.com/qtip2-styles-update/",
+  "file": "html/qtip2-styles-update.html",
+  "images": []
+ },
+ {
+  "slug": "qtip2-tips-plugins-dimension-options-changed",
+  "host": "blog.craigsworks.com",
+  "urls": [
+   "https://blog.craigsworks.com/qtip2-tips-plugins-dimension-options-changed/"
+  ],
+  "snapshot": "20180531233402",
+  "from": "http://blog.craigsworks.com:80/qtip2-tips-plugins-dimension-options-changed/",
+  "file": "html/qtip2-tips-plugins-dimension-options-changed.html",
+  "images": [
+   {
+    "src": "http://blog.craigsworks.com/content/images/2015/07/cover-2.png",
+    "file": null,
+    "error": "fetch failed"
+   },
+   {
+    "src": "http://blog.craigsworks.com/content/images/2015/07/me.jpg",
+    "file": null,
+    "error": "fetch failed"
+   }
+  ]
+ },
+ {
+  "slug": "qtip2-v2-2-0-released",
+  "host": "blog.craigsworks.com",
+  "urls": [
+   "https://blog.craigsworks.com/qtip2-v2-2-0-released/"
+  ],
+  "snapshot": "20150319230631",
+  "from": "http://blog.craigsworks.com/qtip2-v2-2-0-released/",
+  "file": "html/qtip2-v2-2-0-released.html",
+  "images": []
+ },
+ {
+  "slug": "scratchpad-io",
+  "host": "blog.craigsworks.com",
+  "urls": [
+   "https://blog.craigsworks.com/scratchpad-io/"
+  ],
+  "snapshot": "20130801022136",
+  "from": "http://blog.craigsworks.com:80/scratchpad-io/",
+  "file": "html/scratchpad-io.html",
+  "images": [
+   {
+    "src": "http://blog.craigsworks.com/wp-content/plugins/flattr/img/flattr-badge-large.png",
+    "file": "effbd592ef.png",
+    "type": "image/png"
+   },
+   {
+    "src": "http://blog.craigsworks.com/wp-content/plugins/jetpack/modules/sharedaddy/images/loading.gif",
+    "file": "5a0fba64ed.gif",
+    "type": "image/gif"
+   }
+  ]
+ },
+ {
+  "slug": "tether-js-transition-small-changes",
+  "host": "blog.craigsworks.com",
+  "urls": [
+   "https://blog.craigsworks.com/tether-js-transition-small-changes/"
+  ],
+  "snapshot": "20180628012734",
+  "from": "http://blog.craigsworks.com/tether-js-transition-small-changes/",
+  "file": "html/tether-js-transition-small-changes.html",
+  "images": [
+   {
+    "src": "http://blog.craigsworks.com/content/images/2015/07/cover-2.png",
+    "file": "5cabf3ba7c.png",
+    "type": "image/png"
+   },
+   {
+    "src": "http://blog.craigsworks.com/content/images/2015/07/me.jpg",
+    "file": null,
+    "error": "fetch failed"
+   }
+  ]
+ },
+ {
+  "slug": "var-commas-and-equals",
+  "host": "blog.craigsworks.com",
+  "urls": [
+   "https://blog.craigsworks.com/var-commas-and-equals/"
+  ],
+  "snapshot": "20150319223043",
+  "from": "http://blog.craigsworks.com/var-commas-and-equals/",
+  "file": "html/var-commas-and-equals.html",
+  "images": []
+ },
+ {
+  "slug": "where-are-you-using-qtip",
+  "host": "craigsworks.com",
+  "urls": [
+   "https://craigsworks.com/blog/2010/07/where-are-you-using-qtip",
+   "https://craigsworks.com/blog/2010/07/where-are-you-using-qtip/feed/"
+  ],
+  "snapshot": "20101125075710",
+  "from": "http://craigsworks.com:80/blog/2010/07/where-are-you-using-qtip/",
+  "file": "html/where-are-you-using-qtip.html",
+  "images": []
+ }
+]
