@@ -8,6 +8,7 @@ import { createHash } from 'node:crypto';
 import { dirname, join, extname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import http from 'node:http';
+import { loadPosts, listing as postListing, designListing } from './blog.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const SRC = join(ROOT, 'src');
@@ -19,6 +20,12 @@ const PRERENDER = !process.argv.includes('--no-prerender');
 const ALLOW_INDEXING = process.argv.includes('--public') || false;
 // ask.sh: the Cloudflare Worker URL lives in ask.config.json ("" = search-only).
 const ASK = existsSync(join(ROOT, 'ask.config.json')) ? JSON.parse(readFileSync(join(ROOT, 'ask.config.json'), 'utf8')) : { endpoint: '' };
+// The old blog (src/blog/*.md): rendered to /blog/<slug>/ and listed on the home page.
+const POSTS = loadPosts();
+{
+  const d = designListing();
+  if (d && JSON.stringify(d) !== JSON.stringify(postListing(POSTS))) console.warn('warning: the design file\'s post list is out of date; run node tools/blog.mjs sync');
+}
 const ROBOTS_META = ALLOW_INDEXING ? '' : '\n<meta name="robots" content="noindex, nofollow, noarchive">';
 
 const between = (s, a, b, from = 0) => {
@@ -390,7 +397,7 @@ ${FALLBACKS}
 </style>
 <script>if(location.hash.length>1)document.documentElement.classList.add('cv-all')</script>
 ${localFonts(d.helmet.trim())}
-${OSS_SNAPSHOT ? `<script>window.CRAGA_OSS=${JSON.stringify({ timeline: OSS_SNAPSHOT.timeline })}</script>\n` : ''}<script>window.CRAGA_BUILD={sha:"__BUILD_SHA__",short:"__BUILD_SHORT__",date:"${today}",at:"__BUILD_AT__"}</script>
+${POSTS.length ? `<script>window.CRAGA_POSTS=${JSON.stringify(postListing(POSTS))}</script>\n` : ''}${OSS_SNAPSHOT ? `<script>window.CRAGA_OSS=${JSON.stringify({ timeline: OSS_SNAPSHOT.timeline })}</script>\n` : ''}<script>window.CRAGA_BUILD={sha:"__BUILD_SHA__",short:"__BUILD_SHORT__",date:"${today}",at:"__BUILD_AT__"}</script>
 <script type="speculationrules">{"prerender":[{"source":"document","where":{"selector_matches":"a[href=\\"cv/\\"]"},"eagerness":"moderate"}]}</script>
 <script src="${appName}" defer></script>
 </head>
@@ -611,6 +618,8 @@ async function prerender() {
     const html = await page.$eval('#app', (el) => { const c = el.cloneNode(true); c.querySelectorAll('.c-chat, .c-mic, .v2-time').forEach((n) => n.remove()); return c.innerHTML; });
     const passages = await page.evaluate(extractPassages);
     const panels = await page.evaluate(() => [...document.querySelectorAll('#responsibilities [role="tabpanel"][id^="rp-"], #case-studies .c-cs-panels [role="tabpanel"]')].map((p) => ({ kind: p.closest('#responsibilities') ? 'resp' : 'case', file: p.getAttribute('aria-label'), html: p.outerHTML })));
+    // Each blog post, briefly: what it's about and where to read it.
+    for (const b of POSTS) passages.push({ id: 'blog-' + b.slug, title: `${b.slug}.md: ${b.title} (blog post, ${b.date.slice(0, 4)})`, text: (`A post Craig wrote on his old blog (craigsworks.com) on ${b.date}` + (b.tags.length ? `, about ${b.tags.join(', ')}` : '') + '. ' + b.text).slice(0, 1200).replace(/\s\S*$/, '') + '…', href: 'blog/' + b.slug + '/', kind: 'blog', key: b.slug });
     const index = { generated: new Date().toISOString(), passages };
     writeFileSync(join(OUT, 'assets', 'ask-index.json'), JSON.stringify(index));
     mkdirSync(join(ROOT, 'worker'), { recursive: true });
@@ -714,7 +723,71 @@ function cleanPanel(html, kind, where) {
   return { html: h, terms: [...terms.values()] };
 }
 
+// A page's social preview (1200×630): the command, a kicker line and the title, in the site's style.
+async function ogImage(og, dir, cmd, kicker, title) {
+  const font = (f) => 'data:font/woff2;base64,' + readFileSync(join(SRC, 'fonts', f)).toString('base64');
+  const sharp = (await import('sharp')).default;
+  const h3 = title;
+  await og.setContent(`<!doctype html><html><head><style>
+@font-face{font-family:BS;src:url(${font('big-shoulders-display-latin-600.woff2')});font-weight:100 900}
+@font-face{font-family:PS;src:url(${font('public-sans-latin-400.woff2')});font-weight:100 900}
+@font-face{font-family:RH;src:url(${font('red-hat-mono-latin-400.woff2')});font-weight:300 700}
+html,body{margin:0;width:1200px;height:630px;background:#16271F;color:#F6F8F4;overflow:hidden}
+.c{position:relative;box-sizing:border-box;width:1200px;height:630px;padding:68px 80px;display:flex;flex-direction:column;justify-content:space-between;background:radial-gradient(circle at 24px 24px,#47685A 3px,transparent 3.5px),radial-gradient(circle at calc(100% - 24px) 24px,#47685A 3px,transparent 3.5px),radial-gradient(circle at 24px calc(100% - 24px),#47685A 3px,transparent 3.5px),radial-gradient(circle at calc(100% - 24px) calc(100% - 24px),#47685A 3px,transparent 3.5px)}
+.cmd{font:500 30px RH;color:#B7D47A}.k{margin-top:14px;font:400 24px RH;color:#8EC3E6}
+h1{margin:0;font:900 96px/0.92 BS;letter-spacing:.005em;max-width:1000px}
+.ft{display:flex;justify-content:space-between;align-items:center;font:500 26px RH;color:#A7BFB2}.ft b{color:#F6F8F4}
+.arc{position:absolute;left:80px;right:80px;bottom:120px;height:220px;opacity:.10}
+</style></head><body><div class="c"><svg class="arc" viewBox="0 0 1040 200" preserveAspectRatio="none"><path d="M0 200 Q520 -60 1040 200" fill="none" stroke="#E7EEEA" stroke-width="4"/></svg>
+<div><div class="cmd">$ cat ${esc(cmd)}</div>${kicker ? `<div class="k">${esc(kicker)}</div>` : ''}</div>
+<h1 style="font-size:${h3.length > 56 ? 60 : h3.length > 34 ? 74 : 96}px">${esc(h3)}</h1>
+<div class="ft"><span>Craig Michael Thompson · Head of Engineering</span><b>craigthompson.dev</b></div></div></body></html>`);
+  await og.evaluate(() => document.fonts.ready);
+  const shot = await og.screenshot({ type: 'png' });
+  mkdirSync(join(OUT, dir), { recursive: true });
+  writeFileSync(join(OUT, dir, 'og.png'), await sharp(shot).png({ palette: true, quality: 90, effort: 10 }).toBuffer());
+}
+
 const pageThemeHead = () => (HOME.themeHead || '').replace("document.querySelector('#app .c-root')", "document.querySelector('.c-root')");
+
+// The shell every file page shares: head, header with theme and motion buttons, scripts.
+function pageShell({ title, desc, url, depth, cssName, socialTitle, imageAlt, ld, main }) {
+  return `<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>${esc(title)}</title>
+<meta name="description" content="${esc(desc)}">
+<link rel="canonical" href="${url}">
+${social({ title: socialTitle, desc, url, type: 'article', image: url + 'og.png', imageAlt })}
+<script type="application/ld+json">${JSON.stringify(ld)}</script>
+${meta(depth)}
+${pageThemeHead()}
+${preloadFont(depth + 'assets/fonts/big-shoulders-display-latin-600.woff2')}
+${preloadFont(depth + 'assets/fonts/public-sans-latin-400.woff2')}
+<link rel="stylesheet" href="${depth}${cssName}">
+</head>
+<body>
+<div class="c-root" style="background: var(--bg); color: var(--text); min-height: 100vh; font-size: 16px; line-height: 1.7">
+<div class="sp">
+<header class="sp-top"><a class="sp-home" href="${depth}"><span class="c-dot" style="width: 9px; height: 9px; border-radius: 50%; background: var(--ok)"></span>craigthompson.dev</a>
+<div class="sp-tools"><button type="button" class="sp-b" id="sp-theme">theme</button><button type="button" class="sp-b" id="sp-motion" hidden>pause animations</button></div></header>
+<main class="sp-main">
+${main}</main>
+</div>
+</div>
+<script>(function(){var d=document.documentElement,r=document.querySelector('.c-root'),tb=document.getElementById('sp-theme'),mb=document.getElementById('sp-motion');
+function label(){var L=r.classList.contains('c-light');tb.textContent=L?'dark theme':'light theme';tb.setAttribute('aria-label',L?'Switch to dark theme':'Switch to light theme')}
+tb.addEventListener('click',function(){var L=!r.classList.contains('c-light');r.classList.toggle('c-light',L);d.classList.toggle('t-light',L);d.classList.toggle('t-dark',!L);try{localStorage.setItem('theme',L?'light':'dark')}catch(e){}label()});label();
+var loops=document.querySelector('.c-glow,.c-trav,.c-tick,.c-b1,.c-ping');var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+if(loops&&!reduce){mb.hidden=false;var ml=function(){var off=r.classList.contains('still');mb.textContent=off?'play animations':'pause animations'};mb.addEventListener('click',function(){var off=!r.classList.contains('still');r.classList.toggle('still',off);try{localStorage.setItem('motion',off?'off':'on')}catch(e){}ml()});ml()}})()</script>
+<script>${i18nBoot()}</script>
+${ASK.endpoint ? '<script>' + beacon(ASK.endpoint, false) + '</script>' : ''}
+${cfAnalytics}
+</body>
+</html>
+`;;
+}
 
 async function buildFilePages(browser, panels) {
   const css = `${fontFaces('fonts/', ['Big Shoulders Display', 'Public Sans', 'Red Hat Mono'])}
@@ -755,6 +828,39 @@ ${HOME.css}
 .sp-cta a.go{background:var(--acc);color:var(--bg)!important}
 .sp-cta a.alt{border:1px solid var(--line3);color:var(--head)!important}
 @media print{.sp-tools,.sp-more,.sp-pn,.sp-cta{display:none!important}}
+/* blog posts */
+.sp-post{max-width:72ch}
+.sp-post-h{margin:0 0 28px}
+.sp-post-k{margin:0 0 10px;font-family:var(--f-mono);font-size:13px;color:var(--mute)}
+.sp-post-k b{font-weight:500;color:var(--acc)}
+.sp-post h1{margin:0 0 14px;font-family:var(--f-head);font-size:clamp(34px,5.4vw,56px);line-height:1;color:var(--head);letter-spacing:.005em;text-wrap:balance}
+.sp-post-note{margin:0;padding:10px 14px;border-inline-start:3px solid var(--line3);background:var(--panel);border-radius:0 8px 8px 0;font-size:14px;color:var(--text3)}
+.sp-post-b{color:var(--text2);font-size:17px;line-height:1.75}
+.sp-post-b>*{margin:0 0 1.1em}
+.sp-post-b h2,.sp-post-b h3,.sp-post-b h4{margin:1.8em 0 .6em;color:var(--head);font-family:var(--f-head);line-height:1.15;letter-spacing:.005em}
+.sp-post-b h2{font-size:30px}.sp-post-b h3{font-size:24px}.sp-post-b h4{font-size:20px}
+.sp-post-b a{color:var(--acc);text-underline-offset:3px}
+.sp-post-b code{font-family:var(--f-mono);font-size:.88em;padding:.08em .35em;border-radius:4px;background:var(--panel2);border:1px solid var(--line2)}
+.sp-post-b pre{overflow:auto;padding:14px 16px;border:1px solid var(--line2);border-radius:10px;background:var(--panel);font-size:14px;line-height:1.6;direction:ltr;text-align:left}
+.sp-post-b pre:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.sp-post-b pre code{padding:0;border:0;background:none;font-size:inherit}
+.sp-post-b img{max-width:100%;height:auto;border-radius:8px;border:1px solid var(--line2)}
+.sp-post-b blockquote{margin-inline:0;padding:2px 16px;border-inline-start:3px solid var(--acc);color:var(--text3)}
+.sp-post-b ul,.sp-post-b ol{padding-inline-start:1.4em}
+.sp-post-b li{margin:.3em 0}
+.sp-post-b table{border-collapse:collapse;display:block;overflow:auto}
+.sp-post-b th,.sp-post-b td{border:1px solid var(--line2);padding:6px 10px}
+.sp-tags{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 16px;padding:0;list-style:none}
+.sp-tags li{font-family:var(--f-mono);font-size:12px;padding:2px 8px;border:1px solid var(--line3);border-radius:999px;color:var(--text3)}
+.sp-bl{list-style:none;margin:0 0 28px;padding:0;border-top:1px dashed var(--line2)}
+.sp-bl li{display:grid;grid-template-columns:7.5em minmax(0,1fr);gap:4px 18px;padding:14px 0;border-bottom:1px dashed var(--line2)}
+.sp-bl time{font-family:var(--f-mono);font-size:13px;color:var(--dim);padding-top:3px}
+.sp-bl a{font-weight:600;font-size:17px;color:var(--head);text-decoration:none}
+.sp-bl a:hover{text-decoration:underline;text-decoration-color:var(--acc);text-underline-offset:3px}
+.sp-bl p{margin:4px 0 0;font-size:14.5px;color:var(--text3)}
+.sp-yr{margin:30px 0 8px;font-family:var(--f-mono);font-size:14px;font-weight:500;color:var(--ok)}
+@media (max-width:640px){.sp-bl li{grid-template-columns:minmax(0,1fr)}}
+@media print{.sp-post-b pre{white-space:pre-wrap}}
 `;
   const cssName = 'assets/pages.' + hash(css) + '.css';
   writeOut(cssName, css);
@@ -778,74 +884,89 @@ ${HOME.css}
       const prev = list[(i - 1 + list.length) % list.length], next = list[(i + 1) % list.length];
       const homeLink = `../../?${S.home}=${HOME_KEYS[kind][p.file]}#${S.dir}`;
       // Social preview for this file.
-      await og.setContent(`<!doctype html><html><head><style>
-@font-face{font-family:BS;src:url(${font('big-shoulders-display-latin-600.woff2')});font-weight:100 900}
-@font-face{font-family:PS;src:url(${font('public-sans-latin-400.woff2')});font-weight:100 900}
-@font-face{font-family:RH;src:url(${font('red-hat-mono-latin-400.woff2')});font-weight:300 700}
-html,body{margin:0;width:1200px;height:630px;background:#16271F;color:#F6F8F4;overflow:hidden}
-.c{position:relative;box-sizing:border-box;width:1200px;height:630px;padding:68px 80px;display:flex;flex-direction:column;justify-content:space-between;background:radial-gradient(circle at 24px 24px,#47685A 3px,transparent 3.5px),radial-gradient(circle at calc(100% - 24px) 24px,#47685A 3px,transparent 3.5px),radial-gradient(circle at 24px calc(100% - 24px),#47685A 3px,transparent 3.5px),radial-gradient(circle at calc(100% - 24px) calc(100% - 24px),#47685A 3px,transparent 3.5px)}
-.cmd{font:500 30px RH;color:#B7D47A}.k{margin-top:14px;font:400 24px RH;color:#8EC3E6}
-h1{margin:0;font:900 96px/0.92 BS;letter-spacing:.005em;max-width:1000px}
-.ft{display:flex;justify-content:space-between;align-items:center;font:500 26px RH;color:#A7BFB2}.ft b{color:#F6F8F4}
-.arc{position:absolute;left:80px;right:80px;bottom:120px;height:220px;opacity:.10}
-</style></head><body><div class="c"><svg class="arc" viewBox="0 0 1040 200" preserveAspectRatio="none"><path d="M0 200 Q520 -60 1040 200" fill="none" stroke="#E7EEEA" stroke-width="4"/></svg>
-<div><div class="cmd">$ cat ${esc(S.label + p.file)}</div>${kicker ? `<div class="k">${esc(kicker)}</div>` : ''}</div>
-<h1>${esc(h3)}</h1>
-<div class="ft"><span>Craig Michael Thompson · Head of Engineering</span><b>craigthompson.dev</b></div></div></body></html>`);
-      await og.evaluate(() => document.fonts.ready);
-      const shot = await og.screenshot({ type: 'png' });
-      mkdirSync(join(OUT, dir), { recursive: true });
-      writeFileSync(join(OUT, dir, 'og.png'), await sharp(shot).png({ palette: true, quality: 90, effort: 10 }).toBuffer());
+      await ogImage(og, dir, S.label + p.file, kicker, h3);
       const ld = { '@context': 'https://schema.org', '@type': 'Article', headline: h3, name: p.file, description: desc, url, image: url + 'og.png', inLanguage: 'en-GB', dateModified: TODAY, author: { '@type': 'Person', '@id': SITE + '/#person', name: 'Craig Michael Thompson', url: SITE + '/' }, isPartOf: { '@type': 'WebSite', name: 'craigthompson.dev', url: SITE + '/' } };
-      const page = `<!doctype html>
-<html lang="en-GB">
-<head>
-<meta charset="utf-8">
-<title>${esc(title)}</title>
-<meta name="description" content="${esc(desc)}">
-<link rel="canonical" href="${url}">
-${social({ title: `${h3} · ${p.file}`, desc, url, type: 'article', image: url + 'og.png', imageAlt: `${h3}. ${S.label}${p.file}, Craig Michael Thompson` })}
-<script type="application/ld+json">${JSON.stringify(ld)}</script>
-${meta('../../')}
-${pageThemeHead()}
-${preloadFont('../../assets/fonts/big-shoulders-display-latin-600.woff2')}
-${preloadFont('../../assets/fonts/public-sans-latin-400.woff2')}
-<link rel="stylesheet" href="../../${cssName}">
-</head>
-<body>
-<div class="c-root" style="background: var(--bg); color: var(--text); min-height: 100vh; font-size: 16px; line-height: 1.7">
-<div class="sp">
-<header class="sp-top"><a class="sp-home" href="../../"><span class="c-dot" style="width: 9px; height: 9px; border-radius: 50%; background: var(--ok)"></span>craigthompson.dev</a>
-<div class="sp-tools"><button type="button" class="sp-b" id="sp-theme">theme</button><button type="button" class="sp-b" id="sp-motion" hidden>pause animations</button></div></header>
-<main class="sp-main">
-<p class="sp-crumb">$ cat <a href="${homeLink}">${S.label}</a>${esc(p.file)}</p>
+      const page = pageShell({ title, desc, url, depth: '../../', cssName, socialTitle: `${h3} · ${p.file}`, imageAlt: `${h3}. ${S.label}${p.file}, Craig Michael Thompson`, ld, main: `<p class="sp-crumb">$ cat <a href="${homeLink}">${S.label}</a>${esc(p.file)}</p>
 <h1 class="c-sr">${esc(h3)}</h1>
 ${html}
 ${terms.length ? `<section class="sp-terms" aria-labelledby="sp-terms-h"><h2 id="sp-terms-h"># terms used</h2><dl>${terms.map(([, t, d]) => `<dt>${esc(t)}</dt><dd>${esc(d)}</dd>`).join('')}</dl></section>` : ''}
 <nav class="sp-pn" aria-label="More ${S.label}"><a href="../${SLUG(prev.file)}/"><span>← previous</span><b>${esc(prev.file)}</b></a><a class="next" href="../${SLUG(next.file)}/"><span>next →</span><b>${esc(next.file)}</b></a></nav>
 <section class="sp-more" aria-labelledby="sp-more-h"><h2 id="sp-more-h">$ ls ${S.label}</h2><ul>${list.map((x) => `<li><a href="../${SLUG(x.file)}/"${x === p ? ' aria-current="page"' : ''}>${esc(x.file)}</a></li>`).join('')}</ul></section>
 <aside class="sp-cta" aria-label="About Craig"><p><b>Craig Michael Thompson</b>, Head of Engineering: hands-on, AI-first, from start-up to acquisition. Open to new roles.</p><div><a class="go" href="mailto:craga89@gmail.com">get in touch</a><a class="alt" href="${homeLink}">see it in the portfolio</a><a class="alt" href="../../cv/">CV</a></div></aside>
-</main>
-</div>
-</div>
-<script>(function(){var d=document.documentElement,r=document.querySelector('.c-root'),tb=document.getElementById('sp-theme'),mb=document.getElementById('sp-motion');
-function label(){var L=r.classList.contains('c-light');tb.textContent=L?'dark theme':'light theme';tb.setAttribute('aria-label',L?'Switch to dark theme':'Switch to light theme')}
-tb.addEventListener('click',function(){var L=!r.classList.contains('c-light');r.classList.toggle('c-light',L);d.classList.toggle('t-light',L);d.classList.toggle('t-dark',!L);try{localStorage.setItem('theme',L?'light':'dark')}catch(e){}label()});label();
-var loops=document.querySelector('.c-glow,.c-trav,.c-tick,.c-b1,.c-ping');var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
-if(loops&&!reduce){mb.hidden=false;var ml=function(){var off=r.classList.contains('still');mb.textContent=off?'play animations':'pause animations'};mb.addEventListener('click',function(){var off=!r.classList.contains('still');r.classList.toggle('still',off);try{localStorage.setItem('motion',off?'off':'on')}catch(e){}ml()});ml()}})()</script>
-<script>${i18nBoot()}</script>
-${ASK.endpoint ? '<script>' + beacon(ASK.endpoint, false) + '</script>' : ''}
-${cfAnalytics}
-</body>
-</html>
-`;
+` });
       writeFileSync(join(OUT, dir, 'index.html'), page);
       urls.push(url);
     }
   }
+  await buildBlog(og, cssName, urls);
   await og.close();
   HOME.pageUrls = urls;
   console.log('file pages:', urls.length);
+}
+
+// ---------- the blog: /blog/ and /blog/<slug>/ from src/blog/*.md ----------
+const LONG_DATE = (d) => new Date(d + 'T12:00:00Z').toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
+async function renderPost(md, imgDir) {
+  const { marked } = await import('marked');
+  const sharp = (await import('sharp')).default;
+  // Headings start at h2 (the post title is the h1), keeping the post's own steps between levels.
+  const levels = [...md.matchAll(/^(#{1,6}) /gm)].map((m) => m[1].length);
+  const shift = levels.length ? Math.min(...levels) - 2 : 0;
+  const sizes = {};
+  for (const m of md.matchAll(/!\[[^\]]*\]\(img\/([^)\s]+)\)/g)) { try { const meta = await sharp(join(imgDir, m[1])).metadata(); sizes[m[1]] = meta; } catch (e) {} }
+  const renderer = new marked.Renderer();
+  renderer.heading = ({ tokens, depth }) => { const l = Math.min(6, Math.max(2, depth - shift)); return `<h${l}>${renderer.parser.parseInline(tokens)}</h${l}>\n`; };
+  renderer.code = ({ text, lang }) => `<pre tabindex="0" translate="no"${lang ? ` data-lang="${esc(lang)}"` : ''}><code${lang ? ` class="language-${esc(lang)}"` : ''}>${text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code></pre>\n`;
+  renderer.image = ({ href, text }) => { const f = String(href).replace(/^img\//, ''); const m = sizes[f]; return `<img src="../img/${esc(f)}" alt="${esc(text || '')}" loading="lazy" decoding="async"${m ? ` width="${m.width}" height="${m.height}"` : ''}>`; };
+  return marked.parse(md, { renderer, gfm: true });
+}
+
+async function buildBlog(og, cssName, urls) {
+  if (!POSTS.length) return;
+  const IMG = join(SRC, 'blog', 'img');
+  if (existsSync(IMG)) { mkdirSync(join(OUT, 'blog', 'img'), { recursive: true }); for (const f of readdirSync(IMG)) copyFileSync(join(IMG, f), join(OUT, 'blog', 'img', f)); }
+  const cta = (depth) => `<aside class="sp-cta" aria-label="About Craig"><p><b>Craig Michael Thompson</b>, Head of Engineering: hands-on, AI-first, from start-up to acquisition. Open to new roles.</p><div><a class="go" href="mailto:craga89@gmail.com">get in touch</a><a class="alt" href="${depth}#blog">the portfolio</a><a class="alt" href="${depth}cv/">CV</a></div></aside>`;
+  const author = { '@type': 'Person', '@id': SITE + '/#person', name: 'Craig Michael Thompson', url: SITE + '/' };
+  for (let i = 0; i < POSTS.length; i++) {
+    const b = POSTS[i], dir = `blog/${b.slug}/`, url = `${SITE}/${dir}`;
+    const newer = POSTS[i - 1], older = POSTS[i + 1];
+    const html = await renderPost(b.md, IMG);
+    const desc = b.summary.length > 158 ? b.summary.slice(0, 155).replace(/\s\S*$/, '') + '…' : b.summary;
+    await ogImage(og, dir, `blog/${b.slug}.md`, `${LONG_DATE(b.date)}${b.tags.length ? ' · ' + b.tags.slice(0, 3).join(' · ') : ''}`, b.title);
+    const ld = { '@context': 'https://schema.org', '@type': 'BlogPosting', headline: b.title, description: desc, url, image: url + 'og.png', inLanguage: 'en-GB', datePublished: b.date, keywords: b.tags.join(', '), author, isPartOf: { '@type': 'Blog', name: 'Craig Michael Thompson · blog', url: SITE + '/blog/' }, ...(b.original ? { sameAs: b.original } : {}) };
+    const main = `<p class="sp-crumb">$ cat <a href="../">blog/</a>${esc(b.slug)}.md</p>
+<article class="sp-post">
+<header class="sp-post-h"><p class="sp-post-k"><time datetime="${b.date}">${LONG_DATE(b.date)}</time> · ${b.minutes} min read</p>
+<h1>${esc(b.title)}</h1>
+${b.tags.length ? `<ul class="sp-tags" aria-label="Tags">${b.tags.map((t) => `<li>${esc(t)}</li>`).join('')}</ul>` : ''}
+<p class="sp-post-note">First published on my old blog${b.original ? ` (<a href="${esc(b.archived || b.original)}">${esc(new URL(b.original).host)}</a>)` : ''} in ${new Date(b.date + 'T12:00:00Z').toLocaleDateString('en-GB', { month: 'long', year: 'numeric', timeZone: 'UTC' })}, and kept as it was written. Some code and links are out of date.</p></header>
+<div class="sp-post-b">
+${html}</div>
+</article>
+<nav class="sp-pn" aria-label="More posts">${newer ? `<a href="../${newer.slug}/"><span>← newer</span><b>${esc(newer.title)}</b></a>` : '<span></span>'}${older ? `<a class="next" href="../${older.slug}/"><span>older →</span><b>${esc(older.title)}</b></a>` : ''}</nav>
+<section class="sp-more" aria-labelledby="sp-more-h"><h2 id="sp-more-h">$ ls blog/</h2><ul>${POSTS.map((x) => `<li><a href="../${x.slug}/"${x === b ? ' aria-current="page"' : ''}>${esc(x.slug)}.md</a></li>`).join('')}</ul></section>
+${cta('../../')}
+`;
+    mkdirSync(join(OUT, dir), { recursive: true });
+    writeFileSync(join(OUT, dir, 'index.html'), pageShell({ title: `${b.title} · blog · Craig Michael Thompson`, desc, url, depth: '../../', cssName, socialTitle: b.title, imageAlt: `${b.title}. blog/${b.slug}.md, Craig Michael Thompson`, ld, main }));
+    urls.push(url);
+  }
+  // The index: every post, newest first, by year.
+  const years = [...new Set(POSTS.map((b) => b.date.slice(0, 4)))];
+  const url = `${SITE}/blog/`;
+  const span = `${years[years.length - 1]}–${years[0]}`;
+  const desc = `${POSTS.length} posts from Craig Michael Thompson's old blog on craigsworks.com, ${span}: JavaScript, qTip2, Knockout, Durandal, webpack and more.`;
+  await ogImage(og, 'blog/', 'ls -t blog/', `${POSTS.length} posts · ${span}`, 'Blog');
+  const main = `<p class="sp-crumb">$ ls -t <a href="../#blog">blog/</a></p>
+<h1 class="c-sr">Blog</h1>
+<p style="margin: 0 0 8px; color: var(--text3); max-width: 64ch">${POSTS.length} posts from my old blog on craigsworks.com, ${span}, kept as they were written. Some of the tools have since moved on.</p>
+${years.map((y) => `<h2 class="sp-yr">${y}</h2><ol class="sp-bl">${POSTS.filter((b) => b.date.startsWith(y)).map((b) => `<li><time datetime="${b.date}">${LONG_DATE(b.date).replace(/ \d{4}$/, '')}</time><div><a href="${b.slug}/">${esc(b.title)}</a><p>${esc(b.summary)}</p></div></li>`).join('')}</ol>`).join('\n')}
+${cta('../')}
+`;
+  const ld = { '@context': 'https://schema.org', '@type': 'Blog', name: 'Craig Michael Thompson · blog', description: desc, url, author, blogPost: POSTS.map((b) => ({ '@type': 'BlogPosting', headline: b.title, datePublished: b.date, url: `${SITE}/blog/${b.slug}/` })) };
+  writeFileSync(join(OUT, 'blog', 'index.html'), pageShell({ title: 'Blog · Craig Michael Thompson', desc, url, depth: '../', cssName, socialTitle: 'Blog · Craig Michael Thompson', imageAlt: `Blog: ${POSTS.length} posts, ${span}. Craig Michael Thompson`, ld, main }));
+  urls.push(url);
+  console.log('blog:', POSTS.length, 'posts');
 }
 
 // The plain CV as a PDF, printed by Chromium with the page's own print styles.

@@ -1,0 +1,17 @@
+---
+title: "CKEDITOR `key` event - modifier keys"
+date: 2014-07-03
+tags: [Plugins, JavaScript, CKEditor]
+original: https://blog.craigsworks.com/ckeditor-key-modifiers/
+archived: https://web.archive.org/web/20161104142346/http://blog.craigsworks.com:80/ckeditor-key-modifiers/
+---
+When subscribing to the `key` event on a given `CKEDITOR` instance, the `event.data.keyCode` property will be **the sum of both the associated keyCode and any pressed modifier keyCodes e.g.** ctrl/shift/alt keys as noted on the *[official documentation](http://docs.ckeditor.com/#!/api/CKEDITOR.editor-event-key)*
+
+> - keyCode : Number  
+>    *A number representing the key code (or a combination thereof). It is the sum of the current key code and the CKEDITOR.CTRL, CKEDITOR.SHIFT and CKEDITOR.ALT constants, if those are pressed.*
+
+In order to figure out what key as actually pressed *(minus the modifier)* we can use a simple `sanitizeKeyCode` method
+
+[See the code on GitHub](https://gist.github.com/74ef640767bba661621f)
+
+Also included is a handy `isModifier` method that takes a `keyCode` and a `modifierCode`, and rrturns true **if the keyCode is a sum of another key and that given modifier.**

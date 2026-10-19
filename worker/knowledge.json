@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-19T11:24:47.619Z",
+ "generated": "2026-10-19T12:49:25.042Z",
  "passages": [
   {
    "id": "intro",
@@ -12,7 +12,7 @@
   {
    "id": "profile",
    "title": "Profile",
-   "text": "Craig Michael Thompson Full-stack engineer Newcastle upon Tyne, UK 12: 24 (UTC+1) 12:24 UTC+1 in Newcastle open to new roles. Contact: craga89@gmail.com, github.com/Craga89, linkedin.com/in/craigmichaelthompson.",
+   "text": "Craig Michael Thompson Full-stack engineer Newcastle upon Tyne, UK 13: 49 (UTC+1) 13:49 UTC+1 in Newcastle open to new roles. Contact: craga89@gmail.com, github.com/Craga89, linkedin.com/in/craigmichaelthompson.",
    "href": "#top",
    "kind": "link",
    "key": ""
@@ -448,6 +448,150 @@
    "href": "#faq",
    "kind": "link",
    "key": ""
+  },
+  {
+   "id": "blog-generating-roman-numerals",
+   "title": "generating-roman-numerals.md: Generating Roman Numerals (blog post, 2015)",
+   "text": "A post Craig wrote on his old blog (craigsworks.com) on 2015-12-02, about JavaScript. We've been conducting pair programming exercises at work using the excellent FreeCodeCamp, and came upon an interesting problem to solve using JavaScript. We needed to create a generic function for generating Roman Numeral equivalent for any number within a reasonable range (say, to 10000). This is what we came up with! See the code on GitHub You can use it like so: See the code on GitHub…",
+   "href": "blog/generating-roman-numerals/",
+   "kind": "blog",
+   "key": "generating-roman-numerals"
+  },
+  {
+   "id": "blog-durandal-and-webpack-part-1-module-format",
+   "title": "durandal-and-webpack-part-1-module-format.md: Durandal and Webpack: Part 1 - Module format (blog post, 2015)",
+   "text": "A post Craig wrote on his old blog (craigsworks.com) on 2015-07-26, about Knockout.js, Durandal, jQuery, Webpack, Guide, Require.js. This post is part of a series of posts entitled Durandal and Webpack. Check-out the Introduction here if you haven't already, as well as the online examples AMD Durandal's core is written using the Asynchronous Module Definition pattern, which allows users to define their module and load their dependencies asynchronously, a must have for any web-based application. It takes the following form: See the code on GitHub For example, Durandal's viewEngine module has a dependency on it's own system module, as well as jQuery, and is written as: See the code on GitHub This syntax will likely comprise the large majority of your existing application code, and whilst Webpack can understand this format natively, the benefits on enclosing the whole module within a closure are lost. Since Webpack bundles the modules within the same script, we no longer require an asynchronous definition format, and can instead opt for the simpler CommonJS alternative.. CommonJS The CommonJS module format is the synchronous sibling to AMD, and is the primary module format for…",
+   "href": "blog/durandal-and-webpack-part-1-module-format/",
+   "kind": "blog",
+   "key": "durandal-and-webpack-part-1-module-format"
+  },
+  {
+   "id": "blog-durandal-and-webpack-part-2-composition",
+   "title": "durandal-and-webpack-part-2-composition.md: Durandal and Webpack: Part 2 - Composition (blog post, 2015)",
+   "text": "A post Craig wrote on his old blog (craigsworks.com) on 2015-07-26. This post is part of a series of posts entitled Durandal and Webpack. Check-out the Introduction here if you haven't already, as well as the online examples Durandal implements a process known as composition, which allows developers to compose arbitrary Views and ViewModels together into a single output. Much like how React lets you nest Components within your render method. This composition workflow is used extensively in Durandal and is the process by which your ViewModel and View(s) are stitched together to create the basic building blocks of your application. By default, the composition engine deals with what are known in Durandal as moduleIds and viewUrls, which are URLs that point to where the ViewModel or View are situated, respectively. Since Webpack doesn't understand this natively, we'll need to enhance this functionality a little and allow us to directly pass the module, rather than a path pointing to it. system.acquire The logic for this method is fairly straight forward, taking a single moduleId string and returning a Promise instance that resolves with the module: See the code on GitHub We'll…",
+   "href": "blog/durandal-and-webpack-part-2-composition/",
+   "kind": "blog",
+   "key": "durandal-and-webpack-part-2-composition"
+  },
+  {
+   "id": "blog-github-pages-and-webpack-2",
+   "title": "github-pages-and-webpack-2.md: GitHub Pages + Webpack Chunks = output.publicPath (blog post, 2015)",
+   "text": "A post Craig wrote on his old blog (craigsworks.com) on 2015-07-26. If you're looking to use compiled a Webpack application with chunks in your gh-pages repository, you'll need to make sure your output.publicPath is set properly in your webpack.config.js (or similar) file, otherwise your chunks will probably have the wrong URL! Simply set up your output.publicPath to point to the output directory, prefixed with the name of your GitHub project. For example my durandal-webpack compiles to a dist/ directory, and it's publicPath points to... You'll also need to update your index.html to make sure the <script referencing your compiled file reflects this change! Took me a few tries to understand why my chunks weren't loading, so hope this saves you some of that debugging pain! Hint: This also works well with webpack-dev-server.…",
+   "href": "blog/github-pages-and-webpack-2/",
+   "kind": "blog",
+   "key": "github-pages-and-webpack-2"
+  },
+  {
+   "id": "blog-gulp-watch-less",
+   "title": "gulp-watch-less.md: gulp-watch-less - Watch LESS @imports (blog post, 2014)",
+   "text": "A post Craig wrote on his old blog (craigsworks.com) on 2014-10-12, about Plugins, JavaScript, Gulp, Node. I've recently released a new plugin aptly named gulp-watch-less, which will monitor your .less files using the excellent gulp-watch task, and output changed files to the stream whenever the file itself or any of it's @imports have changed. It's usage is pretty straight forward, using the same signature as the underlying gulp-watch plugin: See the code on GitHub Running gulp less will compile all .less files, and watch for changes to those watched and their @imports. Simple! It will also monitor the original files for changes to @import statements (additions, deletions, path updates etc) to ensure the associated files are watched correctly! You can get the plugin using the usual npm install gulp-watch-less or visit the GitHub project for more documentation or to report an issue. Big thanks to Vsevolod Strukchinsky for the modifying his existing (and awesome!) gulp-watch plugin to make this possible. Happy…",
+   "href": "blog/gulp-watch-less/",
+   "kind": "blog",
+   "key": "gulp-watch-less"
+  },
+  {
+   "id": "blog-less-file-import-list",
+   "title": "less-file-import-list.md: LESS - Generate a deep list of all a file's @imports (blog post, 2014)",
+   "text": "A post Craig wrote on his old blog (craigsworks.com) on 2014-10-05, about JavaScript, LESS. Sometimes it's useful to get a list of all @imports for a given .less file, especially if you want to watch those files for changes in your gulp or grunt build steps. We can easily achieve this using the LESS parser itself! See the code on GitHub Disclaimer... this relies on internal implementation details of the LESS.js library and as such could break at any time. That being said, this code should work on all LESS.js versions stretching right back to v1.3! Sample use See the code on GitHub gulp-watch-less I've rolled the above code into a gulp plugin called gulp-watch-less, which works exactly like the gulp-watch plugin but also tracks changes to all @import paths of the files. Neat! Take a look at the official repo for more information on how to use this in your work…",
+   "href": "blog/less-file-import-list/",
+   "kind": "blog",
+   "key": "less-file-import-list"
+  },
+  {
+   "id": "blog-durandal-type-cast-querystring-parameters",
+   "title": "durandal-type-cast-querystring-parameters.md: Durandal - Type cast queryString parameters (blog post, 2014)",
+   "text": "A post Craig wrote on his old blog (craigsworks.com) on 2014-07-28. By default, Durandal's router.parseQueryString method will simply provide all query parameters as strings, which isn't ideal if you're working with data heavily. We can work around this by overwriting and enhancing the parseQueryString method, type casting variables into their correct types. See the code on GitHub This is useful for primitive data types, but as usual YMMV depending on the type of data you're attempting to pass…",
+   "href": "blog/durandal-type-cast-querystring-parameters/",
+   "kind": "blog",
+   "key": "durandal-type-cast-querystring-parameters"
+  },
+  {
+   "id": "blog-knockout-value-binding-input-number",
+   "title": "knockout-value-binding-input-number.md: Knockout `value` binding + HTML5 number input (blog post, 2014)",
+   "text": "A post Craig wrote on his old blog (craigsworks.com) on 2014-07-17, about JavaScript, Knockout.js, HTML5. Knockout's default value binding is great in most cases, but when using the new HTML5 <input type=\"number\" / element, it will always return an empty string when the input is a non-number i.e. contains anything but 0-9 and a decimal! This is actually a byproduct of the number type's WHATWG specification The value sanitization algorithm is as follows: If the value of the element is not a valid floating-point number, then set it to the empty string instead. Luckily, the specification also provides a means of retrieving the input's value as a number, via the valueAsNumber property. When a non-numeric string is used, this will return NaN. The solution We can enhance Knockout's selectExtensions.readValue, which is utilised by the value binding to add support for this feature where possible: See the code on GitHub Note: A byproduct of this implementation is that it will prevent people typing non-numeric characters! There's no easy way around this…",
+   "href": "blog/knockout-value-binding-input-number/",
+   "kind": "blog",
+   "key": "knockout-value-binding-input-number"
+  },
+  {
+   "id": "blog-jquery-ui-draggable-exclusive-draggables",
+   "title": "jquery-ui-draggable-exclusive-draggables.md: ui.draggable.exclusive - Exclusive draggables (blog post, 2014)",
+   "text": "A post Craig wrote on his old blog (craigsworks.com) on 2014-07-14, about Plugins, JavaScript, jQuery, jQuery UI. Shout out to to my friend and colleague Steve Henderson who came up with the original concept behind this idea! UI.Draggable(s)... they're not exclusive! jQuery UI's draggable and droppable component's are great, and are used widely throughout the web to provide consistent, well tested drag/drop functionality across multiple device types. However, one thing that is lacking, is a solid way to make draggable's exclusive i.e. only drop on a single droppable, even if it overlaps multiple droppables! As it stands, any draggable which overlaps a droppable that is marked as active via the accept handler's \"truthyness\" will have a drop event fired if the draggable is released upon it when the drag operation ends. This is problematic if you have say, four closely positioned droppables, only one of which should be dropped upon in a single drag operation. Live demonstration Drag the draggable block below over the numbered droppables. You'll notice that it's possible to drop onto multiple droppables in a single drag operation. Making them exclusive Each draggable operation should…",
+   "href": "blog/jquery-ui-draggable-exclusive-draggables/",
+   "kind": "blog",
+   "key": "jquery-ui-draggable-exclusive-draggables"
+  },
+  {
+   "id": "blog-ckeditor-key-modifiers",
+   "title": "ckeditor-key-modifiers.md: CKEDITOR `key` event - modifier keys (blog post, 2014)",
+   "text": "A post Craig wrote on his old blog (craigsworks.com) on 2014-07-03, about Plugins, JavaScript, CKEditor. When subscribing to the key event on a given CKEDITOR instance, the event.data.keyCode property will be the sum of both the associated keyCode and any pressed modifier keyCodes e.g. ctrl/shift/alt keys as noted on the official documentation - keyCode : Number A number representing the key code (or a combination thereof). It is the sum of the current key code and the CKEDITOR.CTRL, CKEDITOR.SHIFT and CKEDITOR.ALT constants, if those are pressed. In order to figure out what key as actually pressed (minus the modifier) we can use a simple sanitizeKeyCode method See the code on GitHub Also included is a handy isModifier method that takes a keyCode and a modifierCode, and rrturns true if the keyCode is a sum of another key and that given…",
+   "href": "blog/ckeditor-key-modifiers/",
+   "kind": "blog",
+   "key": "ckeditor-key-modifiers"
+  },
+  {
+   "id": "blog-qtip2-now-on-jsdelivr",
+   "title": "qtip2-now-on-jsdelivr.md: qTip2 - Now on jsDelivr (blog post, 2013)",
+   "text": "A post Craig wrote on his old blog (craigsworks.com) on 2013-12-16, about Plugins, JavaScript, qTip2. qTip2 is now officially available through the jsDelivr CDN, and is the CDN of choice for the library starting from today's update! jsDelivr has better performance and availabilty than current the CDNJS service, so it's a welcome addition to the libraries availablity. You can grab the latest stable releases (and older releases too!) from the project page and official download page. Note: qTip2 will still be available as usual from the CDNJS CloudFlare service, but pull request responses are a little slower than jsDelivr, so new releases may not be immediately…",
+   "href": "blog/qtip2-now-on-jsdelivr/",
+   "kind": "blog",
+   "key": "qtip2-now-on-jsdelivr"
+  },
+  {
+   "id": "blog-60fps-scrolling-using-pointer-events-none",
+   "title": "60fps-scrolling-using-pointer-events-none.md: 60fps scrolling using `pointer-events: none` (blog post, 2013)",
+   "text": "A post Craig wrote on his old blog (craigsworks.com) on 2013-11-25. Ryan Seddon just posted a very useful CSS tip to increase your scrolling speeds via use of pointer-events: none, based on Christian Schaefer's tweet: @paul\\irish Easy. Apply \"pointer-events: none\" to the <body on scrollstart and remove it on scrollend. @tabatkins — Christian Schaefer (@derSchepp) November 12, 2013 Read more about it here:…",
+   "href": "blog/60fps-scrolling-using-pointer-events-none/",
+   "kind": "blog",
+   "key": "60fps-scrolling-using-pointer-events-none"
+  },
+  {
+   "id": "blog-qtip2-v2-2-0-released",
+   "title": "qtip2-v2-2-0-released.md: qTip<sup>2</sup> - v2.2.0 released! (blog post, 2013)",
+   "text": "A post Craig wrote on his old blog (craigsworks.com) on 2013-11-21, about javascript, release, plugins, qtip2. Where to Download Head over to the Download page to customise your qTip2 download and grab the latest version! Changelog You can see the various changes in the v2.2.0 release on the…",
+   "href": "blog/qtip2-v2-2-0-released/",
+   "kind": "blog",
+   "key": "qtip2-v2-2-0-released"
+  },
+  {
+   "id": "blog-scratchpad-io",
+   "title": "scratchpad-io.md: Scratchpad.io – Real-time HTML/CSS rendering (blog post, 2012)",
+   "text": "A post Craig wrote on his old blog (craigsworks.com) on 2012-12-13. scratchpad.io is a great little web app by Sandbox Labs that renders your CSS and HTML in real time as you type, and includes localStoragepersistence to stop you from accidentally F5′ing it away! Great for testing out the beginnings of a design, check it…",
+   "href": "blog/scratchpad-io/",
+   "kind": "blog",
+   "key": "scratchpad-io"
+  },
+  {
+   "id": "blog-qtip2-pre-release-changes-aka-what-happened-to-my-qtip-styles",
+   "title": "qtip2-pre-release-changes-aka-what-happened-to-my-qtip-styles.md: qTip<sup>2</sup> - Pre-release changes (AKA What happened to my qTip styles!?) (blog post, 2012)",
+   "text": "A post Craig wrote on his old blog (craigsworks.com) on 2012-11-20, about plugins, javascript. qTip2 is under-going to considerable changes over the next few weeks, with a new website on it’s way, a brand new build system to go along with it, and several new features and documentation updates. However, there are some breaking changes as qTip2 marches on to it’s final 2.0 release, and firmly out of nightly status! As many of you watching GitHub repository will know, the class\\rename branch, which removes dependency upon the ui-tooltip\\ classes used by jQuery UI, has been merged back in the master branch. This means of course, that any of you relying on the old class structure in your code, need to update to the new classes names. A list of old and new class names is listed below to ease this! - #ui-tooltip-<id → #qtip-<id - .ui-tooltip → .qtip - .ui-tooltip-content → .qtip-content - .ui-tooltip-titlebar → .qtip-titlebar - .ui-tooltip-title → .qtip-title - .ui-tooltip-button → .qtip-close - .ui-tooltip-icon → .qtip-icon - .ui-tooltip-focus → .qtip-focus - .ui-tooltip-hover → .qtip-hover - .ui-tooltip-default → .qtip-default As you can see, the ui-tooltip- prefix has simply been…",
+   "href": "blog/qtip2-pre-release-changes-aka-what-happened-to-my-qtip-styles/",
+   "kind": "blog",
+   "key": "qtip2-pre-release-changes-aka-what-happened-to-my-qtip-styles"
+  },
+  {
+   "id": "blog-var-commas-and-equals",
+   "title": "var-commas-and-equals.md: var, commas and equals (blog post, 2012)",
+   "text": "A post Craig wrote on his old blog (craigsworks.com) on 2012-08-12, about javascript. Working with JavaScript for a while (or any other language for that matter) you tend to pick up on a lot of nuances particular to the language, but even long time users get tripped up every now and again, as did I with a recent namespace issue involving… you guessed it: var, commas and equals! Take for example this: See the code on GitHub At first glance, it might seem as if both foo and bar variables should be declared within the local invoke methods scope, but this alas is not the case, and for good reason! Since statements are evaluated right to left, it first attempts to set the bar variable to “uhoh”, and since no bar variable is defined in our local scope (yet), it travels up the scope chain checking for a defined foo variable, until it gets to the window object, (or possibly some other scope if this is embedded within other methods&hrllip;), and sets foo as a property of that scope… we’ve just polluted the global namespace! Perhaps not what you’d expect upon first glance, and an easy thing to get tripped up on. The solution is simple,and actually a little syntactically nicer (i.e. more…",
+   "href": "blog/var-commas-and-equals/",
+   "kind": "blog",
+   "key": "var-commas-and-equals"
+  },
+  {
+   "id": "blog-qtip2-styles-update",
+   "title": "qtip2-styles-update.md: qTip<sup>2</sup> - Styles update (blog post, 2012)",
+   "text": "A post Craig wrote on his old blog (craigsworks.com) on 2012-05-13, about plugins, javascript. In the recent commit today a re-factoring of the CSS stylesheets took place in order to simply the styles qTip2 uses, as well as changes to the underlying tips code to cope with these changes. 1. The biggest change is the movement of the border and border-radius declarations from the titlebar and content elements to the main ui-tooltip element. Thanks to this, many duplicate styles could be removed from the stylesheet for a 10% size saving! - This will likely effect the styling of your tooltips upon updating, and you may see black borders on your tooltip “tips” until you move the border colour declarations to the top ui-tooltip element. 2. The ui-tooltip-shadow class now only works in IE9+ now because of this modification and removal of the IE9 filter declarations. This was done because applying a filter to any element renders the overflow property useless, as reference from this blog post comment: What I think happens in IE<9 is it “designates” a square where DirectX can render on top of a hasLayout box based on width+height properties, and if content tries to expand outside that box…",
+   "href": "blog/qtip2-styles-update/",
+   "kind": "blog",
+   "key": "qtip2-styles-update"
+  },
+  {
+   "id": "blog-where-are-you-using-qtip",
+   "title": "where-are-you-using-qtip.md: Craig Michael Thompson (blog post, 2010)",
+   "text": "A post Craig wrote on his old blog (craigsworks.com) on 2010-07-24. So qTip2 is on it’s way out soon, and I’m looking for a whose who of qTip users! If you’re using qTip on your site and want a chance to be featured on the home page, comment here or send in an…",
+   "href": "blog/where-are-you-using-qtip/",
+   "kind": "blog",
+   "key": "where-are-you-using-qtip"
   }
  ]
 }

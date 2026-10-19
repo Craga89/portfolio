@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Durandal and Webpack: Part 2 - Composition · blog · Craig Michael Thompson</title>
+<meta name="description" content="This post is part of a series of posts entitled Durandal and Webpack.">
+<link rel="canonical" href="https://craigthompson.dev/blog/durandal-and-webpack-part-2-composition/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="craigthompson.dev">
+<meta property="og:locale" content="en_GB">
+<meta property="og:title" content="Durandal and Webpack: Part 2 - Composition">
+<meta property="og:description" content="This post is part of a series of posts entitled Durandal and Webpack.">
+<meta property="og:url" content="https://craigthompson.dev/blog/durandal-and-webpack-part-2-composition/">
+<meta property="og:image" content="https://craigthompson.dev/blog/durandal-and-webpack-part-2-composition/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Durandal and Webpack: Part 2 - Composition. blog/durandal-and-webpack-part-2-composition.md, Craig Michael Thompson">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Durandal and Webpack: Part 2 - Composition">
+<meta name="twitter:description" content="This post is part of a series of posts entitled Durandal and Webpack.">
+<meta name="twitter:image" content="https://craigthompson.dev/blog/durandal-and-webpack-part-2-composition/og.png">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"Durandal and Webpack: Part 2 - Composition","description":"This post is part of a series of posts entitled Durandal and Webpack.","url":"https://craigthompson.dev/blog/durandal-and-webpack-part-2-composition/","image":"https://craigthompson.dev/blog/durandal-and-webpack-part-2-composition/og.png","inLanguage":"en-GB","datePublished":"2015-07-26","keywords":"","author":{"@type":"Person","@id":"https://craigthompson.dev/#person","name":"Craig Michael Thompson","url":"https://craigthompson.dev/"},"isPartOf":{"@type":"Blog","name":"Craig Michael Thompson · blog","url":"https://craigthompson.dev/blog/"},"sameAs":"https://blog.craigsworks.com/durandal-and-webpack-part-2-composition/"}</script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="color-scheme" content="dark light">
+<meta name="theme-color" content="#16271F" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#EDF1EE" media="(prefers-color-scheme: light)">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../../apple-touch-icon.png">
+<style>@media screen{html.t-light,html.t-light body{background:#EDF1EE!important;color-scheme:light}html.t-dark,html.t-dark body{background:#16271F!important;color-scheme:dark}}</style>
+<script>try{(function(){var d=document.documentElement,t=localStorage.getItem('theme'),L=t?t==='light':matchMedia('(prefers-color-scheme: light)').matches,M=localStorage.getItem('motion')==='off';d.classList.add(L?'t-light':'t-dark');if(t)document.querySelectorAll('meta[name="theme-color"]').forEach(function(m){m.content=L?'#EDF1EE':'#16271F'});var o=new MutationObserver(function(){var r=document.querySelector('.c-root');if(!r)return;if(L)r.classList.add('c-light');if(M)r.classList.add('still');o.disconnect()});o.observe(d,{childList:true,subtree:true})})()}catch(e){}</script>
+<link rel="preload" href="../../assets/fonts/big-shoulders-display-latin-600.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../../assets/fonts/public-sans-latin-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../assets/pages.e184b8865e.css">
+</head>
+<body>
+<div class="c-root" style="background: var(--bg); color: var(--text); min-height: 100vh; font-size: 16px; line-height: 1.7">
+<div class="sp">
+<header class="sp-top"><a class="sp-home" href="../../"><span class="c-dot" style="width: 9px; height: 9px; border-radius: 50%; background: var(--ok)"></span>craigthompson.dev</a>
+<div class="sp-tools"><button type="button" class="sp-b" id="sp-theme">theme</button><button type="button" class="sp-b" id="sp-motion" hidden>pause animations</button></div></header>
+<main class="sp-main">
+<p class="sp-crumb">$ cat <a href="../">blog/</a>durandal-and-webpack-part-2-composition.md</p>
+<article class="sp-post">
+<header class="sp-post-h"><p class="sp-post-k"><time datetime="2015-07-26">26 July 2015</time> · 4 min read</p>
+<h1>Durandal and Webpack: Part 2 - Composition</h1>
+
+<p class="sp-post-note">First published on my old blog (<a href="https://web.archive.org/web/20180628012739/http://blog.craigsworks.com/durandal-and-webpack-part-2-composition/">blog.craigsworks.com</a>) in July 2015, and kept as it was written. Some code and links are out of date.</p></header>
+<div class="sp-post-b">
+<p><em>This post is part of a series of posts entitled <strong>Durandal and Webpack</strong>. Check-out the <a href="http://blog.craigsworks.com/durandal-and-webpack-introduction">Introduction</a> here if you haven&#39;t already, as well as the <a href="http://craga89.github.io/durandal-webpack">online examples</a></em></p>
+<p><a href="http://durandaljs.com/">Durandal</a> implements a process known as <a href="http://durandaljs.com/documentation/Using-Composition.html">composition</a>, which allows developers to compose arbitrary Views and ViewModels together into a single output. Much like how <a href="https://facebook.github.io/react/">React</a> lets you nest Components within your <code>render</code> method. This <code>composition</code> workflow is used extensively in Durandal and is the process by which your <code>ViewModel</code> and <code>View</code>(s) are stitched together to create the basic building blocks of your application.</p>
+<p>By default, the <code>composition</code> engine deals with what are known in Durandal as <code>moduleId</code>s and <code>viewUrl</code>s, which are URLs that point to where the <code>ViewModel</code> or <code>View</code> are situated, respectively. Since Webpack doesn&#39;t understand this natively, we&#39;ll need to enhance this functionality a little and <strong>allow us to directly pass the module, rather than a path pointing to it</strong>.</p>
+<h2>system.acquire</h2>
+<p>The logic for this method is fairly straight forward, taking a single <code>moduleId</code> string and returning a <a href="https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a> instance that resolves with the <code>module</code>:</p>
+<p><a href="https://gist.github.com/add43ae8b5f245b29ec7">See the code on GitHub</a></p>
+<p>We&#39;ll override this method to allow the <code>moduleId</code> to be either a <strong><code>String</code> or a <code>Function</code></strong>. In the latter case, this function is given a single argument, another function we&#39;ll call <code>cb</code>, which takes the following form:</p>
+<p><a href="https://gist.github.com/add43ae8b5f245b29ec7">See the code on GitHub</a></p>
+<p>The <code>cb</code> function should be called with <code>null</code> as the first argument if no error occurred, and the resolved <code>module</code> as the second parameter. This may look familiar to you if you&#39;ve used Node extensively, as it&#39;s the <a href="http://fredkschott.com/post/2014/03/understanding-error-first-callbacks-in-node-js/">standard Node.js callback pattern</a>.</p>
+<p>With this in mind, let&#39;s take a look at the override in full:</p>
+<p><a href="https://gist.github.com/1334186a7973b483d3c7">See the code on GitHub</a></p>
+<p>This may look complex, but basically all it&#39;s allowing you to do is specify <code>moduleId</code> as a <code>Function</code>, which can either return the <code>module</code> directly, or execute a passed callback when you&#39;ve retrieved it asynchronously (more on why we want this later!).</p>
+<h2>viewLocator.locateView</h2>
+<p>The logic for this method is a little more complex, but we&#39;re only interested in the first parameter:</p>
+<p><a href="https://gist.github.com/add43ae8b5f245b29ec7">See the code on GitHub</a></p>
+<p>We&#39;ll need to override this method to allow the <code>viewOrUrlOrId</code> to be a bare HTML string (a <code>String</code> whose first character is a <code>&lt;</code>).</p>
+<p><a href="https://gist.github.com/1334186a7973b483d3c7">See the code on GitHub</a></p>
+<p>First, we check the <code>viewOrUrlOrId</code> parameter to see <em>if it&#39;s both a string <strong>and</strong> starts with a <code>&lt;</code></em>. If it does, we assume it&#39;s actually a view as opposed to a <code>viewUrl</code>, and return it as a resolved <a href="https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>. If it doesn&#39;t, we simply proceed with the normal Durandal functionality, which helps us maintain backwards compatibility.</p>
+<h4>A note on these enhancements</h4>
+<p>You&#39;ll need to include these enhancements before your</p>
+<p>app.setRoot()</p>
+<p>call, to ensure any calls are intercepted by the new functionality. Otherwise, things may not work as expected</p>
+<h2>Sample usage</h2>
+<p>Now we&#39;ve got our new functionality in place via our enhancements, let&#39;s see a practical example of how to use this new functionality with Durandal, so Webpack can bundle our <code>Views</code> and <code>ViewModels</code>!</p>
+<h3>ViewModel views</h3>
+<p>Normally, you wouldn&#39;t need to specify the <code>View</code> for a particular <code>ViewModel</code> instance, as it&#39;s inferred by convention by Durandal, depending on the view strategy you&#39;ve got set up. We&#39;ll need to make things more explicit if we want Webpack to bundle our views, however.</p>
+<p>We can specify our views as explicit dependencies directly on the ViewModel instances by setting our <code>getView</code> method to one which returns our <code>require</code>d view HTML:</p>
+<p><a href="https://gist.github.com/add43ae8b5f245b29ec7">See the code on GitHub</a></p>
+<p>Notice we are using the built-in <code>viewEngine.processMarkup</code> method here. Durandal expects the output of a <code>getView</code> call to be a <code>DOMElement</code> instance, so we&#39;ll delegate this parsing operation to Durandal since it&#39;s already included and handles it nicely.</p>
+<p>That&#39;s it. Together with our enhancements this is all that&#39;s needed to allow both Durandal and Webpack to understand the inter-dependency of our <code>View</code> and <code>ViewModel</code>. Durandal composes just like before, and Webpack can bundle our view together with our app. Simples!</p>
+<h3><em>composition</em> Binding Handler</h3>
+<p>The <code>compose</code> binding handler can take various forms, as explained in the <a href="http://durandaljs.com/documentation/Using-Composition.html">Durandal documentation</a>. A sample of these is given below</p>
+<p><a href="https://gist.github.com/add43ae8b5f245b29ec7">See the code on GitHub</a></p>
+<p>Since we&#39;re not using Require.js, we&#39;ll no longer pass <code>moduleId</code>s or <code>viewUrl</code>s to the <code>compose</code> binding, and will instead always pass a module or HTML instead, respectively. We&#39;ll store these as properties on the <code>ViewModel</code>, using <code>require</code> to retrieve them as static dependencies. For example, amending the previous code sample:</p>
+<p><a href="https://gist.github.com/add43ae8b5f245b29ec7">See the code on GitHub</a></p>
+<p><a href="https://gist.github.com/add43ae8b5f245b29ec7">See the code on GitHub</a></p>
+<p>Notice how the dependencies for this <code>ViewModel</code> are immediately visible by simply viewing the <code>viewModel.js</code> file. This is a helpful by-product of this approach and should help you quickly review the top-level dependency graph of your <code>ViewModel</code> without the need to look over your view file.</p>
+<h2>Summary</h2>
+<p>We&#39;ve implemented some enhancements to the core Durandal <code>system.acquire</code> and <code>viewLocator.locateView</code> methods which allow us to pass <code>module</code> and <code>view</code> HTML directly to the <code>composition</code> engine. This lets us specify our dependencies directly on the ViewModel, and allows Webpack to understand and bundle the different parts of our application together in an effective way.</p>
+<p>For a more hands-on approach, or for those of you who&#39;d simply like to look over the code in action, take a look at the <a href="https://github.com/craga89/durandal-webpack">durandal-webpack</a> repository and the <a href="https://craga89.github.io/durandal-webpack">online example</a>.</p>
+<h4>Next Chapter (coming soon!): <strong>Durandal and Webpack: Part 3 - Router</strong></h4>
+</div>
+</article>
+<nav class="sp-pn" aria-label="More posts"><a href="../durandal-and-webpack-part-1-module-format/"><span>← newer</span><b>Durandal and Webpack: Part 1 - Module format</b></a><a class="next" href="../github-pages-and-webpack-2/"><span>older →</span><b>GitHub Pages + Webpack Chunks = output.publicPath</b></a></nav>
+<section class="sp-more" aria-labelledby="sp-more-h"><h2 id="sp-more-h">$ ls blog/</h2><ul><li><a href="../generating-roman-numerals/">generating-roman-numerals.md</a></li><li><a href="../durandal-and-webpack-part-1-module-format/">durandal-and-webpack-part-1-module-format.md</a></li><li><a href="../durandal-and-webpack-part-2-composition/" aria-current="page">durandal-and-webpack-part-2-composition.md</a></li><li><a href="../github-pages-and-webpack-2/">github-pages-and-webpack-2.md</a></li><li><a href="../gulp-watch-less/">gulp-watch-less.md</a></li><li><a href="../less-file-import-list/">less-file-import-list.md</a></li><li><a href="../durandal-type-cast-querystring-parameters/">durandal-type-cast-querystring-parameters.md</a></li><li><a href="../knockout-value-binding-input-number/">knockout-value-binding-input-number.md</a></li><li><a href="../jquery-ui-draggable-exclusive-draggables/">jquery-ui-draggable-exclusive-draggables.md</a></li><li><a href="../ckeditor-key-modifiers/">ckeditor-key-modifiers.md</a></li><li><a href="../qtip2-now-on-jsdelivr/">qtip2-now-on-jsdelivr.md</a></li><li><a href="../60fps-scrolling-using-pointer-events-none/">60fps-scrolling-using-pointer-events-none.md</a></li><li><a href="../qtip2-v2-2-0-released/">qtip2-v2-2-0-released.md</a></li><li><a href="../scratchpad-io/">scratchpad-io.md</a></li><li><a href="../qtip2-pre-release-changes-aka-what-happened-to-my-qtip-styles/">qtip2-pre-release-changes-aka-what-happened-to-my-qtip-styles.md</a></li><li><a href="../var-commas-and-equals/">var-commas-and-equals.md</a></li><li><a href="../qtip2-styles-update/">qtip2-styles-update.md</a></li><li><a href="../where-are-you-using-qtip/">where-are-you-using-qtip.md</a></li></ul></section>
+<aside class="sp-cta" aria-label="About Craig"><p><b>Craig Michael Thompson</b>, Head of Engineering: hands-on, AI-first, from start-up to acquisition. Open to new roles.</p><div><a class="go" href="mailto:craga89@gmail.com">get in touch</a><a class="alt" href="../../#blog">the portfolio</a><a class="alt" href="../../cv/">CV</a></div></aside>
+</main>
+</div>
+</div>
+<script>(function(){var d=document.documentElement,r=document.querySelector('.c-root'),tb=document.getElementById('sp-theme'),mb=document.getElementById('sp-motion');
+function label(){var L=r.classList.contains('c-light');tb.textContent=L?'dark theme':'light theme';tb.setAttribute('aria-label',L?'Switch to dark theme':'Switch to light theme')}
+tb.addEventListener('click',function(){var L=!r.classList.contains('c-light');r.classList.toggle('c-light',L);d.classList.toggle('t-light',L);d.classList.toggle('t-dark',!L);try{localStorage.setItem('theme',L?'light':'dark')}catch(e){}label()});label();
+var loops=document.querySelector('.c-glow,.c-trav,.c-tick,.c-b1,.c-ping');var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+if(loops&&!reduce){mb.hidden=false;var ml=function(){var off=r.classList.contains('still');mb.textContent=off?'play animations':'pause animations'};mb.addEventListener('click',function(){var off=!r.classList.contains('still');r.classList.toggle('still',off);try{localStorage.setItem('motion',off?'off':'on')}catch(e){}ml()});ml()}})()</script>
+<script>(function () {
+  try {
+    if (!('Translator' in self) || window.CRAGA_PRERENDER) return;
+    var L = ["ar","bg","bn","cs","da","de","el","es","fi","fr","he","hi","hr","hu","id","it","ja","kn","ko","lt","mr","nl","no","pl","pt","ro","ru","sk","sl","sv","ta","te","th","tr","uk","vi","zh","zh-Hant"];
+    var norm = function (t) { t = String(t || '').toLowerCase(); if (/^zh-(tw|hk|mo)|^zh-hant/.test(t)) return 'zh-Hant'; var b = t.split('-')[0]; b = { nb: 'no', nn: 'no', iw: 'he', 'in': 'id' }[b] || b; return L.indexOf(b) >= 0 ? b : null; };
+    var I = window.CRAGA_I18N = { langs: L, load: function () { return I._p || (I._p = import("/assets/i18n.6bc9943125.js")); } };
+    var saved = null, no = null;
+    try { saved = localStorage.getItem('craga-lang'); no = localStorage.getItem('craga-lang-no'); } catch (e) {}
+    var want = saved && saved !== 'en' ? norm(saved) : null, offer = null;
+    if (!saved) {
+      var ls = navigator.languages || [navigator.language];
+      for (var i = 0; i < ls.length; i++) { var l = String(ls[i]).toLowerCase(); if (/^en(-|$)/.test(l)) break; var n = norm(l); if (n) { offer = n; break; } }
+    }
+    if (offer && offer === no) offer = null;
+    // Static pages' language menus (the CV), filled in only where translation works.
+    var menus = document.querySelectorAll('[data-tr-menu]');
+    if (menus.length) {
+      var cur = want || 'en';
+      var name = function (c) { try { var n = new Intl.DisplayNames([c], { type: 'language' }).of(c); return n.charAt(0).toLocaleUpperCase(c) + n.slice(1); } catch (e) { return c; } };
+      Array.prototype.forEach.call(menus, function (s) {
+        ['en'].concat(L).forEach(function (c) { var o = document.createElement('option'); o.value = c; o.lang = c; o.textContent = c === 'en' ? 'English' : name(c); s.appendChild(o); });
+        s.value = cur;
+        s.hidden = false;
+        s.addEventListener('change', function () { var v = s.value; I.load().then(function (m) { m.setLanguage(v); }); });
+      });
+      window.addEventListener('craga:lang', function (e) { Array.prototype.forEach.call(menus, function (s) { s.value = e.detail.lang; }); });
+    }
+    if (want || offer) I.load().then(function (m) { m.boot({ lang: want || offer, saved: !!want }); }).catch(function () {});
+  } catch (e) {}
+})();</script>
+<script>(function () {
+  try {
+    if (navigator.globalPrivacyControl || navigator.doNotTrack === '1' || !navigator.sendBeacon) return;
+    var url = "https://craga-ask.craga89.workers.dev/hit", t0 = Date.now(), seen = {}, sent = false;
+    
+    var send = function () {
+      if (sent) return; sent = true;
+      var w = window.innerWidth;
+      navigator.sendBeacon(url, new Blob([JSON.stringify({ path: location.pathname, ref: document.referrer, device: w < 601 ? 'mobile' : w < 1025 ? 'tablet' : 'desktop', sections: Object.keys(seen), seconds: (Date.now() - t0) / 1000, lang: window.CRAGA_LANG && window.CRAGA_LANG !== 'en' ? window.CRAGA_LANG : null, offer: window.CRAGA_I18N_OFFER || null })], { type: 'text/plain' }));
+    };
+    document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'hidden') send(); });
+    window.addEventListener('pagehide', send);
+  } catch (e) {}
+})();</script>
+<script>(function(){try{if(!/(^|\.)craigthompson\.dev$/.test(location.hostname)||navigator.globalPrivacyControl||navigator.doNotTrack==='1')return;var go=function(){var s=document.createElement('script');s.defer=true;s.src='https://static.cloudflareinsights.com/beacon.min.js';s.setAttribute('data-cf-beacon','{"token":"1115308102a141bdb2e944bd0144d4ee"}');document.head.appendChild(s)};var done=false,ev=['pointerdown','keydown','wheel','touchstart','scroll'],once=function(){if(done)return;done=true;ev.forEach(function(t){removeEventListener(t,once,true)});go()};ev.forEach(function(t){addEventListener(t,once,{capture:true,passive:true})});var later=function(){setTimeout(once,6000)};if(document.readyState==='complete')later();else addEventListener('load',later,{once:true})}catch(e){}})()</script>
+</body>
+</html>

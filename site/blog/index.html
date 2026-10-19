@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>Blog · Craig Michael Thompson</title>
+<meta name="description" content="18 posts from Craig Michael Thompson's old blog on craigsworks.com, 2010–2015: JavaScript, qTip2, Knockout, Durandal, webpack and more.">
+<link rel="canonical" href="https://craigthompson.dev/blog/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="craigthompson.dev">
+<meta property="og:locale" content="en_GB">
+<meta property="og:title" content="Blog · Craig Michael Thompson">
+<meta property="og:description" content="18 posts from Craig Michael Thompson's old blog on craigsworks.com, 2010–2015: JavaScript, qTip2, Knockout, Durandal, webpack and more.">
+<meta property="og:url" content="https://craigthompson.dev/blog/">
+<meta property="og:image" content="https://craigthompson.dev/blog/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Blog: 18 posts, 2010–2015. Craig Michael Thompson">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Blog · Craig Michael Thompson">
+<meta name="twitter:description" content="18 posts from Craig Michael Thompson's old blog on craigsworks.com, 2010–2015: JavaScript, qTip2, Knockout, Durandal, webpack and more.">
+<meta name="twitter:image" content="https://craigthompson.dev/blog/og.png">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Blog","name":"Craig Michael Thompson · blog","description":"18 posts from Craig Michael Thompson's old blog on craigsworks.com, 2010–2015: JavaScript, qTip2, Knockout, Durandal, webpack and more.","url":"https://craigthompson.dev/blog/","author":{"@type":"Person","@id":"https://craigthompson.dev/#person","name":"Craig Michael Thompson","url":"https://craigthompson.dev/"},"blogPost":[{"@type":"BlogPosting","headline":"Generating Roman Numerals","datePublished":"2015-12-02","url":"https://craigthompson.dev/blog/generating-roman-numerals/"},{"@type":"BlogPosting","headline":"Durandal and Webpack: Part 1 - Module format","datePublished":"2015-07-26","url":"https://craigthompson.dev/blog/durandal-and-webpack-part-1-module-format/"},{"@type":"BlogPosting","headline":"Durandal and Webpack: Part 2 - Composition","datePublished":"2015-07-26","url":"https://craigthompson.dev/blog/durandal-and-webpack-part-2-composition/"},{"@type":"BlogPosting","headline":"GitHub Pages + Webpack Chunks = output.publicPath","datePublished":"2015-07-26","url":"https://craigthompson.dev/blog/github-pages-and-webpack-2/"},{"@type":"BlogPosting","headline":"gulp-watch-less - Watch LESS @imports","datePublished":"2014-10-12","url":"https://craigthompson.dev/blog/gulp-watch-less/"},{"@type":"BlogPosting","headline":"LESS - Generate a deep list of all a file's @imports","datePublished":"2014-10-05","url":"https://craigthompson.dev/blog/less-file-import-list/"},{"@type":"BlogPosting","headline":"Durandal - Type cast queryString parameters","datePublished":"2014-07-28","url":"https://craigthompson.dev/blog/durandal-type-cast-querystring-parameters/"},{"@type":"BlogPosting","headline":"Knockout `value` binding + HTML5 number input","datePublished":"2014-07-17","url":"https://craigthompson.dev/blog/knockout-value-binding-input-number/"},{"@type":"BlogPosting","headline":"ui.draggable.exclusive - Exclusive draggables","datePublished":"2014-07-14","url":"https://craigthompson.dev/blog/jquery-ui-draggable-exclusive-draggables/"},{"@type":"BlogPosting","headline":"CKEDITOR `key` event - modifier keys","datePublished":"2014-07-03","url":"https://craigthompson.dev/blog/ckeditor-key-modifiers/"},{"@type":"BlogPosting","headline":"qTip2 - Now on jsDelivr","datePublished":"2013-12-16","url":"https://craigthompson.dev/blog/qtip2-now-on-jsdelivr/"},{"@type":"BlogPosting","headline":"60fps scrolling using `pointer-events: none`","datePublished":"2013-11-25","url":"https://craigthompson.dev/blog/60fps-scrolling-using-pointer-events-none/"},{"@type":"BlogPosting","headline":"qTip<sup>2</sup> - v2.2.0 released!","datePublished":"2013-11-21","url":"https://craigthompson.dev/blog/qtip2-v2-2-0-released/"},{"@type":"BlogPosting","headline":"Scratchpad.io – Real-time HTML/CSS rendering","datePublished":"2012-12-13","url":"https://craigthompson.dev/blog/scratchpad-io/"},{"@type":"BlogPosting","headline":"qTip<sup>2</sup> - Pre-release changes (AKA What happened to my qTip styles!?)","datePublished":"2012-11-20","url":"https://craigthompson.dev/blog/qtip2-pre-release-changes-aka-what-happened-to-my-qtip-styles/"},{"@type":"BlogPosting","headline":"var, commas and equals","datePublished":"2012-08-12","url":"https://craigthompson.dev/blog/var-commas-and-equals/"},{"@type":"BlogPosting","headline":"qTip<sup>2</sup> - Styles update","datePublished":"2012-05-13","url":"https://craigthompson.dev/blog/qtip2-styles-update/"},{"@type":"BlogPosting","headline":"Craig Michael Thompson","datePublished":"2010-07-24","url":"https://craigthompson.dev/blog/where-are-you-using-qtip/"}]}</script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="color-scheme" content="dark light">
+<meta name="theme-color" content="#16271F" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#EDF1EE" media="(prefers-color-scheme: light)">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+<style>@media screen{html.t-light,html.t-light body{background:#EDF1EE!important;color-scheme:light}html.t-dark,html.t-dark body{background:#16271F!important;color-scheme:dark}}</style>
+<script>try{(function(){var d=document.documentElement,t=localStorage.getItem('theme'),L=t?t==='light':matchMedia('(prefers-color-scheme: light)').matches,M=localStorage.getItem('motion')==='off';d.classList.add(L?'t-light':'t-dark');if(t)document.querySelectorAll('meta[name="theme-color"]').forEach(function(m){m.content=L?'#EDF1EE':'#16271F'});var o=new MutationObserver(function(){var r=document.querySelector('.c-root');if(!r)return;if(L)r.classList.add('c-light');if(M)r.classList.add('still');o.disconnect()});o.observe(d,{childList:true,subtree:true})})()}catch(e){}</script>
+<link rel="preload" href="../assets/fonts/big-shoulders-display-latin-600.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../assets/fonts/public-sans-latin-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../assets/pages.e184b8865e.css">
+</head>
+<body>
+<div class="c-root" style="background: var(--bg); color: var(--text); min-height: 100vh; font-size: 16px; line-height: 1.7">
+<div class="sp">
+<header class="sp-top"><a class="sp-home" href="../"><span class="c-dot" style="width: 9px; height: 9px; border-radius: 50%; background: var(--ok)"></span>craigthompson.dev</a>
+<div class="sp-tools"><button type="button" class="sp-b" id="sp-theme">theme</button><button type="button" class="sp-b" id="sp-motion" hidden>pause animations</button></div></header>
+<main class="sp-main">
+<p class="sp-crumb">$ ls -t <a href="../#blog">blog/</a></p>
+<h1 class="c-sr">Blog</h1>
+<p style="margin: 0 0 8px; color: var(--text3); max-width: 64ch">18 posts from my old blog on craigsworks.com, 2010–2015, kept as they were written. Some of the tools have since moved on.</p>
+<h2 class="sp-yr">2015</h2><ol class="sp-bl"><li><time datetime="2015-12-02">2 December</time><div><a href="generating-roman-numerals/">Generating Roman Numerals</a><p>We've been conducting pair programming exercises at work using the excellent FreeCodeCamp, and came upon an interesting problem to solve using JavaScript.</p></div></li><li><time datetime="2015-07-26">26 July</time><div><a href="durandal-and-webpack-part-1-module-format/">Durandal and Webpack: Part 1 - Module format</a><p>This post is part of a series of posts entitled Durandal and Webpack.</p></div></li><li><time datetime="2015-07-26">26 July</time><div><a href="durandal-and-webpack-part-2-composition/">Durandal and Webpack: Part 2 - Composition</a><p>This post is part of a series of posts entitled Durandal and Webpack.</p></div></li><li><time datetime="2015-07-26">26 July</time><div><a href="github-pages-and-webpack-2/">GitHub Pages + Webpack Chunks = output.publicPath</a><p>If you're looking to use compiled a Webpack application with chunks in your gh-pages repository, you'll need to make sure your output.publicPath is set properly in your webpack.config.js (or similar)…</p></div></li></ol>
+<h2 class="sp-yr">2014</h2><ol class="sp-bl"><li><time datetime="2014-10-12">12 October</time><div><a href="gulp-watch-less/">gulp-watch-less - Watch LESS @imports</a><p>I've recently released a new plugin aptly named gulp-watch-less, which will monitor your .less files using the excellent gulp-watch task, and output changed files to the stream whenever the file itself or any of it's @imports have changed.</p></div></li><li><time datetime="2014-10-05">5 October</time><div><a href="less-file-import-list/">LESS - Generate a deep list of all a file's @imports</a><p>Sometimes it's useful to get a list of all @imports for a given .less file, especially if you want to watch those files for changes in your gulp or grunt build steps.</p></div></li><li><time datetime="2014-07-28">28 July</time><div><a href="durandal-type-cast-querystring-parameters/">Durandal - Type cast queryString parameters</a><p>By default, Durandal's router.parseQueryString method will simply provide all query parameters as strings, which isn't ideal if you're working with data heavily.</p></div></li><li><time datetime="2014-07-17">17 July</time><div><a href="knockout-value-binding-input-number/">Knockout `value` binding + HTML5 number input</a><p>Knockout's default value binding is great in most cases, but when using the new HTML5 &lt;input type=&quot;number&quot; / element, it will always return an empty string when the input is a non-number i.e.</p></div></li><li><time datetime="2014-07-14">14 July</time><div><a href="jquery-ui-draggable-exclusive-draggables/">ui.draggable.exclusive - Exclusive draggables</a><p>Shout out to to my friend and colleague Steve Henderson who came up with the original concept behind this idea!</p></div></li><li><time datetime="2014-07-03">3 July</time><div><a href="ckeditor-key-modifiers/">CKEDITOR `key` event - modifier keys</a><p>When subscribing to the key event on a given CKEDITOR instance, the event.data.keyCode property will be the sum of both the associated keyCode and any pressed modifier keyCodes e.g.</p></div></li></ol>
+<h2 class="sp-yr">2013</h2><ol class="sp-bl"><li><time datetime="2013-12-16">16 December</time><div><a href="qtip2-now-on-jsdelivr/">qTip2 - Now on jsDelivr</a><p>qTip2 is now officially available through the jsDelivr CDN, and is the CDN of choice for the library starting from today's update!</p></div></li><li><time datetime="2013-11-25">25 November</time><div><a href="60fps-scrolling-using-pointer-events-none/">60fps scrolling using `pointer-events: none`</a><p>Ryan Seddon just posted a very useful CSS tip to increase your scrolling speeds via use of pointer-events: none, based on Christian Schaefer's tweet: @paul\irish Easy.</p></div></li><li><time datetime="2013-11-21">21 November</time><div><a href="qtip2-v2-2-0-released/">qTip&lt;sup>2&lt;/sup> - v2.2.0 released!</a><p>Where to Download Head over to the Download page to customise your qTip2 download and grab the latest version!</p></div></li></ol>
+<h2 class="sp-yr">2012</h2><ol class="sp-bl"><li><time datetime="2012-12-13">13 December</time><div><a href="scratchpad-io/">Scratchpad.io – Real-time HTML/CSS rendering</a><p>scratchpad.io is a great little web app by Sandbox Labs that renders your CSS and HTML in real time as you type, and includes localStoragepersistence to stop you from accidentally F5′ing it away!</p></div></li><li><time datetime="2012-11-20">20 November</time><div><a href="qtip2-pre-release-changes-aka-what-happened-to-my-qtip-styles/">qTip&lt;sup>2&lt;/sup> - Pre-release changes (AKA What happened to my qTip styles!?)</a><p>qTip2 is under-going to considerable changes over the next few weeks, with a new website on it’s way, a brand new build system to go along with it, and several new features and documentation updates.</p></div></li><li><time datetime="2012-08-12">12 August</time><div><a href="var-commas-and-equals/">var, commas and equals</a><p>Working with JavaScript for a while (or any other language for that matter) you tend to pick up on a lot of nuances particular to the language, but even long time users get tripped up every now and…</p></div></li><li><time datetime="2012-05-13">13 May</time><div><a href="qtip2-styles-update/">qTip&lt;sup>2&lt;/sup> - Styles update</a><p>In the recent commit today a re-factoring of the CSS stylesheets took place in order to simply the styles qTip2 uses, as well as changes to the underlying tips code to cope with these changes.</p></div></li></ol>
+<h2 class="sp-yr">2010</h2><ol class="sp-bl"><li><time datetime="2010-07-24">24 July</time><div><a href="where-are-you-using-qtip/">Craig Michael Thompson</a><p>So qTip2 is on it’s way out soon, and I’m looking for a whose who of qTip users!</p></div></li></ol>
+<aside class="sp-cta" aria-label="About Craig"><p><b>Craig Michael Thompson</b>, Head of Engineering: hands-on, AI-first, from start-up to acquisition. Open to new roles.</p><div><a class="go" href="mailto:craga89@gmail.com">get in touch</a><a class="alt" href="../#blog">the portfolio</a><a class="alt" href="../cv/">CV</a></div></aside>
+</main>
+</div>
+</div>
+<script>(function(){var d=document.documentElement,r=document.querySelector('.c-root'),tb=document.getElementById('sp-theme'),mb=document.getElementById('sp-motion');
+function label(){var L=r.classList.contains('c-light');tb.textContent=L?'dark theme':'light theme';tb.setAttribute('aria-label',L?'Switch to dark theme':'Switch to light theme')}
+tb.addEventListener('click',function(){var L=!r.classList.contains('c-light');r.classList.toggle('c-light',L);d.classList.toggle('t-light',L);d.classList.toggle('t-dark',!L);try{localStorage.setItem('theme',L?'light':'dark')}catch(e){}label()});label();
+var loops=document.querySelector('.c-glow,.c-trav,.c-tick,.c-b1,.c-ping');var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+if(loops&&!reduce){mb.hidden=false;var ml=function(){var off=r.classList.contains('still');mb.textContent=off?'play animations':'pause animations'};mb.addEventListener('click',function(){var off=!r.classList.contains('still');r.classList.toggle('still',off);try{localStorage.setItem('motion',off?'off':'on')}catch(e){}ml()});ml()}})()</script>
+<script>(function () {
+  try {
+    if (!('Translator' in self) || window.CRAGA_PRERENDER) return;
+    var L = ["ar","bg","bn","cs","da","de","el","es","fi","fr","he","hi","hr","hu","id","it","ja","kn","ko","lt","mr","nl","no","pl","pt","ro","ru","sk","sl","sv","ta","te","th","tr","uk","vi","zh","zh-Hant"];
+    var norm = function (t) { t = String(t || '').toLowerCase(); if (/^zh-(tw|hk|mo)|^zh-hant/.test(t)) return 'zh-Hant'; var b = t.split('-')[0]; b = { nb: 'no', nn: 'no', iw: 'he', 'in': 'id' }[b] || b; return L.indexOf(b) >= 0 ? b : null; };
+    var I = window.CRAGA_I18N = { langs: L, load: function () { return I._p || (I._p = import("/assets/i18n.6bc9943125.js")); } };
+    var saved = null, no = null;
+    try { saved = localStorage.getItem('craga-lang'); no = localStorage.getItem('craga-lang-no'); } catch (e) {}
+    var want = saved && saved !== 'en' ? norm(saved) : null, offer = null;
+    if (!saved) {
+      var ls = navigator.languages || [navigator.language];
+      for (var i = 0; i < ls.length; i++) { var l = String(ls[i]).toLowerCase(); if (/^en(-|$)/.test(l)) break; var n = norm(l); if (n) { offer = n; break; } }
+    }
+    if (offer && offer === no) offer = null;
+    // Static pages' language menus (the CV), filled in only where translation works.
+    var menus = document.querySelectorAll('[data-tr-menu]');
+    if (menus.length) {
+      var cur = want || 'en';
+      var name = function (c) { try { var n = new Intl.DisplayNames([c], { type: 'language' }).of(c); return n.charAt(0).toLocaleUpperCase(c) + n.slice(1); } catch (e) { return c; } };
+      Array.prototype.forEach.call(menus, function (s) {
+        ['en'].concat(L).forEach(function (c) { var o = document.createElement('option'); o.value = c; o.lang = c; o.textContent = c === 'en' ? 'English' : name(c); s.appendChild(o); });
+        s.value = cur;
+        s.hidden = false;
+        s.addEventListener('change', function () { var v = s.value; I.load().then(function (m) { m.setLanguage(v); }); });
+      });
+      window.addEventListener('craga:lang', function (e) { Array.prototype.forEach.call(menus, function (s) { s.value = e.detail.lang; }); });
+    }
+    if (want || offer) I.load().then(function (m) { m.boot({ lang: want || offer, saved: !!want }); }).catch(function () {});
+  } catch (e) {}
+})();</script>
+<script>(function () {
+  try {
+    if (navigator.globalPrivacyControl || navigator.doNotTrack === '1' || !navigator.sendBeacon) return;
+    var url = "https://craga-ask.craga89.workers.dev/hit", t0 = Date.now(), seen = {}, sent = false;
+    
+    var send = function () {
+      if (sent) return; sent = true;
+      var w = window.innerWidth;
+      navigator.sendBeacon(url, new Blob([JSON.stringify({ path: location.pathname, ref: document.referrer, device: w < 601 ? 'mobile' : w < 1025 ? 'tablet' : 'desktop', sections: Object.keys(seen), seconds: (Date.now() - t0) / 1000, lang: window.CRAGA_LANG && window.CRAGA_LANG !== 'en' ? window.CRAGA_LANG : null, offer: window.CRAGA_I18N_OFFER || null })], { type: 'text/plain' }));
+    };
+    document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'hidden') send(); });
+    window.addEventListener('pagehide', send);
+  } catch (e) {}
+})();</script>
+<script>(function(){try{if(!/(^|\.)craigthompson\.dev$/.test(location.hostname)||navigator.globalPrivacyControl||navigator.doNotTrack==='1')return;var go=function(){var s=document.createElement('script');s.defer=true;s.src='https://static.cloudflareinsights.com/beacon.min.js';s.setAttribute('data-cf-beacon','{"token":"1115308102a141bdb2e944bd0144d4ee"}');document.head.appendChild(s)};var done=false,ev=['pointerdown','keydown','wheel','touchstart','scroll'],once=function(){if(done)return;done=true;ev.forEach(function(t){removeEventListener(t,once,true)});go()};ev.forEach(function(t){addEventListener(t,once,{capture:true,passive:true})});var later=function(){setTimeout(once,6000)};if(document.readyState==='complete')later();else addEventListener('load',later,{once:true})}catch(e){}})()</script>
+</body>
+</html>

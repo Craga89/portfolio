@@ -72,7 +72,7 @@ export function bestAnswer(index, q) {
 
 // ---------- files ----------
 
-const SECTION = { case: 'case-studies', resp: 'responsibilities' };
+const SECTION = { case: 'case-studies', resp: 'responsibilities', blog: 'blog' };
 // The URL path of a file's own page, as the build names it: ai/platform.md → ai-platform.
 export const slug = (file) => String(file).replace(/\.md$/, '').replace(/\//g, '-');
 
@@ -139,9 +139,9 @@ export const TOOLS = [
   },
   {
     name: 'list_files',
-    title: 'List case studies and responsibilities',
-    description: "List the portfolio's files: case studies (projects Craig has led, with outcomes) and responsibilities (what he has owned as Head of Engineering). Returns each file name, title and page URL. Read one with read_file.",
-    inputSchema: { type: 'object', properties: { section: { type: 'string', enum: ['all', 'case-studies', 'responsibilities'], description: 'Which set to list. Defaults to all.' } } },
+    title: 'List case studies, responsibilities and blog posts',
+    description: "List the portfolio's files: case studies (projects Craig has led, with outcomes), responsibilities (what he has owned as Head of Engineering) and blog posts (technical posts from his old blog, 2010-2015). Returns each file name, title and page URL. Read one with read_file.",
+    inputSchema: { type: 'object', properties: { section: { type: 'string', enum: ['all', 'case-studies', 'responsibilities', 'blog'], description: 'Which set to list. Defaults to all.' } } },
     readOnly: true,
     async run(a, src) {
       const fs = files(await src.index(), src.url);
@@ -150,14 +150,14 @@ export const TOOLS = [
   },
   {
     name: 'read_file',
-    title: 'Read a case study or responsibility',
-    description: 'The full text of one case study or responsibility, by file name from list_files (for example monorepo.md or hiring.md).',
+    title: 'Read a case study, responsibility or blog post',
+    description: 'The text of one case study, responsibility or blog post, by file name from list_files (for example monorepo.md or hiring.md). Blog posts come back as a summary with a link to the full post.',
     pageDescription: ' Set show to true to also open it on the page for the person you are helping.',
     inputSchema: { type: 'object', properties: { file: { type: 'string', maxLength: 100, description: 'File name, for example "monorepo.md", "ai/platform.md" or "budget.md".' }, show: { type: 'boolean', surface: 'page', description: 'Also open the file on the page and scroll to it. Defaults to false.' } }, required: ['file'] },
     readOnly: true,
     async run(a, src, surface) {
       const fs = files(await src.index(), src.url);
-      const want = String(a.file).trim().toLowerCase().replace(/^\.?\//, '').replace(/^(case-studies|responsibilities)\//, '').replace(/\/$/, '');
+      const want = String(a.file).trim().toLowerCase().replace(/^\.?\//, '').replace(/^(case-studies|responsibilities|blog)\//, '').replace(/\/$/, '');
       const f = fs.find((x) => x.file.toLowerCase() === want || x.file.toLowerCase().replace(/\.md$/, '') === want || slug(x.file) === want || x.key === want);
       if (!f) throw new ToolError('No file called "' + a.file + '". Files: ' + fs.map((x) => x.file).join(', ') + '.');
       if (a.show && surface === 'page' && src.show) src.show(f);
@@ -322,4 +322,4 @@ export async function callTool(name, args, src, surface, signal) {
   }
 }
 
-export const SERVER_INSTRUCTIONS = "Read-only tools about Craig Michael Thompson, Head of Engineering and full-stack engineer: his profile and contact details, career, case studies and responsibilities, open-source work, and how his portfolio site is tested. Every answer comes from his portfolio site. Start with get_profile or list_files; use search_site or ask for specific questions.";
+export const SERVER_INSTRUCTIONS = "Read-only tools about Craig Michael Thompson, Head of Engineering and full-stack engineer: his profile and contact details, career, case studies and responsibilities, open-source work, old blog posts, and how his portfolio site is tested. Every answer comes from his portfolio site. Start with get_profile or list_files; use search_site or ask for specific questions.";

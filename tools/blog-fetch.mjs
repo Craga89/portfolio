@@ -66,7 +66,8 @@ for (const p of posts.values()) {
   const urls = [...p.urls];
   let snaps = [];
   for (const u of urls) { try { snaps.push(...(await snapshots(u))); } catch (e) { console.log(`::warning title=${p.slug}::snapshot list failed: ${e.message}`); } }
-  snaps.sort((a, b) => b[0].localeCompare(a[0]));
+  // Newest first, but from before the blog went offline (2019 on, the server shows a stock nginx page).
+  snaps.sort((a, b) => (a[0] < '2019' ? 0 : 1) - (b[0] < '2019' ? 0 : 1) || b[0].localeCompare(a[0]));
   const seen = new Set(); snaps = snaps.filter((s) => (seen.has(s[0]) ? false : seen.add(s[0])));
   let saved = null;
   const why = [];

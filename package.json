@@ -8,6 +8,8 @@
     "a11y": "node tools/a11y.mjs"
   },
   "devDependencies": {
-    "playwright": "^1.48.0"
+    "playwright": "^1.48.0",
+    "marked": "^18.0.0",
+    "sharp": "^0.35.0"
   }
 }
