@@ -1,0 +1,33 @@
+# Recover the old craigsworks blog posts from the Wayback Machine (tools/blog-fetch.mjs) and
+# save them, raw, to the blog-import branch. Run by hand; tools/blog-import.mjs does the rest.
+name: Recover old blog posts
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Fetch
+        run: |
+          git fetch -q --depth=1 origin redirect-data:refs/remotes/origin/redirect-data
+          git show origin/redirect-data:archive/archived.json > archived.json
+          node tools/blog-fetch.mjs archived.json out
+      - name: Save to the blog-import branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git switch --orphan blog-import
+          git rm -rq --cached . || true
+          mv out import && git add import
+          git commit -qm "Old blog posts from the Wayback Machine, $(date -u +%F)"
+          git push -qf origin HEAD:blog-import
