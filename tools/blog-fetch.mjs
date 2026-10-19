@@ -11,24 +11,28 @@ import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs';
 import { join, extname } from 'node:path';
 import { createHash } from 'node:crypto';
 
-const [archivedFile, OUT] = process.argv.slice(2);
+const [archivedFile, OUT, MODE] = process.argv.slice(2);
+// "gists": only (re)fetch the gists for posts already saved in <out>.
+const GISTS_ONLY = MODE === 'gists';
 if (!archivedFile || !OUT) { console.log('usage: node tools/blog-fetch.mjs <archived.json> <out dir>'); process.exit(1); }
 mkdirSync(join(OUT, 'html'), { recursive: true });
 mkdirSync(join(OUT, 'img'), { recursive: true });
 const UA = { 'user-agent': 'craigthompson.dev blog recovery (github.com/Craga89/portfolio)' };
-const GH = process.env.GITHUB_TOKEN ? { authorization: 'Bearer ' + process.env.GITHUB_TOKEN } : {};
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 async function get(url, tries = 5) {
   for (let i = 0; i < tries; i++) {
     try {
-      const r = await fetch(url, { headers: Object.assign({}, UA, /api\.github\.com/.test(url) ? GH : {}) });
+      const r = await fetch(url, { headers: UA });
       if (r.status === 429 || r.status >= 500) throw new Error('HTTP ' + r.status);
       return r;
     } catch (e) { if (i === tries - 1) throw e; await sleep(4000 * (i + 1)); }
   }
 }
 
+let out = [];
+if (GISTS_ONLY) out = JSON.parse(readFileSync(join(OUT, 'posts.json'), 'utf8'));
+else {
 // Post addresses: blog.craigsworks.com/<slug> (2012-16) and craigsworks.com/blog/<yyyy>/<mm>/<slug> (2010).
 const NOT_POSTS = /^(tag|category|author|page|rss|feed|about-me|assets|content|public|ghost|shared|search|archive|wp-[a-z]+|xmlrpc\.php|robots\.txt|favicon\.ico|sitemap.*|amp)$/i;
 const posts = new Map();
@@ -61,7 +65,6 @@ async function snapshots(url) {
   return rows.filter((r) => /html/.test(r[3])).sort((a, b) => b[0].localeCompare(a[0]));
 }
 
-const out = [];
 for (const p of posts.values()) {
   const urls = [...p.urls];
   let snaps = [];
@@ -102,6 +105,7 @@ for (const p of posts.values()) {
   }
   out.push({ slug: p.slug, host: p.host, urls, snapshot: saved.ts, from: saved.orig, file: 'html/' + p.slug + '.html', images: imgs });
   console.log(`${p.slug}: snapshot ${saved.ts}, ${imgs.filter((i) => i.file).length}/${imgs.length} images`);
+}
 }
 // Code embedded from GitHub gists: the archive doesn't run the embed, so fetch the gist itself.
 mkdirSync(join(OUT, 'gists'), { recursive: true });

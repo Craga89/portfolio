@@ -4,6 +4,11 @@ name: Recover old blog posts
 
 on:
   workflow_dispatch:
+    inputs:
+      gists:
+        description: Only refetch the gists for the posts already saved
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -21,9 +26,13 @@ jobs:
         run: |
           git fetch -q --depth=1 origin redirect-data:refs/remotes/origin/redirect-data
           git show origin/redirect-data:archive/archived.json > archived.json
-          node tools/blog-fetch.mjs archived.json out
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
+          if [ "${{ inputs.gists }}" = true ]; then
+            git fetch -q --depth=1 origin blog-import:refs/remotes/origin/blog-import
+            mkdir -p out && git archive origin/blog-import import | tar -x && rm -rf out && mv import out
+            node tools/blog-fetch.mjs archived.json out gists
+          else
+            node tools/blog-fetch.mjs archived.json out
+          fi
       - name: Save to the blog-import branch
         run: |
           git config user.name "github-actions[bot]"
