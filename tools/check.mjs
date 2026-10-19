@@ -202,6 +202,30 @@ try {
     }
   }
 
+  // The browser's own page translation (Chrome Translate swaps each text node for a translated
+  // copy wrapped in <font>) has to survive scrolling, tab switches and the page's own updates.
+  {
+    const gp = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+    await gp.goto(base + '/', { waitUntil: 'networkidle' });
+    await gp.waitForTimeout(300);
+    await gp.evaluate(() => {
+      document.documentElement.classList.add('translated-ltr');
+      const tw = document.createTreeWalker(document.getElementById('app'), NodeFilter.SHOW_TEXT);
+      const nodes = [];
+      for (let n = tw.nextNode(); n; n = tw.nextNode()) if (/\p{L}{2}/u.test(n.data)) nodes.push(n);
+      for (const n of nodes) { const f = document.createElement('font'); f.textContent = 'GT:' + n.data; n.replaceWith(f); }
+    });
+    const fonts = () => gp.evaluate(() => document.querySelectorAll('#app font').length);
+    const before = await fonts();
+    for (const id of ['career', 'case-studies', 'faq', 'top']) { await gp.evaluate((x) => document.getElementById(x).scrollIntoView(), id); await gp.waitForTimeout(450); }
+    await gp.locator('#case-studies [role="tab"]').nth(2).click();
+    await gp.waitForTimeout(500);
+    const after = await fonts();
+    const spy = await gp.evaluate(() => { document.getElementById('career').scrollIntoView(); return new Promise((r) => setTimeout(() => r(document.querySelector('.v2-tree a[aria-current="true"]').getAttribute('href')), 700)); });
+    ok('browser page translation survives scrolling and tab switches', after >= before * 0.95 && spy === '#career', `${before} → ${after}, spy ${spy}`);
+    await gp.close();
+  }
+
   // On-device translation, with a stand-in for the browser's Translator API.
   const done = (pg) => pg.waitForFunction(() => document.querySelector('.tr-bar') && document.querySelector('.tr-bar').dataset.kind === 'done', null, { timeout: 60000 });
   {
@@ -218,6 +242,13 @@ try {
     await ep.goto(base + '/', { waitUntil: 'networkidle' });
     await ep.waitForTimeout(300);
     ok('translate: English browsers get the menu, not the offer', (await ep.locator('.tr-offer').count()) === 0 && (await ep.locator('.v2-side .v2-lang-s').count()) === 1 && (await ep.evaluate(() => !document.querySelector('script[src*="i18n."]') && window.__trCalls === 0)));
+    // A question in German on the English page: the answer comes back in German, and says it was machine-translated.
+    await ep.route(/\/ask(\?|$)/, (r) => r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ answer: 'He has led engineering teams. See leadership.md.', sources: ['intro'] }) }));
+    await ep.fill('#c-ask-field', 'Welche Erfahrung hat er mit Teams?');
+    await ep.press('#c-ask-field', 'Enter');
+    await ep.waitForFunction(() => /«de»/.test((document.querySelector('.c-ask-log .c-ask-a:last-of-type') || {}).textContent || ''), null, { timeout: 15000 }).catch(() => {});
+    const am = await ep.evaluate(() => [...document.querySelectorAll('.c-ask-log .c-ask-a')].pop().textContent + ' | ' + [...document.querySelectorAll('.c-ask-log .c-ask-meta')].pop().textContent);
+    ok('translate: an answer translated back says so', /«de» He has led/.test(am) && /Machine-translated from English by your browser/.test(am), am.slice(0, 160));
     await en.close();
 
     const de = await browser.newContext({ locale: 'de-DE', viewport: { width: 1280, height: 900 } });
@@ -242,6 +273,13 @@ try {
       };
     });
     ok('translate: the page translates, names and files kept', t1.lang === 'de' && !t1.untranslated.length && t1.kept && t1.title && t1.menu === 'de', JSON.stringify(t1.untranslated.slice(0, 3)));
+    // It's clear this is machine translation by the browser, not a person's.
+    const disc = await tp.evaluate(() => ({ bar: document.querySelector('.tr-bar [role="status"]').textContent, side: !!document.querySelector('.v2-side .v2-lang-mt') }));
+    await tp.locator('.tr-info').click();
+    await tp.waitForTimeout(150);
+    const pop = await tp.evaluate(() => { const p = document.getElementById('tr-about'); const r = p.getBoundingClientRect(); const b = document.querySelector('.tr-info').getBoundingClientRect(); return { open: p.matches(':popover-open'), text: p.textContent, near: Math.abs(r.top - b.bottom) < 24, inView: r.left >= 0 && r.right <= innerWidth }; });
+    await tp.keyboard.press('Escape');
+    ok('translate: says it is machine translation by the browser', /Maschinelle Übersetzung durch Ihren Browser/.test(disc.bar) && disc.side && pop.open && /built-in translation model/.test(pop.text) && pop.near && pop.inView, JSON.stringify({ disc, pop: Object.assign({}, pop, { text: pop.text.slice(0, 40) }) }));
     const idle = await tp.evaluate(() => new Promise((res) => { let n = 0; const mo = new MutationObserver((l) => { n += l.length; }); mo.observe(document.getElementById('app'), { subtree: true, childList: true, characterData: true, attributes: true }); setTimeout(() => { mo.disconnect(); res(n); }, 2000); }));
     ok('translate: no flicker back to English (idle page unchanged)', idle === 0, String(idle));
     // The stand-in drops the markup tokens for text mentioning "monorepo": the intro paragraph's

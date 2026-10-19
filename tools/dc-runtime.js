@@ -203,6 +203,29 @@
     while (o) { var rm = o; o = o.nextSibling; oldEl.removeChild(rm); }
   }
 
+  // Patch only what changed since the last render, by comparing the new render with the previous
+  // one rather than with the page. Anything unchanged is left exactly as it is on the page, along
+  // with whatever else changed it: the browser's own page translation (which swaps text for
+  // wrapped, translated copies), a disclosure the visitor opened, a class added for an effect.
+  // Where the structure itself changed (a section shown or hidden), it falls back to a full patch.
+  function patchKeep(live, prev, next) {
+    var L = live.childNodes, P = prev.childNodes, N = next.childNodes;
+    if (P.length !== N.length || L.length !== N.length) { patchChildren(live, next); return; }
+    var lv = Array.prototype.slice.call(L), pv = Array.prototype.slice.call(P), nv = Array.prototype.slice.call(N);
+    for (var i = 0; i < nv.length; i++) {
+      var a = lv[i], o = pv[i], n = nv[i];
+      if (o.isEqualNode(n)) continue;
+      if (n.nodeType === 1 && o.nodeType === 1 && sameNode(a, n) && o.localName === n.localName) {
+        syncAttrs(a, n);
+        if (a.localName !== 'canvas') patchKeep(a, o, n);
+      } else if (n.nodeType === 3 && a.nodeType === 3) {
+        if (a.data !== n.data) a.data = n.data;
+      } else {
+        live.replaceChild(n, a);
+      }
+    }
+  }
+
   function patchNode(a, b) {
     if (a.nodeType === 3 || a.nodeType === 8) {
       if (a.data !== b.data) a.data = b.data;
@@ -222,7 +245,10 @@
     // An optional step between building and patching (the page translator uses it), so every
     // render can be adjusted before it reaches the page.
     if (this.transform) { try { this.transform(holder); } catch (e) { if (window.console) console.error(e); } }
-    patchChildren(this.root, holder);
+    // What this render looks like, kept for comparing with the next one (patching moves nodes out).
+    var snapshot = holder.cloneNode(true);
+    if (this.prev) patchKeep(this.root, this.prev, holder); else patchChildren(this.root, holder);
+    this.prev = snapshot;
     if (!this.mounted) {
       this.mounted = true;
       this.mounting = true;

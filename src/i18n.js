@@ -18,52 +18,56 @@
 export const LANGS = ['ar', 'bg', 'bn', 'cs', 'da', 'de', 'el', 'es', 'fi', 'fr', 'he', 'hi', 'hr', 'hu', 'id', 'it', 'ja', 'kn', 'ko', 'lt', 'mr', 'nl', 'no', 'pl', 'pt', 'ro', 'ru', 'sk', 'sl', 'sv', 'ta', 'te', 'th', 'tr', 'uk', 'vi', 'zh', 'zh-Hant'];
 const RTL = new Set(['ar', 'he']);
 
-// The offer, written in each language: [question, accept, decline]. It has to be readable
-// before any language model is on the device, so it can't be machine-translated here.
+// The offer, written in each language: [question, accept, decline, note]. It has to be readable
+// before any language model is on the device, so it can't be machine-translated here. The note
+// says plainly that this is machine translation by the browser, not a person's; the banner
+// repeats it once the page is translated, in words a person wrote rather than the model.
 const OFFER = {
-  ar: ['قراءة هذه الصفحة بالعربية؟', 'ترجمة', 'لا، شكرًا'],
-  bg: ['Да прочетете тази страница на български?', 'Преведи', 'Не, благодаря'],
-  bn: ['এই পৃষ্ঠাটি বাংলায় পড়বেন?', 'অনুবাদ করুন', 'না, ধন্যবাদ'],
-  cs: ['Přečíst tuto stránku v češtině?', 'Přeložit', 'Ne, děkuji'],
-  da: ['Vil du læse siden på dansk?', 'Oversæt', 'Nej tak'],
-  de: ['Diese Seite auf Deutsch lesen?', 'Übersetzen', 'Nein, danke'],
-  el: ['Να διαβάσετε αυτή τη σελίδα στα ελληνικά;', 'Μετάφραση', 'Όχι, ευχαριστώ'],
-  es: ['¿Leer esta página en español?', 'Traducir', 'No, gracias'],
-  fi: ['Luetaanko tämä sivu suomeksi?', 'Käännä', 'Ei kiitos'],
-  fr: ['Lire cette page en français ?', 'Traduire', 'Non merci'],
-  he: ['לקרוא את הדף הזה בעברית?', 'תרגום', 'לא, תודה'],
-  hi: ['यह पेज हिंदी में पढ़ें?', 'अनुवाद करें', 'नहीं, धन्यवाद'],
-  hr: ['Pročitati ovu stranicu na hrvatskom?', 'Prevedi', 'Ne, hvala'],
-  hu: ['Elolvassa ezt az oldalt magyarul?', 'Fordítás', 'Nem, köszönöm'],
-  id: ['Baca halaman ini dalam bahasa Indonesia?', 'Terjemahkan', 'Tidak, terima kasih'],
-  it: ['Leggere questa pagina in italiano?', 'Traduci', 'No, grazie'],
-  ja: ['このページを日本語で読みますか？', '翻訳する', 'いいえ'],
-  kn: ['ಈ ಪುಟವನ್ನು ಕನ್ನಡದಲ್ಲಿ ಓದುವುದೇ?', 'ಅನುವಾದಿಸಿ', 'ಬೇಡ, ಧನ್ಯವಾದಗಳು'],
-  ko: ['이 페이지를 한국어로 읽으시겠어요?', '번역하기', '괜찮아요'],
-  lt: ['Skaityti šį puslapį lietuviškai?', 'Versti', 'Ne, ačiū'],
-  mr: ['हे पान मराठीत वाचायचे?', 'भाषांतर करा', 'नको, धन्यवाद'],
-  nl: ['Deze pagina in het Nederlands lezen?', 'Vertalen', 'Nee, bedankt'],
-  no: ['Vil du lese siden på norsk?', 'Oversett', 'Nei takk'],
-  pl: ['Przeczytać tę stronę po polsku?', 'Przetłumacz', 'Nie, dziękuję'],
-  pt: ['Ler esta página em português?', 'Traduzir', 'Agora não'],
-  ro: ['Citiți această pagină în română?', 'Traduceți', 'Nu, mulțumesc'],
-  ru: ['Прочитать эту страницу на русском?', 'Перевести', 'Нет, спасибо'],
-  sk: ['Prečítať túto stránku v slovenčine?', 'Preložiť', 'Nie, ďakujem'],
-  sl: ['Želite to stran prebrati v slovenščini?', 'Prevedi', 'Ne, hvala'],
-  sv: ['Vill du läsa sidan på svenska?', 'Översätt', 'Nej tack'],
-  ta: ['இந்தப் பக்கத்தைத் தமிழில் படிக்கவா?', 'மொழிபெயர்', 'வேண்டாம், நன்றி'],
-  te: ['ఈ పేజీని తెలుగులో చదవాలా?', 'అనువదించు', 'వద్దు, ధన్యవాదాలు'],
-  th: ['อ่านหน้านี้เป็นภาษาไทยไหม', 'แปล', 'ไม่ ขอบคุณ'],
-  tr: ['Bu sayfayı Türkçe okumak ister misiniz?', 'Çevir', 'Hayır, teşekkürler'],
-  uk: ['Прочитати цю сторінку українською?', 'Перекласти', 'Ні, дякую'],
-  vi: ['Đọc trang này bằng tiếng Việt?', 'Dịch', 'Không, cảm ơn'],
-  zh: ['用中文阅读此页面？', '翻译', '不用了，谢谢'],
-  'zh-Hant': ['用中文閱讀此頁面？', '翻譯', '不用了，謝謝'],
+  ar: ['قراءة هذه الصفحة بالعربية؟', 'ترجمة', 'لا، شكرًا', 'ترجمة آلية يجريها متصفحك على جهازك، ولم يراجعها أي شخص.'],
+  bg: ['Да прочетете тази страница на български?', 'Преведи', 'Не, благодаря', 'Машинен превод от браузъра ви, на вашето устройство. Не е проверен от човек.'],
+  bn: ['এই পৃষ্ঠাটি বাংলায় পড়বেন?', 'অনুবাদ করুন', 'না, ধন্যবাদ', 'আপনার ব্রাউজার আপনার ডিভাইসেই যন্ত্রের মাধ্যমে অনুবাদ করে। কোনো মানুষ এটি যাচাই করেনি।'],
+  cs: ['Přečíst tuto stránku v češtině?', 'Přeložit', 'Ne, děkuji', 'Strojový překlad provádí váš prohlížeč přímo ve vašem zařízení. Nikdo ho nekontroloval.'],
+  da: ['Vil du læse siden på dansk?', 'Oversæt', 'Nej tak', 'Maskinoversættelse fra din browser, på din enhed. Ikke gennemgået af et menneske.'],
+  de: ['Diese Seite auf Deutsch lesen?', 'Übersetzen', 'Nein, danke', 'Maschinelle Übersetzung durch Ihren Browser, direkt auf Ihrem Gerät. Nicht von Menschen geprüft.'],
+  el: ['Να διαβάσετε αυτή τη σελίδα στα ελληνικά;', 'Μετάφραση', 'Όχι, ευχαριστώ', 'Αυτόματη μετάφραση από το πρόγραμμα περιήγησής σας, στη συσκευή σας. Δεν έχει ελεγχθεί από άνθρωπο.'],
+  es: ['¿Leer esta página en español?', 'Traducir', 'No, gracias', 'Traducción automática de tu navegador, en tu dispositivo. Ninguna persona la ha revisado.'],
+  fi: ['Luetaanko tämä sivu suomeksi?', 'Käännä', 'Ei kiitos', 'Selaimesi konekääntämä, laitteellasi. Ihminen ei ole tarkistanut sitä.'],
+  fr: ['Lire cette page en français ?', 'Traduire', 'Non merci', 'Traduction automatique par votre navigateur, sur votre appareil. Non relue par une personne.'],
+  he: ['לקרוא את הדף הזה בעברית?', 'תרגום', 'לא, תודה', 'תרגום מכונה של הדפדפן שלך, במכשיר שלך. אף אדם לא בדק אותו.'],
+  hi: ['यह पेज हिंदी में पढ़ें?', 'अनुवाद करें', 'नहीं, धन्यवाद', 'आपके ब्राउज़र द्वारा आपके डिवाइस पर मशीनी अनुवाद। किसी व्यक्ति ने इसकी जाँच नहीं की है।'],
+  hr: ['Pročitati ovu stranicu na hrvatskom?', 'Prevedi', 'Ne, hvala', 'Strojni prijevod vašeg preglednika, na vašem uređaju. Nije ga provjerila osoba.'],
+  hu: ['Elolvassa ezt az oldalt magyarul?', 'Fordítás', 'Nem, köszönöm', 'Gépi fordítás a böngészőjétől, az Ön eszközén. Ember nem ellenőrizte.'],
+  id: ['Baca halaman ini dalam bahasa Indonesia?', 'Terjemahkan', 'Tidak, terima kasih', 'Terjemahan mesin oleh browser Anda, di perangkat Anda. Belum diperiksa oleh manusia.'],
+  it: ['Leggere questa pagina in italiano?', 'Traduci', 'No, grazie', 'Traduzione automatica del tuo browser, sul tuo dispositivo. Non rivista da una persona.'],
+  ja: ['このページを日本語で読みますか？', '翻訳する', 'いいえ', 'ブラウザがお使いの端末上で機械翻訳します。人による確認はしていません。'],
+  kn: ['ಈ ಪುಟವನ್ನು ಕನ್ನಡದಲ್ಲಿ ಓದುವುದೇ?', 'ಅನುವಾದಿಸಿ', 'ಬೇಡ, ಧನ್ಯವಾದಗಳು', 'ನಿಮ್ಮ ಬ್ರೌಸರ್ ನಿಮ್ಮ ಸಾಧನದಲ್ಲೇ ಮಾಡುವ ಯಂತ್ರ ಅನುವಾದ. ಯಾರೂ ಇದನ್ನು ಪರಿಶೀಲಿಸಿಲ್ಲ.'],
+  ko: ['이 페이지를 한국어로 읽으시겠어요?', '번역하기', '괜찮아요', '브라우저가 기기에서 직접 하는 기계 번역입니다. 사람이 검토하지 않았습니다.'],
+  lt: ['Skaityti šį puslapį lietuviškai?', 'Versti', 'Ne, ačiū', 'Mašininis vertimas jūsų naršyklėje, jūsų įrenginyje. Žmogus jo netikrino.'],
+  mr: ['हे पान मराठीत वाचायचे?', 'भाषांतर करा', 'नको, धन्यवाद', 'तुमच्या ब्राउझरने तुमच्या डिव्हाइसवर केलेले यांत्रिक भाषांतर. कोणीही ते तपासलेले नाही.'],
+  nl: ['Deze pagina in het Nederlands lezen?', 'Vertalen', 'Nee, bedankt', 'Machinevertaling door je browser, op je apparaat. Niet door een mens nagekeken.'],
+  no: ['Vil du lese siden på norsk?', 'Oversett', 'Nei takk', 'Maskinoversettelse fra nettleseren din, på enheten din. Ikke gjennomgått av et menneske.'],
+  pl: ['Przeczytać tę stronę po polsku?', 'Przetłumacz', 'Nie, dziękuję', 'Tłumaczenie maszynowe wykonane przez przeglądarkę na Twoim urządzeniu. Nikt go nie sprawdzał.'],
+  pt: ['Ler esta página em português?', 'Traduzir', 'Agora não', 'Tradução automática do seu navegador, no seu dispositivo. Não foi revista por uma pessoa.'],
+  ro: ['Citiți această pagină în română?', 'Traduceți', 'Nu, mulțumesc', 'Traducere automată făcută de browserul dvs., pe dispozitivul dvs. Nu a fost verificată de un om.'],
+  ru: ['Прочитать эту страницу на русском?', 'Перевести', 'Нет, спасибо', 'Машинный перевод от вашего браузера, прямо на устройстве. Человек его не проверял.'],
+  sk: ['Prečítať túto stránku v slovenčine?', 'Preložiť', 'Nie, ďakujem', 'Strojový preklad vášho prehliadača priamo vo vašom zariadení. Nikto ho nekontroloval.'],
+  sl: ['Želite to stran prebrati v slovenščini?', 'Prevedi', 'Ne, hvala', 'Strojni prevod vašega brskalnika, na vaši napravi. Človek ga ni pregledal.'],
+  sv: ['Vill du läsa sidan på svenska?', 'Översätt', 'Nej tack', 'Maskinöversättning från din webbläsare, på din enhet. Inte granskad av en människa.'],
+  ta: ['இந்தப் பக்கத்தைத் தமிழில் படிக்கவா?', 'மொழிபெயர்', 'வேண்டாம், நன்றி', 'உங்கள் உலாவி உங்கள் சாதனத்திலேயே செய்யும் இயந்திர மொழிபெயர்ப்பு. யாரும் இதைச் சரிபார்க்கவில்லை.'],
+  te: ['ఈ పేజీని తెలుగులో చదవాలా?', 'అనువదించు', 'వద్దు, ధన్యవాదాలు', 'మీ బ్రౌజర్ మీ పరికరంలోనే చేసే యంత్ర అనువాదం. దీన్ని ఎవరూ తనిఖీ చేయలేదు.'],
+  th: ['อ่านหน้านี้เป็นภาษาไทยไหม', 'แปล', 'ไม่ ขอบคุณ', 'แปลด้วยเครื่องโดยเบราว์เซอร์บนอุปกรณ์ของคุณ ยังไม่มีคนตรวจทาน'],
+  tr: ['Bu sayfayı Türkçe okumak ister misiniz?', 'Çevir', 'Hayır, teşekkürler', 'Tarayıcınızın cihazınızda yaptığı makine çevirisi. Bir insan tarafından kontrol edilmedi.'],
+  uk: ['Прочитати цю сторінку українською?', 'Перекласти', 'Ні, дякую', 'Машинний переклад від вашого браузера, просто на пристрої. Людина його не перевіряла.'],
+  vi: ['Đọc trang này bằng tiếng Việt?', 'Dịch', 'Không, cảm ơn', 'Bản dịch máy do trình duyệt thực hiện trên thiết bị của bạn. Chưa được người kiểm tra.'],
+  zh: ['用中文阅读此页面？', '翻译', '不用了，谢谢', '由你的浏览器在设备上进行机器翻译，未经人工审校。'],
+  'zh-Hant': ['用中文閱讀此頁面？', '翻譯', '不用了，謝謝', '由你的瀏覽器在裝置上進行機器翻譯，未經人工審校。'],
 };
 
 // Banner text, machine-translated once the language pack is ready.
 const UI = {
-  done: 'Machine-translated on your device from the English original.',
+  done: 'Machine translation by your browser, on your device. Not reviewed by a person.',
+  about: 'About this translation',
+  aboutText: "Your browser translated this page on your device, using its built-in translation model. No person has reviewed it, so some wording may be wrong or read oddly. Names and technical terms stay in English. The English original is the version to rely on.",
   original: 'Show original',
   language: 'Language',
   failed: "Translation isn't available in this browser right now.",
@@ -533,6 +537,11 @@ html.t-light .tr-offer,html.t-light .tr-bar{--tr-bg:#FFFFFF;--tr-bg2:#E1E8E3;--t
 .tr-bar .tr-btn{min-height:32px;padding:0 10px;font-size:13px}
 .tr-sel{min-height:32px;padding:0 8px;border-radius:8px;border:1px solid var(--tr-line);background:transparent;color:inherit;font:inherit;font-size:13px}
 .tr-sel option{color:#1B2A22;background:#fff}
+.tr-info{display:inline-grid;place-items:center;inline-size:20px;block-size:20px;margin-inline-start:8px;padding:0;border:1px solid var(--tr-line);border-radius:50%;background:transparent;color:inherit;font:italic 700 12px/1 Georgia,serif;cursor:pointer;vertical-align:-4px;position:relative;anchor-name:--tr-info}
+.tr-info::after{content:'';position:absolute;inset:-12px}
+.tr-info:focus-visible{outline:2px solid var(--tr-acc);outline-offset:2px}
+.tr-about{max-inline-size:min(380px,calc(100vw - 32px));box-sizing:border-box;margin:auto;padding:12px 14px;border:1px solid var(--tr-acc);border-radius:10px;background:var(--tr-bg);color:var(--tr-fg);box-shadow:0 16px 40px -16px rgba(0,0,0,.45);font-size:13.5px;line-height:1.5}
+@supports (anchor-name:--a){.tr-about{position-anchor:--tr-info;inset:auto;top:anchor(bottom);inset-inline-start:anchor(start);margin:8px 0 0;position-try-fallbacks:flip-inline}}
 .tr-meter{flex:0 0 120px;height:6px;border-radius:3px;background:var(--tr-line2);overflow:hidden}
 .tr-meter i{display:block;height:100%;width:var(--p,0%);background:var(--tr-acc);transition:width .2s ease}
 @keyframes tr-in{from{opacity:0;transform:translateY(8px)}}
@@ -563,12 +572,12 @@ function languageSelect(current) {
 export function offer(lang) {
   if (!OFFER[lang] || state.offerEl) return;
   css();
-  const [q, yes, no] = OFFER[lang];
+  const [q, yes, no, note] = OFFER[lang];
   window.CRAGA_I18N_OFFER = 'shown';
   const id = 'tr-q';
   const box = el('div', { class: 'tr-offer', role: 'region', 'aria-labelledby': id, lang, dir: RTL.has(lang) ? 'rtl' : 'ltr', translate: 'no' }, [
     el('p', { id, text: q }),
-    el('small', { lang: 'en', dir: 'ltr', text: 'Translated on your device by your browser. Nothing is sent anywhere.' }),
+    el('small', { text: note }),
     el('div', { class: 'tr-row' }, [
       el('button', { type: 'button', class: 'tr-btn tr-go', text: yes, onclick: () => { window.CRAGA_I18N_OFFER = 'accepted'; start(lang); } }),
       el('button', { type: 'button', class: 'tr-btn', text: no, onclick: () => { window.CRAGA_I18N_OFFER = 'dismissed'; ls.set('craga-lang-no', lang); removeOffer(); } }),
@@ -604,7 +613,12 @@ function ui(kind, lang, p) {
   } else if (kind === 'failed') {
     bar.append(el('span', { class: 'tr-msg', role: 'status', lang: 'en', text: UI.failed }), el('button', { type: 'button', class: 'tr-btn', lang: 'en', text: 'OK', onclick: () => removeUi() }));
   } else {
-    bar.append(el('span', { class: 'tr-msg', role: 'status', text: s.done }), el('button', { type: 'button', class: 'tr-btn', text: s.original, onclick: () => stop() }), languageSelect(lang));
+    // The note a person wrote for this language, else the model's own translation of it.
+    const note = (OFFER[lang] && OFFER[lang][3]) || s.done;
+    const sl = state.strings ? lang : 'en';
+    const about = el('div', { id: 'tr-about', class: 'tr-about', popover: '', role: 'note', lang: sl, dir: RTL.has(sl) ? 'rtl' : 'ltr', text: s.aboutText });
+    const info = el('button', { type: 'button', class: 'tr-info', popovertarget: 'tr-about', lang: sl, 'aria-label': s.about, title: s.about, text: 'i' });
+    bar.append(el('span', { class: 'tr-msg' }, [el('span', { role: 'status', text: note }), info]), about, el('button', { type: 'button', class: 'tr-btn', text: s.original, onclick: () => stop() }), languageSelect(lang));
   }
 }
 function removeUi() { if (state.ui) { state.ui.remove(); state.ui = null; } }

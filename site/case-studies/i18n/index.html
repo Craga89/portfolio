@@ -31,7 +31,7 @@
 <script>try{(function(){var d=document.documentElement,t=localStorage.getItem('theme'),L=t?t==='light':matchMedia('(prefers-color-scheme: light)').matches,M=localStorage.getItem('motion')==='off';d.classList.add(L?'t-light':'t-dark');if(t)document.querySelectorAll('meta[name="theme-color"]').forEach(function(m){m.content=L?'#EDF1EE':'#16271F'});var o=new MutationObserver(function(){var r=document.querySelector('.c-root');if(!r)return;if(L)r.classList.add('c-light');if(M)r.classList.add('still');o.disconnect()});o.observe(d,{childList:true,subtree:true})})()}catch(e){}</script>
 <link rel="preload" href="../../assets/fonts/big-shoulders-display-latin-600.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="../../assets/fonts/public-sans-latin-400.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="../../assets/pages.2a12e38b2d.css">
+<link rel="stylesheet" href="../../assets/pages.04b4f6452e.css">
 </head>
 <body>
 <div class="c-root" style="background: var(--bg); color: var(--text); min-height: 100vh; font-size: 16px; line-height: 1.7">
@@ -130,7 +130,7 @@ if(loops&&!reduce){mb.hidden=false;var ml=function(){var off=r.classList.contain
     if (!('Translator' in self) || window.CRAGA_PRERENDER) return;
     var L = ["ar","bg","bn","cs","da","de","el","es","fi","fr","he","hi","hr","hu","id","it","ja","kn","ko","lt","mr","nl","no","pl","pt","ro","ru","sk","sl","sv","ta","te","th","tr","uk","vi","zh","zh-Hant"];
     var norm = function (t) { t = String(t || '').toLowerCase(); if (/^zh-(tw|hk|mo)|^zh-hant/.test(t)) return 'zh-Hant'; var b = t.split('-')[0]; b = { nb: 'no', nn: 'no', iw: 'he', 'in': 'id' }[b] || b; return L.indexOf(b) >= 0 ? b : null; };
-    var I = window.CRAGA_I18N = { langs: L, load: function () { return I._p || (I._p = import("/assets/i18n.db45562c6b.js")); } };
+    var I = window.CRAGA_I18N = { langs: L, load: function () { return I._p || (I._p = import("/assets/i18n.6bc9943125.js")); } };
     var saved = null, no = null;
     try { saved = localStorage.getItem('craga-lang'); no = localStorage.getItem('craga-lang-no'); } catch (e) {}
     var want = saved && saved !== 'en' ? norm(saved) : null, offer = null;

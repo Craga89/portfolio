@@ -417,6 +417,8 @@ a{color:var(--acc)!important;text-decoration:none!important}
 .v2-lang{display:inline-flex;align-items:center;gap:6px;min-height:24px;font-size:12px;color:var(--mute)}
 .v2-lang-s{font:inherit;font-size:12px;color:inherit;background:transparent;border:1px solid var(--line3);border-radius:6px;min-height:24px;padding:0 4px;cursor:pointer;max-width:12em}
 .v2-lang-s option{color:#1B2A22;background:#fff}
+.v2-lang:has(.v2-lang-mt){flex-wrap:wrap}
+.v2-lang-mt{font-size:11.5px;color:var(--mute);white-space:nowrap;text-decoration:underline dotted;text-underline-offset:3px;cursor:help}
 .v2-lang-s:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
 .v2-motion:hover{color:var(--head);text-decoration:underline}
 .v2-motion:focus-visible{outline:2px solid var(--acc);outline-offset:2px;border-radius:3px}
