@@ -422,6 +422,18 @@ a{color:var(--acc)!important;text-decoration:none!important}
 .v2-lang:has(.v2-lang-mt){flex-wrap:wrap}
 .v2-lang-mt{font-size:11.5px;color:var(--mute);white-space:nowrap;text-decoration:underline dotted;text-underline-offset:3px;cursor:help}
 .v2-lang-s:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+/* The language menu as a styled list where the browser allows it (customizable select); each language is written in its own script. */
+@supports (appearance: base-select){
+.v2-lang-s,.v2-lang-s::picker(select){appearance:base-select}
+.v2-lang-s{display:inline-flex;align-items:center;gap:6px;padding:0 8px}
+.v2-lang-s::picker-icon{color:var(--mute);transition:rotate .2s ease}
+.v2-lang-s:open::picker-icon{rotate:180deg}
+.v2-lang-s::picker(select){box-sizing:border-box;min-inline-size:anchor-size(inline);max-block-size:min(60vh,26em);overflow:auto;margin-block:6px;padding:4px;border:1px solid var(--line3);border-radius:10px;background:var(--panel);color:var(--text);box-shadow:0 18px 44px -18px rgba(0,0,0,.55);scrollbar-width:thin;scrollbar-color:var(--line3) transparent}
+.v2-lang-s option{display:flex;align-items:center;gap:8px;min-block-size:32px;padding:4px 10px;border-radius:6px;background:transparent;color:var(--text3);font-size:13px}
+.v2-lang-s option:hover,.v2-lang-s option:focus-visible{background:var(--acc-bg);color:var(--head);outline:none}
+.v2-lang-s option:checked{color:var(--head);font-weight:600}
+.v2-lang-s option::checkmark{color:var(--acc)}
+}
 .v2-motion:hover{color:var(--head);text-decoration:underline}
 .v2-motion:focus-visible{outline:2px solid var(--acc);outline-offset:2px;border-radius:3px}
 @media print{.v2-motion,.v2-lang{display:none!important}}
@@ -827,4 +839,9 @@ html[data-vt-dir="prev"]::view-transition-new(c-rs),html[data-vt-dir="prev"]::vi
 .sp-bl p{margin:4px 0 0;font-size:14.5px;color:var(--text3)}
 .sp-yr{margin:30px 0 8px;font-family:var(--f-mono);font-size:14px;font-weight:500;color:var(--ok)}
 @media (max-width:640px){.sp-bl li{grid-template-columns:minmax(0,1fr)}}
-@media print{.sp-post-b pre{white-space:pre-wrap}}
+@media print{.sp-post-b pre{white-space:pre-wrap}.sp-prog{display:none!important}}
+/* reading progress: driven by scrolling, no script */
+.sp-prog{display:none;position:fixed;z-index:60;inset-inline:0;top:0;height:3px;background:var(--acc);transform-origin:left center;transform:scaleX(0);pointer-events:none}
+[dir="rtl"] .sp-prog{transform-origin:right center}
+@supports (animation-timeline: scroll()){.sp-prog{display:block;animation:sp-prog linear both;animation-timeline:scroll(root)}}
+@keyframes sp-prog{to{transform:scaleX(1)}}

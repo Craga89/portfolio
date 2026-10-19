@@ -358,6 +358,39 @@ try {
     ok('blog: every post page and the index load, with no sideways scroll or broken images', !bad.length && !berr.length, bad.concat(berr).slice(0, 4).join(' | '));
     await bp.close();
   }
+  // Between pages: cross-document view transitions (not with reduced motion), valid speculation
+  // rules, the reading-progress bar, and the styled language menu.
+  {
+    const vtOf = async (reduce) => {
+      const c = await browser.newContext({ viewport: { width: 1280, height: 900 }, reducedMotion: reduce ? 'reduce' : 'no-preference' });
+      await c.addInitScript(() => addEventListener('pagereveal', (e) => { try { sessionStorage.setItem('vt', e.viewTransition ? 'yes' : 'no'); } catch (x) {} }));
+      const q = await c.newPage();
+      const cdp = await c.newCDPSession(q);
+      const rules = [];
+      await cdp.send('Preload.enable');
+      cdp.on('Preload.ruleSetUpdated', (e) => rules.push(e.ruleSet.errorType || 'ok'));
+      await q.goto(base + '/blog/', { waitUntil: 'networkidle' });
+      await q.locator('.sp-bl a').first().click();
+      await q.waitForURL(/\/blog\/[\w-]+\/$/);
+      await q.waitForTimeout(500);
+      const vt = await q.evaluate(() => sessionStorage.getItem('vt'));
+      let prog = null;
+      if (!reduce) { await q.mouse.wheel(0, 1200); await q.waitForTimeout(500); prog = await q.evaluate(() => new DOMMatrix(getComputedStyle(document.querySelector('.sp-prog')).transform).a); }
+      await c.close();
+      return { vt, rules, prog };
+    };
+    const on = await vtOf(false), off = await vtOf(true);
+    ok('pages: a view transition between pages, none with reduced motion; speculation rules valid; reading progress moves', on.vt === 'yes' && off.vt === 'no' && on.rules.length && on.rules.every((r) => r === 'ok') && on.prog > 0.05 && on.prog < 1, JSON.stringify({ on, off }));
+    const sp = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+    await sp.goto(base + '/', { waitUntil: 'networkidle' });
+    const sel = sp.locator('.v2-side .v2-lang-s');
+    const ap = await sel.evaluate((x) => getComputedStyle(x).appearance);
+    await sel.click(); await sp.waitForTimeout(200);
+    const open = await sel.evaluate((x) => x.matches(':open'));
+    await sp.keyboard.press('Escape');
+    ok('language menu: a styled list where supported', ap === 'base-select' && open, ap + ' ' + open);
+    await sp.close();
+  }
   // CV + 404
   const cv = await browser.newPage({ viewport: { width: 1100, height: 900 } });
   await cv.goto(base + '/cv/', { waitUntil: 'networkidle' });

@@ -117,9 +117,11 @@ function seoHead(head, { title, desc, url, type, today }) {
 // preview builds), not for Do Not Track / Global Privacy Control. It loads on the first interaction, or
 // 6s after the page has loaded, so it never competes with the page itself for the network.
 const CF_ANALYTICS_TOKEN = '1115308102a141bdb2e944bd0144d4ee';
-const cfAnalytics = `<script>(function(){try{if(!/(^|\\.)craigthompson\\.dev$/.test(location.hostname)||navigator.globalPrivacyControl||navigator.doNotTrack==='1')return;var go=function(){var s=document.createElement('script');s.defer=true;s.src='https://static.cloudflareinsights.com/beacon.min.js';s.setAttribute('data-cf-beacon','{"token":"${CF_ANALYTICS_TOKEN}"}');document.head.appendChild(s)};var done=false,ev=['pointerdown','keydown','wheel','touchstart','scroll'],once=function(){if(done)return;done=true;ev.forEach(function(t){removeEventListener(t,once,true)});go()};ev.forEach(function(t){addEventListener(t,once,{capture:true,passive:true})});var later=function(){setTimeout(once,6000)};if(document.readyState==='complete')later();else addEventListener('load',later,{once:true})}catch(e){}})()</script>`;
+const cfAnalytics = `<script>(function a(){if(document.prerendering){document.addEventListener('prerenderingchange',a,{once:true});return}try{if(!/(^|\\.)craigthompson\\.dev$/.test(location.hostname)||navigator.globalPrivacyControl||navigator.doNotTrack==='1')return;var go=function(){var s=document.createElement('script');s.defer=true;s.src='https://static.cloudflareinsights.com/beacon.min.js';s.setAttribute('data-cf-beacon','{"token":"${CF_ANALYTICS_TOKEN}"}');document.head.appendChild(s)};var done=false,ev=['pointerdown','keydown','wheel','touchstart','scroll'],once=function(){if(done)return;done=true;ev.forEach(function(t){removeEventListener(t,once,true)});go()};ev.forEach(function(t){addEventListener(t,once,{capture:true,passive:true})});var later=function(){setTimeout(once,6000)};if(document.readyState==='complete')later();else addEventListener('load',later,{once:true})}catch(e){}})()</script>`;
 
-const beacon = (endpoint, sections) => !endpoint ? '' : `(function () {
+const beacon = (endpoint, sections) => !endpoint ? '' : `(function hit() {
+  // A page loaded ahead of a click (speculation rules) only counts once it's actually shown.
+  if (document.prerendering) { document.addEventListener('prerenderingchange', hit, { once: true }); return; }
   try {
     if (navigator.globalPrivacyControl || navigator.doNotTrack === '1' || !navigator.sendBeacon) return;
     var url = ${JSON.stringify(new URL(endpoint || 'https://x').origin + '/hit')}, t0 = Date.now(), seen = {}, sent = false;
@@ -216,6 +218,15 @@ function fontFaces(dir, families) {
   }
   return [...groups.values()].map((g) => `@font-face{font-family:'${g.fam}';font-style:normal;font-weight:${g.lo === g.hi ? g.lo : g.lo + ' ' + g.hi};font-display:swap;src:url(${dir}${g.file}) format('woff2');unicode-range:${g.range}}`).join('\n');
 }
+// Between pages: a cross-fade (cross-document view transitions; post titles move into place),
+// and pages loaded ahead of a click on hover (speculation rules). Both skip themselves where
+// unsupported; the transition also when motion is reduced or paused on the site.
+const NAV_HEAD = (depth) => `<style>@media (prefers-reduced-motion:no-preference){@view-transition{navigation:auto}}
+::view-transition-group(root){animation-duration:.26s}
+::view-transition-group(*.post-title){animation-duration:.38s;animation-timing-function:cubic-bezier(.2,.8,.2,1)}
+::view-transition-old(*.post-title),::view-transition-new(*.post-title){height:100%;object-fit:none;object-position:left center}</style>
+<script>(function(){var off=function(e){try{if(e.viewTransition&&localStorage.getItem('motion')==='off')e.viewTransition.skipTransition()}catch(x){}};addEventListener('pageswap',off);addEventListener('pagereveal',off)})()</script>
+<script type="speculationrules">${JSON.stringify({ prerender: [{ source: 'document', where: { or: ['', 'cv/', 'blog/*', 'case-studies/*', 'responsibilities/*'].map((p) => ({ href_matches: depth + p })) }, eagerness: 'moderate' }] })}</script>`;
 const preloadFont = (href) => `<link rel="preload" href="${href}" as="font" type="font/woff2" crossorigin>`;
 // Drop the Google Fonts links and point the font stacks at the metric-matched fallbacks.
 const localFonts = (helmet) => helmet
@@ -398,7 +409,7 @@ ${FALLBACKS}
 <script>if(location.hash.length>1)document.documentElement.classList.add('cv-all')</script>
 ${localFonts(d.helmet.trim())}
 ${POSTS.length ? `<script>window.CRAGA_POSTS=${JSON.stringify(postListing(POSTS))}</script>\n` : ''}${OSS_SNAPSHOT ? `<script>window.CRAGA_OSS=${JSON.stringify({ timeline: OSS_SNAPSHOT.timeline })}</script>\n` : ''}<script>window.CRAGA_BUILD={sha:"__BUILD_SHA__",short:"__BUILD_SHORT__",date:"${today}",at:"__BUILD_AT__"}</script>
-<script type="speculationrules">{"prerender":[{"source":"document","where":{"selector_matches":"a[href=\\"cv/\\"]"},"eagerness":"moderate"}]}</script>
+${NAV_HEAD('')}
 <script src="${appName}" defer></script>
 </head>
 <body>
@@ -437,7 +448,7 @@ ${meta('../', 'cv')}\n${cvThemeHead}
 <link rel="alternate" type="application/json" href="../cv.json" title="CV (JSON Resume)">
 ${inter ? preloadFont('../assets/fonts/inter-latin-400.woff2') + '\n<style>\n' + fontFaces('../assets/fonts/', ['Inter']) + '\n' + FALLBACKS + '\n</style>' : ''}
 ${helmet}
-<script type="speculationrules">{"prerender":[{"source":"document","where":{"selector_matches":"a[href=\\"../\\"]"},"eagerness":"moderate"}]}</script>
+${NAV_HEAD('../')}
 </head>
 <body>
 ${body}
@@ -766,6 +777,7 @@ ${pageThemeHead()}
 ${preloadFont(depth + 'assets/fonts/big-shoulders-display-latin-600.woff2')}
 ${preloadFont(depth + 'assets/fonts/public-sans-latin-400.woff2')}
 <link rel="stylesheet" href="${depth}${cssName}">
+${NAV_HEAD(depth)}
 </head>
 <body>
 <div class="c-root" style="background: var(--bg); color: var(--text); min-height: 100vh; font-size: 16px; line-height: 1.7">
@@ -860,7 +872,12 @@ ${HOME.css}
 .sp-bl p{margin:4px 0 0;font-size:14.5px;color:var(--text3)}
 .sp-yr{margin:30px 0 8px;font-family:var(--f-mono);font-size:14px;font-weight:500;color:var(--ok)}
 @media (max-width:640px){.sp-bl li{grid-template-columns:minmax(0,1fr)}}
-@media print{.sp-post-b pre{white-space:pre-wrap}}
+@media print{.sp-post-b pre{white-space:pre-wrap}.sp-prog{display:none!important}}
+/* reading progress: driven by scrolling, no script */
+.sp-prog{display:none;position:fixed;z-index:60;inset-inline:0;top:0;height:3px;background:var(--acc);transform-origin:left center;transform:scaleX(0);pointer-events:none}
+[dir="rtl"] .sp-prog{transform-origin:right center}
+@supports (animation-timeline: scroll()){.sp-prog{display:block;animation:sp-prog linear both;animation-timeline:scroll(root)}}
+@keyframes sp-prog{to{transform:scaleX(1)}}
 `;
   const cssName = 'assets/pages.' + hash(css) + '.css';
   writeOut(cssName, css);
@@ -941,10 +958,11 @@ async function buildBlog(og, cssName, urls) {
     const desc = b.summary.length > 158 ? b.summary.slice(0, 155).replace(/\s\S*$/, '') + '…' : b.summary;
     await ogImage(og, dir, `blog/${b.slug}.md`, `${LONG_DATE(b.date)}${b.tags.length ? ' · ' + b.tags.slice(0, 3).join(' · ') : ''}`, b.title);
     const ld = { '@context': 'https://schema.org', '@type': 'BlogPosting', headline: b.title, description: desc, url, image: url + 'og.png', inLanguage: 'en-GB', datePublished: b.date, keywords: b.tags.join(', '), author, isPartOf: { '@type': 'Blog', name: 'Craig Michael Thompson · blog', url: SITE + '/blog/' }, ...(b.original ? { sameAs: b.original } : {}) };
-    const main = `<p class="sp-crumb">$ cat <a href="../">blog/</a>${esc(b.slug)}.md</p>
+    const main = `<div class="sp-prog" aria-hidden="true"></div>
+<p class="sp-crumb">$ cat <a href="../">blog/</a>${esc(b.slug)}.md</p>
 <article class="sp-post">
 <header class="sp-post-h"><p class="sp-post-k"><time datetime="${b.date}">${LONG_DATE(b.date)}</time> · ${b.minutes} min read</p>
-<h1>${esc(b.title)}</h1>
+<h1 style="view-transition-name: p-${b.slug}; view-transition-class: post-title">${esc(b.title)}</h1>
 ${b.tags.length ? `<ul class="sp-tags" aria-label="Tags">${b.tags.map((t) => `<li>${esc(t)}</li>`).join('')}</ul>` : ''}
 <p class="sp-post-note">First published on my old blog${b.original ? ` (<a href="${esc(b.archived || b.original)}">${esc(new URL(b.original).host)}</a>)` : ''} in ${new Date(b.date + 'T12:00:00Z').toLocaleDateString('en-GB', { month: 'long', year: 'numeric', timeZone: 'UTC' })}, and kept as it was written. Some code and links are out of date.</p></header>
 <div class="sp-post-b">
@@ -967,7 +985,7 @@ ${cta('../../')}
   const main = `<p class="sp-crumb">$ ls -t <a href="../#blog">blog/</a></p>
 <h1 class="c-sr">Blog</h1>
 <p style="margin: 0 0 8px; color: var(--text3); max-width: 64ch">${POSTS.length} posts from my old blog on craigsworks.com, ${span}, kept as they were written. Some of the tools have since moved on.</p>
-${years.map((y) => `<h2 class="sp-yr">${y}</h2><ol class="sp-bl">${POSTS.filter((b) => b.date.startsWith(y)).map((b) => `<li><time datetime="${b.date}">${LONG_DATE(b.date).replace(/ \d{4}$/, '')}</time><div><a href="${b.slug}/">${esc(b.title)}</a><p>${esc(b.summary)}</p></div></li>`).join('')}</ol>`).join('\n')}
+${years.map((y) => `<h2 class="sp-yr">${y}</h2><ol class="sp-bl">${POSTS.filter((b) => b.date.startsWith(y)).map((b) => `<li><time datetime="${b.date}">${LONG_DATE(b.date).replace(/ \d{4}$/, '')}</time><div><a href="${b.slug}/" style="view-transition-name: p-${b.slug}; view-transition-class: post-title">${esc(b.title)}</a><p>${esc(b.summary)}</p></div></li>`).join('')}</ol>`).join('\n')}
 ${cta('../')}
 `;
   const ld = { '@context': 'https://schema.org', '@type': 'Blog', name: 'Craig Michael Thompson · blog', description: desc, url, author, blogPost: POSTS.map((b) => ({ '@type': 'BlogPosting', headline: b.title, datePublished: b.date, url: `${SITE}/blog/${b.slug}/` })) };

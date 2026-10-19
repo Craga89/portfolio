@@ -31,7 +31,13 @@
 <script>try{(function(){var d=document.documentElement,t=localStorage.getItem('theme'),L=t?t==='light':matchMedia('(prefers-color-scheme: light)').matches,M=localStorage.getItem('motion')==='off';d.classList.add(L?'t-light':'t-dark');if(t)document.querySelectorAll('meta[name="theme-color"]').forEach(function(m){m.content=L?'#EDF1EE':'#16271F'});var o=new MutationObserver(function(){var r=document.querySelector('.c-root');if(!r)return;if(L)r.classList.add('c-light');if(M)r.classList.add('still');o.disconnect()});o.observe(d,{childList:true,subtree:true})})()}catch(e){}</script>
 <link rel="preload" href="../../assets/fonts/big-shoulders-display-latin-600.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="../../assets/fonts/public-sans-latin-400.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="../../assets/pages.e184b8865e.css">
+<link rel="stylesheet" href="../../assets/pages.82d67748d4.css">
+<style>@media (prefers-reduced-motion:no-preference){@view-transition{navigation:auto}}
+::view-transition-group(root){animation-duration:.26s}
+::view-transition-group(*.post-title){animation-duration:.38s;animation-timing-function:cubic-bezier(.2,.8,.2,1)}
+::view-transition-old(*.post-title),::view-transition-new(*.post-title){height:100%;object-fit:none;object-position:left center}</style>
+<script>(function(){var off=function(e){try{if(e.viewTransition&&localStorage.getItem('motion')==='off')e.viewTransition.skipTransition()}catch(x){}};addEventListener('pageswap',off);addEventListener('pagereveal',off)})()</script>
+<script type="speculationrules">{"prerender":[{"source":"document","where":{"or":[{"href_matches":"../../"},{"href_matches":"../../cv/"},{"href_matches":"../../blog/*"},{"href_matches":"../../case-studies/*"},{"href_matches":"../../responsibilities/*"}]},"eagerness":"moderate"}]}</script>
 </head>
 <body>
 <div class="c-root" style="background: var(--bg); color: var(--text); min-height: 100vh; font-size: 16px; line-height: 1.7">
@@ -39,10 +45,11 @@
 <header class="sp-top"><a class="sp-home" href="../../"><span class="c-dot" style="width: 9px; height: 9px; border-radius: 50%; background: var(--ok)"></span>craigthompson.dev</a>
 <div class="sp-tools"><button type="button" class="sp-b" id="sp-theme">theme</button><button type="button" class="sp-b" id="sp-motion" hidden>pause animations</button></div></header>
 <main class="sp-main">
+<div class="sp-prog" aria-hidden="true"></div>
 <p class="sp-crumb">$ cat <a href="../">blog/</a>qtip2-now-on-jsdelivr.md</p>
 <article class="sp-post">
 <header class="sp-post-h"><p class="sp-post-k"><time datetime="2013-12-16">16 December 2013</time> · 1 min read</p>
-<h1>qTip2 - Now on jsDelivr</h1>
+<h1 style="view-transition-name: p-qtip2-now-on-jsdelivr; view-transition-class: post-title">qTip2 - Now on jsDelivr</h1>
 <ul class="sp-tags" aria-label="Tags"><li>Plugins</li><li>JavaScript</li><li>qTip2</li></ul>
 <p class="sp-post-note">First published on my old blog (<a href="https://web.archive.org/web/20180628012609/http://blog.craigsworks.com/qtip2-now-on-jsdelivr/">blog.craigsworks.com</a>) in December 2013, and kept as it was written. Some code and links are out of date.</p></header>
 <div class="sp-post-b">
@@ -67,7 +74,7 @@ if(loops&&!reduce){mb.hidden=false;var ml=function(){var off=r.classList.contain
     if (!('Translator' in self) || window.CRAGA_PRERENDER) return;
     var L = ["ar","bg","bn","cs","da","de","el","es","fi","fr","he","hi","hr","hu","id","it","ja","kn","ko","lt","mr","nl","no","pl","pt","ro","ru","sk","sl","sv","ta","te","th","tr","uk","vi","zh","zh-Hant"];
     var norm = function (t) { t = String(t || '').toLowerCase(); if (/^zh-(tw|hk|mo)|^zh-hant/.test(t)) return 'zh-Hant'; var b = t.split('-')[0]; b = { nb: 'no', nn: 'no', iw: 'he', 'in': 'id' }[b] || b; return L.indexOf(b) >= 0 ? b : null; };
-    var I = window.CRAGA_I18N = { langs: L, load: function () { return I._p || (I._p = import("/assets/i18n.6bc9943125.js")); } };
+    var I = window.CRAGA_I18N = { langs: L, load: function () { return I._p || (I._p = import("/assets/i18n.5de98dafac.js")); } };
     var saved = null, no = null;
     try { saved = localStorage.getItem('craga-lang'); no = localStorage.getItem('craga-lang-no'); } catch (e) {}
     var want = saved && saved !== 'en' ? norm(saved) : null, offer = null;
@@ -92,7 +99,9 @@ if(loops&&!reduce){mb.hidden=false;var ml=function(){var off=r.classList.contain
     if (want || offer) I.load().then(function (m) { m.boot({ lang: want || offer, saved: !!want }); }).catch(function () {});
   } catch (e) {}
 })();</script>
-<script>(function () {
+<script>(function hit() {
+  // A page loaded ahead of a click (speculation rules) only counts once it's actually shown.
+  if (document.prerendering) { document.addEventListener('prerenderingchange', hit, { once: true }); return; }
   try {
     if (navigator.globalPrivacyControl || navigator.doNotTrack === '1' || !navigator.sendBeacon) return;
     var url = "https://craga-ask.craga89.workers.dev/hit", t0 = Date.now(), seen = {}, sent = false;
@@ -106,6 +115,6 @@ if(loops&&!reduce){mb.hidden=false;var ml=function(){var off=r.classList.contain
     window.addEventListener('pagehide', send);
   } catch (e) {}
 })();</script>
-<script>(function(){try{if(!/(^|\.)craigthompson\.dev$/.test(location.hostname)||navigator.globalPrivacyControl||navigator.doNotTrack==='1')return;var go=function(){var s=document.createElement('script');s.defer=true;s.src='https://static.cloudflareinsights.com/beacon.min.js';s.setAttribute('data-cf-beacon','{"token":"1115308102a141bdb2e944bd0144d4ee"}');document.head.appendChild(s)};var done=false,ev=['pointerdown','keydown','wheel','touchstart','scroll'],once=function(){if(done)return;done=true;ev.forEach(function(t){removeEventListener(t,once,true)});go()};ev.forEach(function(t){addEventListener(t,once,{capture:true,passive:true})});var later=function(){setTimeout(once,6000)};if(document.readyState==='complete')later();else addEventListener('load',later,{once:true})}catch(e){}})()</script>
+<script>(function a(){if(document.prerendering){document.addEventListener('prerenderingchange',a,{once:true});return}try{if(!/(^|\.)craigthompson\.dev$/.test(location.hostname)||navigator.globalPrivacyControl||navigator.doNotTrack==='1')return;var go=function(){var s=document.createElement('script');s.defer=true;s.src='https://static.cloudflareinsights.com/beacon.min.js';s.setAttribute('data-cf-beacon','{"token":"1115308102a141bdb2e944bd0144d4ee"}');document.head.appendChild(s)};var done=false,ev=['pointerdown','keydown','wheel','touchstart','scroll'],once=function(){if(done)return;done=true;ev.forEach(function(t){removeEventListener(t,once,true)});go()};ev.forEach(function(t){addEventListener(t,once,{capture:true,passive:true})});var later=function(){setTimeout(once,6000)};if(document.readyState==='complete')later();else addEventListener('load',later,{once:true})}catch(e){}})()</script>
 </body>
 </html>

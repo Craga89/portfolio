@@ -537,6 +537,7 @@ html.t-light .tr-offer,html.t-light .tr-bar{--tr-bg:#FFFFFF;--tr-bg2:#E1E8E3;--t
 .tr-bar .tr-btn{min-height:32px;padding:0 10px;font-size:13px}
 .tr-sel{min-height:32px;padding:0 8px;border-radius:8px;border:1px solid var(--tr-line);background:transparent;color:inherit;font:inherit;font-size:13px}
 .tr-sel option{color:#1B2A22;background:#fff}
+@supports (appearance: base-select){.tr-sel,.tr-sel::picker(select){appearance:base-select}.tr-sel{display:inline-flex;align-items:center;gap:6px}.tr-sel::picker(select){box-sizing:border-box;max-block-size:min(60vh,26em);overflow:auto;margin-block:6px;padding:4px;border:1px solid var(--tr-line);border-radius:10px;background:var(--tr-bg);color:var(--tr-fg);box-shadow:0 18px 44px -18px rgba(0,0,0,.55)}.tr-sel option{min-block-size:32px;padding:4px 10px;border-radius:6px;background:transparent;color:var(--tr-fg2);font-size:13px}.tr-sel option:hover,.tr-sel option:focus-visible{background:var(--tr-bg2);color:var(--tr-fg);outline:none}.tr-sel option:checked{font-weight:600;color:var(--tr-fg)}.tr-sel option::checkmark{color:var(--tr-acc)}}
 .tr-info{display:inline-grid;place-items:center;inline-size:20px;block-size:20px;margin-inline-start:8px;padding:0;border:1px solid var(--tr-line);border-radius:50%;background:transparent;color:inherit;font:italic 700 12px/1 Georgia,serif;cursor:pointer;vertical-align:-4px;position:relative;anchor-name:--tr-info}
 .tr-info::after{content:'';position:absolute;inset:-12px}
 .tr-info:focus-visible{outline:2px solid var(--tr-acc);outline-offset:2px}

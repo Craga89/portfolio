@@ -430,6 +430,18 @@ a{color:var(--acc)!important;text-decoration:none!important}
 .v2-lang:has(.v2-lang-mt){flex-wrap:wrap}
 .v2-lang-mt{font-size:11.5px;color:var(--mute);white-space:nowrap;text-decoration:underline dotted;text-underline-offset:3px;cursor:help}
 .v2-lang-s:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+/* The language menu as a styled list where the browser allows it (customizable select); each language is written in its own script. */
+@supports (appearance: base-select){
+.v2-lang-s,.v2-lang-s::picker(select){appearance:base-select}
+.v2-lang-s{display:inline-flex;align-items:center;gap:6px;padding:0 8px}
+.v2-lang-s::picker-icon{color:var(--mute);transition:rotate .2s ease}
+.v2-lang-s:open::picker-icon{rotate:180deg}
+.v2-lang-s::picker(select){box-sizing:border-box;min-inline-size:anchor-size(inline);max-block-size:min(60vh,26em);overflow:auto;margin-block:6px;padding:4px;border:1px solid var(--line3);border-radius:10px;background:var(--panel);color:var(--text);box-shadow:0 18px 44px -18px rgba(0,0,0,.55);scrollbar-width:thin;scrollbar-color:var(--line3) transparent}
+.v2-lang-s option{display:flex;align-items:center;gap:8px;min-block-size:32px;padding:4px 10px;border-radius:6px;background:transparent;color:var(--text3);font-size:13px}
+.v2-lang-s option:hover,.v2-lang-s option:focus-visible{background:var(--acc-bg);color:var(--head);outline:none}
+.v2-lang-s option:checked{color:var(--head);font-weight:600}
+.v2-lang-s option::checkmark{color:var(--acc)}
+}
 .v2-motion:hover{color:var(--head);text-decoration:underline}
 .v2-motion:focus-visible{outline:2px solid var(--acc);outline-offset:2px;border-radius:3px}
 @media print{.v2-motion,.v2-lang{display:none!important}}
@@ -2356,7 +2368,7 @@ html[data-vt-dir="prev"]::view-transition-new(c-rs),html[data-vt-dir="prev"]::vi
 <section id="blog" class="c-rv" style="margin-top: clamp(72px, 10vw, 128px)">
 <div class="c-hrow" style="margin: 0 0 8px"><h2 class="c-cmd" style="margin: 0; font-size: clamp(16px, 2vw, 20px); font-weight: 500; color: var(--ok)"><span translate="no">$ ls -t ./blog</span> <span style="color: var(--dim)"># writing</span></h2><a class="c-anchor" href="#blog" data-done="{{anc.blog}}" data-file="blog/" aria-label="Copy link to blog/" title="Copy link to this section">#</a></div>
 <p style="margin: 0 0 24px; color: var(--mute); font-size: 14px; max-width: 72ch">{{blog.count}} posts from my old blog on craigsworks.com, {{blog.span}}, kept as they were written. Some of the tools have since moved on.</p>
-<ol class="c-bl" aria-label="Blog posts, newest first"><sc-for list="{{blog.items}}" as="b" hint-placeholder-count="6"><li class="c-bl-i"><time class="c-bl-d" datetime="{{b.date}}">{{b.when}}</time><a class="c-bl-a" href="{{b.href}}"><span class="c-bl-t">{{b.title}}</span><span class="c-bl-f" translate="no"><bdi>{{b.file}}</bdi></span></a><span class="c-bl-m">{{b.meta}}</span></li></sc-for></ol>
+<ol class="c-bl" aria-label="Blog posts, newest first"><sc-for list="{{blog.items}}" as="b" hint-placeholder-count="6"><li class="c-bl-i"><time class="c-bl-d" datetime="{{b.date}}">{{b.when}}</time><a class="c-bl-a" href="{{b.href}}"><span class="c-bl-t" style="{{b.vt}}">{{b.title}}</span><span class="c-bl-f" translate="no"><bdi>{{b.file}}</bdi></span></a><span class="c-bl-m">{{b.meta}}</span></li></sc-for></ol>
 <div class="c-bl-more"><sc-if value="{{blog.more}}" hint-placeholder-val="true"><button type="button" class="c-bl-b" onClick="{{blog.showAll}}" aria-expanded="false">show all {{blog.count}} posts</button></sc-if><a class="c-bl-b" href="blog/">blog/ index →</a></div>
 </section>
 
@@ -3699,7 +3711,7 @@ class Component extends DCLogic {
       const all = this.posts();
       const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
       const showAll = !!(this.state || {}).blogAll;
-      const items = (showAll ? all : all.slice(0, 8)).map((b) => ({ date: b.date, when: MON[+b.date.slice(5, 7) - 1] + ' ' + b.date.slice(0, 4), href: 'blog/' + b.slug + '/', title: b.title, file: b.slug + '.md', meta: (b.tags || []).slice(0, 3).join(' · ') + ((b.tags || []).length ? ' · ' : '') + b.minutes + ' min' }));
+      const items = (showAll ? all : all.slice(0, 8)).map((b) => ({ date: b.date, when: MON[+b.date.slice(5, 7) - 1] + ' ' + b.date.slice(0, 4), href: 'blog/' + b.slug + '/', vt: 'view-transition-name: p-' + b.slug + '; view-transition-class: post-title', title: b.title, file: b.slug + '.md', meta: (b.tags || []).slice(0, 3).join(' · ') + ((b.tags || []).length ? ' · ' : '') + b.minutes + ' min' }));
       const years = all.map((b) => +b.date.slice(0, 4)).filter(Boolean);
       return { items, count: all.length, span: years.length ? Math.min(...years) + '–' + Math.max(...years) : '', more: !showAll && all.length > 8, showAll: () => this.setState({ blogAll: true }) };
     })();

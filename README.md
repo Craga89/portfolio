@@ -151,6 +151,13 @@ Automated checks can't cover all of WCAG; screen reader passes (VoiceOver, NVDA)
 While the content is being finished, the build keeps the site out of search engines: `robots.txt` disallows everything and every page carries `<meta name="robots" content="noindex">`. When it's ready to be found, build with `node tools/build.mjs --public` (or set `ALLOW_INDEXING` to `true` in `tools/build.mjs`) and push.
 
 
+## Between pages
+
+- **Transitions:** moving between pages cross-fades (cross-document view transitions, `@view-transition { navigation: auto }`), and a post's title moves from the list into place on its page. It's off with reduced motion, and when animations are paused on the site (`pagereveal` skips it). Browsers without it just load the page.
+- **Loading ahead:** speculation rules prerender a page on hover or touch (`eagerness: moderate`) for the home page, the CV, the blog, case studies and responsibilities, so they open instantly. The visit beacon and analytics wait until a prerendered page is actually shown (`document.prerendering`), so nothing is counted for pages no one opened.
+- **Reading progress** on blog posts is a CSS scroll-driven animation (`animation-timeline: scroll(root)`), with no script; it's hidden where unsupported.
+- **The language menus** are customizable selects (`appearance: base-select`) where the browser supports them, styled like the site; each language is written in its own script. Elsewhere they're the browser's own menu.
+
 ## Blog (the old craigsworks posts)
 
 The posts from the old blogs (craigsworks.com/blog in 2010, blog.craigsworks.com 2012–16) live in `src/blog/` as Markdown, one file per post, with front matter: `title`, `date`, `tags`, `original` (the old address) and `archived` (the Wayback Machine copy they came from). Images go in `src/blog/img/`. The build renders each to `/blog/<slug>/` (with its own social preview and `BlogPosting` data), writes `/blog/` listing them all, lists them on the home page (`$ ls -t ./blog`), adds them to ask.sh's index and the agent tools (`list_files`, `read_file`), and puts them in the sitemap. Each old post address redirects to its new page (see below).
