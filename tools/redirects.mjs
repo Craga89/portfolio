@@ -91,7 +91,7 @@ async function discover(dir) {
       else if (ts < prev.first) prev.first = ts;
     }
   }
-  const out = [...seen.values()].sort((a, b) => a.url.localeCompare(b.url)).map((x) => { const m = match(x.url); return Object.assign(x, { to: m ? m.target : null, rule: m ? m.rule.source : null }); });
+  const out = [...seen.values()].filter((x) => !junk(x.url)).sort((a, b) => a.url.localeCompare(b.url)).map((x) => { const m = match(x.url); return Object.assign(x, { to: m ? m.target : null, rule: m ? m.rule.source : null }); });
   writeFileSync(join(dir, 'archived.json'), JSON.stringify(out, null, 1) + '\n');
   const md = ['# Archived URLs on the old domains', '', `${out.length} distinct URLs from the Wayback Machine (${new Date().toISOString().slice(0, 10)}), and where each will redirect.` + skippedAll.map(([p, n]) => ` Not listed: ${n} under ${p}, which go to ${(match('https://' + p) || {}).target}.`).join(''), '', '| rule | URLs |', '| --- | --- |'];
   const by = {}; out.forEach((x) => { (by[x.rule || 'no rule'] = by[x.rule || 'no rule'] || []).push(x); });
@@ -110,11 +110,19 @@ async function hop(url) {
   const r = await fetch(url, { redirect: 'manual', headers: { 'user-agent': 'craigthompson.dev redirect check' } });
   return { status: r.status, location: r.headers.get('location') ? new URL(r.headers.get('location'), url).href : null };
 }
-async function lands(url) {
+// Strings the Wayback Machine's crawler picked out of old scripts ("/projects/qtip/'+s.id+'"), not pages.
+export const junk = (url) => { try { const u = new URL(url); const p = decodeURIComponent(u.pathname + u.search); return /['"(){}<>;+,\[\]|\\^`=]|\s|https?:|\.bak$|\/\.[a-z]/i.test(p.replace(/^\?[\w.-]+=[\w.%-]*(&[\w.-]+=[\w.%-]*)*$/, '')) ; } catch (e) { return true; } };
+
+async function lands(url, tries = 2) {
+  const r = await landsOnce(url);
+  if (r.status === 0 && tries > 1) { await new Promise((res) => setTimeout(res, 1500)); return lands(url, tries - 1); }
+  return r;
+}
+async function landsOnce(url) {
   try {
     const r = await fetch(url.replace(/#.*$/, ''), { redirect: 'follow', headers: { 'user-agent': 'craigthompson.dev redirect check' } });
     return { status: r.status, type: r.headers.get('content-type') || '', final: r.url };
-  } catch (e) { return { status: 0, type: '', final: '', error: e.message }; }
+  } catch (e) { return { status: 0, type: '', final: '', error: e.message + (e.cause ? ' (' + (e.cause.code || e.cause.message) + ')' : '') }; }
 }
 
 async function check(archivedFile) {
@@ -122,7 +130,7 @@ async function check(archivedFile) {
   for (const c of cases) { const m = match(c.from); if (!m || m.target !== c.to) { console.error(`config: ${c.from} maps to ${m ? m.target : 'nothing'}, test expects ${c.to}`); process.exitCode = 1; } }
   if (archivedFile && existsSync(archivedFile)) {
     const seen = new Set(cases.map((c) => c.from));
-    for (const x of JSON.parse(readFileSync(archivedFile, 'utf8'))) if (x.to && !seen.has(x.url)) { cases.push({ from: x.url, to: x.to }); seen.add(x.url); }
+    for (const x of JSON.parse(readFileSync(archivedFile, 'utf8'))) { const m = !junk(x.url) && !seen.has(x.url) && match(x.url); if (m) { cases.push({ from: x.url, to: m.target }); seen.add(x.url); } }
   }
   const results = [];
   const targets = new Map();
@@ -162,11 +170,11 @@ async function check(archivedFile) {
 // targets: before switching over, check every destination the redirects will send people to loads.
 async function targets(archivedFile) {
   const list = new Set(CONF.tests.map(([, to]) => to));
-  if (archivedFile && existsSync(archivedFile)) for (const x of JSON.parse(readFileSync(archivedFile, 'utf8'))) if (x.to) list.add(x.to);
+  if (archivedFile && existsSync(archivedFile)) for (const x of JSON.parse(readFileSync(archivedFile, 'utf8'))) { const m = !junk(x.url) && match(x.url); if (m) list.add(m.target); }
   const all = [...list];
   const res = [];
   let i = 0;
-  await Promise.all(Array.from({ length: 6 }, async () => { while (i < all.length) { const t = all[i++]; res.push(Object.assign({ t }, await lands(t))); } }));
+  await Promise.all(Array.from({ length: 4 }, async () => { while (i < all.length) { const t = all[i++]; res.push(Object.assign({ t }, await lands(t))); } }));
   const host = {};
   for (const r of res) { const h = new URL(r.t).hostname; const k = r.status >= 200 && r.status < 400 ? 'ok' : String(r.status || 'error'); host[h] = host[h] || {}; host[h][k] = (host[h][k] || 0) + 1; }
   const bad = res.filter((r) => !(r.status >= 200 && r.status < 400) || (/\.js$/.test(new URL(r.t).pathname) && !/javascript/.test(r.type)));
