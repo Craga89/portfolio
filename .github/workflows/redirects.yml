@@ -1,6 +1,7 @@
 # Old-domain redirects (redirects/old-domains.json, tools/redirects.mjs).
 #   discover: list every URL the Wayback Machine has archived on the old domains, and where
 #             each will go; saved to the redirect-data branch (archived.md is the readable one).
+#   targets:  before switching over, check every destination loads (saved as archive/targets.md).
 #   check:    request the test URLs and every archived URL, and check each redirects once,
 #             permanently, to the right place, and that the destination loads.
 name: Old-domain redirects
@@ -11,7 +12,7 @@ on:
       task:
         description: discover or check
         type: choice
-        options: [discover, check]
+        options: [discover, targets, check]
         default: check
 
 permissions:
@@ -43,6 +44,17 @@ jobs:
           git add archive
           git commit -qm "Archived URLs on the old domains, $(date -u +%F)"
           git push -qf origin HEAD:redirect-data
+      - name: Check the destinations load
+        if: inputs.task == 'targets'
+        run: |
+          git fetch -q --depth=1 origin redirect-data:refs/remotes/origin/redirect-data
+          git show origin/redirect-data:archive/archived.json > archived.json
+          node tools/redirects.mjs targets archived.json targets.md
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git switch -q -c rd origin/redirect-data
+          mkdir -p archive && mv targets.md archive/targets.md
+          git add archive/targets.md && git commit -qm "Redirect destinations, $(date -u +%F)" && git push -q origin HEAD:redirect-data
       - name: Check the live redirects
         if: inputs.task == 'check'
         run: |

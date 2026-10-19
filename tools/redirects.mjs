@@ -5,6 +5,7 @@
 //   node tools/redirects.mjs match <url>…      which rule a URL hits and where it goes (offline)
 //   node tools/redirects.mjs discover [dir]    list every URL the Wayback Machine has archived on
 //                                              the old domains, and where each one will go
+//   node tools/redirects.mjs targets [archived] [out.md]  check the destinations load (before switching)
 //   node tools/redirects.mjs check [archived]  request the test URLs (and, given the discover output,
 //                                              every archived URL) and check each redirects once,
 //                                              permanently, to the right place, and that it loads
@@ -158,9 +159,30 @@ async function check(archivedFile) {
   if (bad.length) process.exitCode = 1;
 }
 
+// targets: before switching over, check every destination the redirects will send people to loads.
+async function targets(archivedFile) {
+  const list = new Set(CONF.tests.map(([, to]) => to));
+  if (archivedFile && existsSync(archivedFile)) for (const x of JSON.parse(readFileSync(archivedFile, 'utf8'))) if (x.to) list.add(x.to);
+  const all = [...list];
+  const res = [];
+  let i = 0;
+  await Promise.all(Array.from({ length: 6 }, async () => { while (i < all.length) { const t = all[i++]; res.push(Object.assign({ t }, await lands(t))); } }));
+  const host = {};
+  for (const r of res) { const h = new URL(r.t).hostname; const k = r.status >= 200 && r.status < 400 ? 'ok' : String(r.status || 'error'); host[h] = host[h] || {}; host[h][k] = (host[h][k] || 0) + 1; }
+  const bad = res.filter((r) => !(r.status >= 200 && r.status < 400) || (/\.js$/.test(new URL(r.t).pathname) && !/javascript/.test(r.type)));
+  const lines = ['# Redirect destinations', '', `${res.length - bad.length} of ${res.length} destinations load.`, '', '| host | results |', '| --- | --- |'];
+  Object.entries(host).forEach(([h, c]) => lines.push(`| ${h} | ${Object.entries(c).map(([k, n]) => `${k}: ${n}`).join(', ')} |`));
+  if (bad.length) { lines.push('', '| destination | result |', '| --- | --- |'); bad.slice(0, 200).forEach((r) => lines.push(`| ${r.t} | ${r.status ? 'HTTP ' + r.status : r.error}${r.final && r.final !== r.t ? ' (via ' + r.final + ')' : ''} ${/\.js$/.test(new URL(r.t).pathname) ? r.type : ''} |`)); }
+  const text = lines.join('\n') + '\n';
+  console.log(text);
+  if (process.env.GITHUB_STEP_SUMMARY) appendFileSync(process.env.GITHUB_STEP_SUMMARY, text);
+  return text;
+}
+
 const [cmd, ...args] = process.argv.slice(2);
 if (cmd === 'csv') csv(args[0] || join(ROOT, 'redirects', 'cloudflare-bulk.csv'));
 else if (cmd === 'match') for (const a of args) { const m = match(a); console.log(a, '→', m ? `${m.target}  (${m.rule.source})` : 'no rule'); }
 else if (cmd === 'discover') await discover(args[0] || join(ROOT, 'redirects', 'archive'));
 else if (cmd === 'check') await check(args[0]);
+else if (cmd === 'targets') { const t = await targets(args[0]); if (args[1]) writeFileSync(args[1], t); }
 else { console.log('usage: node tools/redirects.mjs csv|match|discover|check'); process.exitCode = 1; }
