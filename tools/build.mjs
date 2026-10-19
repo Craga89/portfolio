@@ -909,7 +909,7 @@ ${html}
 ${terms.length ? `<section class="sp-terms" aria-labelledby="sp-terms-h"><h2 id="sp-terms-h"># terms used</h2><dl>${terms.map(([, t, d]) => `<dt>${esc(t)}</dt><dd>${esc(d)}</dd>`).join('')}</dl></section>` : ''}
 <nav class="sp-pn" aria-label="More ${S.label}"><a href="../${SLUG(prev.file)}/"><span>← previous</span><b>${esc(prev.file)}</b></a><a class="next" href="../${SLUG(next.file)}/"><span>next →</span><b>${esc(next.file)}</b></a></nav>
 <section class="sp-more" aria-labelledby="sp-more-h"><h2 id="sp-more-h">$ ls ${S.label}</h2><ul>${list.map((x) => `<li><a href="../${SLUG(x.file)}/"${x === p ? ' aria-current="page"' : ''}>${esc(x.file)}</a></li>`).join('')}</ul></section>
-<aside class="sp-cta" aria-label="About Craig"><p><b>Craig Michael Thompson</b>, Head of Engineering: hands-on, AI-first, from start-up to acquisition. Open to new roles.</p><div><a class="go" href="mailto:craga89@gmail.com">get in touch</a><a class="alt" href="${homeLink}">see it in the portfolio</a><a class="alt" href="../../cv/">CV</a></div></aside>
+<aside class="sp-cta" aria-label="About Craig"><p><b>Craig Michael Thompson</b>, Head of Engineering: hands-on, AI-first, from start-up to acquisition. Open to new roles.</p><div><a class="go" href="mailto:craga89@gmail.com">./get-in-touch</a><a class="alt" href="${homeLink}">see it in the portfolio</a><a class="alt" href="../../cv/">CV</a></div></aside>
 ` });
       writeFileSync(join(OUT, dir, 'index.html'), page);
       urls.push(url);
@@ -949,7 +949,7 @@ async function buildBlog(og, cssName, urls) {
   if (!POSTS.length) return;
   const IMG = join(SRC, 'blog', 'img');
   if (existsSync(IMG)) { mkdirSync(join(OUT, 'blog', 'img'), { recursive: true }); for (const f of readdirSync(IMG)) copyFileSync(join(IMG, f), join(OUT, 'blog', 'img', f)); }
-  const cta = (depth) => `<aside class="sp-cta" aria-label="About Craig"><p><b>Craig Michael Thompson</b>, Head of Engineering: hands-on, AI-first, from start-up to acquisition. Open to new roles.</p><div><a class="go" href="mailto:craga89@gmail.com">get in touch</a><a class="alt" href="${depth}#blog">the portfolio</a><a class="alt" href="${depth}cv/">CV</a></div></aside>`;
+  const cta = (depth) => `<aside class="sp-cta" aria-label="About Craig"><p><b>Craig Michael Thompson</b>, Head of Engineering: hands-on, AI-first, from start-up to acquisition. Open to new roles.</p><div><a class="go" href="mailto:craga89@gmail.com">./get-in-touch</a><a class="alt" href="${depth}#blog">the portfolio</a><a class="alt" href="${depth}cv/">CV</a></div></aside>`;
   const author = { '@type': 'Person', '@id': SITE + '/#person', name: 'Craig Michael Thompson', url: SITE + '/' };
   for (let i = 0; i < POSTS.length; i++) {
     const b = POSTS[i], dir = `blog/${b.slug}/`, url = `${SITE}/${dir}`;

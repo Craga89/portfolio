@@ -264,11 +264,20 @@ main a:not(.c-btn):hover{text-underline-offset:6px}
   .v2-menu-p li a[aria-current="true"]{background:var(--acc-bg);color:var(--head);border-inline-start-color:var(--acc);font-weight:700}
   .v2-menu-p li a[aria-current="true"]::before{content:'●';color:var(--acc)}
   .v2-menu-tools{display:flex;gap:8px;margin-top:10px;padding-top:12px;border-top:1px solid var(--line2)}
+  .v2-menu-links{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:10px;padding-top:12px;border-top:1px solid var(--line2)}
+  .v2-menu-links .v2-soc{box-sizing:border-box;justify-content:center;gap:8px!important;min-height:44px;padding:0 10px;border:1px solid var(--line3);border-radius:8px;font-size:14px;color:var(--text2)!important;text-decoration:none!important}
+  .v2-menu-links .v2-soc:hover{border-color:var(--acc);color:var(--head)!important}
+  .v2-menu-links .v2-soc:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+  .v2-menu-links .v2-soc .v2-ico{padding:0!important;background:none!important;box-shadow:none!important}
+  .v2-menu-links .v2-copy{display:none}
+  .c-root:has(#v2-menu[open]) .c-chat{visibility:hidden}
   .v2-menu-b{all:unset;box-sizing:border-box;cursor:pointer;flex:1;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;border:1px solid var(--line3);border-radius:8px;font-size:14px;color:var(--text2)}
   .v2-menu-b:hover{border-color:var(--acc);color:var(--head)}
   .v2-menu-b:focus-visible,.v2-menu>summary:focus-visible{outline:2px solid var(--acc);outline-offset:-2px}
   .v2-mbar-cta{flex:none;display:inline-flex;align-items:center;min-height:34px;margin-block:0;margin-inline:auto 2px;padding:0 12px;border-radius:6px;background:var(--acc);color:var(--bg)!important;font-size:13.5px;font-weight:700;text-decoration:none!important;white-space:nowrap}
   .v2-mbar-cta:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+  @media (max-width:374px){.v2-mbrand{font-size:12.5px;gap:6px}.v2-mbar-cta{padding:0 9px;font-size:12.5px}}
+  @media (max-width:340px){.v2-mbrand .c-dot{display:none}}
 }
 
 /* ---- theme layer ---- */
