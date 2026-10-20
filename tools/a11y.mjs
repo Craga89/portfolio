@@ -112,6 +112,9 @@ for (const [width, scheme] of [[1440, 'dark'], [1440, 'light'], [390, 'dark'], [
     await tabs.nth(i).click();
     await page.waitForFunction((k) => document.querySelectorAll('#case-studies [role="tab"]')[k].getAttribute('aria-selected') === 'true', i, { timeout: 3000 }).catch(() => {});
     await page.waitForTimeout(60);
+    // Bring the tabs back into view below the phone header, as a person would see them.
+    await page.evaluate(() => { const t = document.querySelector('#case-studies [role="tablist"]'); if (t) t.scrollIntoView({ block: 'nearest' }); });
+    await page.waitForTimeout(60);
     await axe(page, `case study tab ${i + 1} ${tag}`, '#case-studies');
   }
   // A jargon toggletip open.
@@ -201,6 +204,8 @@ for (const [width, scheme, locale] of [[1440, 'dark', 'de-DE'], [390, 'light', '
     if (i >= await tabs.count()) continue;
     await tabs.nth(i).click();
     await page.waitForTimeout(150);
+    await page.evaluate(() => { const t = document.querySelector('#case-studies [role="tablist"]'); if (t) t.scrollIntoView({ block: 'nearest' }); });
+    await page.waitForTimeout(60);
     await axe(page, `case study tab ${i + 1} translated ${tag}`, '#case-studies');
   }
   await ctx.close();

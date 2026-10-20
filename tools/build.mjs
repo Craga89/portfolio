@@ -529,7 +529,7 @@ function extractPassages() {
   const txt = (n) => {
     if (!n) return '';
     if (n.nodeType === 3) return n.data;
-    if (n.nodeType !== 1 || SKIP.has(n.localName) || (n.classList && (n.classList.contains('c-mcp-live') || n.classList.contains('c-mcp-copy')))) return '';
+    if (n.nodeType !== 1 || SKIP.has(n.localName) || (n.classList && (n.classList.contains('c-mcp-live') || n.classList.contains('c-mcp-copy') || n.classList.contains('c-sq-tog')))) return '';
     let out = '';
     for (const c of n.childNodes) out += txt(c);
     return INLINE.has(n.localName) ? out : ' ' + out + ' ';
@@ -572,7 +572,7 @@ function extractPassages() {
   const stack = q('#stack');
   if (stack) {
     const rows = qa('#stack .c-sq-row').map((r) => {
-      const kids = Array.from(r.children);
+      const kids = Array.from(r.children).filter((k) => !k.classList.contains('c-sq-tog'));
       const items = kids.slice(1).flatMap((k) => (k.children.length ? Array.from(k.children) : [k])).map((x) => clean(txt(x))).filter(Boolean);
       return items.length ? clean(txt(kids[0])) + ' ' + items.join(', ') : '';
     }).filter(Boolean);

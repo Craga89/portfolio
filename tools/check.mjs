@@ -391,6 +391,22 @@ try {
     ok('language menu: a styled list where supported', ap === 'base-select' && open, ap + ' ' + open);
     await sp.close();
   }
+  // The stack on phones: one line per area, opening on tap; a search shows every match.
+  {
+    const st = await browser.newPage({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+    await st.goto(base + '/', { waitUntil: 'networkidle' });
+    const h = () => st.evaluate(() => Math.round(document.getElementById('stack').getBoundingClientRect().height));
+    const closed = await h();
+    const hidden = await st.evaluate(() => [...document.querySelectorAll('#stack .c-sq-hit')].filter((x) => x.offsetParent).length);
+    await st.locator('#stack .c-sq-tog').first().tap();
+    await st.waitForTimeout(200);
+    const open = await st.evaluate(() => ({ exp: document.querySelector('#stack .c-sq-tog').getAttribute('aria-expanded'), shown: document.querySelector('#stack .c-sq-row .c-sq-hit').offsetParent !== null }));
+    await st.fill('.c-sq-in', 'aws');
+    await st.waitForTimeout(200);
+    const found = await st.evaluate(() => [...document.querySelectorAll('#stack .c-sq-hit')].filter((x) => x.offsetParent).length);
+    ok('stack on phones: areas fold to one line each, open on tap, and a search shows matches', closed < 1000 && hidden === 0 && open.exp === 'true' && open.shown && found > 3, JSON.stringify({ closed, hidden, open, found }));
+    await st.close();
+  }
   // CV + 404
   const cv = await browser.newPage({ viewport: { width: 1100, height: 900 } });
   await cv.goto(base + '/cv/', { waitUntil: 'networkidle' });

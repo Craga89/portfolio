@@ -70,7 +70,20 @@ a{color:var(--acc)}a:hover{color:var(--acc-h)}
 .c-sq-hit:hover{border-color:var(--acc);transform:translateY(-2px)}
 .c-sq-hit mark{background:var(--acc);color:var(--bg);border-radius:2px;padding:0 1px}
 @keyframes c-sq-pop{from{opacity:0;transform:translateY(6px) scale(.96)}}
-@media (max-width:640px){.c-sq-row{grid-template-columns:minmax(0,1fr)}}
+.c-sq-tog{display:none}
+@media (max-width:640px){.c-sq-row{grid-template-columns:minmax(0,1fr);gap:0;padding:0}
+.c-sq-g{display:none}
+.c-sq-tog{all:unset;box-sizing:border-box;cursor:pointer;display:grid;grid-template-columns:auto auto minmax(0,1fr) 12px;align-items:center;gap:10px;min-height:48px;padding:6px 0;font-size:13px}
+.c-sq-tog::after{content:'';inline-size:7px;block-size:7px;border-inline-end:1.5px solid var(--mute);border-block-end:1.5px solid var(--mute);rotate:45deg;translate:0 -2px;transition:rotate .2s ease}
+.c-sq-row[data-open="true"] .c-sq-tog::after{rotate:-135deg;translate:0 2px}
+.c-sq-tog:focus-visible{outline:2px solid var(--acc);outline-offset:2px;border-radius:4px}
+.c-sq-tg{color:var(--acc);font-family:var(--f-mono,ui-monospace,monospace)}
+.c-sq-tn{font-family:var(--f-mono,ui-monospace,monospace);font-size:12px;color:var(--dim)}
+.c-sq-tp{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text3)}
+.c-sq-row[data-open="true"] .c-sq-tp{visibility:hidden}
+.c-sq-row:not([data-open="true"]) .c-sq-chips{display:none!important}
+.c-sq-chips{gap:6px!important;padding:2px 0 14px}
+.c-sq-hit{padding:4px 9px!important;font-size:13px!important}}
 .c-glance{margin-top:28px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
 .c-gt{all:unset;box-sizing:border-box;position:relative;display:flex;flex-direction:column;gap:4px;border:1px solid var(--line2);border-radius:10px;padding:20px 20px 18px;cursor:pointer;color:var(--text);text-decoration:none!important;transition:transform .25s ease,border-color .25s ease,background .25s ease}
 .c-gt:hover{border-color:var(--acc);background:var(--panel)}
@@ -2315,9 +2328,10 @@ html[data-vt-dir="prev"]::view-transition-new(c-rs),html[data-vt-dir="prev"]::vi
 <div style="padding: 16px 16px 20px" aria-live="polite">
 <p style="margin: 0 0 10px; font-size: 13px; color: var(--mute)">{{sqSummary}}</p>
 <sc-for list="{{sqResults}}" as="r" hint-placeholder-count="12">
-<div class="c-sq-row">
-<span style="font-size: 13px; color: var(--acc); padding-top: 6px">{{r.group}}</span>
-<span style="display: flex; flex-wrap: wrap; gap: 8px"><sc-for list="{{r.items}}" as="i" hint-placeholder-count="6"><span class="c-sq-hit">{{i.a}}<sc-if value="{{i.hasM}}" hint-placeholder-val="{{ false }}"><mark>{{i.m}}</mark></sc-if>{{i.b}}</span></sc-for></span>
+<div class="c-sq-row" data-open="{{r.open}}">
+<span class="c-sq-g" style="font-size: 13px; color: var(--acc); padding-top: 6px">{{r.group}}</span>
+<button type="button" class="c-sq-tog" onClick="{{r.toggle}}" aria-expanded="{{r.open}}"><span class="c-sq-tg">{{r.group}}</span><span class="c-sq-tn">{{r.count}}</span><span class="c-sq-tp">{{r.preview}}</span></button>
+<span class="c-sq-chips" style="display: flex; flex-wrap: wrap; gap: 8px"><sc-for list="{{r.items}}" as="i" hint-placeholder-count="6"><span class="c-sq-hit">{{i.a}}<sc-if value="{{i.hasM}}" hint-placeholder-val="{{ false }}"><mark>{{i.m}}</mark></sc-if>{{i.b}}</span></sc-for></span>
 </div>
 </sc-for>
 <sc-if value="{{sqEmpty}}" hint-placeholder-val="{{ false }}"><p style="margin: 0; color: var(--text3)">grep: no matches. <span style="color: var(--mute)">Ask me anyway:</span> <a href="mailto:craga89@gmail.com">craga89@gmail.com</a></p></sc-if>
@@ -3521,13 +3535,17 @@ class Component extends DCLogic {
     const sql = sqRaw.trim().toLowerCase();
     const sqTotal = SG.reduce((n, g) => n + g[1].length, 0);
     let sqHits = 0;
+    // On phones each area is one line (name, count, the first few tools) that opens to show them
+    // all; CSS does this only at phone widths. A search opens every area with a match.
+    const sqOpen = (this.state && this.state.sqOpen) || {};
     const sqResults = SG.map(([g, list]) => {
+      const open = !!sqOpen[g];
       const items = list.filter((x) => !sql || x.toLowerCase().includes(sql) || g.includes(sql) || (SK[g] || '').includes(sql)).map((x) => {
         const i = sql ? x.toLowerCase().indexOf(sql) : -1;
         return i < 0 ? { a: x, m: '', b: '', hasM: false } : { a: x.slice(0, i), m: x.slice(i, i + sql.length), b: x.slice(i + sql.length), hasM: true };
       });
       sqHits += items.length;
-      return { group: g + '/', items };
+      return { group: g + '/', items, open: open || sql ? 'true' : 'false', count: String(items.length), preview: items.map((x) => x.a + x.m + x.b).join(', '), toggle: () => this.setState({ sqOpen: Object.assign({}, sqOpen, { [g]: !open }) }) };
     }).filter((r) => r.items.length);
     const sqSummary = sql ? sqHits + ' match' + (sqHits === 1 ? '' : 'es') + ' for "' + sqRaw.trim() + '"' : sqTotal + ' tools across ' + SG.length + ' areas · type to search';
     const askSt = this.state || {};
