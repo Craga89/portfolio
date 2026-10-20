@@ -1,11 +1,17 @@
 // craga-ask: answers questions about Craig's CV for the ask.sh section of craigthompson.dev.
 // Runs on Cloudflare Workers AI's free daily allowance. When that's used up (or anything
 // fails) it returns an error and the site falls back to its own search.
-import knowledge from '../knowledge.json';
-import agentData from '../agent-data.json';
+import knowledge from '../knowledge.json' with { type: 'json' };
+import agentData from '../agent-data.json' with { type: 'json' };
 import { prepareIndex, rank, ToolError } from '../../shared/agent-tools.js';
 import { handleMcp } from './mcp.js';
 import { check, charge, textCost, voiceCost, exhausted, closeDay, BudgetError, ASK_RESERVE } from './budget.js';
+import { errorMessage } from '../../shared/errors.js';
+
+/** @typedef {import('../../shared/agent-tools.js').IndexedPassage} IndexedPassage */
+/** @typedef {import('../../shared/agent-tools.js').Source} Source */
+/** @typedef {import('./budget.js').Share} Share */
+/** @typedef {{ answer: string, sources: string[], model?: string }} Answer */
 export { BudgetError };
 
 const MODELS = [
@@ -34,10 +40,13 @@ const PASSAGES = INDEX.passages;
 const BY_ID = INDEX.byId;
 
 // Pick the passages most likely to answer the question, within a fixed budget.
+/** @param {string} q */
 export function pickContext(q) {
   const scored = rank(INDEX, q);
+  /** @type {IndexedPassage[]} */
   const chosen = [];
   let used = 0;
+  /** @param {IndexedPassage | undefined} p */
   const take = (p) => {
     if (!p || chosen.includes(p)) return;
     const size = p.title.length + p.text.length + 8;
@@ -55,26 +64,39 @@ export function pickContext(q) {
 }
 
 // The section file a passage lives in on the site, as visitors see it (budget.md, faq.md, career.log…).
+/**
+ * @param {string} id
+ * @returns {string | null}
+ */
 export function fileOf(id) {
   const p = BY_ID[id];
   if (!p) return null;
   if (p.kind === 'resp' || p.kind === 'case') return String(p.title).split(':')[0].trim();
   if (/^faq-/.test(id)) return 'faq.md';
   if (/^career-/.test(id)) return 'career.log';
-  return { intro: 'README.md', profile: 'README.md', stack: 'stack/', oss: 'open-source/', recommendations: 'recommendations.txt', recognition: 'recommendations.txt' }[id] || null;
+  /** @type {Record<string, string>} */
+  const FILES = { intro: 'README.md', profile: 'README.md', stack: 'stack/', oss: 'open-source/', recommendations: 'recommendations.txt', recognition: 'recommendations.txt' };
+  return FILES[id] || null;
 }
 
 // Passage ids the model sometimes cites as if they were files ("faq-1.md", "resp-bud") become the real file name.
 const DASHED = PASSAGES.map((p) => p.id).filter((id) => id.includes('-')).sort((a, b) => b.length - a.length);
 const PLAIN = PASSAGES.map((p) => p.id).filter((id) => !id.includes('-'));
 const ID_RE = new RegExp('(?<![\\w./-])(?:(' + DASHED.join('|') + ')(?:\\.(?:md|log|txt))?|(' + PLAIN.join('|') + ')\\.(?:md|log|txt))(?![\\w/-])', 'g');
+/** @param {string} t */
 export const fixRefs = (t) => t
-  .replace(ID_RE, (all, a, b) => fileOf(a || b) || all)
+  .replace(ID_RE, (/** @type {string} */ all, /** @type {string | undefined} */ a, /** @type {string | undefined} */ b) => fileOf(a || b || '') || all)
   .replace(/(\b[\w/.-]+\.(?:md|log|txt)) and \1(?![\w/-])/g, '$1');
 
+/**
+ * @param {unknown} raw
+ * @param {IndexedPassage[]} [ctx]
+ * @returns {Answer}
+ */
 export function parse(raw, ctx) {
   let text = String(raw || '').replace(/<think>[\s\S]*?<\/think>/gi, '').replace(/^\s*<think>[\s\S]*$/i, '').trim();
-  let sources = [];
+  /** @type {string[]} */
+  const sources = [];
   const m = text.match(/\n?\s*\**SOURCES?\**:?\**\s*([\s\S]*)$/i);
   if (m) {
     // Ids are expected, but the model sometimes lists file names (budget.md); map those to the passages it was given.
@@ -88,13 +110,19 @@ export function parse(raw, ctx) {
   }
   text = text
     .replace(/\s*\((?:file|source)s?:\s*[^)]*\)/gi, '')
-    .replace(/\s*\[([\w, -]+)\]/g, (all, ids) => (ids.split(/[,\s]+/).every((id) => !id || BY_ID[id]) ? '' : all))
+    .replace(/\s*\[([\w, -]+)\]/g, (/** @type {string} */ all, /** @type {string} */ ids) => (ids.split(/[,\s]+/).every((id) => !id || BY_ID[id]) ? '' : all))
     .replace(/\*\*/g, '').replace(/[ \t]+\n/g, '\n').replace(/ {2,}/g, ' ').replace(/\s+([.,;:])/g, '$1').replace(/\.{2,}/g, '.').trim();
   text = fixRefs(text);
   return { answer: text, sources: [...new Set(sources)].slice(0, 3) };
 }
 
 // kind: which share of the daily AI budget pays for this (ask, or test for CI).
+/**
+ * @param {Env} env
+ * @param {string} q
+ * @param {Share} [kind]
+ * @returns {Promise<Answer>}
+ */
 async function answer(env, q, kind = 'ask') {
   await check(env, kind, ASK_RESERVE);
   const ctx = pickContext(q);
@@ -126,6 +154,7 @@ async function answer(env, q, kind = 'ask') {
 // ---------- read answers aloud ----------
 // Deepgram Aura voices on Workers AI (natural pacing and intonation), British where available,
 // each falling back to the next; MeloTTS last. The page uses the browser's own voice if all fail.
+/** @type {[string, Record<string, string>][]} */
 const VOICES = [
   ['@cf/deepgram/aura-2-en', { speaker: 'draco', encoding: 'mp3' }],
   ['@cf/deepgram/aura-1', { speaker: 'helios', encoding: 'mp3' }],
@@ -133,6 +162,7 @@ const VOICES = [
 ];
 const MAX_SPEAK = 1000;
 // File names and addresses read as words, not "budget dot m d".
+/** @param {unknown} text */
 export function speakable(text) {
   return String(text || '').replace(/\s+/g, ' ').trim().slice(0, MAX_SPEAK)
     .replace(/\bREADME\.md\b/gi, 'the README')
@@ -142,25 +172,37 @@ export function speakable(text) {
     .replace(/\bai\/platform\.md\b/gi, 'the AI platform case study')
     .replace(/\bget-in-touch\.md\b/gi, 'the contact section')
     .replace(/\bthis-site\.md\b/gi, 'the case study about this site')
-    .replace(/\b([a-z][\w-]*)\.md\b/gi, (m, f) => 'the ' + f.replace(/-/g, ' ') + ' file')
+    .replace(/\b([a-z][\w-]*)\.md\b/gi, (/** @type {string} */ m, /** @type {string} */ f) => 'the ' + f.replace(/-/g, ' ') + ' file')
     .replace(/\bcv\.pdf\b/gi, 'the PDF CV')
     .replace(/craga89@gmail\.com/gi, 'craga89 at gmail dot com')
     .replace(/\bcraigthompson\.dev\b/gi, 'craigthompson dot dev')
     .replace(/\bask\.sh\b/gi, 'ask');
 }
+/** @param {string} b64 */
 const b64bytes = (b64) => { const bin = atob(b64); const out = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i); return out; };
+/**
+ * Workers AI returns audio in several shapes depending on the model.
+ * @param {any} result
+ * @returns {Promise<Uint8Array<ArrayBuffer> | null>}
+ */
 async function audioBytes(result) {
   if (!result) return null;
   if (result instanceof ArrayBuffer) return new Uint8Array(result);
-  if (result instanceof Uint8Array) return result;
+  if (result instanceof Uint8Array) return new Uint8Array(result);
   if (typeof ReadableStream !== 'undefined' && result instanceof ReadableStream) return new Uint8Array(await new Response(result).arrayBuffer());
   if (result instanceof Response) return result.ok ? new Uint8Array(await result.arrayBuffer()) : null;
   if (typeof result.audio === 'string') return b64bytes(result.audio);
   return null;
 }
+/**
+ * @param {Env} env
+ * @param {string} text
+ * @param {Share} [kind]
+ */
 export async function speak(env, text, kind = 'speak') {
   // Priced per character, so check there's room for this answer in the natural voice first.
   await check(env, kind, voiceCost(VOICES[0][0], text.length));
+  /** @type {unknown} */
   let lastErr = null;
   for (const [model, opts] of VOICES) {
     try {
@@ -170,13 +212,17 @@ export async function speak(env, text, kind = 'speak') {
       lastErr = new Error(model + ': no audio');
     } catch (e) {
       lastErr = e;
-      console.log('voice', model, 'failed:', e && e.message);
+      console.log('voice', model, 'failed:', errorMessage(e));
       if (exhausted(e)) { await closeDay(env); throw new BudgetError('free allocation used up'); }
     }
   }
   throw lastErr || new Error('no voice');
 }
 
+/**
+ * @param {string} origin
+ * @returns {Record<string, string>}
+ */
 function cors(origin, allowHeaders = 'content-type') {
   return {
     'access-control-allow-origin': origin,
@@ -186,27 +232,41 @@ function cors(origin, allowHeaders = 'content-type') {
     vary: 'Origin',
   };
 }
+/** @type {(body: unknown, status: number, headers: Record<string, string>) => Response} */
 const json = (body, status, headers) => new Response(JSON.stringify(body), { status, headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store', ...headers } });
 
 // ---------- anonymous logging (D1) ----------
 // Nothing here identifies a visitor: no IP addresses, cookies or user agents are stored.
 const BOT = /bot|crawl|spider|slurp|headless|lighthouse|preview|facebookexternalhit|embedly|pingdom|monitor|curl|wget|python|node-fetch|axios/i;
-import { LANGS as TR_LANGS } from '../../src/i18n.js';
+import { LANGS as TR_LANGS } from '../../shared/langs.js';
 const LANGS = new Set(TR_LANGS);
 const SECTIONS = new Set(['top', 'career', 'responsibilities', 'case-studies', 'stack', 'oss', 'recommendations', 'faq', 'ask']);
+/** @param {Request} request */
 const isTest = (request) => request.headers.get('x-craga-test') === '1';
+/** @param {Request} request */
 const country = (request) => (request.cf && request.cf.country) || null;
 const NOT_COVERED = /isn't covered on the site/i;
 
+/**
+ * @param {Env} env
+ * @param {Request} request
+ * @param {string} q
+ * @param {Partial<Answer> | null} result
+ */
 export async function logQuestion(env, request, q, result, via = 'site') {
   if (!env.DB || isTest(request) || BOT.test(request.headers.get('user-agent') || '')) return;
   try {
     await env.DB.prepare('INSERT INTO questions (question, answered, model, sources, country, via) VALUES (?, ?, ?, ?, ?, ?)')
       .bind(q, result && result.answer && !NOT_COVERED.test(result.answer) ? 1 : 0, (result && result.model) || 'unavailable', result && result.sources ? result.sources.join(',') : '', country(request), via)
       .run();
-  } catch (e) { console.log('log question failed:', e && e.message); }
+  } catch (e) { console.log('log question failed:', errorMessage(e)); }
 }
 
+/**
+ * The visit beacon's body, reduced to the fields and values that may be stored.
+ * @param {Record<string, any>} body
+ * @param {string} origin
+ */
 export function cleanHit(body, origin) {
   const path = String(body.path || '/').slice(0, 100);
   if (!/^\/[\w\-./]*$/.test(path)) return null;
@@ -214,9 +274,9 @@ export function cleanHit(body, origin) {
   try {
     const host = new URL(String(body.ref || '')).hostname.replace(/^www\./, '');
     if (host && host !== new URL(origin).hostname.replace(/^www\./, '')) referrer = host.slice(0, 80);
-  } catch (e) { /* no or bad referrer */ }
+  } catch { /* no referrer, or not a URL */ }
   const device = ['mobile', 'tablet', 'desktop'].includes(body.device) ? body.device : null;
-  const sections = Array.isArray(body.sections) ? [...new Set(body.sections.filter((x) => SECTIONS.has(x)))].join(',') : '';
+  const sections = Array.isArray(body.sections) ? [...new Set(body.sections.filter((/** @type {unknown} */ x) => typeof x === 'string' && SECTIONS.has(x)))].join(',') : '';
   const seconds = Math.max(0, Math.min(3600, Math.round(Number(body.seconds) || 0)));
   // The language the page was translated into on the visitor's device, and what they did with the offer.
   const lang = typeof body.lang === 'string' && LANGS.has(body.lang) ? body.lang : null;
@@ -224,6 +284,7 @@ export function cleanHit(body, origin) {
   return { path, referrer, device, sections, seconds, lang, offer };
 }
 
+/** @param {Request} request @param {Env} env @param {string} origin */
 async function hit(request, env, origin) {
   if (!env.DB || isTest(request) || BOT.test(request.headers.get('user-agent') || '') || /localhost|127\.0\.0\.1/.test(origin)) return;
   if (env.HIT_LIMITER) {
@@ -231,7 +292,7 @@ async function hit(request, env, origin) {
     if (!success) return;
   }
   let body = {};
-  try { body = JSON.parse(await request.text()); } catch (e) { return; }
+  try { body = JSON.parse(await request.text()); } catch { return; } // not JSON: ignore the beacon
   const v = cleanHit(body, origin);
   if (!v) return;
   await env.DB.prepare('INSERT INTO visits (path, referrer, country, device, sections, seconds, lang, offer) VALUES (?, ?, ?, ?, ?, ?, ?, ?)')
@@ -240,15 +301,23 @@ async function hit(request, env, origin) {
 
 // ---------- MCP ----------
 const MCP_HEADERS = 'content-type, accept, mcp-protocol-version, mcp-method, mcp-name';
+/** @param {Env} env */
 const SITE = (env) => String(env.SITE_URL || 'https://craigthompson.dev').replace(/\/$/, '');
 
 // Where the shared agent tools get their data in the worker: the CV and passages bundled at
 // deploy, the latest CI and open-source results from the site, and the ask.sh model directly.
+/**
+ * @param {Env} env
+ * @param {Request} request
+ * @param {(p: Promise<unknown>) => unknown} [wait]
+ * @returns {Source}
+ */
 export function agentSource(env, request, wait = (p) => p) {
   const site = SITE(env);
+  /** @type {Promise<Record<string, any>> | null} */
   let liveP = null;
   return {
-    url: (p) => new URL(p, site + '/').href,
+    url: (/** @type {string} */ p) => new URL(p, site + '/').href,
     cv: async () => agentData.cv,
     index: async () => INDEX,
     projects: async () => agentData.projects,
@@ -258,6 +327,7 @@ export function agentSource(env, request, wait = (p) => p) {
       .then((r) => (r.ok ? r.json() : {}))
       .then((d) => (d && typeof d === 'object' ? d : {}))
       .catch(() => ({}))),
+    /** @param {string} q */
     async ask(q) {
       if (env.ASK_LIMITER) {
         const { success } = await env.ASK_LIMITER.limit({ key: request.headers.get('cf-connecting-ip') || 'anon' });
@@ -276,7 +346,13 @@ export function agentSource(env, request, wait = (p) => p) {
 }
 
 export default {
+  /**
+   * @param {Request} request
+   * @param {Env} env
+   * @param {ExecutionContext} [ctx]
+   */
   async fetch(request, env, ctx) {
+    /** @param {Promise<unknown>} p */
     const wait = (p) => (ctx && ctx.waitUntil ? ctx.waitUntil(p) : p);
     const url = new URL(request.url);
     const origin = request.headers.get('origin') || '';
@@ -284,7 +360,7 @@ export default {
     const h = okOrigin ? cors(origin) : {};
     // Cookie-free visit counts, sent with navigator.sendBeacon (text/plain, so no preflight).
     if (url.pathname === '/hit') {
-      if (request.method === 'POST' && okOrigin) await wait(hit(request, env, origin).catch((e) => console.log('hit failed:', e && e.message)));
+      if (request.method === 'POST' && okOrigin) await wait(hit(request, env, origin).catch((e) => console.log('hit failed:', errorMessage(e))));
       return new Response(null, { status: 204, headers: h });
     }
     if (url.pathname === '/speak') {
@@ -296,11 +372,11 @@ export default {
         if (!success) return json({ error: 'slow down' }, 429, h);
       }
       let text = '';
-      try { text = speakable((await request.json()).text); } catch (e) { /* fall through */ }
+      try { text = speakable(/** @type {{ text?: unknown }} */ (await request.json()).text); } catch { /* not JSON: answered as missing text below */ }
       if (!text) return json({ error: 'missing text' }, 400, h);
       try {
         const { bytes, model } = await speak(env, text, isTest(request) ? 'test' : 'speak');
-        return new Response(bytes, { status: 200, headers: { 'content-type': 'audio/mpeg', 'cache-control': 'no-store', 'x-voice': model.split('/').pop(), 'access-control-expose-headers': 'x-voice', ...h } });
+        return new Response(bytes, { status: 200, headers: { 'content-type': 'audio/mpeg', 'cache-control': 'no-store', 'x-voice': model.split('/').pop() || model, 'access-control-expose-headers': 'x-voice', ...h } });
       } catch (e) {
         // Over today's budget: the page reads it with the browser's own voice instead.
         return json({ error: e instanceof BudgetError ? 'budget' : 'unavailable' }, 503, h);
@@ -329,7 +405,11 @@ export default {
 
     let q = '';
     let via = 'site';
-    try { const b = await request.json(); q = String(b.q || ''); if (b.via === 'webmcp') via = 'webmcp'; } catch (e) { /* fall through */ }
+    try {
+      const b = /** @type {{ q?: unknown, via?: unknown }} */ (await request.json());
+      q = String(b.q || '');
+      if (b.via === 'webmcp') via = 'webmcp';
+    } catch { /* not JSON: answered as missing q below */ }
     q = q.replace(/\s+/g, ' ').trim().slice(0, MAX_Q);
     if (!q) return json({ error: 'missing q' }, 400, h);
 
@@ -338,7 +418,7 @@ export default {
       await wait(logQuestion(env, request, q, result, via));
       return json(result, 200, h);
     } catch (e) {
-      console.log('ask failed:', e && e.message);
+      console.log('ask failed:', errorMessage(e));
       await wait(logQuestion(env, request, q, e instanceof BudgetError ? { model: 'over-budget' } : null, via));
       // The page falls back to its own search; 'budget' tells it why.
       return json({ error: e instanceof BudgetError ? 'budget' : 'unavailable' }, 503, h);

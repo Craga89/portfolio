@@ -4,31 +4,50 @@ Personal site and CV of Craig Michael Thompson, served by GitHub Pages at <https
 
 ## Layout
 
-- `src/` holds the design files exported from the design canvas: `ThemeTyne.dc.html` (the home page), `CV.dc.html` (the plain CV), plus `cv.json` (JSON Resume) and `portrait.webp`.
+- `src/` holds the design files exported from the design canvas: `ThemeTyne.dc.html` (the home page), `CV.dc.html` (the plain CV), plus `cv.json` (JSON Resume), the blog posts (`src/blog/`) and `src/i18n.js` (on-device translation).
+- `shared/` is code used by both the page and the worker: the agent tools and search (`agent-tools.js`), the translated languages (`langs.js`), and type declarations for browser APIs TypeScript doesn't describe yet (`globals.d.ts`).
 - `tools/dc-runtime.js` is a small runtime that runs the design files as an ordinary web page: it fills the template, handles clicks and typing, and patches the page in place when state changes.
-- `tools/build.mjs` turns `src/` into the static site in `site/`. It prerenders the home page in Chromium, so search engines, ATS tools and people without JavaScript get the full content in the HTML.
-- `tools/check.mjs` loads the built site in Chromium, exercises the interactive parts and saves screenshots to `shots/`.
-- `site/` is what gets published. It's committed, so deploys don't need a build step.
+- `tools/build.mjs` turns `src/` into the static site in `site/`. It prerenders the home page in Chromium, so search engines, ATS tools and people without JavaScript get the full content in the HTML. `tools/lib/` holds modules the tools share (the static server, the redirect rules).
+- `worker/` is the ask.sh Cloudflare Worker (see below).
+- `tests/` holds the tests: `unit/` (Node's test runner), `e2e/`, `a11y/` and `visual/` (Playwright), and `smoke/` (the deployed worker).
+- `site/` and the worker's data (`worker/knowledge.json`, `worker/agent-data.json`) are build output. CI builds them; they aren't committed.
 
-## Updating the site
+## Development
+
+Node 22 (see `.node-version`).
 
 ```sh
-npm install
+npm ci
 npx playwright install chromium
-# replace the files in src/ with new exports, then
-npm run build
-npm run check
-git add -A && git commit -m "Update site" && git push
+npm run build          # src/ → site/
+npm run serve          # site/ at http://127.0.0.1:4173/
+npm run verify         # lint, format check, type check and unit tests
+npm run test:e2e       # end-to-end tests on a desktop and a phone
+npm run test:a11y      # the WCAG 2.2 AA suite
+npm run test:visual    # screenshots against the baselines
 ```
 
-Every push to `main` deploys `site/` through `.github/workflows/pages.yml`.
+- **Lint and format:** [oxlint](https://oxc.rs/docs/guide/usage/linter) (`.oxlintrc.json`) and [oxfmt](https://oxc.rs/docs/guide/usage/formatter) (`.oxfmtrc.json`); `npm run format` rewrites files. `.editorconfig` sets the basics for editors.
+- **Types:** the JavaScript is type-checked with TypeScript from its JSDoc (`checkJs`), in three projects for the three places code runs: `tsconfig.web.json` (the browser, strict), `tsconfig.worker.json` (the Workers runtime, strict; its bindings are typed in `worker/src/env.d.ts`) and `tsconfig.node.json` (the tools and tests). Type-checking needs a build first, since the worker imports the passages the build writes.
+- **Unit tests** (`tests/unit/`, mirroring the source tree) run on Node's own test runner with coverage, and fail under 95% of lines, 80% of branches or 90% of functions in `worker/src/`, `shared/` and `tools/lib/`. Code that needs a browser (`src/i18n.js` beyond its pure functions, the runtime) is covered by the end-to-end tests instead.
+- **Playwright** (`playwright.config.mjs`) serves `site/` itself. Its projects: `desktop` and `mobile` (a Pixel 7) for behaviour, where a test tagged `@desktop` or `@mobile` runs on that one only; `a11y-desktop` and `a11y-mobile`; and `visual`. Shared fixtures (`tests/fixtures.mjs`) keep every test off the network (ask.sh's answers come from stand-ins the test sets), fail a test on any page error, and offer a stand-in for the browser's Translator API. Set `BASE_URL` to test a deployed site instead.
+
+## CI and deploys
+
+`.github/workflows/ci.yml` runs on every push and pull request:
+
+- **lint** (oxlint, oxfmt) and **build** (`build.yml`, a reusable workflow that uploads `site/` and the worker's data as the `build` artifact), side by side;
+- on that build: **types and unit tests**, **end-to-end** tests on each project, the **WCAG suite** in four shards (merged into one report), and the **screenshot** comparison;
+- on `main`, once lint, unit, end-to-end and WCAG pass: **deploy** to GitHub Pages, with `live.json` and the commit stamped in, and **deploy the worker**, then its smoke tests (`tests/smoke/`). Those ask real questions only when the worker's code changed, to save the day's AI allowance.
+
+It also runs daily, so `live.json` picks up the latest results. Report branches (`accessibility`, `lighthouse`, `evals`, `oss`, `visual-baselines`, `redirect-data`, `blog-import`) are written by `.github/actions/publish-branch`. Node and Chromium are set up by `.github/actions/setup-node` and `.github/actions/setup-playwright` (cached). Actions are pinned to commit SHAs, and Dependabot (`.github/dependabot.yml`) proposes updates weekly. `.github/workflows/bootstrap.yml` (run by hand) refreshes `package-lock.json` and applies the formatter.
 
 ## Performance
 
 - Fonts are self-hosted from `src/fonts/` (fetched once from Google Fonts by `.github/workflows/fetch-fonts.yml`). The build inlines the `@font-face` rules, preloads the three used for first paint, and adds size-matched system fallbacks so text doesn't move when the web fonts arrive.
 - The home page HTML holds the prerendered content and the CSS. The runtime, template and component code go in one deferred, content-hashed `assets/app.<hash>.js`.
 - The portrait is served as AVIF/WebP at the sizes it's shown. The build also renders the social preview card (`og.png`) and the home-screen icon.
-- `.github/workflows/lighthouse.yml` runs Lighthouse (3 runs each, mobile and desktop) after every Pages deploy and saves a summary to the `lighthouse` branch (`reports/summary.json`).
+- `.github/workflows/lighthouse.yml` runs Lighthouse (3 runs each, mobile and desktop) after every deploy and saves a summary to the `lighthouse` branch (`reports/summary.json`).
 
 ## Extras
 
@@ -58,7 +77,7 @@ Every push to `main` deploys `site/` through `.github/workflows/pages.yml`.
 
 ## Live results on the site (live.json)
 
-The Pages deploy (on every push, and daily) collects the latest CI results from their report branches into `site/live.json` (`tools/live.mjs`): Lighthouse scores (`lighthouse`), the WCAG suite (`accessibility`), the ask.sh answer tests with each answer (`evals`, from `.github/workflows/evals.yml`) and the open-source counts (`oss`, from `.github/workflows/oss-stats.yml`, weekly via the GitHub API). The page fetches it once it's idle and shows it in the sidebar, the `this-site.md` case study, the open-source section and "how ask.sh is tested"; until then (or offline, or locally) it shows static fallbacks. The service worker always fetches `live.json` from the network first.
+The deploy (on every push to `main`, and daily) collects the latest CI results from their report branches into `site/live.json` (`tools/live.mjs`): Lighthouse scores (`lighthouse`), the WCAG suite (`accessibility`), the ask.sh answer tests with each answer (`evals`, from `.github/workflows/evals.yml`) and the open-source counts (`oss`, from `.github/workflows/oss-stats.yml`, weekly via the GitHub API). The page fetches it once it's idle and shows it in the sidebar, the `this-site.md` case study, the open-source section and "how ask.sh is tested"; until then (or offline, or locally) it shows static fallbacks. The service worker always fetches `live.json` from the network first.
 
 ### Costs: designed to be free
 
@@ -102,7 +121,7 @@ Visitors whose browser prefers another language (38 are supported, Arabic and He
 - **Language and direction:** the page gets `lang` (and `dir="rtl"` for Arabic and Hebrew); text not translated yet is marked `lang="en"` so screen readers pronounce it right. Arrows in running text are swapped in right-to-left languages; diagrams are mirrored by CSS. The CSS uses logical properties throughout (`margin-inline-start`, `inset-inline-end`, `padding-inline` and so on), so the layout mirrors. Charts and commands stay left-to-right.
 - **ask.sh in other languages:** a question in another language is detected (Language Detector API), translated to English on the device, answered as usual, and the answer translated back (unless the whole page is already in that language). Read-aloud uses the browser's voice for that language.
 - **Stats:** the anonymous visit beacon records the translated language and what the visitor did with the offer (`lang`, `offer` in D1); the weekly stats show both.
-- **Tests:** CI has no language models, so `tools/translator-stub.mjs` stands in for the API. `tools/check.mjs` covers the offer, full-page translation with names and files kept, the machine-translation notices, no flicker, the token fallback, tabs, ask.sh in German, "Show original", returning visitors, "No thanks", Arabic right-to-left with no sideways scroll, and the CV. `tools/a11y.mjs` runs axe on the offer, the banner and translated pages in German and Arabic.
+- **Tests:** CI has no language models, so `tools/translator-stub.mjs` stands in for the API. `tests/e2e/translation.spec.mjs` covers the offer, full-page translation with names and files kept, the machine-translation notices, no flicker, the token fallback, tabs, ask.sh in German, "Show original", returning visitors, "No thanks", Arabic right-to-left with no sideways scroll, and the CV. `tests/a11y/translated.spec.mjs` runs axe on the offer, the banner and translated pages in German and Arabic. The pure parts (which language to offer, whether a translation kept its markup) have unit tests.
 
 ### Agent tools: WebMCP and MCP
 
@@ -113,7 +132,7 @@ The site's content is available to AI agents as tools, in two places, from one d
 - **MCP (the worker).** `POST https://craga-ask.craga89.workers.dev/mcp` is a public, read-only MCP server (Streamable HTTP, JSON responses, no sessions). It serves both protocol eras on one endpoint: **2026-07-28** (no handshake; `server/discover`; the version in each request's `_meta`, mirrored in `MCP-Protocol-Version`, `Mcp-Method` and `Mcp-Name` headers, which are checked) and **2025-11-25 and earlier** (`initialize`, `ping`, batches for 2025-03-26). Data: the passages and CV bundled at deploy (`worker/knowledge.json`, `worker/agent-data.json`, both written by the build), and `live.json` fetched from `SITE_URL` (cached 5 minutes). Limits: 60 requests a minute per client (`MCP_LIMITER`), and `ask` calls share ask.sh's limit. Browsers may only call it from the site's own origins. Questions asked through it are logged anonymously with `via = 'mcp'` (`'webmcp'` from the page's tools).
 - To use it: add `https://craga-ask.craga89.workers.dev/mcp` as a custom connector (Claude, ChatGPT) or a remote MCP server (Cursor, VS Code, Claude Code: `claude mcp add --transport http craigthompson https://craga-ask.craga89.workers.dev/mcp`).
 
-Tests: `tools/check.mjs` runs the page's tools against a stand-in `modelContext` (the `ask` call is stubbed so tests never reach the real service). `worker/test/worker.test.mjs` covers the MCP endpoint in both eras: header checks, version errors, origins, rate limits, tool errors and logging. After each worker deploy, CI calls the live `/mcp` with curl in both eras and with the official MCP TypeScript SDK client (`worker/test/mcp-client.mjs`).
+Tests: `tests/e2e/webmcp.spec.mjs` runs the page's tools against a stand-in `modelContext` (the `ask` call is answered by a stand-in, so tests never reach the real service). `tests/unit/shared/agent-tools.test.mjs` covers search, files and argument checks, and `tests/unit/worker/mcp.test.mjs` the MCP endpoint in both eras: header checks, version errors, origins, rate limits, tool errors and logging. After each worker deploy, `tests/smoke/worker.test.mjs` calls the live `/mcp` in both eras and with the official MCP TypeScript SDK client.
 
 In Chrome 149–156 WebMCP is an origin trial. Tokens live in `src/origin-trials.txt`, one per line. The build reads the origin out of each token (and drops expired ones), and the app bundle adds the token for the origin it's served from as a `<meta http-equiv="origin-trial">` before the tools register. They're added by the bundle, not written into the HTML, because tokens registered for third-party matching only count when an external script on their origin adds them. To try it without a token, enable `chrome://flags/#enable-webmcp-testing`.
 
@@ -130,19 +149,19 @@ The open-source section has a heatmap of merged pull requests to other projects 
 
 ## Quality checks in CI
 
-- **ask.sh evals** (`worker/evals.json`, `tools/ask-evals.mjs`, `.github/workflows/evals.yml`): after every Worker deploy and weekly, known questions must get answers with the right facts, no invented ones, no salary figures, and no response to prompt injection. Results (with the answers) are saved to the `evals` branch and shown on the site.
+- **ask.sh evals** (`worker/evals.json`, `tools/ask-evals.mjs`, `.github/workflows/evals.yml`): after a worker deploy that could change answers, and weekly, known questions must get answers with the right facts, no invented ones, no salary figures, and no response to prompt injection. Results (with the answers) are saved to the `evals` branch and shown on the site.
 - **Lighthouse thresholds:** performance at least 95 and accessibility and best practices at 100 on mobile and desktop. SEO counts once the site is open to search engines.
-- **Screenshot comparison** (`tools/visual.mjs`, `.github/workflows/visual.yml`): 11 views compared against baselines on the `visual-baselines` branch. Put `[visual]` in a commit message to accept an intended change.
-- **Link check** (`.github/workflows/links.yml`): every outbound link, weekly.
+- **Screenshot comparison** (`tests/visual/`): 14 views compared against baselines on the `visual-baselines` branch with Playwright's `toHaveScreenshot`. Put `[visual]` in a commit message on `main`, or run CI by hand with "update screenshots", to accept an intended change.
+- **Link check** (`.github/workflows/links.yml`): every outbound link in a fresh build, weekly.
 
 ## Accessibility (WCAG 2.2 AA)
 
-`npm run a11y` (`tools/a11y.mjs`) checks the built site against WCAG 2.2 AA:
+`npm run test:a11y` (`tests/a11y/`) checks the built site against WCAG 2.2 AA:
 
-- axe-core (vendored in `tools/vendor/`, refreshed by `.github/workflows/vendor-axe.yml`) with every WCAG 2.0, 2.1 and 2.2 A/AA rule. It runs in both themes, at desktop and mobile widths, on every responsibilities and case-study tab, with the FAQ open, in stack search, in ask.sh and the chat with an answer, in the command palette and shortcuts dialog, and on the plain CV, the 404 page and every file page.
+- axe-core (through `@axe-core/playwright`) with every WCAG 2.0, 2.1 and 2.2 A/AA rule. It runs in both themes, on a desktop and a phone, on every responsibilities and case-study tab, with the FAQ open, in stack search, in ask.sh and the chat with an answer, in the command palette and shortcuts dialog, on translated pages, and on the plain CV, the 404 page and every file page in the sitemap: 392 axe runs.
 - Checks automated rule engines can't make: a keyboard-only walk through the whole page with a visible focus indicator at every stop (2.4.7), nothing focused hidden behind the sticky header or chat bar (2.4.11), reflow at 320px (1.4.10), text spacing (1.4.12), reduced motion and a pause control for the auto-playing tour (2.2.2, 2.3.3), and an off switch for single-key shortcuts (2.1.4).
 
-`.github/workflows/accessibility.yml` runs it after every Pages deploy and every Monday, saves the report to the `accessibility` branch (`reports/latest.txt`), and fails the run if anything doesn't pass. Pass `--url https://craigthompson.dev/` to test the live site instead.
+`tests/reporters/a11y-report.mjs` collects the results into one report (`a11y.json`). CI runs the suite on every build and gates the deploy on it; on `main` the report goes to the `accessibility` branch, which the site shows. `.github/workflows/accessibility.yml` runs it against the live site every Monday.
 
 Automated checks can't cover all of WCAG; screen reader passes (VoiceOver, NVDA) are still worth doing after big content or layout changes.
 
@@ -184,7 +203,7 @@ The `ask.sh` section at the bottom of the home page answers questions about the 
 Deploying the Worker:
 
 1. Create a free Cloudflare account and an API token from the **Edit Cloudflare Workers** template (it covers Workers AI).
-2. Add `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` as repository secrets. Pushing a change under `worker/` (or running the workflow by hand) then deploys it through `.github/workflows/ask-worker.yml`. You can also run `cd worker && npx wrangler deploy`.
+2. Add `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` as repository secrets. CI then deploys it from every push to `main`, with the passages from that build. You can also run `npm run build && cd worker && npx wrangler deploy`.
 3. Put the Worker URL in `ask.config.json`, for example `{ "endpoint": "https://craga-ask.<subdomain>.workers.dev/ask" }`, then rebuild and push.
 
-Test the Worker without Cloudflare with `node worker/test/worker.test.mjs`.
+Its unit tests (`tests/unit/worker/`, in `npm run test:unit`) run without Cloudflare: Workers AI, D1 and the rate limiters are stand-ins. `WORKER_URL=… npm run test:smoke` tests a deployed one.

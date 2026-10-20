@@ -14,21 +14,17 @@ jobs:
   stats:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-node@v5
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
         with:
-          node-version: 22
+          node-version-file: .node-version
       - name: Count
         run: node tools/oss-stats.mjs oss.json
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Save to the oss branch
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git switch --orphan oss-tmp
-          git rm -rq --cached . || true
-          mkdir -p reports && cp oss.json reports/oss.json
-          git add reports
-          git commit -qm "Open-source stats $(date -u +%F)"
-          git push -f origin oss-tmp:oss
+      - run: mkdir -p out/reports && cp oss.json out/reports/oss.json
+      - uses: ./.github/actions/publish-branch
+        with:
+          branch: oss
+          source: out
+          message: Open-source stats ${{ github.run_started_at }}

@@ -1,0 +1,15 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "printWidth": 120,
+  "singleQuote": true,
+  "trailingComma": "all",
+  "ignorePatterns": [
+    "site/**",
+    "src/blog/**",
+    "src/*.dc.html",
+    "tools/vendor/**",
+    "worker/knowledge.json",
+    "worker/agent-data.json",
+    "package-lock.json"
+  ]
+}

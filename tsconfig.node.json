@@ -1,0 +1,25 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "lib": [
+      "ES2023",
+      "DOM",
+      "DOM.Iterable"
+    ],
+    "types": [
+      "node"
+    ],
+    "noImplicitAny": false
+  },
+  "include": [
+    "tools/**/*.mjs",
+    "tools/**/*.js",
+    "tests/**/*.mjs",
+    "playwright.config.mjs",
+    "worker/src/*.d.ts",
+    "shared/globals.d.ts"
+  ],
+  "exclude": [
+    "tools/dc-runtime.js"
+  ]
+}

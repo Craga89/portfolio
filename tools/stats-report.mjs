@@ -13,7 +13,8 @@ const q = (sql) => {
   let out;
   try {
     out = execFileSync('npx', ['-y', 'wrangler@4', 'd1', 'execute', 'craga-ask', '--remote', '--json', '--command', sql], { cwd: join(ROOT, 'worker'), encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
-  } catch (e) {
+  } catch (err) {
+    const e = /** @type {Error & { stdout?: string, stderr?: string }} */ (err);
     const msg = String((e.stdout || '') + ' ' + (e.stderr || '') || e.message).replace(/\s+/g, ' ').slice(0, 900);
     const hint = /7403|not authorized/.test(msg) ? 'The CLOUDFLARE_API_TOKEN secret needs the Account → D1 → Edit permission (Cloudflare dashboard → My Profile → API Tokens → edit the token). ' : '';
     console.log(`::error title=D1 query failed::${hint}${msg}`);

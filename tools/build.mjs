@@ -3,11 +3,12 @@
 //   node tools/build.mjs --no-prerender
 import { readFileSync, writeFileSync, mkdirSync, copyFileSync, rmSync, existsSync, readdirSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
-import { LANGS as TR_LANGS } from '../src/i18n.js';
 import { createHash } from 'node:crypto';
-import { dirname, join, extname } from 'node:path';
+import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import http from 'node:http';
+import { LANGS as TR_LANGS } from '../shared/langs.js';
+import { errorMessage } from '../shared/errors.js';
+import { serve } from './lib/serve.mjs';
 import { loadPosts, listing as postListing, designListing } from './blog.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -65,6 +66,10 @@ const HOME_DESC = 'Craig Michael Thompson: hands-on, AI-first Head of Engineerin
 const OG_DESC = "Hands-on, AI-first Head of Engineering and full-stack engineer. 20+ years' experience in software development and management, from start-up to acquisition.";
 const esc = (t) => String(t).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
 
+/**
+ * Open Graph and Twitter card tags.
+ * @param {{ title: string, desc: string, url: string, type: string, image?: string, imageAlt?: string }} meta
+ */
 function social({ title, desc, url, type, image, imageAlt }) {
   return [
     `<meta property="og:type" content="${type}">`,
@@ -137,7 +142,7 @@ const beacon = (endpoint, sections) => !endpoint ? '' : `(function hit() {
     };
     document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'hidden') send(); });
     window.addEventListener('pagehide', send);
-  } catch (e) {}
+  } catch (e) { /* counting a visit must never break the page */ }
 })();`;
 
 // ---------- devtools greeting ----------
@@ -174,7 +179,7 @@ const CONSOLE_HELLO = `
       ['cmd', '\\n\\n$ ask("What roles is he looking for?")'],
       ['end', '\\n# ask.sh works from here too: ask() any question about my experience.\\n'],
     ];
-    try { console.log(parts.map(function (p) { return '%c' + p[1]; }).join(''), ...parts.map(function (p) { return S[p[0]]; })); } catch (e) {}
+    try { console.log(parts.map(function (p) { return '%c' + p[1]; }).join(''), ...parts.map(function (p) { return S[p[0]]; })); } catch (e) { /* a console without %c styling */ }
     // (window.ask is the #ask section element by default, so only skip if a real function is already there.)
     if (typeof window.ask !== 'function') {
       window.ask = function (q) {
@@ -253,7 +258,12 @@ const HOME = {};
 // On-device translation (src/i18n.js), loaded only when it's needed. The boot snippet runs on
 // every page: it decides whether to offer a language (the visitor's browser prefers one before
 // English) or to start straight away (they chose one before), and loads the module if so.
-const I18N_SRC = readFileSync(join(SRC, 'i18n.js'), 'utf8');
+// Served as one file: the shared language list is inlined in place of its import.
+const I18N_SRC = readFileSync(join(SRC, 'i18n.js'), 'utf8').replace(
+  "import { LANGS, RTL } from '../shared/langs.js';",
+  () => readFileSync(join(ROOT, 'shared', 'langs.js'), 'utf8').replace(/^\/\/.*\n/gm, '').replace('export const LANGS', 'const LANGS').replace('export const RTL', 'const RTL'),
+);
+if (/^import /m.test(I18N_SRC)) throw new Error('src/i18n.js has an import the build does not inline');
 const I18N_PATH = '/assets/i18n.' + createHash('sha256').update(I18N_SRC).digest('hex').slice(0, 10) + '.js';
 const i18nBoot = () => `(function () {
   try {
@@ -262,7 +272,7 @@ const i18nBoot = () => `(function () {
     var norm = function (t) { t = String(t || '').toLowerCase(); if (/^zh-(tw|hk|mo)|^zh-hant/.test(t)) return 'zh-Hant'; var b = t.split('-')[0]; b = { nb: 'no', nn: 'no', iw: 'he', 'in': 'id' }[b] || b; return L.indexOf(b) >= 0 ? b : null; };
     var I = window.CRAGA_I18N = { langs: L, load: function () { return I._p || (I._p = import(${JSON.stringify(I18N_PATH)})); } };
     var saved = null, no = null;
-    try { saved = localStorage.getItem('craga-lang'); no = localStorage.getItem('craga-lang-no'); } catch (e) {}
+    try { saved = localStorage.getItem('craga-lang'); no = localStorage.getItem('craga-lang-no'); } catch (e) { /* storage blocked: no saved choice */ }
     var want = saved && saved !== 'en' ? norm(saved) : null, offer = null;
     if (!saved) {
       var ls = navigator.languages || [navigator.language];
@@ -282,8 +292,8 @@ const i18nBoot = () => `(function () {
       });
       window.addEventListener('craga:lang', function (e) { Array.prototype.forEach.call(menus, function (s) { s.value = e.detail.lang; }); });
     }
-    if (want || offer) I.load().then(function (m) { m.boot({ lang: want || offer, saved: !!want }); }).catch(function () {});
-  } catch (e) {}
+    if (want || offer) I.load().then(function (m) { m.boot({ lang: want || offer, saved: !!want }); }).catch(function (e) { console.warn('translation unavailable:', e); });
+  } catch (e) { console.warn('translation setup failed:', e); }
 })();`;
 
 // shared/agent-tools.js (the agent tools and site search, also used by the worker) as a plain
@@ -346,9 +356,9 @@ function buildHome(today) {
   s.text = ${JSON.stringify(code)};
   document.body.appendChild(s);
   var saved = null;
-  try { saved = localStorage.getItem('theme'); } catch (e) {}
+  try { saved = localStorage.getItem('theme'); } catch (e) { /* storage blocked: follow the system theme */ }
   var light = false;
-  try { light = window.matchMedia('(prefers-color-scheme: light)').matches; } catch (e) {}
+  try { light = window.matchMedia('(prefers-color-scheme: light)').matches; } catch (e) { /* no matchMedia: dark */ }
   // Offline support and instant repeat visits (https only, so local previews aren't cached).
   if ('serviceWorker' in navigator && location.protocol === 'https:') {
     window.addEventListener('load', function () { navigator.serviceWorker.register('sw.js').catch(function () {}); });
@@ -360,7 +370,7 @@ function buildHome(today) {
   var set = app.c.setState;
   app.c.setState = function (p) {
     if (p && typeof p === 'object' && 'theme' in p) {
-      try { localStorage.setItem('theme', p.theme); } catch (e) {}
+      try { localStorage.setItem('theme', p.theme); } catch (e) { /* storage blocked: the choice lasts this visit */ }
       var L = p.theme === 'light', h = document.documentElement;
       h.classList.toggle('t-light', L); h.classList.toggle('t-dark', !L);
       document.querySelectorAll('meta[name="theme-color"]').forEach(function (m) { m.content = L ? '#EDF1EE' : '#16271F'; });
@@ -503,21 +513,6 @@ function writeOut(rel, content) {
 }
 
 // ---------- prerender ----------
-const TYPES = { '.html': 'text/html', '.js': 'text/javascript', '.json': 'application/json', '.webp': 'image/webp', '.avif': 'image/avif', '.png': 'image/png', '.woff2': 'font/woff2', '.svg': 'image/svg+xml', '.css': 'text/css', '.txt': 'text/plain', '.xml': 'application/xml' };
-function serve(dir) {
-  return new Promise((resolve) => {
-    const srv = http.createServer((req, res) => {
-      let p = decodeURIComponent(req.url.split('?')[0]);
-      if (p.endsWith('/')) p += 'index.html';
-      const f = join(dir, p);
-      if (!f.startsWith(dir) || !existsSync(f)) { res.writeHead(404); res.end(); return; }
-      res.writeHead(200, { 'content-type': TYPES[extname(f)] || 'application/octet-stream' });
-      res.end(readFileSync(f));
-    });
-    srv.listen(0, '127.0.0.1', () => resolve(srv));
-  });
-}
-
 // Pull the site's own words out of the rendered page as short passages. ask.sh
 // searches these in the browser, and the Worker gives them to the model as its
 // only source of facts.
@@ -595,21 +590,20 @@ function extractPassages() {
 async function prerender() {
   const { chromium } = await import('playwright');
   const srv = await serve(OUT);
-  const port = srv.address().port;
   const browser = await chromium.launch();
   try {
     const page = await browser.newPage({ viewport: { width: 1440, height: 1000 }, reducedMotion: 'reduce', colorScheme: 'dark' });
     await page.addInitScript(() => { window.CRAGA_PRERENDER = true; });
     const errors = [];
     page.on('pageerror', (e) => errors.push(String(e)));
-    await page.goto(`http://127.0.0.1:${port}/`, { waitUntil: 'load' });
+    await page.goto(srv.url, { waitUntil: 'load' });
     await page.waitForSelector('#app .c-root');
     await page.waitForTimeout(300);
     if (errors.length) throw new Error('page errors during prerender:\n' + errors.join('\n'));
     // The chat bar and mic buttons only work with JavaScript, so leave it out of the static HTML; the runtime adds it.
     // Real section heights at a few widths, so skipped sections reserve the right space.
     const cis = [];
-    for (const [w, media] of [[390, '(max-width:600px)'], [768, '(min-width:601px) and (max-width:900px)'], [1280, '(min-width:901px) and (max-width:1400px)'], [1680, '(min-width:1401px)']]) {
+    for (const [w, media] of /** @type {[number, string][]} */ ([[390, '(max-width:600px)'], [768, '(min-width:601px) and (max-width:900px)'], [1280, '(min-width:901px) and (max-width:1400px)'], [1680, '(min-width:1401px)']])) {
       await page.setViewportSize({ width: w, height: 1000 });
       await page.waitForTimeout(150);
       const rules = await page.evaluate(() => {
@@ -626,7 +620,7 @@ async function prerender() {
     }
     await page.setViewportSize({ width: 1440, height: 1000 });
     await page.waitForTimeout(150);
-    const html = await page.$eval('#app', (el) => { const c = el.cloneNode(true); c.querySelectorAll('.c-chat, .c-mic, .v2-time').forEach((n) => n.remove()); return c.innerHTML; });
+    const html = await page.$eval('#app', (el) => { const c = /** @type {Element} */ (el.cloneNode(true)); c.querySelectorAll('.c-chat, .c-mic, .v2-time').forEach((n) => n.remove()); return c.innerHTML; });
     const passages = await page.evaluate(extractPassages);
     const panels = await page.evaluate(() => [...document.querySelectorAll('#responsibilities [role="tabpanel"][id^="rp-"], #case-studies .c-cs-panels [role="tabpanel"]')].map((p) => ({ kind: p.closest('#responsibilities') ? 'resp' : 'case', file: p.getAttribute('aria-label'), html: p.outerHTML })));
     // Each blog post, briefly: what it's about and where to read it.
@@ -638,14 +632,15 @@ async function prerender() {
     // The rest of what the worker's MCP tools serve: the CV and the projects the page links to.
     const projects = await page.evaluate(() => window.CragaAgent.linkedProjects(document));
     // Keep the last open-source snapshot if this build can't read the oss branch.
-    let prevAgent = null; try { prevAgent = JSON.parse(readFileSync(join(ROOT, 'worker', 'agent-data.json'), 'utf8')); } catch (e) {}
+    let prevAgent = null;
+    if (existsSync(join(ROOT, 'worker', 'agent-data.json'))) prevAgent = JSON.parse(readFileSync(join(ROOT, 'worker', 'agent-data.json'), 'utf8'));
     writeFileSync(join(ROOT, 'worker', 'agent-data.json'), JSON.stringify({ cv: JSON.parse(readFileSync(join(SRC, 'cv.json'), 'utf8')), projects, oss: OSS_SNAPSHOT || (prevAgent && prevAgent.oss) || null }, null, 1) + '\n');
     console.log('ask.sh index:', passages.length, 'passages,', passages.reduce((n, p) => n + p.text.length, 0), 'chars');
     const file = join(OUT, 'index.html');
     writeFileSync(file, readFileSync(file, 'utf8').replace('<!--PRERENDER-->', html).replace('/*CIS*/', cis.join('\n')));
     await buildOgImage(browser);
     await buildFilePages(browser, panels);
-    await buildPdf(browser, port);
+    await buildPdf(browser, srv.url);
   } finally {
     await browser.close();
     srv.close();
@@ -884,8 +879,6 @@ ${HOME.css}
   const groups = { case: panels.filter((p) => p.kind === 'case'), resp: panels.filter((p) => p.kind === 'resp') };
   const where = Object.fromEntries(panels.map((p) => [p.file, SECTION[p.kind].dir]));
   const og = await browser.newPage({ viewport: { width: 1200, height: 630 }, deviceScaleFactor: 1 });
-  const font = (f) => 'data:font/woff2;base64,' + readFileSync(join(SRC, 'fonts', f)).toString('base64');
-  const sharp = (await import('sharp')).default;
   const urls = [];
   for (const kind of ['case', 'resp']) {
     const list = groups[kind], S = SECTION[kind];
@@ -930,7 +923,9 @@ async function renderPost(md, imgDir) {
   const levels = [...md.matchAll(/^(#{1,6}) /gm)].map((m) => m[1].length);
   const shift = levels.length ? Math.min(...levels) - 2 : 0;
   const sizes = {};
-  for (const m of md.matchAll(/!\[[^\]]*\]\(img\/([^)\s]+)\)/g)) { try { const meta = await sharp(join(imgDir, m[1])).metadata(); sizes[m[1]] = meta; } catch (e) {} }
+  for (const m of md.matchAll(/!\[[^\]]*\]\(img\/([^)\s]+)\)/g)) {
+    try { sizes[m[1]] = await sharp(join(imgDir, m[1])).metadata(); } catch (e) { console.warn(`can't read ${join(imgDir, m[1])} (${errorMessage(e)}), so it has no width and height`); }
+  }
   const renderer = new marked.Renderer();
   renderer.heading = ({ tokens, depth }) => { const l = Math.min(6, Math.max(2, depth - shift)); return `<h${l}>${renderer.parser.parseInline(tokens)}</h${l}>\n`; };
   renderer.code = ({ text, lang }) => `<pre tabindex="0" translate="no"${lang ? ` data-lang="${esc(lang)}"` : ''}><code${lang ? ` class="language-${esc(lang)}"` : ''}>${text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code></pre>\n`;
@@ -995,10 +990,10 @@ ${cta('../')}
 }
 
 // The plain CV as a PDF, printed by Chromium with the page's own print styles.
-async function buildPdf(browser, port) {
+async function buildPdf(browser, base) {
   const page = await browser.newPage();
   await page.emulateMedia({ media: 'print', colorScheme: 'light' });
-  await page.goto(`http://127.0.0.1:${port}/cv/`, { waitUntil: 'networkidle' });
+  await page.goto(base + 'cv/', { waitUntil: 'networkidle' });
   await page.evaluate(() => document.fonts.ready);
   await page.pdf({ path: join(OUT, 'cv.pdf'), format: 'A4', preferCSSPageSize: true, printBackground: true, tagged: true, outline: true });
   await page.close();

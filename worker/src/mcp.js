@@ -15,22 +15,41 @@ const META = {
   version: 'io.modelcontextprotocol/protocolVersion',
   serverInfo: 'io.modelcontextprotocol/serverInfo',
 };
+/**
+ * @typedef {import('../../shared/agent-tools.js').Source} Source
+ * @typedef {{ jsonrpc?: unknown, id?: string | number | null, method?: unknown, params?: Record<string, any> }} RpcMessage
+ * @typedef {'modern' | 'legacy'} Era
+ * @typedef {{ result?: any, error?: [number, string], status?: number }} RunResult
+ */
 const ERR = { parse: -32700, invalidRequest: -32600, notFound: -32601, invalidParams: -32602, headerMismatch: -32020, unsupportedVersion: -32022 };
 
+/** @type {(body: unknown, status: number, headers: Record<string, string>) => Response} */
 const reply = (body, status, headers) => new Response(body == null ? null : JSON.stringify(body), {
   status,
   headers: Object.assign(body == null ? {} : { 'content-type': 'application/json; charset=utf-8' }, { 'cache-control': 'no-store' }, headers),
 });
+/** @type {(id: unknown, code: number, message: string, data?: Record<string, unknown>) => Record<string, unknown>} */
 const rpcError = (id, code, message, data) => ({ jsonrpc: '2.0', id: id === undefined ? null : id, error: Object.assign({ code, message }, data ? { data } : {}) });
 
 // Mcp-Name and Mcp-Param-* values may arrive Base64-encoded as =?base64?…?=.
+/**
+ * @param {string | null} v
+ * @returns {string | null}
+ */
 export function headerValue(v) {
   if (v == null) return null;
   const m = /^=\?base64\?([A-Za-z0-9+/=]*)\?=$/.exec(v);
   if (!m) return v;
-  try { return new TextDecoder().decode(Uint8Array.from(atob(m[1]), (c) => c.charCodeAt(0))); } catch (e) { return null; }
+  try { return new TextDecoder().decode(Uint8Array.from(atob(m[1]), (c) => c.charCodeAt(0))); } catch { return null; } // not valid Base64 or UTF-8
 }
 
+/**
+ * @param {RpcMessage & { method: string }} msg
+ * @param {Era} era
+ * @param {Source} src
+ * @param {AbortSignal} signal
+ * @returns {Promise<RunResult>}
+ */
 async function run(msg, era, src, signal) {
   const p = msg.params || {};
   const tools = () => describeTools('mcp', src);
@@ -58,16 +77,24 @@ async function run(msg, era, src, signal) {
 }
 
 // One JSON-RPC message → [status, response body or null].
+/**
+ * @param {RpcMessage} msg
+ * @param {Request} request
+ * @param {Source} src
+ * @returns {Promise<[number, Record<string, unknown> | null]>}
+ */
 async function handle(msg, request, src) {
   if (!msg || typeof msg !== 'object' || msg.jsonrpc !== '2.0' || typeof msg.method !== 'string') return [400, rpcError(msg && msg.id, ERR.invalidRequest, 'Invalid JSON-RPC request')];
   const isNote = !('id' in msg);
   const meta = (msg.params && msg.params._meta) || null;
   const version = meta && meta[META.version];
   const era = version ? 'modern' : 'legacy';
+  /** @param {string} n */
   const hdr = (n) => request.headers.get(n);
 
   if (era === 'modern') {
     // Headers mirror the body so gateways can route on them; they must agree.
+    /** @type {(what: string) => [number, Record<string, unknown>]} */
     const mismatch = (what) => [400, rpcError(msg.id, ERR.headerMismatch, 'Header mismatch: ' + what)];
     if (hdr('mcp-protocol-version') == null) return mismatch('MCP-Protocol-Version header is missing');
     if (hdr('mcp-protocol-version') !== version) return mismatch(`MCP-Protocol-Version header value '${hdr('mcp-protocol-version')}' does not match body value '${version}'`);
@@ -87,23 +114,28 @@ async function handle(msg, request, src) {
   }
 
   if (isNote) return [202, null];
-  const out = await run(msg, era, src, request.signal);
+  const out = await run(/** @type {RpcMessage & { method: string }} */ (msg), era, src, request.signal);
   if (out.error) return [out.status || (era === 'modern' && out.error[0] === ERR.notFound ? 404 : 200), rpcError(msg.id, out.error[0], out.error[1])];
   const result = era === 'modern' ? Object.assign({ resultType: 'complete' }, out.result, { _meta: { [META.serverInfo]: { name: SERVER.name, version: SERVER.version } } }) : out.result;
   return [200, { jsonrpc: '2.0', id: msg.id, result }];
 }
 
+/**
+ * @param {Request} request
+ * @param {Source} src
+ * @param {Record<string, string>} headers CORS headers for the caller's origin
+ */
 export async function handleMcp(request, src, headers) {
   const h = Object.assign({}, headers);
   if (request.method === 'OPTIONS') return reply(null, 204, h);
   if (request.method !== 'POST') return reply(rpcError(null, ERR.invalidRequest, 'Use POST for MCP requests'), 405, Object.assign({ allow: 'POST, OPTIONS' }, h));
   let body;
-  try { body = JSON.parse(await request.text()); } catch (e) { return reply(rpcError(null, ERR.parse, 'Parse error'), 400, h); }
+  try { body = JSON.parse(await request.text()); } catch { return reply(rpcError(null, ERR.parse, 'Parse error'), 400, h); }
   // JSON-RPC batches (protocol 2025-03-26 only): answer each request, skip notifications.
   if (Array.isArray(body)) {
     if (!body.length) return reply(rpcError(null, ERR.invalidRequest, 'Empty batch'), 400, h);
     const out = [];
-    for (const m of body) { const [, b] = await handle(m, request, src); if (b) out.push(b); }
+    for (const m of /** @type {RpcMessage[]} */ (body)) { const [, b] = await handle(m, request, src); if (b) out.push(b); }
     return out.length ? reply(out, 200, h) : reply(null, 202, h);
   }
   const [status, b] = await handle(body, request, src);

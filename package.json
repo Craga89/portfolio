@@ -2,14 +2,35 @@
   "name": "craigthompson.dev",
   "private": true,
   "type": "module",
+  "engines": {
+    "node": ">=22.12"
+  },
   "scripts": {
     "build": "node tools/build.mjs",
-    "check": "node tools/check.mjs",
-    "a11y": "node tools/a11y.mjs"
+    "serve": "node tools/lib/serve.mjs site",
+    "lint": "oxlint",
+    "format": "oxfmt .",
+    "format:check": "oxfmt --check .",
+    "typecheck": "tsc -p tsconfig.node.json && tsc -p tsconfig.web.json && tsc -p tsconfig.worker.json",
+    "test": "npm run test:unit && npm run test:e2e",
+    "test:unit": "node --test --experimental-test-coverage --test-coverage-include=\"worker/src/**\" --test-coverage-include=\"shared/**\" --test-coverage-include=\"tools/lib/**\" --test-coverage-lines=95 --test-coverage-branches=80 --test-coverage-functions=90 \"tests/unit/**/*.test.mjs\"",
+    "test:e2e": "playwright test --project=desktop --project=mobile",
+    "test:a11y": "playwright test --project=a11y-desktop --project=a11y-mobile",
+    "test:visual": "playwright test --project=visual",
+    "test:smoke": "node --test \"tests/smoke/*.test.mjs\"",
+    "verify": "npm run lint && npm run format:check && npm run typecheck && npm run test:unit"
   },
   "devDependencies": {
-    "playwright": "^1.48.0",
-    "marked": "^18.0.0",
-    "sharp": "^0.35.0"
+    "@axe-core/playwright": "^4.10.0",
+    "@modelcontextprotocol/sdk": "^1.12.0",
+    "@playwright/test": "1.56.0",
+    "@types/node": "^22.15.0",
+    "axe-core": "^4.10.0",
+    "marked": "^18.0.10",
+    "oxfmt": "*",
+    "oxlint": "^1.0.0",
+    "playwright": "1.56.0",
+    "sharp": "^0.35.4",
+    "typescript": "^6.0.3"
   }
 }

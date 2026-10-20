@@ -1,0 +1,18 @@
+# Weekly updates for the npm dev dependencies and the pinned GitHub Actions, grouped into one
+# pull request each so CI checks them together.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      dev-dependencies:
+        patterns: ['*']
+  - package-ecosystem: github-actions
+    directories: ['/', '/.github/actions/*']
+    schedule:
+      interval: weekly
+    groups:
+      actions:
+        patterns: ['*']

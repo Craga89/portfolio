@@ -7,9 +7,10 @@
 //
 // Writes <out>/posts.json (one entry per post: address, snapshot, saved file, images) and
 // <out>/html/<slug>.html, <out>/img/<file>. tools/blog-import.mjs turns these into src/blog/.
-import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs';
+import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { join, extname } from 'node:path';
 import { createHash } from 'node:crypto';
+import { errorMessage } from '../shared/errors.js';
 
 const [archivedFile, OUT, MODE] = process.argv.slice(2);
 // "gists": only (re)fetch the gists for posts already saved in <out>.
@@ -20,6 +21,11 @@ mkdirSync(join(OUT, 'img'), { recursive: true });
 const UA = { 'user-agent': 'craigthompson.dev blog recovery (github.com/Craga89/portfolio)' };
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
+/**
+ * Fetch, retrying rate limits and server errors with a growing wait.
+ * @param {string | URL} url
+ * @returns {Promise<Response>}
+ */
 async function get(url, tries = 5) {
   for (let i = 0; i < tries; i++) {
     try {
@@ -28,6 +34,7 @@ async function get(url, tries = 5) {
       return r;
     } catch (e) { if (i === tries - 1) throw e; await sleep(4000 * (i + 1)); }
   }
+  throw new Error('no attempts made at ' + url);
 }
 
 let out = [];
@@ -68,7 +75,7 @@ async function snapshots(url) {
 for (const p of posts.values()) {
   const urls = [...p.urls];
   let snaps = [];
-  for (const u of urls) { try { snaps.push(...(await snapshots(u))); } catch (e) { console.log(`::warning title=${p.slug}::snapshot list failed: ${e.message}`); } }
+  for (const u of urls) { try { snaps.push(...(await snapshots(u))); } catch (e) { console.log(`::warning title=${p.slug}::snapshot list failed: ${errorMessage(e)}`); } }
   // Newest first, but from before the blog went offline (2019 on, the server shows a stock nginx page).
   snaps.sort((a, b) => (a[0] < '2019' ? 0 : 1) - (b[0] < '2019' ? 0 : 1) || b[0].localeCompare(a[0]));
   const seen = new Set(); snaps = snaps.filter((s) => (seen.has(s[0]) ? false : seen.add(s[0])));
@@ -84,7 +91,7 @@ for (const p of posts.values()) {
       writeFileSync(join(OUT, 'html', p.slug + '.html'), html);
       saved = { ts, orig, html };
       break;
-    } catch (e) { console.log(`::warning title=${p.slug}::${e.message}`); }
+    } catch (e) { console.log(`::warning title=${p.slug}::${errorMessage(e)}`); }
     await sleep(800);
   }
   if (!saved) { console.log(`::warning title=${p.slug}::no usable snapshot (${snaps.length} listed): ${why.slice(0, 4).join('; ')}`); out.push({ slug: p.slug, host: p.host, urls, snapshot: null }); continue; }
@@ -100,7 +107,7 @@ for (const p of posts.values()) {
       const type = r.headers.get('content-type') || '';
       if (r.ok && /^image\//.test(type)) { writeFileSync(join(OUT, 'img', name), Buffer.from(await r.arrayBuffer())); imgs.push({ src, file: name, type }); }
       else imgs.push({ src, file: null, status: r.status, type });
-    } catch (e) { imgs.push({ src, file: null, error: e.message }); }
+    } catch (e) { imgs.push({ src, file: null, error: errorMessage(e) }); }
     await sleep(500);
   }
   out.push({ slug: p.slug, host: p.host, urls, snapshot: saved.ts, from: saved.orig, file: 'html/' + p.slug + '.html', images: imgs });
@@ -117,7 +124,7 @@ for (const id of gistIds) {
     if (!r.ok) { console.log(`::warning title=gist ${id}::HTTP ${r.status}`); continue; }
     const g = await r.json();
     writeFileSync(join(OUT, 'gists', id + '.json'), JSON.stringify({ id, url: g.html_url, description: g.description, files: Object.fromEntries(Object.values(g.files).map((f) => [f.filename, { language: f.language, content: f.content }])) }, null, 1));
-  } catch (e) { console.log(`::warning title=gist ${id}::${e.message}`); }
+  } catch (e) { console.log(`::warning title=gist ${id}::${errorMessage(e)}`); }
 }
 console.log(`${gistIds.size} gists`);
 writeFileSync(join(OUT, 'posts.json'), JSON.stringify(out, null, 1) + '\n');
