@@ -1,5 +1,6 @@
 // Open-source numbers for the site, from the GitHub API (run in CI with GITHUB_TOKEN):
-// merged pull requests to other people's public projects, and qTip2's stars, forks and commits.
+// merged pull requests to other people's public projects (counts, by quarter, and each one),
+// and qTip2's stars, forks and commits.
 //   GITHUB_TOKEN=… node tools/oss-stats.mjs out.json
 import { writeFileSync } from 'node:fs';
 
@@ -56,6 +57,16 @@ const out = {
   since: years.length ? Math.min(...years) : null,
   qtip: { stars: repo.stargazers_count, forks: repo.forks_count, commits },
   timeline,
+  // Every merged pull request, newest first, so the site can date the ones it lists.
+  pulls: prs
+    .map((p) => ({
+      repo: p.repository_url.replace('https://api.github.com/repos/', ''),
+      number: p.number,
+      title: p.title,
+      merged: ((p.pull_request && p.pull_request.merged_at) || p.closed_at || p.created_at).slice(0, 10),
+      url: p.html_url,
+    }))
+    .sort((a, b) => b.merged.localeCompare(a.merged)),
 };
 console.log(JSON.stringify(out));
 if (process.argv[2]) writeFileSync(process.argv[2], JSON.stringify(out, null, 2));
