@@ -108,6 +108,17 @@ for (const colorScheme of /** @type {const} */ (['dark', 'light'])) {
         await axe('plain CV');
       });
 
+      test('search and jump on a file page and the CV', async ({ page, axe }) => {
+        for (const path of ['case-studies/monorepo/', 'cv/']) {
+          await page.goto(path);
+          await settle(page);
+          await page.locator('#sp-search').click();
+          await expect(page.locator('#c-pal')).toBeVisible();
+          await page.locator('.c-pal-field').fill('ai');
+          await axe(`search and jump on ${path}`, '#c-pal');
+        }
+      });
+
       test.describe('the 404 page', () => {
         test.use({ expectedErrors: [/status of 404/] });
         test('the 404 page', async ({ page, axe }) => {

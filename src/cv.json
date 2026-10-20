@@ -88,6 +88,7 @@
   "education": [
     {
       "institution": "Newcastle University",
+      "url": "https://www.ncl.ac.uk/",
       "area": "Electronic & Computer Engineering",
       "studyType": "MEng",
       "startDate": "2008",
@@ -97,13 +98,11 @@
   "awards": [
     {
       "title": "qTip featured in Smashing jQuery",
+      "url": "https://www.wiley.com/en-ae/shop/general-end-user-computing/smashing-jquery-p-9780470977231",
       "date": "2011"
     },
     {
       "title": "Famous Software Award (qTip2)"
-    },
-    {
-      "title": "WebComp08"
     }
   ],
   "skills": [

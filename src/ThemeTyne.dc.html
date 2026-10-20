@@ -65,6 +65,11 @@ a{color:var(--acc)}a:hover{color:var(--acc-h)}
 .c-tab{transition:background .2s ease,color .2s ease,border-color .2s ease}
 .c-sq-in{all:unset;box-sizing:border-box;flex:1;min-width:0;min-height:48px;font:inherit;font-size:16px;color:var(--head);caret-color:var(--acc)}
 .c-sq-in::placeholder{color:var(--dim)}
+/* The prompt's cursor sits where typing starts, just before the placeholder, until the field has focus (then the real caret takes over). */
+.c-sq-field{position:relative;flex:1;min-width:0;display:flex;align-items:center}
+.c-sq-field .c-cursor{position:absolute;inset-inline-start:0;top:50%;margin:-.6em 0 0;vertical-align:baseline;pointer-events:none}
+.c-sq-in:not(:focus):placeholder-shown{padding-inline-start:calc(.62em + 8px)}
+.c-sq-in:focus~.c-cursor{display:none}
 .c-sq-row{display:grid;grid-template-columns:140px minmax(0,1fr);gap:6px 16px;padding:10px 0;border-top:1px dashed var(--line)}
 .c-sq-hit{display:inline-block;border:1px solid var(--line3);border-radius:6px;padding:6px 12px;font-size:14px;transition:border-color .2s ease,transform .2s ease;animation:c-sq-pop .35s ease both}
 .c-sq-hit:hover{border-color:var(--acc);transform:translateY(-2px)}
@@ -411,7 +416,7 @@ html,body{background:#FFFFFF!important}
 .c-rv,.c-pop,.c-lit,.c-reveal{opacity:1!important;transform:none!important;clip-path:none!important}
 /* chrome and controls that mean nothing on paper */
 .v2-side,.v2-mbar,.v2-mcta,.c-chat,.c-tip,.c-mic,.v2-copy,.c-fx,#ask,.c-deck-prog,.c-deck-ctl,.c-cs-tabs,.c-theme,.c-ask-share,.c-sr,
-#stack div:has(> .c-sq-in),.c-rs-more,.c-faq>summary::marker,.c-cursor{display:none!important}
+#stack div:has(> .c-sq-field),.c-rs-more,.c-faq>summary::marker,.c-cursor{display:none!important}
 .v2-print{display:block;margin:0 0 14pt;font-size:9.5pt;color:var(--mute)}
 .v2-print a{color:inherit;text-decoration:none}
 /* one column, full width */
@@ -647,6 +652,12 @@ a{color:var(--acc)!important;text-decoration:none!important}
 .c-bl-b{all:unset;box-sizing:border-box;cursor:pointer;display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border:1px solid var(--line3);border-radius:8px;font-family:var(--f-mono,ui-monospace,monospace);font-size:13px;color:var(--text3)}
 .c-bl-b:hover{border-color:var(--acc);color:var(--head)}
 .c-bl-b:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+/* open source: the heatmap leads the section; the selected pull requests use the blog list's layout */
+.c-hm-top{margin-bottom:24px}
+.c-oss-prs{margin-top:48px}
+.c-pr{cursor:default}.c-pr:hover .c-bl-t{text-decoration:none}
+.c-pr-go{min-height:36px;min-width:8.5em;justify-content:center;padding:0 12px;font-size:12.5px;white-space:nowrap;justify-self:end}
+@media (max-width:640px){.c-pr-go{justify-self:start}}
 @media (max-width:640px){.c-bl-i{grid-template-columns:minmax(0,1fr);gap:2px}.c-bl-m{text-align:start;white-space:normal}.c-bl-d{order:-1}}
 .c-hm{margin:0 0 24px;border:1px solid var(--line2);border-radius:12px;background:var(--panel);padding:16px 18px 14px}
 .c-hm-cap{margin:0 0 12px;font-size:13px;color:var(--mute)}
@@ -2323,8 +2334,8 @@ html[data-vt-dir="prev"]::view-transition-new(c-rs),html[data-vt-dir="prev"]::vi
 <div style="border: 1px solid var(--line2); border-radius: 12px; background: var(--panel); overflow: hidden">
 <div style="display: flex; align-items: center; gap: 10px; padding: 6px 16px; border-bottom: 1px solid var(--line2); background: var(--panel2)">
 <span aria-hidden="true" style="color: var(--ok)">$ grep -ri</span>
-<input class="c-sq-in" type="text" autocomplete="off" spellcheck="false" aria-label="Search the stack" placeholder="try aws, test, type, ai…" value="{{sq}}" onChange="{{onSq}}">
-<sc-if value="{{noSq}}" hint-placeholder-val="{{ true }}"><span class="c-cursor" aria-hidden="true"></span></sc-if>
+<span class="c-sq-field"><input class="c-sq-in" type="text" autocomplete="off" spellcheck="false" aria-label="Search the stack" placeholder="try aws, test, type, ai…" value="{{sq}}" onChange="{{onSq}}">
+<sc-if value="{{noSq}}" hint-placeholder-val="{{ true }}"><span class="c-cursor" aria-hidden="true"></span></sc-if></span>
 </div>
 <div style="padding: 16px 16px 20px" aria-live="polite">
 <p style="margin: 0 0 10px; font-size: 13px; color: var(--mute)">{{sqSummary}}</p>
@@ -2342,11 +2353,17 @@ html[data-vt-dir="prev"]::view-transition-new(c-rs),html[data-vt-dir="prev"]::vi
 
 <section id="oss" class="c-rv" style="margin-top: clamp(72px, 10vw, 128px)">
 <div class="c-hrow" style="margin: 0 0 28px"><h2 class="c-cmd" style="margin: 0; font-size: clamp(16px, 2vw, 20px); font-weight: 500; color: var(--ok)"><span translate="no">$ ls ./open-source</span> <span style="color: var(--dim)"># open source</span></h2><a class="c-anchor" href="#oss" data-done="{{anc.oss}}" data-file="open-source/" aria-label="Copy link to open-source/" title="Copy link to this section">#</a></div>
+<sc-if value="{{heat.on}}" hint-placeholder-val="false"><figure class="c-hm c-hm-top">
+<figcaption class="c-hm-cap">Merged pull requests to other projects, by quarter</figcaption>
+<div class="c-hm-g" role="img" aria-label="{{heat.summary}}" style="{{heat.cols}}"><sc-for list="{{heat.cells}}" as="c" hint-placeholder-count="8"><span class="{{c.cls}}" data-l="{{c.l}}" data-edge="{{c.edge}}" data-v="{{c.v}}">{{c.label}}<sc-if value="{{c.tip}}" hint-placeholder-val="false"><span class="c-hm-t">{{c.tip}}</span></sc-if></span></sc-for></div>
+<div class="c-hm-leg" aria-hidden="true"><span>fewer</span><i data-l="0"></i><i data-l="1"></i><i data-l="2"></i><i data-l="3"></i><i data-l="4"></i><span>more</span><span class="c-hm-note">{{heat.note}}</span></div>
+<details class="c-hm-tb"><summary>as a table</summary><table><thead><tr><th scope="col">year</th><th scope="col">merged</th><th scope="col">projects</th></tr></thead><tbody><sc-for list="{{heat.rows}}" as="r" hint-placeholder-count="3"><tr><td>{{r.y}}</td><td>{{r.n}}</td><td>{{r.repos}}</td></tr></sc-for></tbody></table></details>
+</figure></sc-if>
 <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); gap: 18px">
 <article class="c-card" style="border: 1px solid var(--line2); border-radius: 12px; padding: 26px; background: var(--panel)">
 <div style="font-size: 13px; color: var(--acc)">open-source/qtip2</div>
 <h3 style="margin: 8px 0 10px; font-size: 21px; color: var(--head)"><a href="https://github.com/qTip2/qTip2" style="color: var(--head)">qTip2 — pretty powerful tooltips</a></h3>
-<p style="margin: 0; color: var(--text3); font-size: 15px">Widely adopted jQuery plugin and a go-to tooltip library in its day: {{live.qStars}} stars, {{live.qForks}} forks and {{live.qCommits}} commits, built with extensive help from community contributors. Featured in Smashing jQuery (2011).</p>
+<p style="margin: 0; color: var(--text3); font-size: 15px">Widely adopted jQuery plugin and a go-to tooltip library in its day: {{live.qStars}} stars, {{live.qForks}} forks and {{live.qCommits}} commits, built with extensive help from community contributors. Featured in <a href="https://www.wiley.com/en-ae/shop/general-end-user-computing/smashing-jquery-p-9780470977231"><em>Smashing jQuery</em></a> (2011).</p>
 </article>
 <article class="c-card" style="border: 1px solid var(--line2); border-radius: 12px; padding: 26px; background: var(--panel)">
 <div style="font-size: 13px; color: var(--acc)">open-source/micromouse</div>
@@ -2359,32 +2376,9 @@ html[data-vt-dir="prev"]::view-transition-new(c-rs),html[data-vt-dir="prev"]::vi
 <p style="margin: 0; color: var(--text3); font-size: 15px">React drag-and-drop builder with a Node.js CSS-inlining service behind it, for a platform sending billions of emails.</p>
 </article>
 </div>
-
-<div style="margin-top: 48px">
-<sc-if value="{{heat.on}}" hint-placeholder-val="false"><figure class="c-hm">
-<figcaption class="c-hm-cap">Merged pull requests to other projects, by quarter</figcaption>
-<div class="c-hm-g" role="img" aria-label="{{heat.summary}}" style="{{heat.cols}}"><sc-for list="{{heat.cells}}" as="c" hint-placeholder-count="8"><span class="{{c.cls}}" data-l="{{c.l}}" data-edge="{{c.edge}}" data-v="{{c.v}}">{{c.label}}<sc-if value="{{c.tip}}" hint-placeholder-val="false"><span class="c-hm-t">{{c.tip}}</span></sc-if></span></sc-for></div>
-<div class="c-hm-leg" aria-hidden="true"><span>fewer</span><i data-l="0"></i><i data-l="1"></i><i data-l="2"></i><i data-l="3"></i><i data-l="4"></i><span>more</span><span class="c-hm-note">{{heat.note}}</span></div>
-<details class="c-hm-tb"><summary>as a table</summary><table><thead><tr><th scope="col">year</th><th scope="col">merged</th><th scope="col">projects</th></tr></thead><tbody><sc-for list="{{heat.rows}}" as="r" hint-placeholder-count="3"><tr><td>{{r.y}}</td><td>{{r.n}}</td><td>{{r.repos}}</td></tr></sc-for></tbody></table></details>
-</figure></sc-if>
+<div class="c-oss-prs">
 <p style="margin: 0 0 20px; color: var(--mute); font-size: 14px; max-width: 72ch"><strong style="color: var(--head)">{{live.prs}} merged pull requests across {{live.repos}} other projects</strong> since {{live.since}}, usually fixing something I hit in production. A selection:</p>
-<div role="table" aria-label="Selected upstream contributions" style="border: 1px solid var(--line2); border-radius: 12px; overflow: hidden">
-<div role="rowgroup">
-<div role="row" class="c-yr" style="display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 18px; padding: 12px 20px; border-bottom: 1px solid var(--line)"><span role="cell" style="flex: 0 1 300px"><a href="https://github.com/better-auth/better-auth/pull/9398">better-auth/better-auth</a></span><span role="cell" style="flex: 1 1 280px; color: var(--text2)">Fixed SAML metadata so an organisation's default SSO provider works</span></div>
-<div role="row" class="c-yr" style="display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 18px; padding: 12px 20px; border-bottom: 1px solid var(--line)"><span role="cell" style="flex: 0 1 300px"><a href="https://github.com/shuding/nextra/pull/4995">shuding/nextra</a></span><span role="cell" style="flex: 1 1 280px; color: var(--text2)">Git worktree support for the docs framework</span></div>
-<div role="row" class="c-yr" style="display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 18px; padding: 12px 20px; border-bottom: 1px solid var(--line)"><span role="cell" style="flex: 0 1 300px"><a href="https://github.com/buildkite/test-collector-javascript/pull/30">buildkite/test-collector-javascript</a></span><span role="cell" style="flex: 1 1 280px; color: var(--text2)">Path prefixes so Test Analytics works in monorepos</span></div>
-<div role="row" class="c-yr" style="display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 18px; padding: 12px 20px; border-bottom: 1px solid var(--line)"><span role="cell" style="flex: 0 1 300px"><a href="https://github.com/swc-project/swc-node/pull/647">swc-project/swc-node</a></span><span role="cell" style="flex: 1 1 280px; color: var(--text2)">Made the require hook revertible</span></div>
-<div role="row" class="c-yr" style="display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 18px; padding: 12px 20px; border-bottom: 1px solid var(--line)"><span role="cell" style="flex: 0 1 300px"><a href="https://github.com/Popmotion/popmotion/pull/506">Popmotion/popmotion</a></span><span role="cell" style="flex: 1 1 280px; color: var(--text2)">IE11 compatibility fix for the animation library</span></div>
-<div role="row" class="c-yr" style="display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 18px; padding: 12px 20px; border-bottom: 1px solid var(--line)"><span role="cell" style="flex: 0 1 300px"><a href="https://github.com/lerna/lerna/pull/904">lerna/lerna</a></span><span role="cell" style="flex: 1 1 280px; color: var(--text2)">Improved canary releases for the monorepo tool</span></div>
-<div role="row" class="c-yr" style="display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 18px; padding: 12px 20px; border-bottom: 1px solid var(--line)"><span role="cell" style="flex: 0 1 300px"><a href="https://github.com/ianstormtaylor/slate/pull/728">ianstormtaylor/slate</a></span><span role="cell" style="flex: 1 1 280px; color: var(--text2)">Selection and node-lookup utilities for the rich-text editor</span></div>
-<div role="row" class="c-yr" style="display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 18px; padding: 12px 20px; border-bottom: 1px solid var(--line)"><span role="cell" style="flex: 0 1 300px"><a href="https://github.com/tomkp/react-split-pane/pull/226">tomkp/react-split-pane</a></span><span role="cell" style="flex: 1 1 280px; color: var(--text2)">Custom pane class names and CSS order support</span></div>
-<div role="row" class="c-yr" style="display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 18px; padding: 12px 20px; border-bottom: 1px solid var(--line)"><span role="cell" style="flex: 0 1 300px"><a href="https://github.com/robinweser/fela/pull/193">robinweser/fela</a></span><span role="cell" style="flex: 1 1 280px; color: var(--text2)">Clearer display names for themed React components</span></div>
-<div role="row" class="c-yr" style="display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 18px; padding: 12px 20px; border-bottom: 1px solid var(--line)"><span role="cell" style="flex: 0 1 300px"><a href="https://github.com/shipshapecode/tether/pull/179">shipshapecode/tether</a></span><span role="cell" style="flex: 1 1 280px; color: var(--text2)">Positioning for elements inside iframes</span></div>
-<div role="row" class="c-yr" style="display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 18px; padding: 12px 20px; border-bottom: 1px solid var(--line)"><span role="cell" style="flex: 0 1 300px"><a href="https://github.com/preactjs/preact/pull/66">preactjs/preact</a></span><span role="cell" style="flex: 1 1 280px; color: var(--text2)">Fixed handling of multiple camelCase CSS properties</span></div>
-<div role="row" class="c-yr" style="display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 18px; padding: 12px 20px; border-bottom: 1px solid var(--line)"><span role="cell" style="flex: 0 1 300px"><a href="https://github.com/BlueSpire/Durandal/pull/486">BlueSpire/Durandal</a></span><span role="cell" style="flex: 1 1 280px; color: var(--text2)">Observable app titles and an optional view plugin for the SPA framework</span></div>
-<div role="row" class="c-yr" style="display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 18px; padding: 12px 20px"><span role="cell" style="flex: 0 1 300px"><a href="https://github.com/cdnjs/cdnjs/pull/1071">cdnjs/cdnjs</a> · <a href="https://github.com/jsdelivr/jsdelivr/pull/203">jsdelivr</a></span><span role="cell" style="flex: 1 1 280px; color: var(--text2)">Published qTip2 releases to both public CDNs</span></div>
-</div>
-</div>
+<ol class="c-bl" aria-label="Selected upstream contributions, newest first"><li class="c-bl-i"><time class="c-bl-d" datetime="2026-05-11">May 2026</time><span class="c-bl-a c-pr"><span class="c-bl-t">Git worktree support for the docs framework</span><span class="c-bl-f" translate="no"><bdi>shuding/nextra</bdi></span></span><a class="c-bl-b c-pr-go" href="https://github.com/shuding/nextra/pull/4995" aria-label="Pull request 4995 to shuding/nextra on GitHub">PR #4995 <span aria-hidden="true">↗</span></a></li><li class="c-bl-i"><time class="c-bl-d" datetime="2026-04-29">Apr 2026</time><span class="c-bl-a c-pr"><span class="c-bl-t">Fixed SAML metadata so an organisation&#x27;s default SSO provider works</span><span class="c-bl-f" translate="no"><bdi>better-auth/better-auth</bdi></span></span><a class="c-bl-b c-pr-go" href="https://github.com/better-auth/better-auth/pull/9398" aria-label="Pull request 9398 to better-auth/better-auth on GitHub">PR #9398 <span aria-hidden="true">↗</span></a></li><li class="c-bl-i"><time class="c-bl-d" datetime="2022-06-09">Jun 2022</time><span class="c-bl-a c-pr"><span class="c-bl-t">Path prefixes so Test Analytics works in monorepos</span><span class="c-bl-f" translate="no"><bdi>buildkite/test-collector-javascript</bdi></span></span><a class="c-bl-b c-pr-go" href="https://github.com/buildkite/test-collector-javascript/pull/30" aria-label="Pull request 30 to buildkite/test-collector-javascript on GitHub">PR #30 <span aria-hidden="true">↗</span></a></li><li class="c-bl-i"><time class="c-bl-d" datetime="2022-03-31">Mar 2022</time><span class="c-bl-a c-pr"><span class="c-bl-t">Made the require hook revertible</span><span class="c-bl-f" translate="no"><bdi>swc-project/swc-node</bdi></span></span><a class="c-bl-b c-pr-go" href="https://github.com/swc-project/swc-node/pull/647" aria-label="Pull request 647 to swc-project/swc-node on GitHub">PR #647 <span aria-hidden="true">↗</span></a></li><li class="c-bl-i"><time class="c-bl-d" datetime="2018-09-21">Sep 2018</time><span class="c-bl-a c-pr"><span class="c-bl-t">IE11 compatibility fix for the animation library</span><span class="c-bl-f" translate="no"><bdi>Popmotion/popmotion</bdi></span></span><a class="c-bl-b c-pr-go" href="https://github.com/Popmotion/popmotion/pull/506" aria-label="Pull request 506 to Popmotion/popmotion on GitHub">PR #506 <span aria-hidden="true">↗</span></a></li><li class="c-bl-i"><time class="c-bl-d" datetime="2017-11-12">Nov 2017</time><span class="c-bl-a c-pr"><span class="c-bl-t">Custom pane class names and CSS order support</span><span class="c-bl-f" translate="no"><bdi>tomkp/react-split-pane</bdi></span></span><a class="c-bl-b c-pr-go" href="https://github.com/tomkp/react-split-pane/pull/226" aria-label="Pull request 226 to tomkp/react-split-pane on GitHub">PR #226 <span aria-hidden="true">↗</span></a></li><li class="c-bl-i"><time class="c-bl-d" datetime="2017-07-06">Jul 2017</time><span class="c-bl-a c-pr"><span class="c-bl-t">Improved canary releases for the monorepo tool</span><span class="c-bl-f" translate="no"><bdi>lerna/lerna</bdi></span></span><a class="c-bl-b c-pr-go" href="https://github.com/lerna/lerna/pull/904" aria-label="Pull request 904 to lerna/lerna on GitHub">PR #904 <span aria-hidden="true">↗</span></a></li><li class="c-bl-i"><time class="c-bl-d" datetime="2017-04-19">Apr 2017</time><span class="c-bl-a c-pr"><span class="c-bl-t">Selection and node-lookup utilities for the rich-text editor</span><span class="c-bl-f" translate="no"><bdi>ianstormtaylor/slate</bdi></span></span><a class="c-bl-b c-pr-go" href="https://github.com/ianstormtaylor/slate/pull/728" aria-label="Pull request 728 to ianstormtaylor/slate on GitHub">PR #728 <span aria-hidden="true">↗</span></a></li><li class="c-bl-i"><time class="c-bl-d" datetime="2017-02-10">Feb 2017</time><span class="c-bl-a c-pr"><span class="c-bl-t">Clearer display names for themed React components</span><span class="c-bl-f" translate="no"><bdi>robinweser/fela</bdi></span></span><a class="c-bl-b c-pr-go" href="https://github.com/robinweser/fela/pull/193" aria-label="Pull request 193 to robinweser/fela on GitHub">PR #193 <span aria-hidden="true">↗</span></a></li><li class="c-bl-i"><time class="c-bl-d" datetime="2016-07-14">Jul 2016</time><span class="c-bl-a c-pr"><span class="c-bl-t">Positioning for elements inside iframes</span><span class="c-bl-f" translate="no"><bdi>shipshapecode/tether</bdi></span></span><a class="c-bl-b c-pr-go" href="https://github.com/shipshapecode/tether/pull/179" aria-label="Pull request 179 to shipshapecode/tether on GitHub">PR #179 <span aria-hidden="true">↗</span></a></li><li class="c-bl-i"><time class="c-bl-d" datetime="2016-02-25">Feb 2016</time><span class="c-bl-a c-pr"><span class="c-bl-t">Fixed handling of multiple camelCase CSS properties</span><span class="c-bl-f" translate="no"><bdi>preactjs/preact</bdi></span></span><a class="c-bl-b c-pr-go" href="https://github.com/preactjs/preact/pull/66" aria-label="Pull request 66 to preactjs/preact on GitHub">PR #66 <span aria-hidden="true">↗</span></a></li><li class="c-bl-i"><time class="c-bl-d" datetime="2014-04-24">Apr 2014</time><span class="c-bl-a c-pr"><span class="c-bl-t">Observable app titles and an optional view plugin for the SPA framework</span><span class="c-bl-f" translate="no"><bdi>BlueSpire/Durandal</bdi></span></span><a class="c-bl-b c-pr-go" href="https://github.com/BlueSpire/Durandal/pull/486" aria-label="Pull request 486 to BlueSpire/Durandal on GitHub">PR #486 <span aria-hidden="true">↗</span></a></li><li class="c-bl-i"><time class="c-bl-d" datetime="2013-12-12">Dec 2013</time><span class="c-bl-a c-pr"><span class="c-bl-t">Published qTip2 releases to jsDelivr</span><span class="c-bl-f" translate="no"><bdi>jsdelivr/jsdelivr</bdi></span></span><a class="c-bl-b c-pr-go" href="https://github.com/jsdelivr/jsdelivr/pull/203" aria-label="Pull request 203 to jsdelivr/jsdelivr on GitHub">PR #203 <span aria-hidden="true">↗</span></a></li><li class="c-bl-i"><time class="c-bl-d" datetime="2013-03-23">Mar 2013</time><span class="c-bl-a c-pr"><span class="c-bl-t">Published qTip2 releases to cdnjs</span><span class="c-bl-f" translate="no"><bdi>cdnjs/cdnjs</bdi></span></span><a class="c-bl-b c-pr-go" href="https://github.com/cdnjs/cdnjs/pull/1071" aria-label="Pull request 1071 to cdnjs/cdnjs on GitHub">PR #1071 <span aria-hidden="true">↗</span></a></li></ol>
 <p style="margin: 14px 0 0; font-size: 14px"><a href="https://github.com/search?q=author%3ACraga89+type%3Apr+is%3Amerged+-user%3ACraga89&amp;type=pullrequests">See them all on GitHub →</a></p>
 </div>
 </section>
@@ -2415,14 +2409,13 @@ html[data-vt-dir="prev"]::view-transition-new(c-rs),html[data-vt-dir="prev"]::vi
 <div>
 <h2 id="c-awards" class="c-cmd" style="margin: 0 0 20px; font-size: clamp(16px, 2vw, 20px); font-weight: 500; color: var(--ok)"><span translate="no">$ cat recognition.txt</span></h2>
 <ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 12px; color: var(--text2)">
-<li><span style="color: var(--acc)">→</span> qTip featured in <em>Smashing jQuery</em> (2011)</li>
+<li><span style="color: var(--acc)">→</span> qTip featured in <a href="https://www.wiley.com/en-ae/shop/general-end-user-computing/smashing-jquery-p-9780470977231"><em>Smashing jQuery</em></a> (2011)</li>
 <li><span style="color: var(--acc)">→</span> Famous Software Award for qTip2</li>
-<li><span style="color: var(--acc)">→</span> WebComp08</li>
 </ul>
 </div>
 <div>
 <h2 class="c-cmd" style="margin: 0 0 20px; font-size: clamp(16px, 2vw, 20px); font-weight: 500; color: var(--ok)"><span translate="no">$ cat education.txt</span> <span style="color: var(--dim)"># education</span></h2>
-<p style="margin: 0; color: var(--text2)"><strong style="color: var(--head)">MEng, Electronic &amp; Computer Engineering</strong><br>Newcastle University · 2008 — 2013</p>
+<p style="margin: 0; color: var(--text2)"><strong style="color: var(--head)">MEng, Electronic &amp; Computer Engineering</strong><br><a href="https://www.ncl.ac.uk/">Newcastle University</a> · 2008 — 2013</p>
 </div>
 </section>
 

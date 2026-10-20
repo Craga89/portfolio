@@ -566,6 +566,7 @@ ${NAV_HEAD('../')}
 ${body}
 ${cvThemeTail}
 <script>${i18nBoot()}</script>
+<script>${paletteBoot()}</script>
 ${ASK.endpoint ? '<script>' + beacon(ASK.endpoint, false) + '</script>\n' : ''}${cfAnalytics}
 </body>
 </html>
@@ -1092,7 +1093,7 @@ ${NAV_HEAD(depth)}
 <div class="c-root" style="background: var(--bg); color: var(--text); min-height: 100vh; font-size: 16px; line-height: 1.7">
 <div class="sp">
 <header class="sp-top"><a class="sp-home" href="${depth}"><span class="c-dot" style="width: 9px; height: 9px; border-radius: 50%; background: var(--ok)"></span>craigthompson.dev</a>
-<div class="sp-tools"><button type="button" class="sp-b" id="sp-theme">theme</button><button type="button" class="sp-b" id="sp-motion" hidden>pause animations</button></div></header>
+<div class="sp-tools"><button type="button" class="sp-b" id="sp-search" aria-haspopup="dialog" aria-keyshortcuts="Control+K Meta+K" title="Search and jump (Ctrl+K)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>search</button><button type="button" class="sp-b" id="sp-theme">theme</button><button type="button" class="sp-b" id="sp-motion" hidden>pause animations</button></div></header>
 <main class="sp-main">
 ${main}</main>
 </div>
@@ -1103,6 +1104,7 @@ tb.addEventListener('click',function(){var L=!r.classList.contains('c-light');r.
 var loops=document.querySelector('.c-glow,.c-trav,.c-tick,.c-b1,.c-ping');var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
 if(loops&&!reduce){mb.hidden=false;var ml=function(){var off=r.classList.contains('still');mb.textContent=off?'play animations':'pause animations'};mb.addEventListener('click',function(){var off=!r.classList.contains('still');r.classList.toggle('still',off);try{localStorage.setItem('motion',off?'off':'on')}catch(e){}ml()});ml()}})()</script>
 <script>${i18nBoot()}</script>
+<script>${paletteBoot()}</script>
 ${ASK.endpoint ? '<script>' + beacon(ASK.endpoint, false) + '</script>' : ''}
 ${cfAnalytics}
 </body>
@@ -1110,7 +1112,83 @@ ${cfAnalytics}
 `;
 }
 
+// The search-and-jump palette for the pages other than the home page (src/palette.js), with its
+// list filled in: the home page's sections, every file page and post, and a few actions. It loads
+// when someone asks for it (Ctrl/⌘+K, /, or the search button), so pages don't pay for it otherwise.
+let PALETTE_PATH = '';
+function writePalette(panels) {
+  const sections = [
+    ['top', 'README.md', 'intro about summary home'],
+    ['career', 'career.log', 'experience jobs history work employers'],
+    ['responsibilities', 'responsibilities/', 'roles leadership'],
+    ['case-studies', 'case-studies/', 'projects work'],
+    ['stack', 'stack/', 'skills tools technologies'],
+    ['oss', 'open-source/', 'github pull requests contributions'],
+    ['blog', 'blog/', 'posts writing articles'],
+    ['recommendations', 'recommendations.txt', 'references testimonials'],
+    ['faq', 'faq.md', 'questions'],
+    ['ask', 'ask.sh', 'ai question chat'],
+    ['contact', 'get-in-touch.md', 'contact email hire talk get in touch'],
+  ];
+  const items = [
+    ...sections.map(([id, label, kw]) => ({ icon: '#', label, kind: 'section', path: '#' + id, kw })),
+    { icon: '▤', label: 'Open the plain CV', kind: 'action', path: 'cv/', kw: 'resume' },
+    { icon: '↓', label: 'Download cv.pdf', kind: 'action', path: 'cv.pdf', kw: 'resume pdf' },
+    {
+      icon: '@',
+      label: 'Copy email address',
+      kind: 'action',
+      action: 'email',
+      kw: 'contact mail email craga89@gmail.com',
+    },
+    { icon: '◐', label: 'Switch theme', kind: 'action', action: 'theme', kw: 'theme dark light mode colours' },
+    { icon: '✎', label: 'blog/ index', kind: 'section', path: 'blog/', kw: 'posts writing' },
+    ...POSTS.map((b) => ({
+      icon: '✎',
+      label: b.title,
+      kind: 'post · ' + b.date.slice(0, 4),
+      path: `blog/${b.slug}/`,
+      kw: 'blog post ' + b.tags.join(' '),
+    })),
+    ...['resp', 'case'].flatMap((kind) =>
+      panels
+        .filter((p) => p.kind === kind)
+        .map((p) => ({
+          icon: '›',
+          label: SECTION[kind].label + p.file,
+          kind: kind === 'case' ? 'case study' : 'responsibility',
+          path: `${SECTION[kind].dir}/${SLUG(p.file)}/`,
+        })),
+    ),
+    { icon: '↗', label: 'GitHub profile', kind: 'link', path: 'https://github.com/Craga89', kw: 'craga89 code' },
+    {
+      icon: '↗',
+      label: 'LinkedIn profile',
+      kind: 'link',
+      path: 'https://www.linkedin.com/in/craigmichaelthompson/',
+      kw: 'linkedin',
+    },
+  ];
+  const src = readFileSync(join(SRC, 'palette.js'), 'utf8').replace('/*ITEMS*/ []', JSON.stringify(items));
+  if (src.includes('/*ITEMS*/')) throw new Error('src/palette.js: the ITEMS placeholder was not filled in');
+  PALETTE_PATH = '/assets/palette.' + hash(src) + '.js';
+  writeOut(PALETTE_PATH.slice(1), src);
+  const cv = join(OUT, 'cv', 'index.html');
+  if (existsSync(cv)) writeFileSync(cv, readFileSync(cv, 'utf8').replace('__PALETTE_PATH__', PALETTE_PATH));
+}
+
+// Opens the palette on Ctrl/⌘+K, on / (unless single-key shortcuts are off), or from the search button.
+// The CV page is written before the palette (which needs the prerendered file list), so it gets a
+// placeholder that writePalette fills in.
+const paletteBoot =
+  () => `(function(){var p;function go(){(p=p||import(${JSON.stringify(PALETTE_PATH || '__PALETTE_PATH__')})).then(function(m){m.toggle()})}
+var b=document.getElementById('sp-search');if(b)b.addEventListener('click',go);
+document.addEventListener('keydown',function(e){var k=e.key;if((e.metaKey||e.ctrlKey)&&!e.altKey&&!e.shiftKey&&(k==='k'||k==='K')){e.preventDefault();go();return}
+if(k!=='/'||e.metaKey||e.ctrlKey||e.altKey||e.defaultPrevented)return;try{if(localStorage.getItem('keys')==='off')return}catch(x){/* storage blocked: shortcuts stay on */}
+var t=e.target;if(t&&(t.isContentEditable||/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))||document.querySelector('dialog[open]'))return;e.preventDefault();go()})})()`;
+
 async function buildFilePages(browser, panels) {
+  writePalette(panels);
   const css = `${fontFaces('fonts/', ['Big Shoulders Display', 'Public Sans', 'Red Hat Mono'])}
 ${FALLBACKS}
 ${HOME.css}

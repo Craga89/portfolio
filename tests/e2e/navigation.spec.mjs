@@ -85,3 +85,23 @@ test.describe('a missing page', () => {
     await expect(page.locator('h1')).not.toBeEmpty();
   });
 });
+
+// Search and jump works on every page, not just the home page; elsewhere it loads on first use.
+for (const path of ['case-studies/monorepo/', 'blog/', 'cv/']) {
+  test(`search and jump opens with Ctrl+K and from its button on ${path}`, async ({ page }) => {
+    await page.goto(path);
+    const palette = page.locator('#c-pal');
+    await expect(palette).toHaveCount(0);
+    await page.keyboard.press('Control+k');
+    await expect(palette).toBeVisible();
+    await page.locator('.c-pal-field').fill('hiring');
+    await expect(page.locator('.c-pal-o[aria-selected="true"]')).toContainText('hiring.md');
+    await page.keyboard.press('Escape');
+    await expect(palette).toBeHidden();
+    await page.locator('#sp-search').click();
+    await expect(palette).toBeVisible();
+    await page.locator('.c-pal-field').fill('hiring');
+    await page.keyboard.press('Enter');
+    await page.waitForURL(/\/responsibilities\/hiring\/$/);
+  });
+}
