@@ -398,13 +398,15 @@ try {
     const h = () => st.evaluate(() => Math.round(document.getElementById('stack').getBoundingClientRect().height));
     const closed = await h();
     const hidden = await st.evaluate(() => [...document.querySelectorAll('#stack .c-sq-hit')].filter((x) => x.offsetParent).length);
+    await st.locator('#stack .c-sq-tog').first().scrollIntoViewIfNeeded();
+    await st.waitForTimeout(400);
     await st.locator('#stack .c-sq-tog').first().tap();
-    await st.waitForTimeout(200);
+    await st.waitForFunction(() => document.querySelector('#stack .c-sq-tog').getAttribute('aria-expanded') === 'true', null, { timeout: 3000 }).catch(() => {});
     const open = await st.evaluate(() => ({ exp: document.querySelector('#stack .c-sq-tog').getAttribute('aria-expanded'), shown: document.querySelector('#stack .c-sq-row .c-sq-hit').offsetParent !== null }));
     await st.fill('.c-sq-in', 'aws');
     await st.waitForTimeout(200);
     const found = await st.evaluate(() => [...document.querySelectorAll('#stack .c-sq-hit')].filter((x) => x.offsetParent).length);
-    ok('stack on phones: areas fold to one line each, open on tap, and a search shows matches', closed < 1000 && hidden === 0 && open.exp === 'true' && open.shown && found > 3, JSON.stringify({ closed, hidden, open, found }));
+    ok('stack: areas fold to one line each, open on tap, and a search shows matches', closed < 1000 && hidden === 0 && open.exp === 'true' && open.shown && found > 3, JSON.stringify({ closed, hidden, open, found }));
     await st.close();
   }
   // CV + 404
