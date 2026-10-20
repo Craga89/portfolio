@@ -10,48 +10,14 @@
 //                                              every archived URL) and check each redirects once,
 //                                              permanently, to the right place, and that it loads
 //
-// Matching follows Cloudflare Bulk Redirects: a rule matches its exact URL, or with subpath
-// matching everything under it; with include-subdomains also any subdomain. When several match,
-// the most specific wins: the exact host, then an exact path, then the longest path.
+// The rules and how they match: tools/lib/redirects.mjs.
 import { readFileSync, writeFileSync, mkdirSync, existsSync, appendFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { loadPosts } from './blog.mjs';
+import { errorMessage } from '../shared/errors.js';
+import { CONF, RULES, junk, match } from './lib/redirects.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
-const CONF = JSON.parse(readFileSync(join(ROOT, 'redirects', 'old-domains.json'), 'utf8'));
-
-const split = (src) => { const i = src.indexOf('/'); return i < 0 ? [src.toLowerCase(), '/'] : [src.slice(0, i).toLowerCase(), src.slice(i) || '/']; };
-// Each recovered blog post redirects from its old address to its new page.
-const postRules = loadPosts().filter((b) => b.original).map((b) => { const u = new URL(b.original); return { source: u.hostname.replace(/^www\./, '') + u.pathname.replace(/\/$/, ''), target: CONF.home + 'blog/' + b.slug + '/', subdomains: !u.hostname.startsWith('blog.'), subpath: true, suffix: false, why: 'blog post: ' + b.title }; });
-const RULES = postRules.concat(CONF.rules).map((r, i) => { const [host, path] = split(r.source); return Object.assign({ i, host, path }, r); });
-
-export function match(input) {
-  const u = new URL(input);
-  const host = u.hostname.toLowerCase().replace(/\.$/, '');
-  const path = u.pathname || '/';
-  let best = null;
-  for (const r of RULES) {
-    const hostExact = host === r.host;
-    if (!hostExact && !(r.subdomains && host.endsWith('.' + r.host))) continue;
-    const exact = path === r.path;
-    const under = r.subpath && (r.path === '/' || path.startsWith(r.path.endsWith('/') ? r.path : r.path + '/'));
-    if (!exact && !under) continue;
-    const score = [hostExact ? 1 : 0, exact ? 1 : 0, r.path.length];
-    if (!best || cmp(score, best.score) > 0) best = { r, score };
-  }
-  if (!best) return null;
-  const r = best.r;
-  let target = r.target;
-  if (r.subpath && r.suffix && path !== r.path) {
-    let rest = path.slice(r.path.endsWith('/') ? r.path.length - 1 : r.path.length);
-    if (target.endsWith('/') && rest.startsWith('/')) rest = rest.slice(1);
-    target += rest;
-  }
-  if (r.query && u.search) target += u.search;
-  return { rule: r, target };
-}
-function cmp(a, b) { for (let k = 0; k < a.length; k++) if (a[k] !== b[k]) return a[k] - b[k]; return 0; }
 
 function csv(file) {
   const b = (v) => (v ? 'TRUE' : 'FALSE');
@@ -77,7 +43,7 @@ async function discover(dir) {
         const t = await r.text();
         rows = t.trim() ? JSON.parse(t).slice(1) : [];
         break;
-      } catch (e) { console.log(`${process.env.GITHUB_ACTIONS && attempt === 2 ? '::warning title=Wayback ' + d + '::' : ''}${d}: ${e.message}${attempt < 2 ? ', retrying' : ', giving up'}`); await new Promise((r) => setTimeout(r, 5000 * (attempt + 1))); }
+      } catch (e) { console.log(`${process.env.GITHUB_ACTIONS && attempt === 2 ? '::warning title=Wayback ' + d + '::' : ''}${d}: ${errorMessage(e)}${attempt < 2 ? ', retrying' : ', giving up'}`); await new Promise((r) => setTimeout(r, 5000 * (attempt + 1))); }
     }
     // Paths with thousands of archived URLs (the old forums) are counted, not listed.
     const skipped = {};
@@ -111,10 +77,8 @@ async function discover(dir) {
 
 async function hop(url) {
   const r = await fetch(url, { redirect: 'manual', headers: { 'user-agent': 'craigthompson.dev redirect check' } });
-  return { status: r.status, location: r.headers.get('location') ? new URL(r.headers.get('location'), url).href : null };
+  return { status: r.status, location: (loc => (loc ? new URL(loc, url).href : null))(r.headers.get('location')) };
 }
-// Strings the Wayback Machine's crawler picked out of old scripts ("/projects/qtip/'+s.id+'"), not pages.
-export const junk = (url) => { try { const u = new URL(url); const p = decodeURIComponent(u.pathname + u.search); return /['"(){}<>;+,\[\]|\\^`=]|\s|https?:|\.bak$|\/\.[a-z]/i.test(p.replace(/^\?[\w.-]+=[\w.%-]*(&[\w.-]+=[\w.%-]*)*$/, '')) ; } catch (e) { return true; } };
 
 async function lands(url, tries = 2) {
   const r = await landsOnce(url);
@@ -125,7 +89,7 @@ async function landsOnce(url) {
   try {
     const r = await fetch(url.replace(/#.*$/, ''), { redirect: 'follow', headers: { 'user-agent': 'craigthompson.dev redirect check' } });
     return { status: r.status, type: r.headers.get('content-type') || '', final: r.url };
-  } catch (e) { return { status: 0, type: '', final: '', error: e.message + (e.cause ? ' (' + (e.cause.code || e.cause.message) + ')' : '') }; }
+  } catch (e) { return { status: 0, type: '', final: '', error: errorMessage(e) + (e instanceof Error && e.cause ? ' (' + (/** @type {{ code?: string, message?: string }} */ (e.cause).code || /** @type {{ message?: string }} */ (e.cause).message) + ')' : '') }; }
 }
 
 async function check(archivedFile) {
@@ -146,7 +110,7 @@ async function check(archivedFile) {
         const h = await hop(c.from);
         res = Object.assign({}, c, h, { ok: h.status === 301 && h.location === c.to });
         if (!res.ok) res.why = h.status === 301 ? `goes to ${h.location}` : h.status >= 300 && h.status < 400 ? `${h.status} (not permanent) to ${h.location}` : `HTTP ${h.status}, not redirected`;
-      } catch (e) { res = Object.assign({}, c, { ok: false, why: 'no response: ' + e.message }); }
+      } catch (e) { res = Object.assign({}, c, { ok: false, why: 'no response: ' + errorMessage(e) }); }
       results.push(res);
       if (res.ok) targets.set(c.to, null);
     }
@@ -191,7 +155,9 @@ async function targets(archivedFile) {
 }
 
 const [cmd, ...args] = process.argv.slice(2);
-if (cmd === 'csv') csv(args[0] || join(ROOT, 'redirects', 'cloudflare-bulk.csv'));
+if (process.argv[1] !== fileURLToPath(import.meta.url)) {
+  // imported (by the tests): no command to run
+} else if (cmd === 'csv') csv(args[0] || join(ROOT, 'redirects', 'cloudflare-bulk.csv'));
 else if (cmd === 'match') for (const a of args) { const m = match(a); console.log(a, '→', m ? `${m.target}  (${m.rule.source})` : 'no rule'); }
 else if (cmd === 'discover') await discover(args[0] || join(ROOT, 'redirects', 'archive'));
 else if (cmd === 'check') await check(args[0]);

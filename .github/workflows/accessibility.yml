@@ -1,19 +1,14 @@
-# WCAG 2.2 AA checks (tools/a11y.mjs): axe-core across every page state, plus keyboard,
-# focus visibility, focus-not-obscured, reflow, text spacing and motion checks.
-# Runs on the built site in site/ (exactly what's deployed) after every Pages deploy,
-# weekly, and on demand. The report is saved to the `accessibility` branch, and the run
-# fails if anything doesn't pass.
-name: Accessibility (WCAG 2.2 AA)
+# The WCAG 2.2 AA suite (tests/a11y/) against the live site: weekly and on demand. CI runs the
+# same suite on every build before it's deployed. The report goes to the accessibility branch,
+# and the run fails if anything doesn't pass.
+name: Accessibility (WCAG 2.2 AA, live site)
 
 on:
   workflow_dispatch:
     inputs:
       url:
-        description: Test this URL instead of the built site (optional)
-        default: ''
-  workflow_run:
-    workflows: [Deploy to GitHub Pages]
-    types: [completed]
+        description: The address to test
+        default: https://craigthompson.dev/
   schedule:
     - cron: '17 6 * * 1' # Mondays, 06:17 UTC
 
@@ -26,50 +21,39 @@ concurrency:
 
 jobs:
   wcag:
-    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      BASE_URL: ${{ inputs.url || 'https://craigthompson.dev/' }}
     steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-node@v5
-        with:
-          node-version: 22
-      - name: Install Playwright
-        run: |
-          npm i --no-save playwright@1
-          npx playwright install --with-deps chromium
-      - name: Run the checks
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+      - uses: ./.github/actions/setup-node
+      - uses: ./.github/actions/setup-playwright
+      - name: Run the suite
         id: run
         continue-on-error: true
-        run: |
-          set -o pipefail
-          if [ -n "${{ inputs.url }}" ]; then target="--url ${{ inputs.url }}"; else target=""; fi
-          node tools/a11y.mjs $target --out a11y.json | tee a11y.txt
-      - name: Summary
-        if: always()
-        run: |
-          { echo '## WCAG 2.2 AA'; echo; echo '```'; cat a11y.txt 2>/dev/null | head -150; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
-          node -e "
-            const r = require('./a11y.json');
-            for (const v of r.violations.slice(0, 20)) console.log('::error title=axe ' + v.rule + '::' + v.help + ' — ' + v.target + ' (' + v.states[0] + ')');
-            for (const f of r.failures.slice(0, 20)) console.log('::error title=' + f.check + '::' + f.state + ': ' + f.what);
-            if (r.pass) console.log('::notice title=WCAG 2.2 AA::All checks pass (' + r.axeRuns + ' axe runs, axe ' + r.axe + ')');
-          " || true
+        run: npx playwright test --project=a11y-desktop --project=a11y-mobile --workers=4
       - name: Save to the accessibility branch
-        if: always()
+        if: always() && hashFiles('a11y.json') != ''
         run: |
-          [ -f a11y.json ] || exit 0
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          sha=${{ github.event.workflow_run.head_sha || github.sha }}
-          git switch --orphan a11y-tmp
-          git rm -rq --cached . || true
-          mkdir -p reports && cp a11y.json reports/latest.json && cp a11y.txt reports/latest.txt
-          echo "$sha" > reports/commit.txt
-          echo "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" > reports/run.txt
-          date -u +%FT%TZ > reports/at.txt
-          git add reports
-          git commit -qm "WCAG 2.2 AA report for $sha"
-          git push -f origin a11y-tmp:accessibility
+          mkdir -p out/reports && cp a11y.json out/reports/latest.json
+          git rev-parse HEAD > out/reports/commit.txt
+          echo "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" > out/reports/run.txt
+          date -u +%FT%TZ > out/reports/at.txt
+      - if: always() && hashFiles('a11y.json') != ''
+        uses: ./.github/actions/publish-branch
+        with:
+          branch: accessibility
+          source: out
+          message: WCAG 2.2 AA report for ${{ env.BASE_URL }}
+      - if: always()
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: a11y-report
+          path: |
+            a11y.json
+            playwright-report
+          retention-days: 14
       - name: Fail if anything didn't pass
         if: steps.run.outcome != 'success'
         run: exit 1

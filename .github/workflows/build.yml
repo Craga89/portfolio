@@ -1,0 +1,33 @@
+# Builds the site (tools/build.mjs) and uploads it, with the data the worker is deployed with, as
+# the "build" artifact: site/, worker/knowledge.json and worker/agent-data.json.
+# Called by the CI and link-check workflows.
+name: Build
+
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+      - uses: ./.github/actions/setup-node
+      - uses: ./.github/actions/setup-playwright
+      - name: Fetch the open-source counts (oss branch)
+        run: git fetch -q --depth=1 origin oss:refs/remotes/origin/oss || echo "::notice::No oss branch yet; the build uses its fallback counts."
+      - name: Build
+        run: npm run build
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: build
+          path: |
+            site
+            worker/knowledge.json
+            worker/agent-data.json
+          include-hidden-files: true # site/.well-known/
+          if-no-files-found: error
+          retention-days: 7

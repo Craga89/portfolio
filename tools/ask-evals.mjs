@@ -5,6 +5,7 @@
 import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { errorMessage } from '../shared/errors.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const endpoint = (process.argv[2] && !process.argv[2].startsWith('--') ? process.argv[2] : '') || JSON.parse(readFileSync(join(ROOT, 'ask.config.json'), 'utf8')).endpoint;
@@ -46,7 +47,7 @@ for (const c of cases) {
   for (let attempt = 0; attempt < 2 && problems.length; attempt++) {
     try { d = await ask(c.q); problems = grade(c, d); } catch (e) {
       if (e instanceof OverBudget) { console.log((process.env.GITHUB_ACTIONS ? '::notice title=ask.sh answer tests::' : '') + "Skipped: today's AI allowance for tests is used up. They'll run again on the next schedule."); process.exit(0); }
-      problems = [e.message];
+      problems = [errorMessage(e)];
     }
   }
   const pass = !problems.length;

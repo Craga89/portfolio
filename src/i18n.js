@@ -15,13 +15,15 @@
 // translated from the cache before it's patched in, and nothing flickers back to English.
 // Static pages (the CV and the file pages) are translated in place.
 
-export const LANGS = ['ar', 'bg', 'bn', 'cs', 'da', 'de', 'el', 'es', 'fi', 'fr', 'he', 'hi', 'hr', 'hu', 'id', 'it', 'ja', 'kn', 'ko', 'lt', 'mr', 'nl', 'no', 'pl', 'pt', 'ro', 'ru', 'sk', 'sl', 'sv', 'ta', 'te', 'th', 'tr', 'uk', 'vi', 'zh', 'zh-Hant'];
-const RTL = new Set(['ar', 'he']);
+import { LANGS, RTL } from '../shared/langs.js';
+
+export { LANGS };
 
 // The offer, written in each language: [question, accept, decline, note]. It has to be readable
 // before any language model is on the device, so it can't be machine-translated here. The note
 // says plainly that this is machine translation by the browser, not a person's; the banner
 // repeats it once the page is translated, in words a person wrote rather than the model.
+/** @type {Record<string, [question: string, accept: string, decline: string, note: string]>} */
 const OFFER = {
   ar: ['قراءة هذه الصفحة بالعربية؟', 'ترجمة', 'لا، شكرًا', 'ترجمة آلية يجريها متصفحك على جهازك، ولم يراجعها أي شخص.'],
   bg: ['Да прочетете тази страница на български?', 'Преведи', 'Не, благодаря', 'Машинен превод от браузъра ви, на вашето устройство. Не е проверен от човек.'],
@@ -63,7 +65,9 @@ const OFFER = {
   'zh-Hant': ['用中文閱讀此頁面？', '翻譯', '不用了，謝謝', '由你的瀏覽器在裝置上進行機器翻譯，未經人工審校。'],
 };
 
+/** @typedef {{ done: string, about: string, aboutText: string, original: string, language: string, failed: string }} Strings */
 // Banner text, machine-translated once the language pack is ready.
+/** @type {Strings} */
 const UI = {
   done: 'Machine translation by your browser, on your device. Not reviewed by a person.',
   about: 'About this translation',
@@ -82,19 +86,43 @@ const STORE = 'craga-tr-';
 // Never translated, wherever they appear: the name, email addresses, domains and file names.
 const KEEP = /Craig Michael Thompson|Craig Thompson|[\w.+-]+@[\w-]+\.[\w.]*[a-z]|\b(?:[\w-]+\.)+(?:dev|com|io|org|net)(?:\/[\w./-]*)?|(?:\.\/)?\b[\w/-]+\.(?:md|log|txt|json|pdf|sh|vcf)\b/g;
 
+// The visitor's choices and the translation cache. Storage can be unavailable (private
+// browsing, blocked cookies); then nothing is remembered, and everything still works.
 const ls = {
-  get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
-  set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} },
+  /** @param {string} k */
+  get(k) {
+    try {
+      return localStorage.getItem(k);
+    } catch {
+      return null;
+    }
+  },
+  /** @param {string} k @param {string} v */
+  set(k, v) {
+    try {
+      localStorage.setItem(k, v);
+    } catch {
+      // Not remembered this time.
+    }
+  },
 };
 
+/**
+ * A language's own name for itself ("Deutsch"), or in another language.
+ * @param {string} code
+ * @param {string} [inLang]
+ */
 export function langName(code, inLang) {
   try {
-    const n = new Intl.DisplayNames([inLang || code], { type: 'language' }).of(code === 'zh-Hant' ? 'zh-Hant' : code);
+    const n = new Intl.DisplayNames([inLang || code], { type: 'language' }).of(code);
     return n ? n.charAt(0).toLocaleUpperCase(code) + n.slice(1) : code;
-  } catch (e) { return code; }
+  } catch {
+    return code; // a code Intl doesn't know
+  }
 }
 
 // The visitor's preferred language, if it's one we can translate to and it comes before English.
+/** @param {readonly string[] | undefined} list the browser's languages, most preferred first */
 export function preferred(list) {
   for (const raw of list || []) {
     const l = String(raw).toLowerCase();
@@ -104,21 +132,30 @@ export function preferred(list) {
   }
   return null;
 }
-export function normalise(l) {
-  l = String(l || '').toLowerCase();
+/** Old and regional codes for the same languages. @type {Record<string, string>} */
+const ALIASES = { nb: 'no', nn: 'no', iw: 'he', in: 'id' };
+/**
+ * A browser language tag as one of LANGS, or null.
+ * @param {unknown} tag
+ */
+export function normalise(tag) {
+  const l = String(tag || '').toLowerCase();
   if (/^zh-(tw|hk|mo)|^zh-hant/.test(l)) return 'zh-Hant';
-  let b = l.split('-')[0];
-  b = { nb: 'no', nn: 'no', iw: 'he', in: 'id' }[b] || b;
+  const base = l.split('-')[0];
+  const b = ALIASES[base] || base;
   return LANGS.includes(b) ? b : null;
 }
 
 // ---------- units: what gets translated as one piece ----------
 
-const blocked = (el) => !!(el.closest && el.closest(SKIP));
-const hasText = (el) => Array.prototype.some.call(el.childNodes, (c) => c.nodeType === 3 && LETTER.test(c.data));
+/** @param {Element} el */
+const blocked = (el) => !!el.closest(SKIP);
+/** @param {Element} el */
+const hasText = (el) => Array.from(el.childNodes).some((c) => c instanceof Text && LETTER.test(c.data));
 
 // The element whose text is translated together with this one's: the nearest block, unless that
 // block has no text of its own (a row of chips), in which case the outermost inline element.
+/** @param {Element} el */
 function unitFor(el) {
   let u = el;
   while (INLINE.has(u.localName) && u.parentElement) {
@@ -128,12 +165,17 @@ function unitFor(el) {
   return u;
 }
 
+/**
+ * The elements under root whose text is translated as one piece each.
+ * @param {Element} root
+ */
 export function unitsIn(root) {
+  /** @type {Element[]} */
   const out = [];
   const seen = new Set();
   const doc = root.ownerDocument || document;
-  const tw = doc.createTreeWalker(root, 4 /* text */);
-  for (let n = tw.nextNode(); n; n = tw.nextNode()) {
+  const tw = doc.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+  for (let n = /** @type {Text | null} */ (tw.nextNode()); n; n = /** @type {Text | null} */ (tw.nextNode())) {
     if (!LETTER.test(n.data)) continue;
     const p = n.parentElement;
     if (!p || blocked(p)) continue;
@@ -145,24 +187,48 @@ export function unitsIn(root) {
   return out;
 }
 
-const atomic = (c) => !INLINE.has(c.localName) || (c.matches && c.matches(SKIP)) || !LETTER.test(c.textContent || '');
+/** An inline element translated as a whole (a token), not as text inside a pair of tokens. @param {Element} c */
+const atomic = (c) => !INLINE.has(c.localName) || c.matches(SKIP) || !LETTER.test(c.textContent || '');
 // Braces in the page's own text would read as tokens, so they're swapped out while translating.
+/** @param {string} t */
 const hideBraces = (t) => t.replace(/\{/g, '').replace(/\}/g, '');
+/** @param {string} t */
 const showBraces = (t) => t.replace(//g, '{').replace(//g, '}');
 
-// A unit as a string with numbered tokens for its inline elements.
+/**
+ * A unit encoded for the translator.
+ * @typedef {object} Meta
+ * @property {string} key the text with numbered tokens: {i} for an atomic node, {i}…{/i} around a pair's text
+ * @property {Node[]} nodes the node each token number stands for
+ * @property {number[]} parent each token's enclosing pair (-1 at the top level)
+ * @property {boolean[]} paired whether each token has a closing {/i}
+ * @property {string} lead whitespace before the text, kept outside the translation
+ * @property {string} trail whitespace after it
+ * @property {boolean} translatable whether there's any text besides the tokens
+ */
+
+/**
+ * A unit as a string with numbered tokens for its inline elements.
+ * @param {Element} unit
+ * @returns {Meta}
+ */
 export function encode(unit) {
   const doc = unit.ownerDocument || document;
+  /** @type {Node[]} */
   const nodes = [];
+  /** @type {number[]} */
   const parent = [];
+  /** @type {boolean[]} */
   const paired = [];
   // Protected text becomes a token too, standing for a text node of its own.
+  /** @param {string} t @param {number} pi */
   const protect = (t, pi) => hideBraces(t).replace(KEEP, (m) => { const i = nodes.length; nodes.push(doc.createTextNode(m)); parent.push(pi); paired.push(false); return '{' + i + '}'; });
+  /** @param {Element} el @param {number} pi @returns {string} */
   const walk = (el, pi) => {
     let s = '';
     for (const c of el.childNodes) {
-      if (c.nodeType === 3) { s += protect(c.data, pi); continue; }
-      if (c.nodeType !== 1) continue;
+      if (c instanceof Text) { s += protect(c.data, pi); continue; }
+      if (!(c instanceof Element)) continue;
       const i = nodes.length;
       nodes.push(c);
       parent.push(pi);
@@ -178,9 +244,14 @@ export function encode(unit) {
 }
 
 // Tokens as the translator may hand them back: full-width braces, stray spaces.
+/** @param {unknown} t */
 const tidy = (t) => String(t).replace(/[{｛]\s*(\/?)\s*(\d+)\s*[}｝]/g, '{$1$2}');
 
-// Do the tokens in a translation still describe the same markup?
+/**
+ * Do the tokens in a translation still describe the same markup?
+ * @param {string} out
+ * @param {Pick<Meta, 'nodes' | 'parent' | 'paired'>} meta
+ */
 export function fits(out, meta) {
   const seen = new Array(meta.nodes.length).fill(0);
   const closed = new Array(meta.nodes.length).fill(0);
@@ -203,12 +274,21 @@ export function fits(out, meta) {
   return stack.length === 1 && seen.every((n) => n === 1) && closed.every((n, i) => n === (meta.paired[i] ? 1 : 0));
 }
 
-// Put a translation into a unit, reusing its original inline elements.
+/**
+ * Put a translation into a unit, reusing its original inline elements.
+ * @param {Element} unit
+ * @param {string} out a translation that fits(meta)
+ * @param {Meta} meta
+ * @param {((el: Node) => void) | null} [stash] called with each element before it's emptied
+ */
 export function rebuild(unit, out, meta, stash) {
   const doc = unit.ownerDocument || document;
+  /** @param {Node} el */
   const clear = (el) => { if (stash) stash(el); while (el.firstChild) el.removeChild(el.firstChild); };
   clear(unit);
+  /** @type {Node[]} */
   const stack = [unit];
+  /** @param {string} t */
   const text = (t) => { if (t) stack[stack.length - 1].appendChild(doc.createTextNode(showBraces(t))); };
   let last = 0;
   let m;
@@ -229,20 +309,60 @@ export function rebuild(unit, out, meta, stash) {
 
 // ---------- the translator ----------
 
+/** An element whose original content is kept for "Show original" on a static page. @typedef {Element & { __trOrig?: Node[], __trAttr?: Record<string, string> }} Stashed */
+
 const state = {
-  lang: 'en', translator: null, cache: new Map(), queue: [], queued: new Set(), done: 0, total: 0,
-  running: false, app: null, active: false, ui: null, strings: null, offerEl: null, stashes: [], texts: [], swapped: new WeakSet(), title: null, saveT: 0, flushT: 0,
-  metas: new Map(), attrSrc: new Map(),
+  lang: 'en',
+  /** @type {TranslatorInstance | null} */
+  translator: null,
+  /** Translations by key. @type {Map<string, string>} */
+  cache: new Map(),
+  /** Keys waiting to be translated, nearest the viewport first. @type {string[]} */
+  queue: [],
+  /** @type {Set<string>} */
+  queued: new Set(),
+  done: 0,
+  total: 0,
+  running: false,
+  /** @type {CragaApp | null} */
+  app: null,
+  active: false,
+  /** @type {HTMLElement | null} */
+  ui: null,
+  /** The banner's text in the page's language, once translated. @type {Strings | null} */
+  strings: null,
+  /** @type {HTMLElement | null} */
+  offerEl: null,
+  /** @type {Stashed[]} */
+  stashes: [],
+  /** Text nodes whose arrows were swapped, with their original text. @type {[Text, string][]} */
+  texts: [],
+  /** @type {WeakSet<Text>} */
+  swapped: new WeakSet(),
+  /** @type {string | null} */
+  title: null,
+  /** @type {ReturnType<typeof setTimeout> | undefined} */
+  saveT: undefined,
+  /** @type {ReturnType<typeof setTimeout> | undefined} */
+  flushT: undefined,
+  /** The encoded unit behind each key (null for an attribute). @type {Map<string, Meta | null>} */
+  metas: new Map(),
+  /** The original text of each attribute key. @type {Map<string, string>} */
+  attrSrc: new Map(),
 };
 
+/** @param {string} lang @returns {Map<string, string>} */
 function loadCache(lang) {
-  const m = new Map();
-  try { const d = JSON.parse(ls.get(STORE + lang) || '{}'); Object.keys(d).forEach((k) => m.set(k, d[k])); } catch (e) {}
-  return m;
+  try {
+    return new Map(Object.entries(JSON.parse(ls.get(STORE + lang) || '{}')));
+  } catch {
+    return new Map(); // a damaged cache is just started again
+  }
 }
 function saveCache() {
   clearTimeout(state.saveT);
   state.saveT = setTimeout(() => {
+    /** @type {Record<string, string>} */
     const o = {};
     let size = 0;
     for (const [k, v] of state.cache) { size += k.length + v.length; if (size > 1.5e6) break; o[k] = v; }
@@ -250,6 +370,7 @@ function saveCache() {
   }, 1500);
 }
 
+/** @param {string} key */
 function enqueue(key) {
   if (!key || state.cache.has(key) || state.queued.has(key)) return;
   state.queued.add(key);
@@ -258,9 +379,12 @@ function enqueue(key) {
   pump();
 }
 
+/** @param {string} key */
 async function translateKey(key) {
   const tr = state.translator;
-  if (state.attrSrc.has(key)) return tidy(await tr.translate(state.attrSrc.get(key)));
+  if (!tr) return null;
+  const src = state.attrSrc.get(key);
+  if (src != null) return tidy(await tr.translate(src));
   const meta = state.metas.get(key);
   const out = tidy(await tr.translate(key));
   if (!meta || fits(out, meta)) return out;
@@ -282,9 +406,14 @@ async function pump() {
   const lang = state.lang;
   try {
     while (state.queue.length && state.lang === lang && state.translator) {
-      const key = state.queue.shift();
+      const key = /** @type {string} */ (state.queue.shift());
+      /** @type {string | null} */
       let out = null;
-      try { out = await translateKey(key); } catch (e) { out = null; }
+      try {
+        out = await translateKey(key);
+      } catch (e) {
+        console.warn('translation failed, left in English:', key.slice(0, 60), e);
+      }
       if (state.lang !== lang) break;
       state.queued.delete(key);
       state.done++;
@@ -295,12 +424,12 @@ async function pump() {
   } finally {
     state.running = false;
   }
-  if (state.lang === lang && !state.queue.length) { clearTimeout(state.flushT); state.flushT = 0; flush(); saveCache(); progress(); }
+  if (state.lang === lang && !state.queue.length) { clearTimeout(state.flushT); state.flushT = undefined; flush(); saveCache(); progress(); }
 }
 
 function flushSoon() {
   if (state.flushT) return;
-  state.flushT = setTimeout(() => { state.flushT = 0; flush(); }, 250);
+  state.flushT = setTimeout(() => { state.flushT = undefined; flush(); }, 250);
 }
 function flush() {
   if (!state.active) return;
@@ -319,12 +448,16 @@ function translateTitle() {
   if (!meta.translatable) return;
   if (!state.metas.has(meta.key)) state.metas.set(meta.key, meta);
   const out = state.cache.get(meta.key);
-  if (out != null && fits(out, meta)) { rebuild(span, out, meta); document.title = span.textContent; } else enqueue(meta.key);
+  if (out != null && fits(out, meta)) { rebuild(span, out, meta); document.title = span.textContent || state.title; } else enqueue(meta.key);
 }
 
 // Translate everything under root from the cache; anything not there yet is queued and marked
 // as English for now (so screen readers pronounce it right).
 const translatedUnits = new WeakSet();
+/**
+ * @param {Element} root
+ * @param {boolean} live true for a static page (changes are stashed for "Show original"); false for a render
+ */
 export function apply(root, live) {
   for (const u of unitsIn(root)) {
     if (live && translatedUnits.has(u)) continue;
@@ -351,6 +484,7 @@ export function apply(root, live) {
   });
   if (RTL.has(state.lang)) swapArrows(root, live);
 }
+/** @param {string} key @param {string} v */
 function queueAttr(key, v) {
   if (state.cache.has(key) || state.queued.has(key)) return;
   state.metas.set(key, null);
@@ -364,10 +498,11 @@ function queueAttr(key, v) {
 // Arrows that point along the line of text point the other way in Arabic and Hebrew. (Arrows in
 // diagrams are mirrored by CSS instead; code and commands stay left-to-right.)
 const NO_SWAP = 'code,pre,kbd,samp,svg,.c-cmd,.c-ask-q,.c-ltr,[dir="ltr"],.c-arr,.c-arch-a,.c-mcp-a,.c-go';
+/** @param {Element} root @param {boolean} live */
 function swapArrows(root, live) {
   const doc = root.ownerDocument || document;
-  const tw = doc.createTreeWalker(root, 4);
-  for (let n = tw.nextNode(); n; n = tw.nextNode()) {
+  const tw = doc.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+  for (let n = /** @type {Text | null} */ (tw.nextNode()); n; n = /** @type {Text | null} */ (tw.nextNode())) {
     if (!/[→←]/.test(n.data) || (live && state.swapped.has(n))) continue;
     if (n.parentElement && n.parentElement.closest(NO_SWAP)) continue;
     if (live) { state.texts.push([n, n.data]); state.swapped.add(n); }
@@ -376,7 +511,12 @@ function swapArrows(root, live) {
 }
 
 // Static pages: remember what was there so "Show original" can put it back.
-function stash(el) { if (el && !el.__trOrig) { el.__trOrig = Array.prototype.slice.call(el.childNodes); state.stashes.push(el); } }
+/** @param {Node} node */
+function stash(node) {
+  const el = /** @type {Stashed} */ (node);
+  if (el && !el.__trOrig) { el.__trOrig = Array.from(el.childNodes); state.stashes.push(el); }
+}
+/** @param {Stashed} el @param {string} a @param {string} v */
 function stashAttr(el, a, v) { el.__trAttr = el.__trAttr || {}; if (!(a in el.__trAttr)) { el.__trAttr[a] = v; state.stashes.push(el); } }
 function restoreStatic() {
   for (const [n, d] of state.texts) n.data = d;
@@ -384,23 +524,29 @@ function restoreStatic() {
   for (let i = state.stashes.length - 1; i >= 0; i--) {
     const el = state.stashes[i];
     if (el.__trOrig) { el.replaceChildren(...el.__trOrig); delete el.__trOrig; }
-    if (el.__trAttr) { Object.keys(el.__trAttr).forEach((a) => el.setAttribute(a, el.__trAttr[a])); delete el.__trAttr; }
-    if (el.getAttribute && el.getAttribute('lang') === 'en') el.removeAttribute('lang');
+    if (el.__trAttr) { for (const [a, v] of Object.entries(el.__trAttr)) el.setAttribute(a, v); delete el.__trAttr; }
+    if (el.getAttribute('lang') === 'en') el.removeAttribute('lang');
   }
   document.querySelectorAll('[lang="en"]').forEach((el) => { if (el !== document.documentElement) el.removeAttribute('lang'); });
   state.stashes = [];
 }
 
+/**
+ * @param {string} source
+ * @param {string} target
+ * @param {(loaded: number) => void} [onProgress] the language pack's download, 0 to 1
+ */
 async function makeTranslator(source, target, onProgress) {
   return self.Translator.create({
     sourceLanguage: source,
     targetLanguage: target,
-    monitor(m) { if (onProgress) m.addEventListener('downloadprogress', (e) => onProgress(e.loaded)); },
+    monitor(m) { if (onProgress) m.addEventListener('downloadprogress', (e) => onProgress(/** @type {ProgressEvent} */ (e).loaded)); },
   });
 }
 
 // ---------- page language ----------
 
+/** @param {string} lang */
 function setDocLang(lang) {
   const h = document.documentElement;
   if (lang === 'en') { h.setAttribute('lang', h.dataset.lang0 || 'en-GB'); h.removeAttribute('dir'); return; }
@@ -414,8 +560,14 @@ function announce() {
   window.dispatchEvent(new CustomEvent('craga:lang', { detail: { lang: window.CRAGA_LANG } }));
 }
 
-export async function start(lang, opts = {}) {
-  lang = normalise(lang) || lang;
+/**
+ * Translate the page into a language (downloading its pack if need be).
+ * @param {string} code
+ * @param {{ silent?: boolean }} [opts] silent: no banner if it can't (a returning visitor)
+ * @returns {Promise<boolean | void>} whether it started
+ */
+export async function start(code, opts = {}) {
+  const lang = normalise(code) || code;
   if (!LANGS.includes(lang)) return stop();
   if (state.active && state.lang === lang) return;
   if (state.active) await stop({ keep: true });
@@ -434,10 +586,12 @@ export async function start(lang, opts = {}) {
   ls.set('craga-lang', lang);
   setDocLang(lang);
   try {
-    const s = {};
-    for (const k of Object.keys(UI)) s[k] = tidy(await translator.translate(UI[k]));
+    const s = /** @type {Strings} */ ({ ...UI });
+    for (const k of /** @type {(keyof Strings)[]} */ (Object.keys(UI))) s[k] = tidy(await translator.translate(UI[k]));
     state.strings = s;
-  } catch (e) { state.strings = null; }
+  } catch {
+    state.strings = null; // the banner stays in English
+  }
   const app = window.CRAGA_APP;
   if (app && typeof app.schedule === 'function') {
     state.app = app;
@@ -446,7 +600,7 @@ export async function start(lang, opts = {}) {
     app.render();
     const near = unitsIn(app.root).map((u) => { const r = u.getBoundingClientRect(); return { u, d: r.bottom < 0 ? -r.bottom + 2000 : Math.max(0, r.top - innerHeight) }; }).sort((a, b) => a.d - b.d);
     for (const { u } of near) { const meta = encode(u); if (meta.translatable) { state.metas.set(meta.key, meta); enqueue(meta.key); } }
-    app.transform = (holder) => apply(holder, false);
+    app.transform = (holder) => { apply(holder, false); };
     app.render();
   } else {
     state.app = null;
@@ -458,12 +612,17 @@ export async function start(lang, opts = {}) {
   return true;
 }
 
+/** @param {{ keep?: boolean }} [opts] keep: switching to another language, so leave the page language and banner */
 export async function stop(opts = {}) {
   const was = state.active;
   state.active = false;
   state.queue = [];
   state.queued = new Set();
-  if (state.translator && state.translator.destroy) { try { state.translator.destroy(); } catch (e) {} }
+  try {
+    state.translator?.destroy?.();
+  } catch (e) {
+    console.warn(e);
+  }
   state.translator = null;
   if (state.app) { state.app.transform = null; state.app.render(); }
   else if (was) restoreStatic();
@@ -478,21 +637,30 @@ export async function stop(opts = {}) {
   }
 }
 
+/** @param {string} lang "en" for the original */
 export function setLanguage(lang) {
   return lang === 'en' || !lang ? stop() : start(lang);
 }
 
 // ---------- ask.sh ----------
 
+/** @type {Map<string, Promise<TranslatorInstance>>} */
 const pairs = new Map();
+/** @param {string} from @param {string} to */
 async function pair(from, to) {
   const k = from + '>' + to;
-  if (!pairs.has(k)) pairs.set(k, makeTranslator(from, to).catch((e) => { pairs.delete(k); throw e; }));
-  return pairs.get(k);
+  let p = pairs.get(k);
+  if (!p) {
+    p = makeTranslator(from, to).catch((e) => { pairs.delete(k); throw e; });
+    pairs.set(k, p);
+  }
+  return p;
 }
+/** @type {Promise<LanguageDetectorInstance> | null} */
 let detector = null;
 
 // A question typed in another language, in English for ask.sh, and the language it was in.
+/** @param {string} text @returns {Promise<{ text: string, lang?: string }>} */
 export async function toEnglish(text) {
   const letters = (String(text).match(/\p{L}/gu) || []).length;
   if (!('LanguageDetector' in self) || letters < 8) return { text };
@@ -507,12 +675,13 @@ export async function toEnglish(text) {
 }
 
 // An English answer in the visitor's language, line by line (answers can be lists).
+/** @param {string} text @param {string} lang */
 export async function fromEnglish(text, lang) {
   const tr = await pair('en', lang);
   const lines = String(text).split('\n');
   const out = [];
   for (const l of lines) {
-    const m = l.match(/^(\s*[-•*]\s+)?(.*)$/);
+    const m = /** @type {RegExpMatchArray} */ (l.match(/^(\s*[-•*]\s+)?(.*)$/));
     out.push(m[2] && LETTER.test(m[2]) ? (m[1] || '') + tidy(await tr.translate(m[2])) : l);
   }
   return out.join('\n');
@@ -557,19 +726,35 @@ function css() {
   s.textContent = CSS;
   document.head.appendChild(s);
 }
-const el = (tag, attrs, kids) => {
+/**
+ * A small element builder: attributes, `text`, and on* listeners.
+ * @param {string} tag
+ * @param {Record<string, string | ((e: any) => void)>} [attrs]
+ * @param {(Node | null | undefined)[]} [kids]
+ */
+const el = (tag, attrs = {}, kids = []) => {
   const e = document.createElement(tag);
-  Object.keys(attrs || {}).forEach((k) => { if (k === 'text') e.textContent = attrs[k]; else if (k.startsWith('on')) e.addEventListener(k.slice(2), attrs[k]); else e.setAttribute(k, attrs[k]); });
-  (kids || []).forEach((c) => c && e.appendChild(c));
+  for (const [k, v] of Object.entries(attrs)) {
+    if (typeof v === 'function') e.addEventListener(k.slice(2), v);
+    else if (k === 'text') e.textContent = v;
+    else e.setAttribute(k, v);
+  }
+  for (const c of kids) if (c) e.appendChild(c);
   return e;
 };
 
+/** @param {string} current */
 function languageSelect(current) {
-  const s = el('select', { class: 'tr-sel', translate: 'no', 'aria-label': (state.strings && state.strings.language) || UI.language, onchange: (e) => setLanguage(e.target.value) });
-  [['en', 'English']].concat(LANGS.map((c) => [c, langName(c)])).forEach(([c, n]) => { const o = el('option', { value: c, lang: c, text: n }); if (c === current) o.selected = true; s.appendChild(o); });
+  const s = el('select', { class: 'tr-sel', translate: 'no', 'aria-label': (state.strings && state.strings.language) || UI.language, onchange: (/** @type {Event} */ e) => setLanguage(/** @type {HTMLSelectElement} */ (e.target).value) });
+  for (const [c, n] of [['en', 'English'], ...LANGS.map((c) => [c, langName(c)])]) {
+    const o = /** @type {HTMLOptionElement} */ (el('option', { value: c, lang: c, text: n }));
+    if (c === current) o.selected = true;
+    s.appendChild(o);
+  }
   return s;
 }
 
+/** @param {string} lang */
 export function offer(lang) {
   if (!OFFER[lang] || state.offerEl) return;
   css();
@@ -584,12 +769,18 @@ export function offer(lang) {
       el('button', { type: 'button', class: 'tr-btn', text: no, onclick: () => { window.CRAGA_I18N_OFFER = 'dismissed'; ls.set('craga-lang-no', lang); removeOffer(); } }),
     ]),
   ]);
-  box.addEventListener('keydown', (e) => { if (e.key === 'Escape') { window.CRAGA_I18N_OFFER = 'dismissed'; removeOffer(); } });
+  box.addEventListener('keydown', (/** @type {KeyboardEvent} */ e) => { if (e.key === 'Escape') { window.CRAGA_I18N_OFFER = 'dismissed'; removeOffer(); } });
   state.offerEl = box;
   document.body.insertBefore(box, document.body.firstChild);
 }
 function removeOffer() { if (state.offerEl) { state.offerEl.remove(); state.offerEl = null; } }
 
+/**
+ * The translation bar at the top of the page.
+ * @param {'downloading' | 'translating' | 'done' | 'failed'} kind
+ * @param {string} lang
+ * @param {number} [p] progress, 0 to 1
+ */
 function ui(kind, lang, p) {
   css();
   if (!state.ui) {
@@ -600,9 +791,10 @@ function ui(kind, lang, p) {
   const pct = Math.round((p || 0) * 100);
   const busy = kind === 'downloading' || kind === 'translating';
   // Progress updates in place and isn't announced; only the finished state is.
-  if (busy && bar.dataset.kind === 'busy') {
-    bar.querySelector('.tr-msg').textContent = langName(lang) + ' · ' + pct + '%';
-    bar.querySelector('.tr-meter').style.setProperty('--p', pct + '%');
+  const msg = bar.querySelector('.tr-msg'), meter = /** @type {HTMLElement | null} */ (bar.querySelector('.tr-meter'));
+  if (busy && bar.dataset.kind === 'busy' && msg && meter) {
+    msg.textContent = langName(lang) + ' · ' + pct + '%';
+    meter.style.setProperty('--p', pct + '%');
     return;
   }
   bar.dataset.kind = busy ? 'busy' : kind;
@@ -633,12 +825,15 @@ function progress() {
 
 // Called by the page once this module has loaded: start straight away for a returning visitor
 // who chose a language before, otherwise offer it.
+/** @param {{ lang: string, saved?: boolean }} opts the language to offer or start; saved: the visitor chose it before */
 export async function boot({ lang, saved }) {
   if (!('Translator' in self)) return;
   if (saved) {
     try {
       if ((await self.Translator.availability({ sourceLanguage: 'en', targetLanguage: lang })) === 'available' && (await start(lang, { silent: true }))) return;
-    } catch (e) {}
+    } catch (e) {
+      console.warn('could not restore the saved language', e);
+    }
   }
   offer(lang);
 }

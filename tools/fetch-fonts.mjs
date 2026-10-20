@@ -13,12 +13,18 @@ mkdirSync(OUT, { recursive: true });
 const css = await (await fetch(CSS, { headers: { 'user-agent': UA } })).text();
 const blocks = [...css.matchAll(/\/\*\s*([\w-]+)\s*\*\/\s*@font-face\s*{([^}]*)}/g)].filter((m) => m[1] === 'latin' || m[1] === 'latin-ext');
 if (!blocks.length) throw new Error('no font-face blocks found:\n' + css.slice(0, 500));
+/** The first group of `re` in `s`; throws if Google's CSS has changed shape. */
+const must = (/** @type {string} */ s, /** @type {RegExp} */ re) => {
+  const m = s.match(re);
+  if (!m) throw new Error(`${re} not found in:\n${s}`);
+  return m[1];
+};
 const files = new Map();
 let out = '';
 for (const [, subset, body] of blocks) {
-  const fam = body.match(/font-family:\s*'([^']+)'/)[1];
-  const weight = body.match(/font-weight:\s*([\d ]+)/)[1].trim();
-  const url = body.match(/url\(([^)]+)\)/)[1];
+  const fam = must(body, /font-family:\s*'([^']+)'/);
+  const weight = must(body, /font-weight:\s*([\d ]+)/).trim();
+  const url = must(body, /url\(([^)]+)\)/);
   let name = files.get(url);
   if (!name) {
     name = `${fam.toLowerCase().replace(/\s+/g, '-')}-${subset}-${weight.replace(' ', '-')}.woff2`;
@@ -27,7 +33,7 @@ for (const [, subset, body] of blocks) {
     files.set(url, name);
     console.log(name, buf.length);
   }
-  out += `@font-face{font-family:'${fam}';font-style:normal;font-weight:${weight};font-display:swap;src:url(FONTDIR/${name}) format('woff2');unicode-range:${body.match(/unicode-range:\s*([^;]+)/)[1].trim()}}\n`;
+  out += `@font-face{font-family:'${fam}';font-style:normal;font-weight:${weight};font-display:swap;src:url(FONTDIR/${name}) format('woff2');unicode-range:${must(body, /unicode-range:\s*([^;]+)/).trim()}}\n`;
 }
 writeFileSync(join(OUT, 'fonts.css'), out);
 console.log('wrote', files.size, 'files');

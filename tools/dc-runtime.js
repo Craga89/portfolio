@@ -10,189 +10,286 @@
  * Re-renders are patched into the live DOM (not replaced), so focus, <details>
  * state and canvases survive, and server-prerendered markup is reused.
  */
-(function () {
+(() => {
   'use strict';
 
-  var HOLE = /\{\{\s*([^}]+?)\s*\}\}/g;
-  var ONE_HOLE = /^\{\{\s*([^}]+?)\s*\}\}$/;
-  var EVENTS = { onclick: 'click', onchange: 'input', onkeydown: 'keydown', oninput: 'input' };
+  const HOLE = /\{\{\s*([^}]+?)\s*\}\}/g;
+  const ONE_HOLE = /^\{\{\s*([^}]+?)\s*\}\}$/;
+  /** Template attribute → DOM event it binds. */
+  const EVENTS = /** @type {Record<string, string>} */ ({ onclick: 'click', onchange: 'input', onkeydown: 'keydown', oninput: 'input' });
 
+  /** @typedef {Record<string, any>} Scope */
+  /** @typedef {(this: DCLogic, e: Event) => void} Handler */
+
+  /**
+   * A dotted path ("a.b.c") in the render values; "true" and "false" are literals.
+   * @param {Scope} scope
+   * @param {string} path
+   * @returns {unknown}
+   */
   function lookup(scope, path) {
     if (path === 'true') return true;
     if (path === 'false') return false;
-    var parts = path.split('.');
-    var v = scope;
-    for (var i = 0; i < parts.length; i++) {
+    /** @type {any} */
+    let v = scope;
+    for (const part of path.split('.')) {
       if (v == null) return undefined;
-      v = v[parts[i]];
+      v = v[part];
     }
     return v;
   }
 
-  function str(v) { return v == null || v === false ? '' : String(v); }
+  /** @param {unknown} v */
+  const str = (v) => (v == null || v === false ? '' : String(v));
 
-  function DCLogic(props) {
-    this.props = props || {};
-    this.state = {};
-  }
-  DCLogic.prototype.setState = function (patch) {
-    var next = typeof patch === 'function' ? patch(this.state, this.props) : patch;
-    this.state = Object.assign({}, this.state, next);
-    if (this.__app) this.__app.schedule();
-  };
+  /** The base class design-file components extend. */
+  class DCLogic {
+    /** @param {Record<string, unknown>} [props] */
+    constructor(props) {
+      /** @type {Record<string, any>} */
+      this.props = props || {};
+      /** @type {Record<string, any>} */
+      this.state = {};
+      /** @type {App | undefined} */
+      this.__app = undefined;
+    }
 
-  function App(root, template, Component, props) {
-    this.root = root;
-    this.template = template;
-    this.fns = [];
-    this.pending = false;
-    this.mounted = false;
-    this.c = new Component(props);
-    this.c.props = props;
-    if (!this.c.state) this.c.state = {};
-    this.c.__app = this;
-    this.bindEvents();
+    /** @param {Record<string, any> | ((state: Record<string, any>, props: Record<string, any>) => Record<string, any>)} patch */
+    setState(patch) {
+      const next = typeof patch === 'function' ? patch(this.state, this.props) : patch;
+      this.state = Object.assign({}, this.state, next);
+      if (this.__app) this.__app.schedule();
+    }
   }
 
-  App.prototype.schedule = function () {
-    if (this.pending || !this.mounted) return;
-    this.pending = true;
-    var self = this;
-    var run = function () { self.pending = false; self.render(); };
-    // State set while mounting re-renders in its own task, so the first paint-ready work and
-    // that follow-up render don't add up to one long task.
-    if (this.mounting) setTimeout(run, 0); else Promise.resolve().then(run);
-  };
+  /**
+   * @typedef {DCLogic & {
+   *   renderVals?: () => Scope,
+   *   componentDidMount?: () => void,
+   *   componentDidUpdate?: () => void,
+   *   componentWillUnmount?: () => void,
+   * }} Component
+   */
 
-  App.prototype.bindEvents = function () {
-    var self = this;
-    Object.keys(EVENTS).forEach(function (attr) {
-      var type = EVENTS[attr];
-      if (self['_b' + type]) return;
-      self['_b' + type] = true;
-      self.root.addEventListener(type, function (e) {
-        var n = e.target;
-        while (n && n !== self.root) {
-          if (n.getAttribute) {
-            var id = n.getAttribute('data-dc-' + type);
-            if (id != null && self.fns[+id]) {
-              self.fns[+id].call(self.c, e);
+  class App {
+    /**
+     * @param {HTMLElement} root
+     * @param {HTMLTemplateElement} template
+     * @param {new (props: Record<string, unknown>) => Component} ComponentClass
+     * @param {Record<string, unknown>} props
+     */
+    constructor(root, template, ComponentClass, props) {
+      this.root = root;
+      this.template = template;
+      /** @type {Handler[]} */
+      this.fns = [];
+      this.pending = false;
+      this.mounted = false;
+      this.mounting = false;
+      /** An optional step between building and patching (the page translator uses it). @type {((holder: HTMLElement) => void) | null} */
+      this.transform = null;
+      /** The previous render, for comparing with the next one. @type {Node | null} */
+      this.prev = null;
+      /** @type {Set<string>} */
+      this.bound = new Set();
+      this.c = new ComponentClass(props);
+      this.c.props = props;
+      if (!this.c.state) this.c.state = {};
+      this.c.__app = this;
+      this.bindEvents();
+    }
+
+    schedule() {
+      if (this.pending || !this.mounted) return;
+      this.pending = true;
+      const run = () => {
+        this.pending = false;
+        this.render();
+      };
+      // State set while mounting re-renders in its own task, so the first paint-ready work and
+      // that follow-up render don't add up to one long task.
+      if (this.mounting) setTimeout(run, 0);
+      else Promise.resolve().then(run);
+    }
+
+    /** One delegated listener per event type, dispatching to the handler ids on the elements. */
+    bindEvents() {
+      for (const type of new Set(Object.values(EVENTS))) {
+        if (this.bound.has(type)) continue;
+        this.bound.add(type);
+        this.root.addEventListener(type, (e) => {
+          for (let n = /** @type {Node | null} */ (e.target); n && n !== this.root; n = n.parentNode) {
+            if (!(n instanceof Element)) continue;
+            const id = n.getAttribute('data-dc-' + type);
+            const fn = id != null ? this.fns[+id] : undefined;
+            if (fn) {
+              fn.call(this.c, e);
               if (e.cancelBubble) break;
             }
           }
-          n = n.parentNode;
-        }
-      });
-    });
-  };
-
-  // Build a fresh DOM fragment from the template for the current values.
-  App.prototype.build = function (vals) {
-    var self = this;
-    self.fns = [];
-    var frag = document.createDocumentFragment();
-
-    function walk(src, out, scope) {
-      for (var node = src.firstChild; node; node = node.nextSibling) {
-        if (node.nodeType === 3) {
-          var t = node.data;
-          t = t.indexOf('{{') < 0 ? t : t.replace(HOLE, function (_, p) { return str(lookup(scope, p)); });
-          // Match what the HTML parser makes of prerendered markup: no empty text nodes, and
-          // neighbouring text in one node. Otherwise hydration rewrites hundreds of nodes.
-          var prev = out.lastChild;
-          if (prev && prev.nodeType === 3) prev.data += t;
-          else if (t) out.appendChild(document.createTextNode(t));
-        } else if (node.nodeType === 1) {
-          var tag = node.localName;
-          if (tag === 'sc-for') {
-            var m = ONE_HOLE.exec(node.getAttribute('list') || '');
-            var list = m ? lookup(scope, m[1]) : null;
-            var as = node.getAttribute('as') || 'item';
-            if (list && list.length) {
-              for (var i = 0; i < list.length; i++) {
-                var s = Object.create(scope);
-                s[as] = list[i];
-                walk(node, out, s);
-              }
-            }
-          } else if (tag === 'sc-if') {
-            var mv = ONE_HOLE.exec(node.getAttribute('value') || '');
-            if (mv && lookup(scope, mv[1])) walk(node, out, scope);
-          } else {
-            var el = node.cloneNode(false);
-            var attrs = Array.prototype.slice.call(el.attributes);
-            for (var a = 0; a < attrs.length; a++) {
-              var name = attrs[a].name, val = attrs[a].value;
-              if (name.indexOf('hint-placeholder') === 0) { el.removeAttribute(name); continue; }
-              if (val.indexOf('{{') < 0) continue;
-              var lower = name.toLowerCase();
-              if (EVENTS[lower]) {
-                el.removeAttribute(name);
-                var fm = ONE_HOLE.exec(val);
-                var fn = fm ? lookup(scope, fm[1]) : null;
-                if (typeof fn === 'function') {
-                  self.fns.push(fn);
-                  el.setAttribute('data-dc-' + EVENTS[lower], String(self.fns.length - 1));
-                }
-                continue;
-              }
-              var one = ONE_HOLE.exec(val);
-              var out2 = one ? lookup(scope, one[1]) : val.replace(HOLE, function (_, p) { return str(lookup(scope, p)); });
-              if (out2 == null || out2 === false) el.removeAttribute(name);
-              else el.setAttribute(name, out2 === true ? '' : String(out2));
-            }
-            walk(node.content || node, el, scope);
-            out.appendChild(el);
-          }
-        }
+        });
       }
     }
-    walk(this.template.content, frag, vals);
-    return frag;
-  };
+
+    /**
+     * A fresh DOM fragment from the template for the current values.
+     * @param {Scope} vals
+     */
+    build(vals) {
+      this.fns = [];
+      const frag = document.createDocumentFragment();
+      /**
+       * @param {Node} src
+       * @param {Node} out
+       * @param {Scope} scope
+       */
+      const walk = (src, out, scope) => {
+        for (let node = src.firstChild; node; node = node.nextSibling) {
+          if (node instanceof Text) {
+            const t = node.data.includes('{{') ? node.data.replace(HOLE, (_, p) => str(lookup(scope, p))) : node.data;
+            // Match what the HTML parser makes of prerendered markup: no empty text nodes, and
+            // neighbouring text in one node. Otherwise hydration rewrites hundreds of nodes.
+            const prev = out.lastChild;
+            if (prev instanceof Text) prev.data += t;
+            else if (t) out.appendChild(document.createTextNode(t));
+          } else if (node instanceof Element) {
+            const tag = node.localName;
+            if (tag === 'sc-for') {
+              const m = ONE_HOLE.exec(node.getAttribute('list') || '');
+              const list = m ? lookup(scope, m[1]) : null;
+              const as = node.getAttribute('as') || 'item';
+              if (Array.isArray(list)) {
+                for (const item of list) {
+                  const s = Object.create(scope);
+                  s[as] = item;
+                  walk(node, out, s);
+                }
+              }
+            } else if (tag === 'sc-if') {
+              const m = ONE_HOLE.exec(node.getAttribute('value') || '');
+              if (m && lookup(scope, m[1])) walk(node, out, scope);
+            } else {
+              const el = /** @type {Element} */ (node.cloneNode(false));
+              for (const { name, value } of Array.from(el.attributes)) {
+                if (name.startsWith('hint-placeholder')) {
+                  el.removeAttribute(name);
+                  continue;
+                }
+                if (!value.includes('{{')) continue;
+                const event = EVENTS[name.toLowerCase()];
+                if (event) {
+                  el.removeAttribute(name);
+                  const fm = ONE_HOLE.exec(value);
+                  const fn = fm ? lookup(scope, fm[1]) : null;
+                  if (typeof fn === 'function') {
+                    this.fns.push(/** @type {Handler} */ (fn));
+                    el.setAttribute('data-dc-' + event, String(this.fns.length - 1));
+                  }
+                  continue;
+                }
+                const one = ONE_HOLE.exec(value);
+                const v = one ? lookup(scope, one[1]) : value.replace(HOLE, (_, p) => str(lookup(scope, p)));
+                if (v == null || v === false) el.removeAttribute(name);
+                else el.setAttribute(name, v === true ? '' : String(v));
+              }
+              walk(node instanceof HTMLTemplateElement ? node.content : node, el, scope);
+              out.appendChild(el);
+            }
+          }
+        }
+      };
+      walk(this.template.content, frag, vals);
+      return frag;
+    }
+
+    render() {
+      const c = this.c;
+      const holder = document.createElement('div');
+      holder.appendChild(this.build((c.renderVals && c.renderVals()) || {}));
+      if (this.transform) {
+        try {
+          this.transform(holder);
+        } catch (e) {
+          console.error(e);
+        }
+      }
+      // What this render looks like, kept for comparing with the next one (patching moves nodes out).
+      const snapshot = holder.cloneNode(true);
+      if (this.prev) patchKeep(this.root, this.prev, holder);
+      else patchChildren(this.root, holder);
+      this.prev = snapshot;
+      if (!this.mounted) {
+        this.mounted = true;
+        this.mounting = true;
+        try {
+          if (c.componentDidMount) c.componentDidMount();
+        } finally {
+          this.mounting = false;
+        }
+      } else if (c.componentDidUpdate) {
+        c.componentDidUpdate();
+      }
+    }
+  }
 
   // ---- patching ----
+
+  /**
+   * @param {Node} a
+   * @param {Node} b
+   */
   function sameNode(a, b) {
     if (a.nodeType !== b.nodeType) return false;
-    if (a.nodeType !== 1) return true;
+    if (!(a instanceof Element) || !(b instanceof Element)) return true;
     return a.localName === b.localName && (a.id || '') === (b.id || '');
   }
 
+  /**
+   * @param {Element} a the live element
+   * @param {Element} b the new render's element
+   */
   function syncAttrs(a, b) {
     if (a.localName === 'canvas') return; // owned by effects code
-    var i, n;
-    var bs = b.attributes;
-    for (i = 0; i < bs.length; i++) {
-      n = bs[i].name;
-      if (a.getAttribute(n) !== bs[i].value) a.setAttribute(n, bs[i].value);
+    for (const { name, value } of Array.from(b.attributes)) {
+      if (a.getAttribute(name) !== value) a.setAttribute(name, value);
     }
-    var as = Array.prototype.slice.call(a.attributes);
-    for (i = 0; i < as.length; i++) {
-      n = as[i].name;
-      if (b.hasAttribute(n)) continue;
-      if (n === 'open' && (a.localName === 'details' || a.localName === 'dialog')) continue; // user-toggled, or opened with showModal()
-      if (n === 'tabindex' && a.getAttribute(n) === '-1') continue; // set by code to move focus to a section
-      a.removeAttribute(n);
+    for (const { name } of Array.from(a.attributes)) {
+      if (b.hasAttribute(name)) continue;
+      if (name === 'open' && (a.localName === 'details' || a.localName === 'dialog')) continue; // user-toggled, or opened with showModal()
+      if (name === 'tabindex' && a.getAttribute(name) === '-1') continue; // set by code to move focus to a section
+      a.removeAttribute(name);
     }
     // Typed values only: a checkbox's or radio's value attribute isn't what the user changes.
-    if (((a.localName === 'input' && !/^(checkbox|radio)$/i.test(a.type)) || a.localName === 'textarea') && document.activeElement !== a) {
-      var v = b.getAttribute('value') || '';
+    const typed = (a instanceof HTMLInputElement && !/^(checkbox|radio)$/i.test(a.type)) || a instanceof HTMLTextAreaElement;
+    if (typed && document.activeElement !== a) {
+      const v = b.getAttribute('value') || '';
       if (a.value !== v) a.value = v;
     }
   }
 
+  /**
+   * Make oldEl's children match newEl's, reusing nodes that look the same (a short look-ahead).
+   * @param {Node} oldEl
+   * @param {Node} newEl
+   */
   function patchChildren(oldEl, newEl) {
-    var o = oldEl.firstChild;
-    var n = newEl.firstChild;
+    let o = oldEl.firstChild;
+    let n = newEl.firstChild;
     while (n) {
-      var next = n.nextSibling;
-      var found = null, c = o, k = 0;
-      while (c && k < 8) {
-        if (sameNode(c, n)) { found = c; break; }
-        c = c.nextSibling; k++;
+      const next = n.nextSibling;
+      let found = null;
+      for (let c = o, k = 0; c && k < 8; c = c.nextSibling, k++) {
+        if (sameNode(c, n)) {
+          found = c;
+          break;
+        }
       }
       if (found) {
-        while (o !== found) { var r = o; o = o.nextSibling; oldEl.removeChild(r); }
+        while (o && o !== found) {
+          const r = o;
+          o = o.nextSibling;
+          oldEl.removeChild(r);
+        }
         patchNode(found, n);
         o = found.nextSibling;
       } else {
@@ -200,89 +297,99 @@
       }
       n = next;
     }
-    while (o) { var rm = o; o = o.nextSibling; oldEl.removeChild(rm); }
+    while (o) {
+      const rm = o;
+      o = o.nextSibling;
+      oldEl.removeChild(rm);
+    }
   }
 
-  // Patch only what changed since the last render, by comparing the new render with the previous
-  // one rather than with the page. Anything unchanged is left exactly as it is on the page, along
-  // with whatever else changed it: the browser's own page translation (which swaps text for
-  // wrapped, translated copies), a disclosure the visitor opened, a class added for an effect.
-  // Where the structure itself changed (a section shown or hidden), it falls back to a full patch.
+  /**
+   * Patch only what changed since the last render, by comparing the new render with the previous
+   * one rather than with the page. Anything unchanged is left exactly as it is on the page, along
+   * with whatever else changed it: the browser's own page translation (which swaps text for
+   * wrapped, translated copies), a disclosure the visitor opened, a class added for an effect.
+   * Where the structure itself changed (a section shown or hidden), it falls back to a full patch.
+   * @param {Node} live
+   * @param {Node} prev
+   * @param {Node} next
+   */
   function patchKeep(live, prev, next) {
-    var L = live.childNodes, P = prev.childNodes, N = next.childNodes;
-    if (P.length !== N.length || L.length !== N.length) { patchChildren(live, next); return; }
-    var lv = Array.prototype.slice.call(L), pv = Array.prototype.slice.call(P), nv = Array.prototype.slice.call(N);
-    for (var i = 0; i < nv.length; i++) {
-      var a = lv[i], o = pv[i], n = nv[i];
-      if (o.isEqualNode(n)) continue;
-      if (n.nodeType === 1 && o.nodeType === 1 && sameNode(a, n) && o.localName === n.localName) {
+    const L = Array.from(live.childNodes), P = Array.from(prev.childNodes), N = Array.from(next.childNodes);
+    if (P.length !== N.length || L.length !== N.length) {
+      patchChildren(live, next);
+      return;
+    }
+    N.forEach((n, i) => {
+      const a = L[i], o = P[i];
+      if (o.isEqualNode(n)) return;
+      if (a instanceof Element && o instanceof Element && n instanceof Element && sameNode(a, n) && o.localName === n.localName) {
         syncAttrs(a, n);
         if (a.localName !== 'canvas') patchKeep(a, o, n);
-      } else if (n.nodeType === 3 && a.nodeType === 3) {
+      } else if (a instanceof Text && n instanceof Text) {
         if (a.data !== n.data) a.data = n.data;
       } else {
         live.replaceChild(n, a);
       }
-    }
+    });
   }
 
+  /**
+   * @param {Node} a
+   * @param {Node} b
+   */
   function patchNode(a, b) {
-    if (a.nodeType === 3 || a.nodeType === 8) {
+    if (a instanceof CharacterData && b instanceof CharacterData) {
       if (a.data !== b.data) a.data = b.data;
       return;
     }
+    if (!(a instanceof Element) || !(b instanceof Element)) return;
     syncAttrs(a, b);
     if (a.localName === 'canvas') return;
     patchChildren(a, b);
   }
 
-  App.prototype.render = function () {
-    var c = this.c;
-    var vals = c.renderVals ? c.renderVals() : {};
-    var frag = this.build(vals || {});
-    var holder = document.createElement('div');
-    holder.appendChild(frag);
-    // An optional step between building and patching (the page translator uses it), so every
-    // render can be adjusted before it reaches the page.
-    if (this.transform) { try { this.transform(holder); } catch (e) { if (window.console) console.error(e); } }
-    // What this render looks like, kept for comparing with the next one (patching moves nodes out).
-    var snapshot = holder.cloneNode(true);
-    if (this.prev) patchKeep(this.root, this.prev, holder); else patchChildren(this.root, holder);
-    this.prev = snapshot;
-    if (!this.mounted) {
-      this.mounted = true;
-      this.mounting = true;
-      try { if (c.componentDidMount) c.componentDidMount(); } finally { this.mounting = false; }
-    } else if (c.componentDidUpdate) {
-      c.componentDidUpdate();
-    }
-  };
-
+  /**
+   * Default props from the design file's data-props (each { default } entry; $-keys are canvas-only).
+   * @param {Element} script
+   */
   function readProps(script) {
-    var props = {};
+    /** @type {Record<string, unknown>} */
+    const props = {};
+    let spec;
     try {
-      var spec = JSON.parse(script.getAttribute('data-props') || '{}');
-      Object.keys(spec).forEach(function (k) {
-        if (k.charAt(0) === '$') return;
-        if (spec[k] && typeof spec[k] === 'object' && 'default' in spec[k]) props[k] = spec[k].default;
-      });
-    } catch (e) {}
+      spec = JSON.parse(script.getAttribute('data-props') || '{}');
+    } catch (e) {
+      console.error('dc-runtime: unreadable data-props', e);
+      return props;
+    }
+    for (const [k, v] of Object.entries(spec)) {
+      if (!k.startsWith('$') && v && typeof v === 'object' && 'default' in v) props[k] = v.default;
+    }
     return props;
   }
 
+  /**
+   * Mount a design file's component on the page.
+   * @param {{ root: string, template: string, script: string, props?: Record<string, unknown> }} opts selectors, and props over the file's defaults
+   */
   function mount(opts) {
-    var root = document.querySelector(opts.root);
-    var template = document.querySelector(opts.template);
-    var script = document.querySelector(opts.script);
-    var Component = new Function('DCLogic', script.textContent + '\n;return Component;')(DCLogic);
-    var props = Object.assign(readProps(script), opts.props || {});
-    var app = new App(root, template, Component, props);
+    const root = /** @type {HTMLElement} */ (document.querySelector(opts.root));
+    const template = /** @type {HTMLTemplateElement} */ (document.querySelector(opts.template));
+    const script = /** @type {HTMLScriptElement} */ (document.querySelector(opts.script));
+    // The design file's script defines `class Component extends DCLogic` in its own scope.
+    const ComponentClass = new Function('DCLogic', script.textContent + '\n;return Component;')(DCLogic);
+    const app = new App(root, template, ComponentClass, Object.assign(readProps(script), opts.props || {}));
     app.render();
-    window.addEventListener('pagehide', function () {
-      if (app.c.componentWillUnmount) try { app.c.componentWillUnmount(); } catch (e) {}
+    addEventListener('pagehide', () => {
+      try {
+        if (app.c.componentWillUnmount) app.c.componentWillUnmount();
+      } catch (e) {
+        console.error(e);
+      }
     });
     return app;
   }
 
-  window.DCRuntime = { mount: mount, DCLogic: DCLogic };
+  /** @type {any} */ (window).DCRuntime = { mount, DCLogic };
 })();

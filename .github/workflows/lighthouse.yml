@@ -9,7 +9,7 @@ on:
         description: Page to audit (blank = the first address that's serving this site)
         default: ''
   workflow_run:
-    workflows: [Deploy to GitHub Pages]
+    workflows: [CI]
     types: [completed]
   schedule:
     - cron: '43 5 * * 1' # Mondays, 05:43 UTC
@@ -23,22 +23,22 @@ concurrency:
 
 jobs:
   audit:
-    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    if: >-
+      github.event_name != 'workflow_run' ||
+      (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event != 'pull_request')
     runs-on: ubuntu-latest
     env:
       URL: ${{ inputs.url }}
     steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-node@v5
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
         with:
-          node-version: 22
+          node-version-file: .node-version
       - name: Install Lighthouse
         run: npm i -g lighthouse@12
       - name: Audit
         run: |
           mkdir -p out
-          # Read now: the Save step below switches to an orphan branch, which clears the checkout.
-          if grep -qx 'Disallow: /' site/robots.txt; then echo "INDEXED=0" >> "$GITHUB_ENV"; else echo "INDEXED=1" >> "$GITHUB_ENV"; fi
           sleep 20 # let the Pages CDN pick up a fresh deploy
           # Use the first address that serves the site (the new domain, then the old one while DNS moves).
           # A domain only counts if it serves this site (CRAGA_BUILD is in every build), not a redirect elsewhere.
@@ -51,6 +51,8 @@ jobs:
           fi
           [ -n "$URL" ] || { echo "::error::No address is serving the site"; exit 1; }
           echo "::notice title=Lighthouse::Auditing $URL"; echo "URL=$URL" >> "$GITHUB_ENV"
+          # SEO is only checked once the site is open to search engines.
+          if curl -sf -m 20 "${URL%/}/robots.txt" | grep -qx 'Disallow: /'; then echo "INDEXED=0" >> "$GITHUB_ENV"; else echo "INDEXED=1" >> "$GITHUB_ENV"; fi
           for preset in mobile desktop; do
             for i in 1 2 3; do
               flags=""; [ "$preset" = desktop ] && flags="--preset=desktop"
@@ -63,22 +65,18 @@ jobs:
             echo "::error title=Lighthouse summary::$(tail -c 800 out/summary.err | tr '\n' ' ')"; exit 1
           fi
           head -c 4000 out/summary.json
-      - name: Save to the lighthouse branch
+      - name: Prepare the report
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          sha=${{ github.event.workflow_run.head_sha || github.sha }}
-          git fetch origin lighthouse || true
-          git switch --orphan lh-tmp
-          git rm -rq --cached . || true
-          mkdir -p reports && cp out/summary.json reports/summary.json
-          for f in out/mobile-2.json out/desktop-2.json; do [ -f "$f" ] && cp "$f" reports/; done
-          echo "$sha" > reports/commit.txt
-          echo "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" > reports/run.txt
-          date -u +%FT%TZ > reports/at.txt
-          git add reports
-          git commit -qm "Lighthouse for $sha"
-          git push -f origin lh-tmp:lighthouse
+          mkdir -p report/reports && cp out/summary.json report/reports/summary.json
+          for f in out/mobile-2.json out/desktop-2.json; do [ -f "$f" ] && cp "$f" report/reports/; done
+          echo "${{ github.event.workflow_run.head_sha || github.sha }}" > report/reports/commit.txt
+          echo "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" > report/reports/run.txt
+          date -u +%FT%TZ > report/reports/at.txt
+      - uses: ./.github/actions/publish-branch
+        with:
+          branch: lighthouse
+          source: report
+          message: Lighthouse for ${{ github.event.workflow_run.head_sha || github.sha }}
       - name: Check thresholds
         # Fails the run if a score drops: performance under 95, or accessibility / best practices
         # under 100. SEO is only checked once the site is open to search engines (no noindex).

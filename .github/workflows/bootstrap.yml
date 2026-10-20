@@ -1,0 +1,43 @@
+# Installs the dev dependencies at their latest versions, writes package-lock.json, formats the
+# code with oxfmt and applies oxlint's safe fixes. Run by hand (the result goes to the `bootstrap`
+# branch for review), or by pushing a `bootstrap/…` branch (the result is committed back to it).
+name: Bootstrap dependencies and formatting
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ['bootstrap/**']
+
+permissions:
+  contents: write
+
+jobs:
+  bootstrap:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
+        with:
+          node-version-file: .node-version
+      - name: Install the latest versions
+        run: |
+          rm -f package-lock.json
+          # Exact versions in package.json; package-lock.json pins the rest.
+          npm install --save-exact --no-audit --no-fund --save-dev \
+            @axe-core/playwright@latest @modelcontextprotocol/sdk@1 @playwright/test@latest playwright@latest \
+            @types/node@22 axe-core@latest marked@latest oxfmt@latest oxlint@latest sharp@latest typescript@latest
+      - name: Format and fix
+        run: |
+          npx oxfmt --version && npx oxfmt .
+          npx oxlint --fix || true
+          npx oxlint > oxlint.txt 2>&1 || true
+          tail -80 oxlint.txt
+          git add -f oxlint.txt
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -qm "Lockfile, formatting and lint fixes (bootstrap workflow)"
+          if [ "$GITHUB_EVENT_NAME" = push ]; then git push origin "HEAD:$GITHUB_REF_NAME"; else git push -f origin HEAD:bootstrap; fi
