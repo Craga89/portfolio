@@ -83,24 +83,24 @@ The deploy (on every push to `main`, and daily) collects the latest CI results f
 
 Nothing on the site needs a paid plan. The services and their free limits:
 
-| Service | Used for | Free limit | Over the limit |
-|---|---|---|---|
-| GitHub Pages and Actions | hosting, CI | free for public repositories | — |
-| Cloudflare Workers (Free plan) | ask.sh, read-aloud, MCP, visit counts | 100,000 requests a day | requests fail until midnight UTC |
-| Workers AI | ask.sh answers, read-aloud voice | 10,000 neurons a day | Free plan: requests fail; Paid plan: billed |
-| D1 | question log, visit counts, AI budget | 5M rows read, 100k written a day | queries fail until midnight UTC |
-| Cloudflare Web Analytics | page views | free | — |
-| The browser's built-in AI (Translator, Language Detector) | translation, ask.sh in other languages | runs on the visitor's device | — |
+| Service                                                   | Used for                               | Free limit                       | Over the limit                              |
+| --------------------------------------------------------- | -------------------------------------- | -------------------------------- | ------------------------------------------- |
+| GitHub Pages and Actions                                  | hosting, CI                            | free for public repositories     | —                                           |
+| Cloudflare Workers (Free plan)                            | ask.sh, read-aloud, MCP, visit counts  | 100,000 requests a day           | requests fail until midnight UTC            |
+| Workers AI                                                | ask.sh answers, read-aloud voice       | 10,000 neurons a day             | Free plan: requests fail; Paid plan: billed |
+| D1                                                        | question log, visit counts, AI budget  | 5M rows read, 100k written a day | queries fail until midnight UTC             |
+| Cloudflare Web Analytics                                  | page views                             | free                             | —                                           |
+| The browser's built-in AI (Translator, Language Detector) | translation, ask.sh in other languages | runs on the visitor's device     | —                                           |
 
 On the Workers Free plan nothing can be billed: going over a limit makes requests fail, and every AI feature falls back (search answers, the browser's own voice). Keep the account on the Free plan to keep it that way.
 
 On top of that, `worker/src/budget.js` keeps Workers AI inside the free allowance on any plan. Spending is recorded per UTC day in D1 (`ai_budget`), split into shares so one feature can't use up another's:
 
-| Share | Neurons a day | Roughly |
-|---|---|---|
-| `ask`: visitors' ask.sh answers (site, WebMCP, MCP) | 6,000 | ~140 answers (~40 neurons each on Gemma 4) |
-| `speak`: read-aloud in the natural voice | 2,500 | a few answers (Aura 2 is ~2.7 neurons a character); then the browser's voice, which is free |
-| `test`: CI smoke tests and answer tests | 1,000 | about one full test run |
+| Share                                               | Neurons a day | Roughly                                                                                     |
+| --------------------------------------------------- | ------------- | ------------------------------------------------------------------------------------------- |
+| `ask`: visitors' ask.sh answers (site, WebMCP, MCP) | 6,000         | ~140 answers (~40 neurons each on Gemma 4)                                                  |
+| `speak`: read-aloud in the natural voice            | 2,500         | a few answers (Aura 2 is ~2.7 neurons a character); then the browser's voice, which is free |
+| `test`: CI smoke tests and answer tests             | 1,000         | about one full test run                                                                     |
 
 When a share is used up the Worker answers 503 `{"error":"budget"}`: ask.sh says it's used today's free allowance and answers from the site's search, and read-aloud uses the browser's voice. If Workers AI reports the account's free allocation is used up, every share closes for the day. If D1 can't be read, AI is off rather than unmetered. Shares can be changed with `AI_CAP_ASK`, `AI_CAP_SPEAK` and `AI_CAP_TEST` variables. The weekly stats show spending per share.
 
@@ -168,7 +168,6 @@ Automated checks can't cover all of WCAG; screen reader passes (VoiceOver, NVDA)
 ## Search engines
 
 While the content is being finished, the build keeps the site out of search engines: `robots.txt` disallows everything and every page carries `<meta name="robots" content="noindex">`. When it's ready to be found, build with `node tools/build.mjs --public` (or set `ALLOW_INDEXING` to `true` in `tools/build.mjs`) and push.
-
 
 ## Between pages
 

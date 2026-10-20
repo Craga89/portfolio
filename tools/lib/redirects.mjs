@@ -11,14 +11,32 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 export const CONF = JSON.parse(readFileSync(join(ROOT, 'redirects', 'old-domains.json'), 'utf8'));
 
 /** A rule's source as [host, path]. @param {string} src */
-const split = (src) => { const i = src.indexOf('/'); return i < 0 ? [src.toLowerCase(), '/'] : [src.slice(0, i).toLowerCase(), src.slice(i) || '/']; };
+const split = (src) => {
+  const i = src.indexOf('/');
+  return i < 0 ? [src.toLowerCase(), '/'] : [src.slice(0, i).toLowerCase(), src.slice(i) || '/'];
+};
 // Each recovered blog post redirects from its old address to its new page.
-const postRules = loadPosts().filter((b) => b.original).map((b) => { const u = new URL(b.original); return { source: u.hostname.replace(/^www\./, '') + u.pathname.replace(/\/$/, ''), target: CONF.home + 'blog/' + b.slug + '/', subdomains: !u.hostname.startsWith('blog.'), subpath: true, suffix: false, why: 'blog post: ' + b.title }; });
+const postRules = loadPosts()
+  .filter((b) => b.original)
+  .map((b) => {
+    const u = new URL(b.original);
+    return {
+      source: u.hostname.replace(/^www\./, '') + u.pathname.replace(/\/$/, ''),
+      target: CONF.home + 'blog/' + b.slug + '/',
+      subdomains: !u.hostname.startsWith('blog.'),
+      subpath: true,
+      suffix: false,
+      why: 'blog post: ' + b.title,
+    };
+  });
 /**
  * @typedef {{ source: string, target: string, subdomains?: boolean, subpath?: boolean, suffix?: boolean, query?: boolean, why: string }} Rule
  */
 /** @type {(Rule & { i: number, host: string, path: string })[]} */
-export const RULES = /** @type {Rule[]} */ (postRules).concat(CONF.rules).map((r, i) => { const [host, path] = split(r.source); return Object.assign({ i, host, path }, r); });
+export const RULES = /** @type {Rule[]} */ (postRules).concat(CONF.rules).map((r, i) => {
+  const [host, path] = split(r.source);
+  return Object.assign({ i, host, path }, r);
+});
 
 /**
  * The rule a URL hits, and where it goes; null if none.
@@ -50,7 +68,10 @@ export function match(input) {
   return { rule: r, target };
 }
 /** @param {number[]} a @param {number[]} b */
-function cmp(a, b) { for (let k = 0; k < a.length; k++) if (a[k] !== b[k]) return a[k] - b[k]; return 0; }
+function cmp(a, b) {
+  for (let k = 0; k < a.length; k++) if (a[k] !== b[k]) return a[k] - b[k];
+  return 0;
+}
 
 // Strings the Wayback Machine's crawler picked out of old scripts ("/projects/qtip/'+s.id+'"), not pages.
 /** @param {string} url */

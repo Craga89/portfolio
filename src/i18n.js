@@ -26,41 +26,201 @@ export { LANGS };
 /** @type {Record<string, [question: string, accept: string, decline: string, note: string]>} */
 const OFFER = {
   ar: ['قراءة هذه الصفحة بالعربية؟', 'ترجمة', 'لا، شكرًا', 'ترجمة آلية يجريها متصفحك على جهازك، ولم يراجعها أي شخص.'],
-  bg: ['Да прочетете тази страница на български?', 'Преведи', 'Не, благодаря', 'Машинен превод от браузъра ви, на вашето устройство. Не е проверен от човек.'],
-  bn: ['এই পৃষ্ঠাটি বাংলায় পড়বেন?', 'অনুবাদ করুন', 'না, ধন্যবাদ', 'আপনার ব্রাউজার আপনার ডিভাইসেই যন্ত্রের মাধ্যমে অনুবাদ করে। কোনো মানুষ এটি যাচাই করেনি।'],
-  cs: ['Přečíst tuto stránku v češtině?', 'Přeložit', 'Ne, děkuji', 'Strojový překlad provádí váš prohlížeč přímo ve vašem zařízení. Nikdo ho nekontroloval.'],
-  da: ['Vil du læse siden på dansk?', 'Oversæt', 'Nej tak', 'Maskinoversættelse fra din browser, på din enhed. Ikke gennemgået af et menneske.'],
-  de: ['Diese Seite auf Deutsch lesen?', 'Übersetzen', 'Nein, danke', 'Maschinelle Übersetzung durch Ihren Browser, direkt auf Ihrem Gerät. Nicht von Menschen geprüft.'],
-  el: ['Να διαβάσετε αυτή τη σελίδα στα ελληνικά;', 'Μετάφραση', 'Όχι, ευχαριστώ', 'Αυτόματη μετάφραση από το πρόγραμμα περιήγησής σας, στη συσκευή σας. Δεν έχει ελεγχθεί από άνθρωπο.'],
-  es: ['¿Leer esta página en español?', 'Traducir', 'No, gracias', 'Traducción automática de tu navegador, en tu dispositivo. Ninguna persona la ha revisado.'],
-  fi: ['Luetaanko tämä sivu suomeksi?', 'Käännä', 'Ei kiitos', 'Selaimesi konekääntämä, laitteellasi. Ihminen ei ole tarkistanut sitä.'],
-  fr: ['Lire cette page en français ?', 'Traduire', 'Non merci', 'Traduction automatique par votre navigateur, sur votre appareil. Non relue par une personne.'],
+  bg: [
+    'Да прочетете тази страница на български?',
+    'Преведи',
+    'Не, благодаря',
+    'Машинен превод от браузъра ви, на вашето устройство. Не е проверен от човек.',
+  ],
+  bn: [
+    'এই পৃষ্ঠাটি বাংলায় পড়বেন?',
+    'অনুবাদ করুন',
+    'না, ধন্যবাদ',
+    'আপনার ব্রাউজার আপনার ডিভাইসেই যন্ত্রের মাধ্যমে অনুবাদ করে। কোনো মানুষ এটি যাচাই করেনি।',
+  ],
+  cs: [
+    'Přečíst tuto stránku v češtině?',
+    'Přeložit',
+    'Ne, děkuji',
+    'Strojový překlad provádí váš prohlížeč přímo ve vašem zařízení. Nikdo ho nekontroloval.',
+  ],
+  da: [
+    'Vil du læse siden på dansk?',
+    'Oversæt',
+    'Nej tak',
+    'Maskinoversættelse fra din browser, på din enhed. Ikke gennemgået af et menneske.',
+  ],
+  de: [
+    'Diese Seite auf Deutsch lesen?',
+    'Übersetzen',
+    'Nein, danke',
+    'Maschinelle Übersetzung durch Ihren Browser, direkt auf Ihrem Gerät. Nicht von Menschen geprüft.',
+  ],
+  el: [
+    'Να διαβάσετε αυτή τη σελίδα στα ελληνικά;',
+    'Μετάφραση',
+    'Όχι, ευχαριστώ',
+    'Αυτόματη μετάφραση από το πρόγραμμα περιήγησής σας, στη συσκευή σας. Δεν έχει ελεγχθεί από άνθρωπο.',
+  ],
+  es: [
+    '¿Leer esta página en español?',
+    'Traducir',
+    'No, gracias',
+    'Traducción automática de tu navegador, en tu dispositivo. Ninguna persona la ha revisado.',
+  ],
+  fi: [
+    'Luetaanko tämä sivu suomeksi?',
+    'Käännä',
+    'Ei kiitos',
+    'Selaimesi konekääntämä, laitteellasi. Ihminen ei ole tarkistanut sitä.',
+  ],
+  fr: [
+    'Lire cette page en français ?',
+    'Traduire',
+    'Non merci',
+    'Traduction automatique par votre navigateur, sur votre appareil. Non relue par une personne.',
+  ],
   he: ['לקרוא את הדף הזה בעברית?', 'תרגום', 'לא, תודה', 'תרגום מכונה של הדפדפן שלך, במכשיר שלך. אף אדם לא בדק אותו.'],
-  hi: ['यह पेज हिंदी में पढ़ें?', 'अनुवाद करें', 'नहीं, धन्यवाद', 'आपके ब्राउज़र द्वारा आपके डिवाइस पर मशीनी अनुवाद। किसी व्यक्ति ने इसकी जाँच नहीं की है।'],
-  hr: ['Pročitati ovu stranicu na hrvatskom?', 'Prevedi', 'Ne, hvala', 'Strojni prijevod vašeg preglednika, na vašem uređaju. Nije ga provjerila osoba.'],
-  hu: ['Elolvassa ezt az oldalt magyarul?', 'Fordítás', 'Nem, köszönöm', 'Gépi fordítás a böngészőjétől, az Ön eszközén. Ember nem ellenőrizte.'],
-  id: ['Baca halaman ini dalam bahasa Indonesia?', 'Terjemahkan', 'Tidak, terima kasih', 'Terjemahan mesin oleh browser Anda, di perangkat Anda. Belum diperiksa oleh manusia.'],
-  it: ['Leggere questa pagina in italiano?', 'Traduci', 'No, grazie', 'Traduzione automatica del tuo browser, sul tuo dispositivo. Non rivista da una persona.'],
-  ja: ['このページを日本語で読みますか？', '翻訳する', 'いいえ', 'ブラウザがお使いの端末上で機械翻訳します。人による確認はしていません。'],
-  kn: ['ಈ ಪುಟವನ್ನು ಕನ್ನಡದಲ್ಲಿ ಓದುವುದೇ?', 'ಅನುವಾದಿಸಿ', 'ಬೇಡ, ಧನ್ಯವಾದಗಳು', 'ನಿಮ್ಮ ಬ್ರೌಸರ್ ನಿಮ್ಮ ಸಾಧನದಲ್ಲೇ ಮಾಡುವ ಯಂತ್ರ ಅನುವಾದ. ಯಾರೂ ಇದನ್ನು ಪರಿಶೀಲಿಸಿಲ್ಲ.'],
-  ko: ['이 페이지를 한국어로 읽으시겠어요?', '번역하기', '괜찮아요', '브라우저가 기기에서 직접 하는 기계 번역입니다. 사람이 검토하지 않았습니다.'],
-  lt: ['Skaityti šį puslapį lietuviškai?', 'Versti', 'Ne, ačiū', 'Mašininis vertimas jūsų naršyklėje, jūsų įrenginyje. Žmogus jo netikrino.'],
-  mr: ['हे पान मराठीत वाचायचे?', 'भाषांतर करा', 'नको, धन्यवाद', 'तुमच्या ब्राउझरने तुमच्या डिव्हाइसवर केलेले यांत्रिक भाषांतर. कोणीही ते तपासलेले नाही.'],
-  nl: ['Deze pagina in het Nederlands lezen?', 'Vertalen', 'Nee, bedankt', 'Machinevertaling door je browser, op je apparaat. Niet door een mens nagekeken.'],
-  no: ['Vil du lese siden på norsk?', 'Oversett', 'Nei takk', 'Maskinoversettelse fra nettleseren din, på enheten din. Ikke gjennomgått av et menneske.'],
-  pl: ['Przeczytać tę stronę po polsku?', 'Przetłumacz', 'Nie, dziękuję', 'Tłumaczenie maszynowe wykonane przez przeglądarkę na Twoim urządzeniu. Nikt go nie sprawdzał.'],
-  pt: ['Ler esta página em português?', 'Traduzir', 'Agora não', 'Tradução automática do seu navegador, no seu dispositivo. Não foi revista por uma pessoa.'],
-  ro: ['Citiți această pagină în română?', 'Traduceți', 'Nu, mulțumesc', 'Traducere automată făcută de browserul dvs., pe dispozitivul dvs. Nu a fost verificată de un om.'],
-  ru: ['Прочитать эту страницу на русском?', 'Перевести', 'Нет, спасибо', 'Машинный перевод от вашего браузера, прямо на устройстве. Человек его не проверял.'],
-  sk: ['Prečítať túto stránku v slovenčine?', 'Preložiť', 'Nie, ďakujem', 'Strojový preklad vášho prehliadača priamo vo vašom zariadení. Nikto ho nekontroloval.'],
-  sl: ['Želite to stran prebrati v slovenščini?', 'Prevedi', 'Ne, hvala', 'Strojni prevod vašega brskalnika, na vaši napravi. Človek ga ni pregledal.'],
-  sv: ['Vill du läsa sidan på svenska?', 'Översätt', 'Nej tack', 'Maskinöversättning från din webbläsare, på din enhet. Inte granskad av en människa.'],
-  ta: ['இந்தப் பக்கத்தைத் தமிழில் படிக்கவா?', 'மொழிபெயர்', 'வேண்டாம், நன்றி', 'உங்கள் உலாவி உங்கள் சாதனத்திலேயே செய்யும் இயந்திர மொழிபெயர்ப்பு. யாரும் இதைச் சரிபார்க்கவில்லை.'],
+  hi: [
+    'यह पेज हिंदी में पढ़ें?',
+    'अनुवाद करें',
+    'नहीं, धन्यवाद',
+    'आपके ब्राउज़र द्वारा आपके डिवाइस पर मशीनी अनुवाद। किसी व्यक्ति ने इसकी जाँच नहीं की है।',
+  ],
+  hr: [
+    'Pročitati ovu stranicu na hrvatskom?',
+    'Prevedi',
+    'Ne, hvala',
+    'Strojni prijevod vašeg preglednika, na vašem uređaju. Nije ga provjerila osoba.',
+  ],
+  hu: [
+    'Elolvassa ezt az oldalt magyarul?',
+    'Fordítás',
+    'Nem, köszönöm',
+    'Gépi fordítás a böngészőjétől, az Ön eszközén. Ember nem ellenőrizte.',
+  ],
+  id: [
+    'Baca halaman ini dalam bahasa Indonesia?',
+    'Terjemahkan',
+    'Tidak, terima kasih',
+    'Terjemahan mesin oleh browser Anda, di perangkat Anda. Belum diperiksa oleh manusia.',
+  ],
+  it: [
+    'Leggere questa pagina in italiano?',
+    'Traduci',
+    'No, grazie',
+    'Traduzione automatica del tuo browser, sul tuo dispositivo. Non rivista da una persona.',
+  ],
+  ja: [
+    'このページを日本語で読みますか？',
+    '翻訳する',
+    'いいえ',
+    'ブラウザがお使いの端末上で機械翻訳します。人による確認はしていません。',
+  ],
+  kn: [
+    'ಈ ಪುಟವನ್ನು ಕನ್ನಡದಲ್ಲಿ ಓದುವುದೇ?',
+    'ಅನುವಾದಿಸಿ',
+    'ಬೇಡ, ಧನ್ಯವಾದಗಳು',
+    'ನಿಮ್ಮ ಬ್ರೌಸರ್ ನಿಮ್ಮ ಸಾಧನದಲ್ಲೇ ಮಾಡುವ ಯಂತ್ರ ಅನುವಾದ. ಯಾರೂ ಇದನ್ನು ಪರಿಶೀಲಿಸಿಲ್ಲ.',
+  ],
+  ko: [
+    '이 페이지를 한국어로 읽으시겠어요?',
+    '번역하기',
+    '괜찮아요',
+    '브라우저가 기기에서 직접 하는 기계 번역입니다. 사람이 검토하지 않았습니다.',
+  ],
+  lt: [
+    'Skaityti šį puslapį lietuviškai?',
+    'Versti',
+    'Ne, ačiū',
+    'Mašininis vertimas jūsų naršyklėje, jūsų įrenginyje. Žmogus jo netikrino.',
+  ],
+  mr: [
+    'हे पान मराठीत वाचायचे?',
+    'भाषांतर करा',
+    'नको, धन्यवाद',
+    'तुमच्या ब्राउझरने तुमच्या डिव्हाइसवर केलेले यांत्रिक भाषांतर. कोणीही ते तपासलेले नाही.',
+  ],
+  nl: [
+    'Deze pagina in het Nederlands lezen?',
+    'Vertalen',
+    'Nee, bedankt',
+    'Machinevertaling door je browser, op je apparaat. Niet door een mens nagekeken.',
+  ],
+  no: [
+    'Vil du lese siden på norsk?',
+    'Oversett',
+    'Nei takk',
+    'Maskinoversettelse fra nettleseren din, på enheten din. Ikke gjennomgått av et menneske.',
+  ],
+  pl: [
+    'Przeczytać tę stronę po polsku?',
+    'Przetłumacz',
+    'Nie, dziękuję',
+    'Tłumaczenie maszynowe wykonane przez przeglądarkę na Twoim urządzeniu. Nikt go nie sprawdzał.',
+  ],
+  pt: [
+    'Ler esta página em português?',
+    'Traduzir',
+    'Agora não',
+    'Tradução automática do seu navegador, no seu dispositivo. Não foi revista por uma pessoa.',
+  ],
+  ro: [
+    'Citiți această pagină în română?',
+    'Traduceți',
+    'Nu, mulțumesc',
+    'Traducere automată făcută de browserul dvs., pe dispozitivul dvs. Nu a fost verificată de un om.',
+  ],
+  ru: [
+    'Прочитать эту страницу на русском?',
+    'Перевести',
+    'Нет, спасибо',
+    'Машинный перевод от вашего браузера, прямо на устройстве. Человек его не проверял.',
+  ],
+  sk: [
+    'Prečítať túto stránku v slovenčine?',
+    'Preložiť',
+    'Nie, ďakujem',
+    'Strojový preklad vášho prehliadača priamo vo vašom zariadení. Nikto ho nekontroloval.',
+  ],
+  sl: [
+    'Želite to stran prebrati v slovenščini?',
+    'Prevedi',
+    'Ne, hvala',
+    'Strojni prevod vašega brskalnika, na vaši napravi. Človek ga ni pregledal.',
+  ],
+  sv: [
+    'Vill du läsa sidan på svenska?',
+    'Översätt',
+    'Nej tack',
+    'Maskinöversättning från din webbläsare, på din enhet. Inte granskad av en människa.',
+  ],
+  ta: [
+    'இந்தப் பக்கத்தைத் தமிழில் படிக்கவா?',
+    'மொழிபெயர்',
+    'வேண்டாம், நன்றி',
+    'உங்கள் உலாவி உங்கள் சாதனத்திலேயே செய்யும் இயந்திர மொழிபெயர்ப்பு. யாரும் இதைச் சரிபார்க்கவில்லை.',
+  ],
   te: ['ఈ పేజీని తెలుగులో చదవాలా?', 'అనువదించు', 'వద్దు, ధన్యవాదాలు', 'మీ బ్రౌజర్ మీ పరికరంలోనే చేసే యంత్ర అనువాదం. దీన్ని ఎవరూ తనిఖీ చేయలేదు.'],
   th: ['อ่านหน้านี้เป็นภาษาไทยไหม', 'แปล', 'ไม่ ขอบคุณ', 'แปลด้วยเครื่องโดยเบราว์เซอร์บนอุปกรณ์ของคุณ ยังไม่มีคนตรวจทาน'],
-  tr: ['Bu sayfayı Türkçe okumak ister misiniz?', 'Çevir', 'Hayır, teşekkürler', 'Tarayıcınızın cihazınızda yaptığı makine çevirisi. Bir insan tarafından kontrol edilmedi.'],
-  uk: ['Прочитати цю сторінку українською?', 'Перекласти', 'Ні, дякую', 'Машинний переклад від вашого браузера, просто на пристрої. Людина його не перевіряла.'],
-  vi: ['Đọc trang này bằng tiếng Việt?', 'Dịch', 'Không, cảm ơn', 'Bản dịch máy do trình duyệt thực hiện trên thiết bị của bạn. Chưa được người kiểm tra.'],
+  tr: [
+    'Bu sayfayı Türkçe okumak ister misiniz?',
+    'Çevir',
+    'Hayır, teşekkürler',
+    'Tarayıcınızın cihazınızda yaptığı makine çevirisi. Bir insan tarafından kontrol edilmedi.',
+  ],
+  uk: [
+    'Прочитати цю сторінку українською?',
+    'Перекласти',
+    'Ні, дякую',
+    'Машинний переклад від вашого браузера, просто на пристрої. Людина його не перевіряла.',
+  ],
+  vi: [
+    'Đọc trang này bằng tiếng Việt?',
+    'Dịch',
+    'Không, cảm ơn',
+    'Bản dịch máy do trình duyệt thực hiện trên thiết bị của bạn. Chưa được người kiểm tra.',
+  ],
   zh: ['用中文阅读此页面？', '翻译', '不用了，谢谢', '由你的浏览器在设备上进行机器翻译，未经人工审校。'],
   'zh-Hant': ['用中文閱讀此頁面？', '翻譯', '不用了，謝謝', '由你的瀏覽器在裝置上進行機器翻譯，未經人工審校。'],
 };
@@ -71,20 +231,25 @@ const OFFER = {
 const UI = {
   done: 'Machine translation by your browser, on your device. Not reviewed by a person.',
   about: 'About this translation',
-  aboutText: "Your browser translated this page on your device, using its built-in translation model. No person has reviewed it, so some wording may be wrong or read oddly. Names and technical terms stay in English. The English original is the version to rely on.",
+  aboutText:
+    'Your browser translated this page on your device, using its built-in translation model. No person has reviewed it, so some wording may be wrong or read oddly. Names and technical terms stay in English. The English original is the version to rely on.',
   original: 'Show original',
   language: 'Language',
   failed: "Translation isn't available in this browser right now.",
 };
 
-const INLINE = new Set('a abbr b bdi bdo cite data dfn em i mark q s small span strong sub sup time u var button label'.split(' '));
-const SKIP = 'script,style,noscript,template,code,pre,kbd,samp,svg,math,textarea,input,select,option,canvas,iframe,video,audio,[translate="no"],[contenteditable],.c-cursor';
+const INLINE = new Set(
+  'a abbr b bdi bdo cite data dfn em i mark q s small span strong sub sup time u var button label'.split(' '),
+);
+const SKIP =
+  'script,style,noscript,template,code,pre,kbd,samp,svg,math,textarea,input,select,option,canvas,iframe,video,audio,[translate="no"],[contenteditable],.c-cursor';
 const ATTRS = ['aria-label', 'title', 'placeholder', 'alt'];
 const LETTER = /\p{L}/u;
 const TOKEN = /\{(\/?)(\d+)\}/g;
 const STORE = 'craga-tr-';
 // Never translated, wherever they appear: the name, email addresses, domains and file names.
-const KEEP = /Craig Michael Thompson|Craig Thompson|[\w.+-]+@[\w-]+\.[\w.]*[a-z]|\b(?:[\w-]+\.)+(?:dev|com|io|org|net)(?:\/[\w./-]*)?|(?:\.\/)?\b[\w/-]+\.(?:md|log|txt|json|pdf|sh|vcf)\b/g;
+const KEEP =
+  /Craig Michael Thompson|Craig Thompson|[\w.+-]+@[\w-]+\.[\w.]*[a-z]|\b(?:[\w-]+\.)+(?:dev|com|io|org|net)(?:\/[\w./-]*)?|(?:\.\/)?\b[\w/-]+\.(?:md|log|txt|json|pdf|sh|vcf)\b/g;
 
 // The visitor's choices and the translation cache. Storage can be unavailable (private
 // browsing, blocked cookies); then nothing is remembered, and everything still works.
@@ -160,7 +325,8 @@ function unitFor(el) {
   let u = el;
   while (INLINE.has(u.localName) && u.parentElement) {
     const p = u.parentElement;
-    if (INLINE.has(p.localName) || hasText(p)) u = p; else break;
+    if (INLINE.has(p.localName) || hasText(p)) u = p;
+    else break;
   }
   return u;
 }
@@ -222,17 +388,33 @@ export function encode(unit) {
   const paired = [];
   // Protected text becomes a token too, standing for a text node of its own.
   /** @param {string} t @param {number} pi */
-  const protect = (t, pi) => hideBraces(t).replace(KEEP, (m) => { const i = nodes.length; nodes.push(doc.createTextNode(m)); parent.push(pi); paired.push(false); return '{' + i + '}'; });
+  const protect = (t, pi) =>
+    hideBraces(t).replace(KEEP, (m) => {
+      const i = nodes.length;
+      nodes.push(doc.createTextNode(m));
+      parent.push(pi);
+      paired.push(false);
+      return '{' + i + '}';
+    });
   /** @param {Element} el @param {number} pi @returns {string} */
   const walk = (el, pi) => {
     let s = '';
     for (const c of el.childNodes) {
-      if (c instanceof Text) { s += protect(c.data, pi); continue; }
+      if (c instanceof Text) {
+        s += protect(c.data, pi);
+        continue;
+      }
       if (!(c instanceof Element)) continue;
       const i = nodes.length;
       nodes.push(c);
       parent.push(pi);
-      if (atomic(c)) { paired.push(false); s += '{' + i + '}'; } else { paired.push(true); s += '{' + i + '}' + walk(c, i) + '{/' + i + '}'; }
+      if (atomic(c)) {
+        paired.push(false);
+        s += '{' + i + '}';
+      } else {
+        paired.push(true);
+        s += '{' + i + '}' + walk(c, i) + '{/' + i + '}';
+      }
     }
     return s;
   };
@@ -284,12 +466,17 @@ export function fits(out, meta) {
 export function rebuild(unit, out, meta, stash) {
   const doc = unit.ownerDocument || document;
   /** @param {Node} el */
-  const clear = (el) => { if (stash) stash(el); while (el.firstChild) el.removeChild(el.firstChild); };
+  const clear = (el) => {
+    if (stash) stash(el);
+    while (el.firstChild) el.removeChild(el.firstChild);
+  };
   clear(unit);
   /** @type {Node[]} */
   const stack = [unit];
   /** @param {string} t */
-  const text = (t) => { if (t) stack[stack.length - 1].appendChild(doc.createTextNode(showBraces(t))); };
+  const text = (t) => {
+    if (t) stack[stack.length - 1].appendChild(doc.createTextNode(showBraces(t)));
+  };
   let last = 0;
   let m;
   const s = meta.lead + out + meta.trail;
@@ -298,7 +485,10 @@ export function rebuild(unit, out, meta, stash) {
     text(s.slice(last, m.index));
     last = TOKEN.lastIndex;
     const i = +m[2];
-    if (m[1]) { stack.pop(); continue; }
+    if (m[1]) {
+      stack.pop();
+      continue;
+    }
     const el = meta.nodes[i];
     if (meta.paired[i]) clear(el);
     stack[stack.length - 1].appendChild(el);
@@ -365,7 +555,11 @@ function saveCache() {
     /** @type {Record<string, string>} */
     const o = {};
     let size = 0;
-    for (const [k, v] of state.cache) { size += k.length + v.length; if (size > 1.5e6) break; o[k] = v; }
+    for (const [k, v] of state.cache) {
+      size += k.length + v.length;
+      if (size > 1.5e6) break;
+      o[k] = v;
+    }
     ls.set(STORE + state.lang, JSON.stringify(o));
   }, 1500);
 }
@@ -424,12 +618,21 @@ async function pump() {
   } finally {
     state.running = false;
   }
-  if (state.lang === lang && !state.queue.length) { clearTimeout(state.flushT); state.flushT = undefined; flush(); saveCache(); progress(); }
+  if (state.lang === lang && !state.queue.length) {
+    clearTimeout(state.flushT);
+    state.flushT = undefined;
+    flush();
+    saveCache();
+    progress();
+  }
 }
 
 function flushSoon() {
   if (state.flushT) return;
-  state.flushT = setTimeout(() => { state.flushT = undefined; flush(); }, 250);
+  state.flushT = setTimeout(() => {
+    state.flushT = undefined;
+    flush();
+  }, 250);
 }
 function flush() {
   if (!state.active) return;
@@ -448,7 +651,10 @@ function translateTitle() {
   if (!meta.translatable) return;
   if (!state.metas.has(meta.key)) state.metas.set(meta.key, meta);
   const out = state.cache.get(meta.key);
-  if (out != null && fits(out, meta)) { rebuild(span, out, meta); document.title = span.textContent || state.title; } else enqueue(meta.key);
+  if (out != null && fits(out, meta)) {
+    rebuild(span, out, meta);
+    document.title = span.textContent || state.title;
+  } else enqueue(meta.key);
 }
 
 // Translate everything under root from the cache; anything not there yet is queued and marked
@@ -465,9 +671,18 @@ export function apply(root, live) {
     if (!meta.translatable) continue;
     if (!state.metas.has(meta.key)) state.metas.set(meta.key, meta);
     const out = state.cache.get(meta.key);
-    if (out == null) { enqueue(meta.key); u.setAttribute('lang', 'en'); continue; }
+    if (out == null) {
+      enqueue(meta.key);
+      u.setAttribute('lang', 'en');
+      continue;
+    }
     // A cached translation whose tokens don't fit this markup (it changed) is redone.
-    if (!fits(out, meta)) { state.cache.delete(meta.key); enqueue(meta.key); u.setAttribute('lang', 'en'); continue; }
+    if (!fits(out, meta)) {
+      state.cache.delete(meta.key);
+      enqueue(meta.key);
+      u.setAttribute('lang', 'en');
+      continue;
+    }
     rebuild(u, out, meta, live ? stash : null);
     if (u.getAttribute('lang') === 'en') u.removeAttribute('lang');
     if (live) translatedUnits.add(u);
@@ -479,7 +694,10 @@ export function apply(root, live) {
       if (!v || !LETTER.test(v)) continue;
       const key = '@' + v;
       const t = state.cache.get(key);
-      if (t) { if (live) stashAttr(el, a, v); el.setAttribute(a, t); } else queueAttr(key, v);
+      if (t) {
+        if (live) stashAttr(el, a, v);
+        el.setAttribute(a, t);
+      } else queueAttr(key, v);
     }
   });
   if (RTL.has(state.lang)) swapArrows(root, live);
@@ -505,7 +723,10 @@ function swapArrows(root, live) {
   for (let n = /** @type {Text | null} */ (tw.nextNode()); n; n = /** @type {Text | null} */ (tw.nextNode())) {
     if (!/[→←]/.test(n.data) || (live && state.swapped.has(n))) continue;
     if (n.parentElement && n.parentElement.closest(NO_SWAP)) continue;
-    if (live) { state.texts.push([n, n.data]); state.swapped.add(n); }
+    if (live) {
+      state.texts.push([n, n.data]);
+      state.swapped.add(n);
+    }
     n.data = n.data.replace(/[→←]/g, (c) => (c === '→' ? '←' : '→'));
   }
 }
@@ -514,20 +735,37 @@ function swapArrows(root, live) {
 /** @param {Node} node */
 function stash(node) {
   const el = /** @type {Stashed} */ (node);
-  if (el && !el.__trOrig) { el.__trOrig = Array.from(el.childNodes); state.stashes.push(el); }
+  if (el && !el.__trOrig) {
+    el.__trOrig = Array.from(el.childNodes);
+    state.stashes.push(el);
+  }
 }
 /** @param {Stashed} el @param {string} a @param {string} v */
-function stashAttr(el, a, v) { el.__trAttr = el.__trAttr || {}; if (!(a in el.__trAttr)) { el.__trAttr[a] = v; state.stashes.push(el); } }
+function stashAttr(el, a, v) {
+  el.__trAttr = el.__trAttr || {};
+  if (!(a in el.__trAttr)) {
+    el.__trAttr[a] = v;
+    state.stashes.push(el);
+  }
+}
 function restoreStatic() {
   for (const [n, d] of state.texts) n.data = d;
   state.texts = [];
   for (let i = state.stashes.length - 1; i >= 0; i--) {
     const el = state.stashes[i];
-    if (el.__trOrig) { el.replaceChildren(...el.__trOrig); delete el.__trOrig; }
-    if (el.__trAttr) { for (const [a, v] of Object.entries(el.__trAttr)) el.setAttribute(a, v); delete el.__trAttr; }
+    if (el.__trOrig) {
+      el.replaceChildren(...el.__trOrig);
+      delete el.__trOrig;
+    }
+    if (el.__trAttr) {
+      for (const [a, v] of Object.entries(el.__trAttr)) el.setAttribute(a, v);
+      delete el.__trAttr;
+    }
     if (el.getAttribute('lang') === 'en') el.removeAttribute('lang');
   }
-  document.querySelectorAll('[lang="en"]').forEach((el) => { if (el !== document.documentElement) el.removeAttribute('lang'); });
+  document.querySelectorAll('[lang="en"]').forEach((el) => {
+    if (el !== document.documentElement) el.removeAttribute('lang');
+  });
   state.stashes = [];
 }
 
@@ -540,7 +778,10 @@ async function makeTranslator(source, target, onProgress) {
   return self.Translator.create({
     sourceLanguage: source,
     targetLanguage: target,
-    monitor(m) { if (onProgress) m.addEventListener('downloadprogress', (e) => onProgress(/** @type {ProgressEvent} */ (e).loaded)); },
+    monitor(m) {
+      if (onProgress)
+        m.addEventListener('downloadprogress', (e) => onProgress(/** @type {ProgressEvent} */ (e).loaded));
+    },
   });
 }
 
@@ -549,10 +790,15 @@ async function makeTranslator(source, target, onProgress) {
 /** @param {string} lang */
 function setDocLang(lang) {
   const h = document.documentElement;
-  if (lang === 'en') { h.setAttribute('lang', h.dataset.lang0 || 'en-GB'); h.removeAttribute('dir'); return; }
+  if (lang === 'en') {
+    h.setAttribute('lang', h.dataset.lang0 || 'en-GB');
+    h.removeAttribute('dir');
+    return;
+  }
   if (!h.dataset.lang0) h.dataset.lang0 = h.getAttribute('lang') || 'en-GB';
   h.setAttribute('lang', lang);
-  if (RTL.has(lang)) h.setAttribute('dir', 'rtl'); else h.removeAttribute('dir');
+  if (RTL.has(lang)) h.setAttribute('dir', 'rtl');
+  else h.removeAttribute('dir');
 }
 
 function announce() {
@@ -576,13 +822,31 @@ export async function start(code, opts = {}) {
   let translator;
   try {
     // Progress events can still arrive after the pack is ready; by then the bar shows the translation.
-    translator = await makeTranslator('en', lang, (p) => { if (!state.active) ui('downloading', lang, p); });
+    translator = await makeTranslator('en', lang, (p) => {
+      if (!state.active) ui('downloading', lang, p);
+    });
   } catch (e) {
-    if (opts.silent) { removeUi(); return false; }
+    if (opts.silent) {
+      removeUi();
+      return false;
+    }
     ui('failed', lang);
     return false;
   }
-  Object.assign(state, { lang, translator, cache: loadCache(lang), metas: new Map(), attrSrc: new Map(), queue: [], queued: new Set(), done: 0, total: 0, active: true, swapped: new WeakSet(), title: null });
+  Object.assign(state, {
+    lang,
+    translator,
+    cache: loadCache(lang),
+    metas: new Map(),
+    attrSrc: new Map(),
+    queue: [],
+    queued: new Set(),
+    done: 0,
+    total: 0,
+    active: true,
+    swapped: new WeakSet(),
+    title: null,
+  });
   ls.set('craga-lang', lang);
   setDocLang(lang);
   try {
@@ -598,9 +862,22 @@ export async function start(code, opts = {}) {
     // Queue what's on screen first, from the English page, then translate every render.
     app.transform = null;
     app.render();
-    const near = unitsIn(app.root).map((u) => { const r = u.getBoundingClientRect(); return { u, d: r.bottom < 0 ? -r.bottom + 2000 : Math.max(0, r.top - innerHeight) }; }).sort((a, b) => a.d - b.d);
-    for (const { u } of near) { const meta = encode(u); if (meta.translatable) { state.metas.set(meta.key, meta); enqueue(meta.key); } }
-    app.transform = (holder) => { apply(holder, false); };
+    const near = unitsIn(app.root)
+      .map((u) => {
+        const r = u.getBoundingClientRect();
+        return { u, d: r.bottom < 0 ? -r.bottom + 2000 : Math.max(0, r.top - innerHeight) };
+      })
+      .sort((a, b) => a.d - b.d);
+    for (const { u } of near) {
+      const meta = encode(u);
+      if (meta.translatable) {
+        state.metas.set(meta.key, meta);
+        enqueue(meta.key);
+      }
+    }
+    app.transform = (holder) => {
+      apply(holder, false);
+    };
     app.render();
   } else {
     state.app = null;
@@ -624,8 +901,10 @@ export async function stop(opts = {}) {
     console.warn(e);
   }
   state.translator = null;
-  if (state.app) { state.app.transform = null; state.app.render(); }
-  else if (was) restoreStatic();
+  if (state.app) {
+    state.app.transform = null;
+    state.app.render();
+  } else if (was) restoreStatic();
   if (state.title != null) document.title = state.title;
   state.title = null;
   if (!opts.keep) {
@@ -651,7 +930,10 @@ async function pair(from, to) {
   const k = from + '>' + to;
   let p = pairs.get(k);
   if (!p) {
-    p = makeTranslator(from, to).catch((e) => { pairs.delete(k); throw e; });
+    p = makeTranslator(from, to).catch((e) => {
+      pairs.delete(k);
+      throw e;
+    });
     pairs.set(k, p);
   }
   return p;
@@ -745,7 +1027,12 @@ const el = (tag, attrs = {}, kids = []) => {
 
 /** @param {string} current */
 function languageSelect(current) {
-  const s = el('select', { class: 'tr-sel', translate: 'no', 'aria-label': (state.strings && state.strings.language) || UI.language, onchange: (/** @type {Event} */ e) => setLanguage(/** @type {HTMLSelectElement} */ (e.target).value) });
+  const s = el('select', {
+    class: 'tr-sel',
+    translate: 'no',
+    'aria-label': (state.strings && state.strings.language) || UI.language,
+    onchange: (/** @type {Event} */ e) => setLanguage(/** @type {HTMLSelectElement} */ (e.target).value),
+  });
   for (const [c, n] of [['en', 'English'], ...LANGS.map((c) => [c, langName(c)])]) {
     const o = /** @type {HTMLOptionElement} */ (el('option', { value: c, lang: c, text: n }));
     if (c === current) o.selected = true;
@@ -761,19 +1048,57 @@ export function offer(lang) {
   const [q, yes, no, note] = OFFER[lang];
   window.CRAGA_I18N_OFFER = 'shown';
   const id = 'tr-q';
-  const box = el('div', { class: 'tr-offer', role: 'region', 'aria-labelledby': id, lang, dir: RTL.has(lang) ? 'rtl' : 'ltr', translate: 'no' }, [
-    el('p', { id, text: q }),
-    el('small', { text: note }),
-    el('div', { class: 'tr-row' }, [
-      el('button', { type: 'button', class: 'tr-btn tr-go', text: yes, onclick: () => { window.CRAGA_I18N_OFFER = 'accepted'; start(lang); } }),
-      el('button', { type: 'button', class: 'tr-btn', text: no, onclick: () => { window.CRAGA_I18N_OFFER = 'dismissed'; ls.set('craga-lang-no', lang); removeOffer(); } }),
-    ]),
-  ]);
-  box.addEventListener('keydown', (/** @type {KeyboardEvent} */ e) => { if (e.key === 'Escape') { window.CRAGA_I18N_OFFER = 'dismissed'; removeOffer(); } });
+  const box = el(
+    'div',
+    {
+      class: 'tr-offer',
+      role: 'region',
+      'aria-labelledby': id,
+      lang,
+      dir: RTL.has(lang) ? 'rtl' : 'ltr',
+      translate: 'no',
+    },
+    [
+      el('p', { id, text: q }),
+      el('small', { text: note }),
+      el('div', { class: 'tr-row' }, [
+        el('button', {
+          type: 'button',
+          class: 'tr-btn tr-go',
+          text: yes,
+          onclick: () => {
+            window.CRAGA_I18N_OFFER = 'accepted';
+            start(lang);
+          },
+        }),
+        el('button', {
+          type: 'button',
+          class: 'tr-btn',
+          text: no,
+          onclick: () => {
+            window.CRAGA_I18N_OFFER = 'dismissed';
+            ls.set('craga-lang-no', lang);
+            removeOffer();
+          },
+        }),
+      ]),
+    ],
+  );
+  box.addEventListener('keydown', (/** @type {KeyboardEvent} */ e) => {
+    if (e.key === 'Escape') {
+      window.CRAGA_I18N_OFFER = 'dismissed';
+      removeOffer();
+    }
+  });
   state.offerEl = box;
   document.body.insertBefore(box, document.body.firstChild);
 }
-function removeOffer() { if (state.offerEl) { state.offerEl.remove(); state.offerEl = null; } }
+function removeOffer() {
+  if (state.offerEl) {
+    state.offerEl.remove();
+    state.offerEl = null;
+  }
+}
 
 /**
  * The translation bar at the top of the page.
@@ -791,7 +1116,8 @@ function ui(kind, lang, p) {
   const pct = Math.round((p || 0) * 100);
   const busy = kind === 'downloading' || kind === 'translating';
   // Progress updates in place and isn't announced; only the finished state is.
-  const msg = bar.querySelector('.tr-msg'), meter = /** @type {HTMLElement | null} */ (bar.querySelector('.tr-meter'));
+  const msg = bar.querySelector('.tr-msg'),
+    meter = /** @type {HTMLElement | null} */ (bar.querySelector('.tr-meter'));
   if (busy && bar.dataset.kind === 'busy' && msg && meter) {
     msg.textContent = langName(lang) + ' · ' + pct + '%';
     meter.style.setProperty('--p', pct + '%');
@@ -802,19 +1128,51 @@ function ui(kind, lang, p) {
   bar.setAttribute('lang', kind === 'done' ? lang : 'en');
   bar.replaceChildren();
   if (busy) {
-    bar.append(el('span', { class: 'tr-msg', lang, text: langName(lang) + ' · ' + pct + '%' }), el('span', { class: 'tr-meter', 'aria-hidden': 'true', style: '--p:' + pct + '%' }, [el('i')]));
+    bar.append(
+      el('span', { class: 'tr-msg', lang, text: langName(lang) + ' · ' + pct + '%' }),
+      el('span', { class: 'tr-meter', 'aria-hidden': 'true', style: '--p:' + pct + '%' }, [el('i')]),
+    );
   } else if (kind === 'failed') {
-    bar.append(el('span', { class: 'tr-msg', role: 'status', lang: 'en', text: UI.failed }), el('button', { type: 'button', class: 'tr-btn', lang: 'en', text: 'OK', onclick: () => removeUi() }));
+    bar.append(
+      el('span', { class: 'tr-msg', role: 'status', lang: 'en', text: UI.failed }),
+      el('button', { type: 'button', class: 'tr-btn', lang: 'en', text: 'OK', onclick: () => removeUi() }),
+    );
   } else {
     // The note a person wrote for this language, else the model's own translation of it.
     const note = (OFFER[lang] && OFFER[lang][3]) || s.done;
     const sl = state.strings ? lang : 'en';
-    const about = el('div', { id: 'tr-about', class: 'tr-about', popover: '', role: 'note', lang: sl, dir: RTL.has(sl) ? 'rtl' : 'ltr', text: s.aboutText });
-    const info = el('button', { type: 'button', class: 'tr-info', popovertarget: 'tr-about', lang: sl, 'aria-label': s.about, title: s.about, text: 'i' });
-    bar.append(el('span', { class: 'tr-msg' }, [el('span', { role: 'status', text: note }), info]), about, el('button', { type: 'button', class: 'tr-btn', text: s.original, onclick: () => stop() }), languageSelect(lang));
+    const about = el('div', {
+      id: 'tr-about',
+      class: 'tr-about',
+      popover: '',
+      role: 'note',
+      lang: sl,
+      dir: RTL.has(sl) ? 'rtl' : 'ltr',
+      text: s.aboutText,
+    });
+    const info = el('button', {
+      type: 'button',
+      class: 'tr-info',
+      popovertarget: 'tr-about',
+      lang: sl,
+      'aria-label': s.about,
+      title: s.about,
+      text: 'i',
+    });
+    bar.append(
+      el('span', { class: 'tr-msg' }, [el('span', { role: 'status', text: note }), info]),
+      about,
+      el('button', { type: 'button', class: 'tr-btn', text: s.original, onclick: () => stop() }),
+      languageSelect(lang),
+    );
   }
 }
-function removeUi() { if (state.ui) { state.ui.remove(); state.ui = null; } }
+function removeUi() {
+  if (state.ui) {
+    state.ui.remove();
+    state.ui = null;
+  }
+}
 function progress() {
   if (!state.active) return;
   if (state.queue.length || state.running) ui('translating', state.lang, state.total ? state.done / state.total : 0);
@@ -830,7 +1188,11 @@ export async function boot({ lang, saved }) {
   if (!('Translator' in self)) return;
   if (saved) {
     try {
-      if ((await self.Translator.availability({ sourceLanguage: 'en', targetLanguage: lang })) === 'available' && (await start(lang, { silent: true }))) return;
+      if (
+        (await self.Translator.availability({ sourceLanguage: 'en', targetLanguage: lang })) === 'available' &&
+        (await start(lang, { silent: true }))
+      )
+        return;
     } catch (e) {
       console.warn('could not restore the saved language', e);
     }
@@ -840,5 +1202,14 @@ export async function boot({ lang, saved }) {
 
 // For tests and debugging.
 export function status() {
-  return { lang: state.lang, active: state.active, queued: state.queue.length, running: state.running, done: state.done, total: state.total, cached: state.cache.size, next: state.queue.slice(0, 3) };
+  return {
+    lang: state.lang,
+    active: state.active,
+    queued: state.queue.length,
+    running: state.running,
+    done: state.done,
+    total: state.total,
+    cached: state.cache.size,
+    next: state.queue.slice(0, 3),
+  };
 }

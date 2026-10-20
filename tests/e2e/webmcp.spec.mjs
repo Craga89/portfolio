@@ -131,7 +131,11 @@ test.describe('WebMCP tools', { tag: '@desktop' }, () => {
 
   test('page-only arguments are offered on the page', async ({ page }) => {
     const hasShow = await page.evaluate(
-      () => !!(/** @type {any} */ (window).__tools.find((/** @type {any} */ t) => t.name === 'read_file').inputSchema.properties.show),
+      () =>
+        !!(
+          /** @type {any} */ (window).__tools.find((/** @type {any} */ t) => t.name === 'read_file').inputSchema
+            .properties.show
+        ),
     );
     expect(hasShow).toBe(true);
   });

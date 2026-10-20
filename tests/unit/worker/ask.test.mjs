@@ -13,7 +13,10 @@ describe('/ask', () => {
     const e = env({
       AI: ai((model, input) => {
         calls.push({ model, input });
-        return { response: 'Yes, he has owned a substantial monthly AWS budget [resp-bud].\nSOURCES: resp-bud, case-cost, nope' };
+        return {
+          response:
+            'Yes, he has owned a substantial monthly AWS budget [resp-bud].\nSOURCES: resp-bud, case-cost, nope',
+        };
       }),
     });
     const r = await worker.fetch(request({ q: 'Has he owned a budget?' }), e);
@@ -37,7 +40,11 @@ describe('/ask', () => {
       AI: ai((model) => {
         seen.push(model);
         if (seen.length === 1) throw new Error('3040: Capacity temporarily exceeded');
-        return { choices: [{ message: { content: '<think>hmm</think>He studied at Newcastle University.\n**SOURCES:** recognition' } }] };
+        return {
+          choices: [
+            { message: { content: '<think>hmm</think>He studied at Newcastle University.\n**SOURCES:** recognition' } },
+          ],
+        };
       }),
     });
     const d = await (await worker.fetch(request({ q: 'Where did he study?' }), e)).json();
@@ -47,7 +54,11 @@ describe('/ask', () => {
   });
 
   it('returns 503 when every model fails, so the site falls back to search', async () => {
-    const e = env({ AI: ai(() => { throw new Error('down'); }) });
+    const e = env({
+      AI: ai(() => {
+        throw new Error('down');
+      }),
+    });
     assert.equal((await worker.fetch(request({ q: 'anything' }), e)).status, 503);
   });
 
@@ -58,14 +69,20 @@ describe('/ask', () => {
     assert.equal((await worker.fetch(request({ q: '   ' }), e)).status, 400);
     assert.equal((await worker.fetch(request(null, { method: 'GET' }), e)).status, 405);
     assert.equal((await worker.fetch(request({ q: 'hi' }, { path: '/' }), e)).status, 404);
-    const pre = await worker.fetch(new Request('https://x/ask', { method: 'OPTIONS', headers: { origin: 'http://localhost:8080' } }), e);
+    const pre = await worker.fetch(
+      new Request('https://x/ask', { method: 'OPTIONS', headers: { origin: 'http://localhost:8080' } }),
+      e,
+    );
     assert.equal(pre.status, 204);
     assert.equal(pre.headers.get('access-control-allow-methods'), 'POST, OPTIONS');
   });
 
   it('applies the rate limit, and cuts long questions', async () => {
     let q = '';
-    const run = ai((m, i) => { q = i.messages[1].content; return { response: 'ok' }; });
+    const run = ai((m, i) => {
+      q = i.messages[1].content;
+      return { response: 'ok' };
+    });
     assert.equal((await worker.fetch(request({ q: 'hi' }), env({ AI: run, ASK_LIMITER: limiter(false) }))).status, 429);
     await worker.fetch(request({ q: 'x'.repeat(5000) }), env({ AI: run }));
     assert.match(q, /QUESTION: x{300}$/);
@@ -91,12 +108,21 @@ describe('answer text', () => {
 
   it('drops copied file labels, and maps file names on the SOURCES line to passages', () => {
     const ctx = pickContext('Where did he study?');
-    let d = parse('He earned an MEng from Newcastle University (file: recommendations.txt).\nSOURCES: recommendations.txt', ctx);
+    let d = parse(
+      'He earned an MEng from Newcastle University (file: recommendations.txt).\nSOURCES: recommendations.txt',
+      ctx,
+    );
     assert.equal(d.answer, 'He earned an MEng from Newcastle University.');
     assert.ok(d.sources.includes('recognition'), JSON.stringify(d.sources));
-    d = parse('Yes, he has. See acquisition.md.\nSOURCES: acquisition.md, faq.md', pickContext('Has he been through an acquisition?'));
+    d = parse(
+      'Yes, he has. See acquisition.md.\nSOURCES: acquisition.md, faq.md',
+      pickContext('Has he been through an acquisition?'),
+    );
     assert.ok(d.sources.includes('resp-acq'), JSON.stringify(d.sources));
-    assert.ok(d.sources.some((id) => id.startsWith('faq-')), JSON.stringify(d.sources));
+    assert.ok(
+      d.sources.some((id) => id.startsWith('faq-')),
+      JSON.stringify(d.sources),
+    );
     d = parse('Answer.\n\nSOURCES:\n- [faq-1]\n- career-1', ctx);
     assert.deepEqual(d.sources, ['faq-1', 'career-1']);
   });

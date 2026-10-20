@@ -4,7 +4,8 @@ import { test, expect, renderAll, settle } from './axe.mjs';
 
 test.use({ viewport: { width: 320, height: 640 }, colorScheme: 'light' });
 
-const SPACING = '*{line-height:1.5!important;letter-spacing:.12em!important;word-spacing:.16em!important}p{margin-bottom:2em!important}';
+const SPACING =
+  '*{line-height:1.5!important;letter-spacing:.12em!important;word-spacing:.16em!important}p{margin-bottom:2em!important}';
 /** @param {import('@playwright/test').Page} page */
 const sideways = (page) => page.evaluate(() => document.documentElement.scrollWidth - innerWidth);
 
@@ -23,11 +24,14 @@ for (const path of ['/', 'cv/']) {
         const cs = getComputedStyle(el);
         if (!el.childNodes.length || cs.display === 'none' || cs.visibility === 'hidden') return;
         if (![...el.childNodes].some((n) => n.nodeType === Node.TEXT_NODE && (n.textContent || '').trim())) return;
-        const clipX = /hidden|clip/.test(cs.overflowX) && el.scrollWidth > el.clientWidth + 2 && cs.textOverflow !== 'ellipsis';
+        const clipX =
+          /hidden|clip/.test(cs.overflowX) && el.scrollWidth > el.clientWidth + 2 && cs.textOverflow !== 'ellipsis';
         const clipY = /hidden|clip/.test(cs.overflowY) && el.scrollHeight > el.clientHeight + 2;
         // 1px visually-hidden text (for screen readers) is clipped on purpose.
         if ((clipX || clipY) && el.clientWidth > 1 && el.clientHeight > 1) {
-          out.push(`${el.tagName.toLowerCase()}${el.className ? '.' + String(el.className).split(' ')[0] : ''} "${(el.textContent || '').trim().slice(0, 40)}"`);
+          out.push(
+            `${el.tagName.toLowerCase()}${el.className ? '.' + String(el.className).split(' ')[0] : ''} "${(el.textContent || '').trim().slice(0, 40)}"`,
+          );
         }
       });
       return out.slice(0, 10);

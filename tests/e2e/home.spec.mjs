@@ -40,8 +40,12 @@ test('the sidebar scrolls to a section and marks it current', { tag: '@desktop' 
   await link.click();
   await expect(link).toHaveAttribute('aria-current', 'true');
   // Scrolled so the section starts near the top of the window.
-  await expect.poll(() => page.locator('#faq').evaluate((el) => Math.round(el.getBoundingClientRect().top))).toBeGreaterThanOrEqual(0);
-  await expect.poll(() => page.locator('#faq').evaluate((el) => Math.round(el.getBoundingClientRect().top))).toBeLessThan(200);
+  await expect
+    .poll(() => page.locator('#faq').evaluate((el) => Math.round(el.getBoundingClientRect().top)))
+    .toBeGreaterThanOrEqual(0);
+  await expect
+    .poll(() => page.locator('#faq').evaluate((el) => Math.round(el.getBoundingClientRect().top)))
+    .toBeLessThan(200);
 });
 
 test('the theme toggles and is remembered', { tag: '@desktop' }, async ({ page }) => {

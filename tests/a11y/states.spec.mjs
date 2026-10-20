@@ -25,7 +25,9 @@ for (const colorScheme of /** @type {const} */ (['dark', 'light'])) {
         for (let i = 0; i < n; i++) {
           await segs.nth(i).click();
           await expect(segs.nth(i)).toHaveAttribute('aria-selected', 'true');
-          await page.locator('#responsibilities details').evaluateAll((all) => all.forEach((d) => d.setAttribute('open', '')));
+          await page
+            .locator('#responsibilities details')
+            .evaluateAll((all) => all.forEach((d) => d.setAttribute('open', '')));
           await axe(`responsibilities tab ${i + 1}`, '#responsibilities');
         }
       });

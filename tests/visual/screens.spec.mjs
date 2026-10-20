@@ -24,13 +24,24 @@ const VIEWS = [
   { name: 'faq', width: 1440, height: 900, scheme: 'light', el: '#faq' },
   { name: 'blog', width: 1440, height: 900, scheme: 'dark', el: '#blog' },
   { name: 'cv', width: 1100, height: 900, scheme: 'light', path: 'cv/', full: true },
-  { name: 'blog-post', width: 1100, height: 900, scheme: 'light', path: 'blog/durandal-and-webpack-part-2-composition/' },
+  {
+    name: 'blog-post',
+    width: 1100,
+    height: 900,
+    scheme: 'light',
+    path: 'blog/durandal-and-webpack-part-2-composition/',
+  },
   { name: 'blog-index-mobile', width: 390, height: 844, scheme: 'dark', path: 'blog/', mobile: true },
 ];
 
 for (const v of VIEWS) {
   test.describe(v.name, () => {
-    test.use({ viewport: { width: v.width, height: v.height }, colorScheme: v.scheme, isMobile: !!v.mobile, hasTouch: !!v.mobile });
+    test.use({
+      viewport: { width: v.width, height: v.height },
+      colorScheme: v.scheme,
+      isMobile: !!v.mobile,
+      hasTouch: !!v.mobile,
+    });
 
     test(v.name, async ({ page }) => {
       await page.goto(v.path || '/');

@@ -1,14 +1,8 @@
 {
   "extends": "./tsconfig.base.json",
   "compilerOptions": {
-    "lib": [
-      "ES2023",
-      "DOM",
-      "DOM.Iterable"
-    ],
-    "types": [
-      "node"
-    ],
+    "lib": ["ES2023", "DOM", "DOM.Iterable"],
+    "types": ["node"],
     "noImplicitAny": false
   },
   "include": [
@@ -19,7 +13,5 @@
     "worker/src/*.d.ts",
     "shared/globals.d.ts"
   ],
-  "exclude": [
-    "tools/dc-runtime.js"
-  ]
+  "exclude": ["tools/dc-runtime.js"]
 }

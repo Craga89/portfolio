@@ -6,16 +6,49 @@ import { ORIGIN, env } from './helpers.mjs';
 
 const MCP = 'https://craga-ask.example.workers.dev/mcp';
 /** @type {(method: string, params: Record<string, any>, opts?: { id?: number | null, headers?: Record<string, string>, origin?: string }) => Request} */
-const rpc = (method, params, { id = 1, headers = {}, origin } = {}) => new Request(MCP, {
-  method: 'POST',
-  headers: { 'content-type': 'application/json', accept: 'application/json, text/event-stream', ...(origin ? { origin } : {}), ...headers },
-  body: JSON.stringify(id == null ? { jsonrpc: '2.0', method, params } : { jsonrpc: '2.0', id, method, params }),
-});
+const rpc = (method, params, { id = 1, headers = {}, origin } = {}) =>
+  new Request(MCP, {
+    method: 'POST',
+    headers: {
+      'content-type': 'application/json',
+      accept: 'application/json, text/event-stream',
+      ...(origin ? { origin } : {}),
+      ...headers,
+    },
+    body: JSON.stringify(id == null ? { jsonrpc: '2.0', method, params } : { jsonrpc: '2.0', id, method, params }),
+  });
 const V = '2026-07-28';
-const modernMeta = { 'io.modelcontextprotocol/protocolVersion': V, 'io.modelcontextprotocol/clientInfo': { name: 'test', version: '1' }, 'io.modelcontextprotocol/clientCapabilities': {} };
+const modernMeta = {
+  'io.modelcontextprotocol/protocolVersion': V,
+  'io.modelcontextprotocol/clientInfo': { name: 'test', version: '1' },
+  'io.modelcontextprotocol/clientCapabilities': {},
+};
 /** @type {(method: string, params?: Record<string, any>, extra?: Record<string, string>) => Request} */
-const modern = (method, params = {}, extra = {}) => rpc(method, { ...params, _meta: modernMeta }, { headers: { 'mcp-protocol-version': V, 'mcp-method': method, ...(params.name ? { 'mcp-name': params.name } : {}), ...extra } });
-const LIVE = { oss: { prs: 59, repos: 35, since: 2012, qtip: { stars: 1970, forks: 458, commits: 1384 }, timeline: [{ y: 2014, q: 2, n: 7, repos: ['BlueSpire/Durandal'] }], at: '2026-10-17' }, lighthouse: { mobile: { performance: 97 }, desktop: { performance: 100 } }, build: { sha: 'abc123', at: '2026-10-18T00:00:00Z' } };
+const modern = (method, params = {}, extra = {}) =>
+  rpc(
+    method,
+    { ...params, _meta: modernMeta },
+    {
+      headers: {
+        'mcp-protocol-version': V,
+        'mcp-method': method,
+        ...(params.name ? { 'mcp-name': params.name } : {}),
+        ...extra,
+      },
+    },
+  );
+const LIVE = {
+  oss: {
+    prs: 59,
+    repos: 35,
+    since: 2012,
+    qtip: { stars: 1970, forks: 458, commits: 1384 },
+    timeline: [{ y: 2014, q: 2, n: 7, repos: ['BlueSpire/Durandal'] }],
+    at: '2026-10-17',
+  },
+  lighthouse: { mobile: { performance: 97 }, desktop: { performance: 100 } },
+  build: { sha: 'abc123', at: '2026-10-18T00:00:00Z' },
+};
 const realFetch = globalThis.fetch;
 /** @type {string[]} */
 const liveFetches = [];
@@ -29,13 +62,21 @@ before(() => {
     return Response.json(LIVE);
   };
 });
-after(() => { globalThis.fetch = realFetch; });
-const call = async (/** @type {Request} */ r, /** @type {Record<string, unknown>} */ bindings = {}) => { const res = await worker.fetch(r, env(bindings)); const t = await res.text(); return { status: res.status, headers: res.headers, body: t ? JSON.parse(t) : null }; };
+after(() => {
+  globalThis.fetch = realFetch;
+});
+const call = async (/** @type {Request} */ r, /** @type {Record<string, unknown>} */ bindings = {}) => {
+  const res = await worker.fetch(r, env(bindings));
+  const t = await res.text();
+  return { status: res.status, headers: res.headers, body: t ? JSON.parse(t) : null };
+};
 const toolData = (/** @type {any} */ b) => JSON.parse(b.result.content[0].text);
 
 describe('/mcp', () => {
   it('legacy: initialize negotiates a version, no session', async () => {
-    const r = await call(rpc('initialize', { protocolVersion: '2025-06-18', capabilities: {}, clientInfo: { name: 't', version: '1' } }));
+    const r = await call(
+      rpc('initialize', { protocolVersion: '2025-06-18', capabilities: {}, clientInfo: { name: 't', version: '1' } }),
+    );
     assert.equal(r.status, 200);
     assert.equal(r.body.result.protocolVersion, '2025-06-18');
     assert.deepEqual(r.body.result.capabilities, { tools: { listChanged: false } });
@@ -53,11 +94,24 @@ describe('/mcp', () => {
   it('tools/list: the shared tools, minus page-only ones', async () => {
     const { body } = await call(rpc('tools/list', {}));
     const names = body.result.tools.map((t) => t.name);
-    assert.deepEqual(names, ['get_profile', 'get_career', 'list_files', 'read_file', 'search_site', 'ask', 'get_open_source', 'get_site_report']);
+    assert.deepEqual(names, [
+      'get_profile',
+      'get_career',
+      'list_files',
+      'read_file',
+      'search_site',
+      'ask',
+      'get_open_source',
+      'get_site_report',
+    ]);
     const read = body.result.tools.find((t) => t.name === 'read_file');
     assert.deepEqual(Object.keys(read.inputSchema.properties), ['file']);
     assert.deepEqual(read.inputSchema.required, ['file']);
-    assert.ok(body.result.tools.every((t) => t.description.length > 40 && t.annotations.readOnlyHint === true && t.inputSchema.type === 'object'));
+    assert.ok(
+      body.result.tools.every(
+        (t) => t.description.length > 40 && t.annotations.readOnlyHint === true && t.inputSchema.type === 'object',
+      ),
+    );
     assert.ok(!/on the page for the person/.test(read.description));
   });
 
@@ -72,7 +126,10 @@ describe('/mcp', () => {
     assert.ok(f.body.result.structuredContent.text.length > 200);
     const blog = await call(rpc('tools/call', { name: 'list_files', arguments: { section: 'blog' } }));
     const posts = toolData(blog.body).files;
-    assert.ok(posts.length > 10 && posts.every((p) => /\/blog\/[\w-]+\/$/.test(p.url)), 'blog posts are listed with their pages');
+    assert.ok(
+      posts.length > 10 && posts.every((p) => /\/blog\/[\w-]+\/$/.test(p.url)),
+      'blog posts are listed with their pages',
+    );
     const post = await call(rpc('tools/call', { name: 'read_file', arguments: { file: 'blog/' + posts[0].file } }));
     assert.ok(toolData(post.body).text.length > 100);
     const miss = await call(rpc('tools/call', { name: 'read_file', arguments: { file: 'nope.md' } }));
@@ -91,7 +148,16 @@ describe('/mcp', () => {
     const logged = [];
     const env = {
       AI: { run: async () => ({ response: 'Yes, he has owned the AWS budget. See budget.md.\nSOURCES: resp-bud' }) },
-      DB: { prepare: (sql) => ({ bind: (...a) => ({ first: async () => null, run: async () => { if (!/ai_budget/.test(sql)) logged.push(a); } }) }) },
+      DB: {
+        prepare: (sql) => ({
+          bind: (...a) => ({
+            first: async () => null,
+            run: async () => {
+              if (!/ai_budget/.test(sql)) logged.push(a);
+            },
+          }),
+        }),
+      },
       ASK_LIMITER: { limit: async () => ({ success: true }) },
     };
     const r = await call(rpc('tools/call', { name: 'ask', arguments: { question: 'Has he owned a budget?' } }), env);
@@ -101,10 +167,19 @@ describe('/mcp', () => {
     assert.match(d.sources[0], /^budget\.md/);
     assert.equal(logged.length, 1);
     assert.equal(logged[0][5], 'mcp');
-    const limited = await call(rpc('tools/call', { name: 'ask', arguments: { question: 'Again?' } }), { ...env, ASK_LIMITER: { limit: async () => ({ success: false }) } });
+    const limited = await call(rpc('tools/call', { name: 'ask', arguments: { question: 'Again?' } }), {
+      ...env,
+      ASK_LIMITER: { limit: async () => ({ success: false }) },
+    });
     assert.equal(limited.body.result.isError, true);
     assert.match(limited.body.result.content[0].text, /Too many questions/);
-    const down = await call(rpc('tools/call', { name: 'ask', arguments: { question: 'Where did he study?' } }), { AI: { run: async () => { throw new Error('quota'); } } });
+    const down = await call(rpc('tools/call', { name: 'ask', arguments: { question: 'Where did he study?' } }), {
+      AI: {
+        run: async () => {
+          throw new Error('quota');
+        },
+      },
+    });
     assert.equal(down.body.result.structuredContent.via, 'search');
   });
 
@@ -115,11 +190,15 @@ describe('/mcp', () => {
       const d = o.body.result.structuredContent;
       assert.ok(d.merged_pull_requests > 0, 'merged count from the snapshot');
       assert.ok(d.by_quarter.length > 0);
-    } finally { liveDown = false; }
+    } finally {
+      liveDown = false;
+    }
   });
   it('live data: open source and site report read live.json from the site', async () => {
     liveFetches.length = 0;
-    const o = await call(rpc('tools/call', { name: 'get_open_source', arguments: {} }), { SITE_URL: 'https://craigthompson.dev/' });
+    const o = await call(rpc('tools/call', { name: 'get_open_source', arguments: {} }), {
+      SITE_URL: 'https://craigthompson.dev/',
+    });
     const d = o.body.result.structuredContent;
     assert.equal(d.merged_pull_requests, 59);
     assert.equal(d.qtip2.stars, 1970);
@@ -145,19 +224,39 @@ describe('/mcp', () => {
     assert.equal(c.body.result.resultType, 'complete');
     assert.ok(c.body.result.structuredContent.work.length >= 3);
     // Base64-encoded Mcp-Name is decoded before comparing.
-    const b64 = await call(modern('tools/call', { name: 'get_career', arguments: {} }, { 'mcp-name': '=?base64?' + btoa('get_career') + '?=' }));
+    const b64 = await call(
+      modern(
+        'tools/call',
+        { name: 'get_career', arguments: {} },
+        { 'mcp-name': '=?base64?' + btoa('get_career') + '?=' },
+      ),
+    );
     assert.equal(b64.status, 200);
-    const noName = await call(rpc('tools/call', { name: 'get_career', arguments: {}, _meta: modernMeta }, { headers: { 'mcp-protocol-version': V, 'mcp-method': 'tools/call' } }));
+    const noName = await call(
+      rpc(
+        'tools/call',
+        { name: 'get_career', arguments: {}, _meta: modernMeta },
+        { headers: { 'mcp-protocol-version': V, 'mcp-method': 'tools/call' } },
+      ),
+    );
     assert.equal(noName.status, 400);
     assert.equal(noName.body.error.code, -32020);
-    const wrongName = await call(modern('tools/call', { name: 'get_career', arguments: {} }, { 'mcp-name': 'get_profile' }));
+    const wrongName = await call(
+      modern('tools/call', { name: 'get_career', arguments: {} }, { 'mcp-name': 'get_profile' }),
+    );
     assert.equal(wrongName.body.error.code, -32020);
     const wrongMethod = await call(modern('tools/list', {}, { 'mcp-method': 'tools/call' }));
     assert.equal(wrongMethod.body.error.code, -32020);
     const noVersion = await call(rpc('tools/list', { _meta: modernMeta }, { headers: { 'mcp-method': 'tools/list' } }));
     assert.equal(noVersion.body.error.code, -32020);
     const future = { ...modernMeta, 'io.modelcontextprotocol/protocolVersion': '2099-01-01' };
-    const unsup = await call(rpc('tools/list', { _meta: future }, { headers: { 'mcp-protocol-version': '2099-01-01', 'mcp-method': 'tools/list' } }));
+    const unsup = await call(
+      rpc(
+        'tools/list',
+        { _meta: future },
+        { headers: { 'mcp-protocol-version': '2099-01-01', 'mcp-method': 'tools/list' } },
+      ),
+    );
     assert.equal(unsup.status, 400);
     assert.equal(unsup.body.error.code, -32022);
     assert.equal(unsup.body.error.data.requested, '2099-01-01');
@@ -184,9 +283,22 @@ describe('/mcp', () => {
     const bad = await call(new Request(MCP, { method: 'POST', body: '{nope' }));
     assert.equal(bad.status, 400);
     assert.equal(bad.body.error.code, -32700);
-    const batch = await worker.fetch(new Request(MCP, { method: 'POST', body: JSON.stringify([{ jsonrpc: '2.0', id: 1, method: 'ping' }, { jsonrpc: '2.0', method: 'notifications/initialized' }, { jsonrpc: '2.0', id: 2, method: 'tools/list' }]) }), env());
+    const batch = await worker.fetch(
+      new Request(MCP, {
+        method: 'POST',
+        body: JSON.stringify([
+          { jsonrpc: '2.0', id: 1, method: 'ping' },
+          { jsonrpc: '2.0', method: 'notifications/initialized' },
+          { jsonrpc: '2.0', id: 2, method: 'tools/list' },
+        ]),
+      }),
+      env(),
+    );
     const out = await batch.json();
-    assert.deepEqual(out.map((/** @type {any} */ x) => x.id), [1, 2]);
+    assert.deepEqual(
+      out.map((/** @type {any} */ x) => x.id),
+      [1, 2],
+    );
     const slow = await call(rpc('tools/list', {}), { MCP_LIMITER: { limit: async () => ({ success: false }) } });
     assert.equal(slow.status, 429);
     const wrongHeader = await call(rpc('tools/list', {}, { headers: { 'mcp-protocol-version': '1999-01-01' } }));

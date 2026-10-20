@@ -62,21 +62,29 @@ export async function check(env, kind, need) {
   if (!env.DB) return; // local tests without a database
   let row;
   try {
-    row = /** @type {{ neurons: number } | null} */ (await env.DB.prepare('SELECT neurons FROM ai_budget WHERE day = ? AND kind = ?').bind(today(), kind).first());
+    row = /** @type {{ neurons: number } | null} */ (
+      await env.DB.prepare('SELECT neurons FROM ai_budget WHERE day = ? AND kind = ?').bind(today(), kind).first()
+    );
   } catch (e) {
     throw new BudgetError('budget unavailable: ' + errorMessage(e));
   }
   const spent = (row && row.neurons) || 0;
-  if (spent + need > cap(env, kind)) throw new BudgetError(`daily ${kind} budget used (${Math.round(spent)} of ${cap(env, kind)} neurons)`);
+  if (spent + need > cap(env, kind))
+    throw new BudgetError(`daily ${kind} budget used (${Math.round(spent)} of ${cap(env, kind)} neurons)`);
 }
 
 /** @param {Env} env @param {Share} kind @param {number} neurons */
 export async function charge(env, kind, neurons) {
   if (!env.DB || !(neurons > 0)) return;
   try {
-    await env.DB.prepare('INSERT INTO ai_budget (day, kind, neurons, calls) VALUES (?, ?, ?, 1) ON CONFLICT(day, kind) DO UPDATE SET neurons = neurons + excluded.neurons, calls = calls + 1')
-      .bind(today(), kind, Math.round(neurons * 100) / 100).run();
-  } catch (e) { console.log('budget charge failed:', errorMessage(e)); }
+    await env.DB.prepare(
+      'INSERT INTO ai_budget (day, kind, neurons, calls) VALUES (?, ?, ?, 1) ON CONFLICT(day, kind) DO UPDATE SET neurons = neurons + excluded.neurons, calls = calls + 1',
+    )
+      .bind(today(), kind, Math.round(neurons * 100) / 100)
+      .run();
+  } catch (e) {
+    console.log('budget charge failed:', errorMessage(e));
+  }
 }
 
 // Workers AI says the account's free allocation is used up (on the Free plan): stop every share

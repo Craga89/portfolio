@@ -46,11 +46,11 @@ export const test = base.extend({
       (url) => url.host !== site,
       (route) => {
         const url = new URL(route.request().url());
-        if (/\/ask$/.test(url.pathname)) {
+        if (url.pathname.endsWith('/ask')) {
           services.calls.ask.push(route.request().postData() || '');
           return route.fulfill(fulfilment(services.ask));
         }
-        if (/\/speak$/.test(url.pathname)) {
+        if (url.pathname.endsWith('/speak')) {
           services.calls.speak.push(route.request().postData() || '');
           return route.fulfill(fulfilment(services.speak));
         }
@@ -76,11 +76,14 @@ export const test = base.extend({
     page.on('console', (m) => {
       if (m.type() !== 'error') return;
       // The browser logs every failed response; the service stand-ins fail on purpose.
-      if (/^Failed to load resource/.test(m.text()) && new URL(m.location().url || baseURL || '').host !== site) return;
+      if (m.text().startsWith('Failed to load resource') && new URL(m.location().url || baseURL || '').host !== site) return;
       errors.push('console: ' + m.text());
     });
     await use(page);
-    expect(errors.filter((e) => !expectedErrors.some((re) => re.test(e))), 'errors on the page').toEqual([]);
+    expect(
+      errors.filter((e) => !expectedErrors.some((re) => re.test(e))),
+      'errors on the page',
+    ).toEqual([]);
   },
 });
 
@@ -106,4 +109,5 @@ export const settle = (page) =>
  * The translation bar says the page is translated.
  * @param {import('@playwright/test').Page} page
  */
-export const translated = (page) => expect(page.locator('.tr-bar')).toHaveAttribute('data-kind', 'done', { timeout: 60_000 });
+export const translated = (page) =>
+  expect(page.locator('.tr-bar')).toHaveAttribute('data-kind', 'done', { timeout: 60_000 });

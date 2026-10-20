@@ -11,7 +11,11 @@ const loops = () =>
     .filter((a) => a.playState === 'running' && a.effect?.getTiming().iterations === Infinity)
     .map((a) => {
       const target = /** @type {KeyframeEffect} */ (a.effect).target;
-      return (target && String(/** @type {Element} */ (target).className)) || /** @type {CSSAnimation} */ (a).animationName || '?';
+      return (
+        (target && String(/** @type {Element} */ (target).className)) ||
+        /** @type {CSSAnimation} */ (a).animationName ||
+        '?'
+      );
     });
 
 test.describe('motion', { tag: '@desktop' }, () => {

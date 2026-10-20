@@ -13,7 +13,10 @@ interface TranslatorCreateOptions {
 }
 interface TranslatorStatic {
   create(options: TranslatorCreateOptions): Promise<TranslatorInstance>;
-  availability(options: { sourceLanguage: string; targetLanguage: string }): Promise<'unavailable' | 'downloadable' | 'downloading' | 'available'>;
+  availability(options: {
+    sourceLanguage: string;
+    targetLanguage: string;
+  }): Promise<'unavailable' | 'downloadable' | 'downloading' | 'available'>;
 }
 /** Chrome's built-in Language Detector API. */
 interface LanguageDetectorInstance {
@@ -44,5 +47,5 @@ interface Window {
   /** The shared agent tools, as the page exposes them (shared/agent-tools.js). */
   CragaAgent: typeof import('./agent-tools.js');
 }
-declare var Translator: TranslatorStatic;
-declare var LanguageDetector: LanguageDetectorStatic;
+declare let Translator: TranslatorStatic;
+declare let LanguageDetector: LanguageDetectorStatic;

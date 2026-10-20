@@ -42,8 +42,13 @@ export const test = base.extend(
           })),
         );
         await testInfo.attach('axe', { body: JSON.stringify({ label, violations }), contentType: 'application/json' });
-        expect.soft(violations.map((v) => `${v.id}: ${v.help} (${v.target})`), `axe: ${label}`).toEqual([]);
+        expect
+          .soft(
+            violations.map((v) => `${v.id}: ${v.help} (${v.target})`),
+            `axe: ${label}`,
+          )
+          .toEqual([]);
       });
     },
-  })
+  }),
 );

@@ -8,7 +8,9 @@ import { test, expect } from '../fixtures.mjs';
  */
 async function followFirstPost(page) {
   await page.addInitScript(() =>
-    addEventListener('pagereveal', (e) => sessionStorage.setItem('vt', /** @type {any} */ (e).viewTransition ? 'yes' : 'no')),
+    addEventListener('pagereveal', (e) =>
+      sessionStorage.setItem('vt', /** @type {any} */ (e).viewTransition ? 'yes' : 'no'),
+    ),
   );
   await page.goto('blog/');
   await page.locator('.sp-bl a').first().click();
@@ -28,7 +30,10 @@ function viewTransitionsOn() {
 }
 
 test.describe('between pages', { tag: '@desktop' }, () => {
-  test('a view transition, valid speculation rules, and a reading-progress bar that moves', async ({ page, context }) => {
+  test('a view transition, valid speculation rules, and a reading-progress bar that moves', async ({
+    page,
+    context,
+  }) => {
     const cdp = await context.newCDPSession(page);
     /** @type {string[]} */
     const rules = [];
@@ -41,7 +46,10 @@ test.describe('between pages', { tag: '@desktop' }, () => {
     expect(rules.every((r) => r === 'ok')).toBe(true);
 
     await page.mouse.wheel(0, 1200);
-    const progress = () => page.evaluate(() => new DOMMatrix(getComputedStyle(/** @type {Element} */ (document.querySelector('.sp-prog'))).transform).a);
+    const progress = () =>
+      page.evaluate(
+        () => new DOMMatrix(getComputedStyle(/** @type {Element} */ (document.querySelector('.sp-prog'))).transform).a,
+      );
     await expect.poll(progress).toBeGreaterThan(0.05);
     expect(await progress()).toBeLessThan(1);
   });

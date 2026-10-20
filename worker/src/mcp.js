@@ -21,15 +21,31 @@ const META = {
  * @typedef {'modern' | 'legacy'} Era
  * @typedef {{ result?: any, error?: [number, string], status?: number }} RunResult
  */
-const ERR = { parse: -32700, invalidRequest: -32600, notFound: -32601, invalidParams: -32602, headerMismatch: -32020, unsupportedVersion: -32022 };
+const ERR = {
+  parse: -32700,
+  invalidRequest: -32600,
+  notFound: -32601,
+  invalidParams: -32602,
+  headerMismatch: -32020,
+  unsupportedVersion: -32022,
+};
 
 /** @type {(body: unknown, status: number, headers: Record<string, string>) => Response} */
-const reply = (body, status, headers) => new Response(body == null ? null : JSON.stringify(body), {
-  status,
-  headers: Object.assign(body == null ? {} : { 'content-type': 'application/json; charset=utf-8' }, { 'cache-control': 'no-store' }, headers),
-});
+const reply = (body, status, headers) =>
+  new Response(body == null ? null : JSON.stringify(body), {
+    status,
+    headers: Object.assign(
+      body == null ? {} : { 'content-type': 'application/json; charset=utf-8' },
+      { 'cache-control': 'no-store' },
+      headers,
+    ),
+  });
 /** @type {(id: unknown, code: number, message: string, data?: Record<string, unknown>) => Record<string, unknown>} */
-const rpcError = (id, code, message, data) => ({ jsonrpc: '2.0', id: id === undefined ? null : id, error: Object.assign({ code, message }, data ? { data } : {}) });
+const rpcError = (id, code, message, data) => ({
+  jsonrpc: '2.0',
+  id: id === undefined ? null : id,
+  error: Object.assign({ code, message }, data ? { data } : {}),
+});
 
 // Mcp-Name and Mcp-Param-* values may arrive Base64-encoded as =?base64?…?=.
 /**
@@ -40,7 +56,11 @@ export function headerValue(v) {
   if (v == null) return null;
   const m = /^=\?base64\?([A-Za-z0-9+/=]*)\?=$/.exec(v);
   if (!m) return v;
-  try { return new TextDecoder().decode(Uint8Array.from(atob(m[1]), (c) => c.charCodeAt(0))); } catch { return null; } // not valid Base64 or UTF-8
+  try {
+    return new TextDecoder().decode(Uint8Array.from(atob(m[1]), (c) => c.charCodeAt(0)));
+  } catch {
+    return null;
+  } // not valid Base64 or UTF-8
 }
 
 /**
@@ -55,20 +75,41 @@ async function run(msg, era, src, signal) {
   const tools = () => describeTools('mcp', src);
   switch (msg.method) {
     case 'initialize': {
-      if (era === 'modern') return { error: [ERR.notFound, 'initialize is not part of protocol ' + MODERN[0] + '; send requests directly'] };
+      if (era === 'modern')
+        return {
+          error: [ERR.notFound, 'initialize is not part of protocol ' + MODERN[0] + '; send requests directly'],
+        };
       const asked = p.protocolVersion;
-      return { result: { protocolVersion: LEGACY.includes(asked) ? asked : LEGACY[0], capabilities: { tools: { listChanged: false } }, serverInfo: SERVER, instructions: SERVER_INSTRUCTIONS } };
+      return {
+        result: {
+          protocolVersion: LEGACY.includes(asked) ? asked : LEGACY[0],
+          capabilities: { tools: { listChanged: false } },
+          serverInfo: SERVER,
+          instructions: SERVER_INSTRUCTIONS,
+        },
+      };
     }
     case 'server/discover':
       if (era !== 'modern') return { error: [ERR.notFound, 'Method not found: server/discover'] };
-      return { result: { supportedVersions: MODERN.concat(LEGACY), capabilities: { tools: {} }, instructions: SERVER_INSTRUCTIONS, ttlMs: 3600000, cacheScope: 'public' } };
+      return {
+        result: {
+          supportedVersions: MODERN.concat(LEGACY),
+          capabilities: { tools: {} },
+          instructions: SERVER_INSTRUCTIONS,
+          ttlMs: 3600000,
+          cacheScope: 'public',
+        },
+      };
     case 'ping':
       if (era === 'modern') return { error: [ERR.notFound, 'Method not found: ping'] };
       return { result: {} };
     case 'tools/list':
-      return { result: era === 'modern' ? { tools: tools(), ttlMs: 3600000, cacheScope: 'public' } : { tools: tools() } };
+      return {
+        result: era === 'modern' ? { tools: tools(), ttlMs: 3600000, cacheScope: 'public' } : { tools: tools() },
+      };
     case 'tools/call': {
-      if (typeof p.name !== 'string' || !hasTool(p.name, 'mcp')) return { error: [ERR.invalidParams, 'Unknown tool: ' + p.name], status: 200 };
+      if (typeof p.name !== 'string' || !hasTool(p.name, 'mcp'))
+        return { error: [ERR.invalidParams, 'Unknown tool: ' + p.name], status: 200 };
       return { result: await callTool(p.name, p.arguments || {}, src, 'mcp', signal) };
     }
     default:
@@ -84,7 +125,8 @@ async function run(msg, era, src, signal) {
  * @returns {Promise<[number, Record<string, unknown> | null]>}
  */
 async function handle(msg, request, src) {
-  if (!msg || typeof msg !== 'object' || msg.jsonrpc !== '2.0' || typeof msg.method !== 'string') return [400, rpcError(msg && msg.id, ERR.invalidRequest, 'Invalid JSON-RPC request')];
+  if (!msg || typeof msg !== 'object' || msg.jsonrpc !== '2.0' || typeof msg.method !== 'string')
+    return [400, rpcError(msg && msg.id, ERR.invalidRequest, 'Invalid JSON-RPC request')];
   const isNote = !('id' in msg);
   const meta = (msg.params && msg.params._meta) || null;
   const version = meta && meta[META.version];
@@ -97,26 +139,55 @@ async function handle(msg, request, src) {
     /** @type {(what: string) => [number, Record<string, unknown>]} */
     const mismatch = (what) => [400, rpcError(msg.id, ERR.headerMismatch, 'Header mismatch: ' + what)];
     if (hdr('mcp-protocol-version') == null) return mismatch('MCP-Protocol-Version header is missing');
-    if (hdr('mcp-protocol-version') !== version) return mismatch(`MCP-Protocol-Version header value '${hdr('mcp-protocol-version')}' does not match body value '${version}'`);
-    if (!MODERN.includes(version)) return [400, rpcError(msg.id, ERR.unsupportedVersion, 'Unsupported protocol version', { supported: MODERN.concat(LEGACY), requested: version })];
+    if (hdr('mcp-protocol-version') !== version)
+      return mismatch(
+        `MCP-Protocol-Version header value '${hdr('mcp-protocol-version')}' does not match body value '${version}'`,
+      );
+    if (!MODERN.includes(version))
+      return [
+        400,
+        rpcError(msg.id, ERR.unsupportedVersion, 'Unsupported protocol version', {
+          supported: MODERN.concat(LEGACY),
+          requested: version,
+        }),
+      ];
     if (!isNote) {
       if (hdr('mcp-method') == null) return mismatch('Mcp-Method header is missing');
-      if (hdr('mcp-method') !== msg.method) return mismatch(`Mcp-Method header value '${hdr('mcp-method')}' does not match body value '${msg.method}'`);
+      if (hdr('mcp-method') !== msg.method)
+        return mismatch(`Mcp-Method header value '${hdr('mcp-method')}' does not match body value '${msg.method}'`);
       if (msg.method === 'tools/call') {
         const name = headerValue(hdr('mcp-name'));
         if (name == null) return mismatch('Mcp-Name header is missing');
-        if (name !== (msg.params || {}).name) return mismatch(`Mcp-Name header value '${name}' does not match body value '${(msg.params || {}).name}'`);
+        if (name !== (msg.params || {}).name)
+          return mismatch(`Mcp-Name header value '${name}' does not match body value '${(msg.params || {}).name}'`);
       }
     }
   } else {
     const v = hdr('mcp-protocol-version');
-    if (v && !LEGACY.includes(v) && !MODERN.includes(v)) return [400, rpcError(msg.id, ERR.invalidRequest, 'Unsupported MCP-Protocol-Version: ' + v + '. Supported: ' + MODERN.concat(LEGACY).join(', '))];
+    if (v && !LEGACY.includes(v) && !MODERN.includes(v))
+      return [
+        400,
+        rpcError(
+          msg.id,
+          ERR.invalidRequest,
+          'Unsupported MCP-Protocol-Version: ' + v + '. Supported: ' + MODERN.concat(LEGACY).join(', '),
+        ),
+      ];
   }
 
   if (isNote) return [202, null];
   const out = await run(/** @type {RpcMessage & { method: string }} */ (msg), era, src, request.signal);
-  if (out.error) return [out.status || (era === 'modern' && out.error[0] === ERR.notFound ? 404 : 200), rpcError(msg.id, out.error[0], out.error[1])];
-  const result = era === 'modern' ? Object.assign({ resultType: 'complete' }, out.result, { _meta: { [META.serverInfo]: { name: SERVER.name, version: SERVER.version } } }) : out.result;
+  if (out.error)
+    return [
+      out.status || (era === 'modern' && out.error[0] === ERR.notFound ? 404 : 200),
+      rpcError(msg.id, out.error[0], out.error[1]),
+    ];
+  const result =
+    era === 'modern'
+      ? Object.assign({ resultType: 'complete' }, out.result, {
+          _meta: { [META.serverInfo]: { name: SERVER.name, version: SERVER.version } },
+        })
+      : out.result;
   return [200, { jsonrpc: '2.0', id: msg.id, result }];
 }
 
@@ -128,14 +199,26 @@ async function handle(msg, request, src) {
 export async function handleMcp(request, src, headers) {
   const h = Object.assign({}, headers);
   if (request.method === 'OPTIONS') return reply(null, 204, h);
-  if (request.method !== 'POST') return reply(rpcError(null, ERR.invalidRequest, 'Use POST for MCP requests'), 405, Object.assign({ allow: 'POST, OPTIONS' }, h));
+  if (request.method !== 'POST')
+    return reply(
+      rpcError(null, ERR.invalidRequest, 'Use POST for MCP requests'),
+      405,
+      Object.assign({ allow: 'POST, OPTIONS' }, h),
+    );
   let body;
-  try { body = JSON.parse(await request.text()); } catch { return reply(rpcError(null, ERR.parse, 'Parse error'), 400, h); }
+  try {
+    body = JSON.parse(await request.text());
+  } catch {
+    return reply(rpcError(null, ERR.parse, 'Parse error'), 400, h);
+  }
   // JSON-RPC batches (protocol 2025-03-26 only): answer each request, skip notifications.
   if (Array.isArray(body)) {
     if (!body.length) return reply(rpcError(null, ERR.invalidRequest, 'Empty batch'), 400, h);
     const out = [];
-    for (const m of /** @type {RpcMessage[]} */ (body)) { const [, b] = await handle(m, request, src); if (b) out.push(b); }
+    for (const m of /** @type {RpcMessage[]} */ (body)) {
+      const [, b] = await handle(m, request, src);
+      if (b) out.push(b);
+    }
     return out.length ? reply(out, 200, h) : reply(null, 202, h);
   }
   const [status, b] = await handle(body, request, src);
