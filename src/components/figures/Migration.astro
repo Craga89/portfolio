@@ -1,0 +1,49 @@
+---
+interface Props {
+  area: string;
+  from: string;
+  to: string;
+}
+const { area, from, to } = Astro.props;
+---
+
+<li class="c-pop migration">
+  <div class="area">{area}</div>
+  <div class="move"><span class="c-strike">{from}</span> <span class="arrow" aria-hidden="true">→</span><span class="c-sr">to</span> <strong>{to}</strong></div>
+  <div class="note"><slot /></div>
+</li>
+
+<style>
+  .migration {
+    border: 1px solid var(--line2);
+    border-radius: 10px;
+    padding: 16px;
+  }
+  /* Each card pops in a beat after the last, and strikes out its old tool a beat after that. */
+  .migration {
+    --i: calc(sibling-index() - 1);
+    animation-delay: calc(var(--i) * 0.08s);
+  }
+  .c-strike {
+    animation-delay: calc(var(--i) * 0.08s + 0.3s);
+  }
+  .area {
+    margin-bottom: 6px;
+    font-size: 12px;
+    color: var(--mute);
+  }
+  .move {
+    line-height: 1.4;
+  }
+  .arrow {
+    color: var(--acc);
+  }
+  strong {
+    color: var(--head);
+  }
+  .note {
+    margin-top: 8px;
+    font-size: 13px;
+    color: var(--acc);
+  }
+</style>

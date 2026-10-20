@@ -1,0 +1,41 @@
+---
+// One stage in an <Evolution>. The first reads "started as", the last "today".
+---
+
+<li class="c-pop era"><span class="c-sr prefix"></span><slot /></li>
+
+<style>
+  .era {
+    position: relative;
+    z-index: 1;
+    flex: 0 1 auto;
+    text-align: center;
+    font-size: 12px;
+    line-height: 1.35;
+    padding: 5px 9px;
+    border-radius: 6px;
+    border: 1px solid var(--line3);
+    background: var(--panel);
+    color: var(--text3);
+  }
+  .era:last-child {
+    border-color: var(--acc);
+    background: var(--acc-bg);
+    color: var(--head);
+    font-weight: 700;
+  }
+  .era:nth-child(2) { animation-delay: 0.15s; }
+  .era:nth-child(3) { animation-delay: 0.3s; }
+  .era:nth-child(4) { animation-delay: 0.45s; }
+  .era:nth-child(5) { animation-delay: 0.6s; }
+  .era:nth-child(n + 6) { animation-delay: 0.75s; }
+  .prefix::before {
+    content: 'then: ';
+  }
+  .era:first-child .prefix::before {
+    content: 'started as: ';
+  }
+  .era:last-child .prefix::before {
+    content: 'today: ';
+  }
+</style>

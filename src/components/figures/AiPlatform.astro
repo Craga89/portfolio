@@ -1,0 +1,148 @@
+---
+// ai-platform.md: how the product reaches the models, through an AI service in its own account,
+// and the check every change to it passes.
+---
+
+<div>
+  <div class="label">How AI reaches the product</div>
+  <div class="row">
+    <div class="c-pop box product">
+      <div class="k">product</div>
+      <div class="t">features that call AI</div>
+      <div class="s">in the core platform</div>
+    </div>
+    <div class="arrow" aria-hidden="true">→</div>
+    <div class="c-pop account">
+      <div class="account-k">isolated AWS account</div>
+      <div class="row">
+        <div class="c-pop box agent">
+          <div class="k">AI agent service</div>
+          <div class="t">Mastra agents &amp; workflows</div>
+          <div class="s">TypeScript, like the rest of the platform</div>
+        </div>
+        <div class="arrow" aria-hidden="true">⇄</div>
+        <div class="c-pop box models">
+          <div class="k">models</div>
+          <div class="t">Amazon Bedrock</div>
+          <div class="s">inside the same cloud as everything else</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <ol class="c-pop change" aria-label="Every change to the AI service">
+    <li class="lead">every change:</li>
+    <li><span class="chip">PR to the AI service</span></li>
+    <li><span class="chip" data-tone="acc">eval suite in CI</span></li>
+    <li><span class="chip" data-tone="ok">ships only if it passes</span></li>
+  </ol>
+</div>
+
+<style>
+  .label {
+    margin-bottom: 12px;
+    font-size: 13px;
+    color: var(--mute);
+  }
+  .row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+    gap: 10px 12px;
+  }
+  .box {
+    min-width: 0;
+    border: 1px solid var(--line3);
+    border-radius: 10px;
+    padding: 14px 16px;
+  }
+  .product {
+    flex: 0 1 170px;
+    animation-delay: 0.1s;
+  }
+  .account {
+    flex: 1 1 520px;
+    border: 1px dashed var(--acc);
+    border-radius: 12px;
+    padding: 12px;
+    animation-delay: 0.3s;
+  }
+  .account-k {
+    margin-bottom: 10px;
+    font-size: 12px;
+    color: var(--acc);
+  }
+  .agent {
+    flex: 1 1 220px;
+    border-color: var(--acc);
+    background: var(--acc-bg);
+    animation-delay: 0.5s;
+  }
+  .models {
+    flex: 1 1 180px;
+    animation-delay: 0.7s;
+  }
+  .k {
+    font-size: 12px;
+    color: var(--mute);
+  }
+  .agent .k {
+    color: var(--acc);
+  }
+  .t {
+    font-weight: 700;
+    color: var(--head);
+  }
+  .s {
+    margin-top: 4px;
+    font-size: 13px;
+    color: var(--mute);
+  }
+  .agent .s {
+    color: var(--text3);
+  }
+  .arrow {
+    align-self: center;
+    font-size: 18px;
+    color: var(--acc);
+  }
+  :root[dir='rtl'] .arrow {
+    scale: -1 1;
+  }
+  .change {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin: 14px 0 0;
+    padding: 0;
+    list-style: none;
+    font-size: 14px;
+    animation-delay: 0.9s;
+  }
+  .change li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .chip {
+    border: 1px solid var(--line3);
+    border-radius: 6px;
+    padding: 6px 10px;
+  }
+  .change li:nth-child(n + 3)::before {
+    content: '→' / '';
+    color: var(--acc);
+  }
+  .lead {
+    color: var(--mute);
+  }
+  [data-tone] {
+    color: var(--head);
+  }
+  .chip[data-tone='acc'] {
+    border-color: var(--acc);
+  }
+  .chip[data-tone='ok'] {
+    border-color: var(--ok);
+  }
+</style>

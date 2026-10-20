@@ -1,0 +1,201 @@
+---
+// One stage of a <Pipeline>, with the connector to the next. The slot holds anything extra
+// (tags, bars) under the title.
+interface Props {
+  title: string;
+  note?: string;
+  /** A small picture above the title. */
+  icon?: 'branch' | 'graph';
+  /** The last stage, where it ends: green, with no connector after it. */
+  final?: boolean;
+  /** Shows a pulsing "live" dot by the title. */
+  live?: boolean;
+  /** Lets the stage grow to fit wider content. */
+  wide?: boolean;
+}
+const { title, note, icon, final, live, wide } = Astro.props;
+---
+
+<li class="stage" data-final={final ? '' : undefined}>
+  <div class="box" data-wide={wide ? '' : undefined}>
+    {icon === 'branch' && <div class="branch" aria-hidden="true">⎇</div>}
+    {
+      icon === 'graph' && (
+        <div class="graph" aria-hidden="true">
+          <span data-tone="acc" />
+          <i />
+          <span data-tone="ok" />
+          <i />
+          <span />
+        </div>
+      )
+    }
+    <div class="title">{title}{live && <span class="dot" aria-hidden="true"></span>}</div>
+    {note && <div class="note">{note}</div>}
+    <slot />
+  </div>
+  {
+    !final && (
+      <span class="link" aria-hidden="true">
+        <span class="trav" />
+        <span class="arr">▶</span>
+      </span>
+    )
+  }
+</li>
+
+<style>
+  /* The stage and its connector share a list item, so the connector can grow to fill the row. */
+  .stage {
+    display: contents;
+    /* Stage n lights up at about n × 0.9s into the 6s loop; its connector's dot leaves 0.4s later. */
+    --i: calc(sibling-index() - 1);
+  }
+  .box {
+    flex: 0 1 auto;
+    border: 1px solid var(--line3);
+    border-radius: 10px;
+    padding: 12px 14px;
+    background: var(--panel);
+    color: var(--text);
+    animation: glow 6s ease infinite;
+    animation-delay: calc(var(--i) * 0.9s);
+  }
+  .box[data-wide] {
+    flex: 0 1 200px;
+    min-width: 170px;
+  }
+  .stage[data-final] .box {
+    border-color: var(--ok);
+    background: var(--ok-bg);
+    animation-name: glow-ok;
+  }
+  .title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+  }
+  .branch + .title,
+  .graph + .title {
+    margin-top: 4px;
+  }
+  .note {
+    font-size: 12px;
+    color: var(--mute);
+  }
+  .stage[data-final] .note {
+    color: var(--ok-text);
+  }
+  .branch {
+    font-size: 18px;
+    line-height: 1;
+    color: var(--acc);
+  }
+  .graph {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    height: 18px;
+  }
+  .graph span {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--line3);
+  }
+  .graph span[data-tone='acc'] {
+    background: var(--acc);
+  }
+  .graph span[data-tone='ok'] {
+    background: var(--ok);
+  }
+  .graph i {
+    width: 10px;
+    height: 1px;
+    background: var(--dim);
+  }
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--ok);
+    animation: c-pulse 2s ease-in-out infinite;
+  }
+  .link {
+    position: relative;
+    flex: 1 1 24px;
+    min-width: 24px;
+    height: 2px;
+    background: repeating-linear-gradient(90deg, var(--conn) 0 6px, transparent 6px 10px);
+  }
+  .trav {
+    position: absolute;
+    top: -3px;
+    inset-inline-start: 0;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--acc);
+    opacity: 0;
+    animation: trav 6s linear infinite;
+    animation-delay: calc(var(--i) * 0.9s + 0.4s);
+  }
+  .arr {
+    position: absolute;
+    inset-inline-end: -3px;
+    top: -9px;
+    font-size: 12px;
+    color: var(--conn);
+  }
+  :root[dir='rtl'] .arr {
+    display: inline-block;
+    scale: -1 1;
+  }
+  @keyframes glow {
+    0%,
+    16% {
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--acc) 35%, transparent);
+      border-color: var(--acc);
+    }
+    32%,
+    100% {
+      box-shadow: 0 0 0 0 transparent;
+      border-color: var(--line3);
+    }
+  }
+  @keyframes glow-ok {
+    0%,
+    16% {
+      box-shadow: 0 0 0 4px color-mix(in srgb, var(--ok) 35%, transparent);
+    }
+    32%,
+    100% {
+      box-shadow: 0 0 0 0 transparent;
+    }
+  }
+  @keyframes trav {
+    0% {
+      inset-inline-start: 0;
+      opacity: 0;
+    }
+    1% {
+      opacity: 1;
+    }
+    7% {
+      inset-inline-start: calc(100% - 8px);
+      opacity: 1;
+    }
+    9%,
+    100% {
+      inset-inline-start: calc(100% - 8px);
+      opacity: 0;
+    }
+  }
+  @media (forced-colors: active) {
+    .dot {
+      forced-color-adjust: none;
+      background: CanvasText;
+    }
+  }
+</style>

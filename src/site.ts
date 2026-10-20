@@ -12,8 +12,6 @@ export const SOURCE = 'https://github.com/Craga89/portfolio';
 export const ASK_ENDPOINT: string = ask.endpoint || '';
 export const WORKER_ORIGIN = ASK_ENDPOINT ? new URL(ASK_ENDPOINT).origin : '';
 
-/** Cloudflare Web Analytics (cookieless page views). */
-export const CF_ANALYTICS_TOKEN = '1115308102a141bdb2e944bd0144d4ee';
 
 /** Browser chrome colours, [dark, light]. */
 export const CHROME = { home: ['#16271F', '#EDF1EE'], cv: ['#111214', '#F4F4F2'] } as const;

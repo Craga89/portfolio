@@ -158,6 +158,59 @@ kbd {
   animation: c-pop 0.5s ease both;
 }
 
+/* A step that lights up in turn. */
+.c-lit {
+  animation: c-lit 0.5s ease both;
+}
+
+@keyframes c-lit {
+  from {
+    background: transparent;
+    border-color: var(--line2);
+    color: var(--dim);
+  }
+}
+
+/* The old way of doing something, struck through as it comes into view. */
+.c-strike {
+  color: var(--mute2);
+  background-image: linear-gradient(var(--bad), var(--bad));
+  background-repeat: no-repeat;
+  background-position: 0 55%;
+  background-size: 100% 2px;
+  animation: c-strike 0.6s ease both;
+}
+
+@keyframes c-strike {
+  from {
+    background-size: 0% 2px;
+    color: var(--text);
+  }
+}
+
+/* A line or bar that draws itself across as it scrolls into view. */
+.c-fill {
+  transform-origin: left;
+}
+
+@supports (animation-timeline: view()) {
+  .c-fill {
+    animation: c-bar linear both;
+    animation-timeline: view();
+    animation-range: entry 10% cover 40%;
+  }
+}
+
+@keyframes c-bar {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+:root[dir='rtl'] .c-fill {
+  transform-origin: right;
+}
+
 /* Motion off: the visitor's system setting, or "pause animations" on the site (WCAG 2.2.2). */
 @media (prefers-reduced-motion: reduce) {
   html {
@@ -196,4 +249,13 @@ kbd {
     animation: none !important;
     transition: none !important;
   }
+}
+
+/* A list item's position, for staggered entrances: animation-delay: calc(var(--i) * 0.1s).
+   Registered so it's worked out on the item and inherited by its children. Browsers without
+   sibling-index() show everything at once. */
+@property --i {
+  syntax: '<integer>';
+  inherits: true;
+  initial-value: 0;
 }

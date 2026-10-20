@@ -1,0 +1,27 @@
+---
+// this-site.md: what every change goes through, one <Gate> per step.
+interface Props {
+  label: string;
+}
+const { label } = Astro.props;
+---
+
+<div>
+  <div class="label">{label}</div>
+  <ol class="gates" aria-label="Quality gates"><slot /></ol>
+</div>
+
+<style>
+  .label {
+    margin-bottom: 10px;
+    font-size: 13px;
+    color: var(--mute);
+  }
+  .gates {
+    display: grid;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+</style>

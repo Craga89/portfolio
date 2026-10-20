@@ -1,14 +1,23 @@
 ---
-// One step in a <Chain>. `tone` marks it: acc for the key steps, ok for where it ends.
+// One step in a <Chain> or <Method>, with an arrow from the step before. `tone` marks it: acc for the key steps, ok for where it ends.
 interface Props {
   tone?: 'acc' | 'ok';
 }
 const { tone } = Astro.props;
 ---
 
-<span class="step"><span class="c-pop chip" data-tone={tone}><slot /></span></span>
+<li class="step"><span class="c-pop chip" data-tone={tone}><slot /></span></li>
 
 <style>
+  .step {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .step + .step::before {
+    content: '→' / '';
+    color: var(--acc);
+  }
   .chip {
     border: 1px solid var(--line3);
     border-radius: 6px;

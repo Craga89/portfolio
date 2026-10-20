@@ -2,12 +2,14 @@
 // A labelled part of a file: a small caption, then its content.
 interface Props {
   label?: string;
+  /** acc highlights the caption, for the "after" half of a before-and-after. */
+  tone?: 'acc';
 }
-const { label } = Astro.props;
+const { label, tone } = Astro.props;
 ---
 
 <div class="block">
-  {label && <div class="label">{label}</div>}
+  {label && <div class="label" data-tone={tone}>{label}</div>}
   <slot />
 </div>
 
@@ -16,5 +18,8 @@ const { label } = Astro.props;
     margin-bottom: 12px;
     font-size: 13px;
     color: var(--mute);
+  }
+  .label[data-tone='acc'] {
+    color: var(--acc);
   }
 </style>

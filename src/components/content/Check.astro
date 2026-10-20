@@ -1,0 +1,35 @@
+---
+interface Props {
+  /** What the check maps to, such as WCAG success criteria. */
+  tag: string;
+  title: string;
+}
+const { tag, title } = Astro.props;
+---
+
+<li class="check">
+  <div class="tag">{tag}</div>
+  <div class="title">{title}</div>
+  <div class="text"><slot /></div>
+</li>
+
+<style>
+  .check {
+    border: 1px solid var(--line2);
+    border-radius: 8px;
+    padding: 12px 14px;
+  }
+  .tag {
+    font-size: 12px;
+    color: var(--acc);
+  }
+  .title {
+    margin: 2px 0 4px;
+    color: var(--head);
+    font-weight: 700;
+  }
+  .text {
+    font-size: 14px;
+    color: var(--text3);
+  }
+</style>

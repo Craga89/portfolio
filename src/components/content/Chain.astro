@@ -6,12 +6,16 @@ import Block from './Block.astro';
 interface Props {
   label?: string;
   loop?: boolean;
+  /** The old way of doing it: muted steps and arrows. */
+  faded?: boolean;
+  /** Highlight the caption. */
+  tone?: 'acc';
 }
-const { label, loop } = Astro.props;
+const { label, loop, faded, tone } = Astro.props;
 ---
 
-<Block label={label}>
-  <div class="chain" data-loop={loop ? '' : undefined}><slot /></div>
+<Block label={label} tone={tone}>
+  <ol class="chain" aria-label={label} data-loop={loop ? '' : undefined} data-faded={faded ? '' : undefined}><slot /></ol>
 </Block>
 
 <style>
@@ -22,16 +26,20 @@ const { label, loop } = Astro.props;
     gap: 8px;
     font-size: 14px;
   }
-  /* Arrows between the steps (and the loop mark), as flex items of their own. */
-  .chain :global(.step + .step)::before,
-  .chain[data-loop]::after {
-    content: '→' / '';
-    color: var(--acc);
+  .chain {
+    margin: 0;
+    padding: 0;
+    list-style: none;
   }
+  .chain[data-faded] :global(.chip) {
+    color: var(--text3);
+  }
+  .chain[data-faded] :global(.step + .step)::before {
+    color: var(--dim);
+  }
+  /* A cycle: back to the start. */
   .chain[data-loop]::after {
     content: '↻' / '';
-  }
-  .chain :global(.step) {
-    display: contents;
+    color: var(--acc);
   }
 </style>

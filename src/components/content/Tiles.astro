@@ -1,0 +1,31 @@
+---
+// A markdown list shown as a grid of small boxes.
+import Block from './Block.astro';
+
+interface Props {
+  label: string;
+}
+---
+
+<Block label={Astro.props.label}><div class="tiles"><slot /></div></Block>
+
+<style>
+  .tiles :global(ul) {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+    gap: 10px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: 14px;
+  }
+  .tiles :global(li) {
+    border: 1px solid var(--line2);
+    border-radius: 8px;
+    padding: 12px 14px;
+    color: var(--text3);
+  }
+  .tiles :global(p) {
+    margin: 0;
+  }
+</style>

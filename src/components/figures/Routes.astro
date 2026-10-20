@@ -1,0 +1,27 @@
+---
+// this-site.md: how each kind of request travels, one <Route> per row.
+interface Props {
+  label: string;
+}
+const { label } = Astro.props;
+---
+
+<div>
+  <div class="label">{label}</div>
+  <ul class="routes" aria-label={label}><slot /></ul>
+</div>
+
+<style>
+  .label {
+    margin-bottom: 10px;
+    font-size: 13px;
+    color: var(--mute);
+  }
+  .routes {
+    display: grid;
+    gap: 10px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+</style>

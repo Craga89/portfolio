@@ -1,0 +1,31 @@
+---
+interface Props {
+  /** Shown in bold before the text, such as "2019–21 · Founding & foundations." */
+  title: string;
+}
+---
+
+<li class="phase"><div><span class="title">{Astro.props.title}</span> <span class="text"><slot /></span></div></li>
+
+<style>
+  .phase {
+    display: flex;
+    gap: 14px;
+  }
+  /* Tree branches: ├─ for each phase, └─ for the last. */
+  .phase::before {
+    content: '├─' / '';
+    flex: none;
+    color: var(--dim);
+  }
+  .phase:last-child::before {
+    content: '└─' / '';
+  }
+  .title {
+    color: var(--acc);
+    font-weight: 700;
+  }
+  .text {
+    color: var(--text2);
+  }
+</style>

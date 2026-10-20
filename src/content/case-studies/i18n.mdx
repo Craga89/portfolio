@@ -13,27 +13,19 @@ Customers survey their people in their own language, so the interface and the qu
   <Stat value="cache first">translations checked inside the VPC before any network call</Stat>
 </Stats>
 
-{/* TODO */}
-<div style="display: flex; flex-direction: column; gap: 18px">
-<div>
-<div style="font-size: 13px; color: var(--mute); margin-bottom: 10px">Interface text, kept in step by the build</div>
-<ol class="c-mcp-flow" aria-label="Interface text, kept in step by the build">
-<li><span class="c-mcp-s"><b>messages</b> in components</span><span class="c-mcp-a" aria-hidden="true">→</span></li>
-<li><span class="c-mcp-s"><b>extracted</b> to English</span><span class="c-mcp-a" aria-hidden="true">→</span></li>
-<li><span class="c-mcp-s"><b>keys synced</b> to every language</span><span class="c-mcp-a" aria-hidden="true">→</span></li>
-<li><span class="c-mcp-s c-mcp-end"><b>gaps</b> fall back to English</span></li>
-</ol>
-</div>
-<div>
-<div style="font-size: 13px; color: var(--mute); margin-bottom: 10px">Customer content, translated at runtime, cache first</div>
-<ol class="c-mcp-flow" aria-label="Customer content, translated at runtime, cache first">
-<li><span class="c-mcp-s"><b>survey question</b></span><span class="c-mcp-a" aria-hidden="true">→</span></li>
-<li><span class="c-mcp-s"><b>Redis cache</b> inside the VPC</span><span class="c-mcp-a" aria-hidden="true">→</span></li>
-<li><span class="c-mcp-s"><b>translation service</b> + DynamoDB</span><span class="c-mcp-a" aria-hidden="true">→</span></li>
-<li><span class="c-mcp-s c-mcp-end"><b>Google Cloud Translation</b></span></li>
-</ol>
-</div>
-</div>
+<Flow label="Interface text, kept in step by the build">
+  <FlowStep term="messages">in components</FlowStep>
+  <FlowStep term="extracted">to English</FlowStep>
+  <FlowStep term="keys synced">to every language</FlowStep>
+  <FlowStep term="gaps" final>fall back to English</FlowStep>
+</Flow>
+
+<Flow label="Customer content, translated at runtime, cache first">
+  <FlowStep term="survey question" />
+  <FlowStep term="Redis cache">inside the VPC</FlowStep>
+  <FlowStep term="translation service">+ DynamoDB</FlowStep>
+  <FlowStep term="Google Cloud Translation" final />
+</Flow>
 
 <Compare label="Internationalisation before and after">
   <Row area="language files" before="drifted as keys changed">Every build adds and removes keys in every language to match English</Row>

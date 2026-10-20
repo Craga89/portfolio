@@ -1,0 +1,40 @@
+---
+// refactor.md: the repo-wide migrations, each a <Migration> from the old tool to the new one.
+interface Props {
+  label: string;
+  /** A total shown opposite the caption. */
+  total?: string;
+}
+const { label, total } = Astro.props;
+---
+
+<div>
+  <div class="head"><span class="label">{label}</span>{total && <span class="total">{total}</span>}</div>
+  <ol class="migrations" aria-label={label}><slot /></ol>
+</div>
+
+<style>
+  .head {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 6px 16px;
+    margin-bottom: 12px;
+    font-size: 13px;
+  }
+  .label {
+    color: var(--mute);
+  }
+  .total {
+    color: var(--acc);
+  }
+  .migrations {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr));
+    gap: 12px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+</style>

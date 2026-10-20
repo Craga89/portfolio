@@ -1,0 +1,40 @@
+---
+// Each responsibility's own page.
+import type { GetStaticPaths } from 'astro';
+import FilePage from '../../layouts/FilePage.astro';
+import ResponsibilityCard from '../../components/files/ResponsibilityCard.astro';
+import Crumb from '../../components/page/Crumb.astro';
+import FileFooter from '../../components/page/FileFooter.astro';
+import { responsibilities, slugOf } from '../../lib/files';
+import { articleLd, describe } from '../../lib/seo';
+
+export const getStaticPaths = (async () => {
+  const all = await responsibilities();
+  return all.map((entry, current) => ({ params: { slug: slugOf(entry.data.file) }, props: { all, current } }));
+}) satisfies GetStaticPaths;
+
+const { all, current } = Astro.props;
+const entry = all[current];
+const { file, title, id } = entry.data;
+const path = `responsibilities/${slugOf(file)}/`;
+const home = `/?resp=${id}#responsibilities`;
+const description = describe(entry.data.lede, `${title}: responsibilities from Craig Michael Thompson's portfolio.`);
+const files = all.map((e) => ({ file: e.data.file, href: `/responsibilities/${slugOf(e.data.file)}/` }));
+---
+
+<FilePage
+  title={`${title} · ${file} · Craig Michael Thompson`}
+  description={description}
+  path={path}
+  type="article"
+  image={`/${path}og.png`}
+  imageAlt={`${title}. responsibilities/${file}, Craig Michael Thompson`}
+  ld={articleLd({ headline: title, name: file, description, path })}
+  tips
+  mono
+>
+  <Crumb folder="responsibilities/" file={file} home={home} />
+  <h1 class="c-sr">{title}</h1>
+  <ResponsibilityCard entry={entry} index={current} total={all.length} level={2} open />
+  <FileFooter folder="responsibilities/" files={files} current={current} source={entry.body ?? ''} home={home} />
+</FilePage>

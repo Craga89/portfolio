@@ -1,0 +1,137 @@
+---
+// monorepo.md: the separate repositories (one square each, coloured by kind), merged into one.
+interface Group {
+  /** How many repositories of this kind. */
+  count: number;
+  name: string;
+  tone: 'acc' | 'ok' | 'blue' | 'lilac' | 'text';
+}
+interface Props {
+  before: string;
+  groups: Group[];
+  via: string;
+  after: string;
+  /** The headline number in the "after" box; the slot describes it. */
+  value: string;
+}
+const { before, groups, via, after, value } = Astro.props;
+const squares = groups.flatMap((g) => Array.from({ length: g.count }, () => g.tone));
+---
+
+<div class="merge">
+  <div class="before">
+    <div class="caption">{before}</div>
+    <div class="squares" aria-hidden="true">{squares.map((tone) => <span class="sq" data-tone={tone}></span>)}</div>
+    <ul class="key">
+      {
+        groups.map((g) => (
+          <li>
+            <span aria-hidden="true" data-tone={g.tone}>■</span> {g.name}
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+  <div class="c-pop via" aria-hidden="true">{via}<span class="arrow">→</span></div>
+  <div class="c-pop after">
+    <div class="caption">{after}</div>
+    <div class="value">{value}</div>
+    <div class="text"><slot /></div>
+  </div>
+</div>
+
+<style>
+  .merge {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 24px 32px;
+  }
+  .before {
+    flex: 1 1 300px;
+    min-width: 0;
+  }
+  .caption {
+    margin-bottom: 12px;
+    font-size: 13px;
+    color: var(--mute);
+  }
+  .after .caption {
+    margin-bottom: 0;
+  }
+  .squares {
+    display: grid;
+    grid-template-columns: repeat(6, 30px);
+    gap: 8px;
+  }
+  .sq {
+    width: 30px;
+    height: 30px;
+    border-radius: 4px;
+    animation: c-pop2 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  }
+  .sq {
+    animation-delay: calc((sibling-index() - 1) * 0.04s);
+  }
+  @keyframes c-pop2 {
+    from {
+      opacity: 0;
+      transform: scale(0.3);
+    }
+  }
+  [data-tone='acc'] { --tone: var(--acc); }
+  [data-tone='ok'] { --tone: var(--ok); }
+  [data-tone='blue'] { --tone: var(--blue); }
+  [data-tone='lilac'] { --tone: var(--lilac); }
+  [data-tone='text'] { --tone: var(--text); }
+  .sq {
+    background: var(--tone);
+  }
+  .key {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 16px;
+    margin: 14px 0 0;
+    padding: 0;
+    list-style: none;
+    font-size: 13px;
+    color: var(--text3);
+  }
+  .key [data-tone] {
+    color: var(--tone);
+  }
+  .via {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 0 0 auto;
+    max-width: 12ch;
+    text-align: center;
+    font-size: 15px;
+    color: var(--acc);
+    animation-delay: 0.8s;
+  }
+  .arrow {
+    font-size: 28px;
+  }
+  :root[dir='rtl'] .arrow {
+    scale: -1 1;
+  }
+  .after {
+    flex: 1 1 260px;
+    min-width: 0;
+    border: 2px solid var(--acc);
+    border-radius: 12px;
+    padding: 24px;
+    animation-delay: 1s;
+  }
+  .value {
+    font-size: clamp(36px, 5vw, 52px);
+    font-weight: 800;
+    line-height: 1.1;
+    color: var(--head);
+  }
+  .text {
+    color: var(--text);
+  }
+</style>

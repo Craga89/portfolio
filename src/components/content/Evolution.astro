@@ -1,0 +1,54 @@
+---
+// How something changed over the years: stages along a line, each an <Era>.
+import Block from './Block.astro';
+
+interface Props {
+  label: string;
+  /** The list's accessible name. */
+  name: string;
+}
+const { label, name } = Astro.props;
+---
+
+<Block label={label}>
+  <div class="scroll" tabindex="0" role="region" aria-label="Wide content, scrolls sideways">
+    <div class="track">
+      <span class="line" aria-hidden="true"><span class="c-fill"></span></span>
+      <ol aria-label={name}><slot /></ol>
+    </div>
+  </div>
+</Block>
+
+<style>
+  .scroll {
+    overflow-x: auto;
+  }
+  .track {
+    position: relative;
+    min-width: 640px;
+    margin: 4px 0;
+  }
+  .line {
+    position: absolute;
+    inset-inline: 12px;
+    top: 50%;
+    height: 2px;
+    margin-top: -1px;
+  }
+  .c-fill {
+    display: block;
+    height: 2px;
+    width: 100%;
+    background: var(--line3);
+  }
+  ol {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+</style>

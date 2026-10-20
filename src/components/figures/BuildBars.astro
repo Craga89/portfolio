@@ -1,0 +1,76 @@
+---
+// Progress bars inside a <Stage>: packages building side by side, each finishing at its own pace.
+interface Props {
+  items: string[];
+}
+---
+
+<ul class="bars">
+  {
+    Astro.props.items.map((name) => (
+      <li>
+        <span class="name">{name}</span>
+        <span class="track">
+          <span class="fill" />
+        </span>
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  .bars {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin: 8px 0 0;
+    padding: 0;
+    list-style: none;
+    font-size: 11px;
+    color: var(--text3);
+  }
+  li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .name {
+    flex: 0 0 9ch;
+  }
+  .track {
+    flex: 1;
+    height: 6px;
+    background: var(--line);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .fill {
+    display: block;
+    height: 6px;
+    background: var(--ok);
+    transform-origin: left;
+    animation: b1 6s cubic-bezier(0.3, 0.7, 0.2, 1) infinite;
+    animation-delay: calc(var(--i) * 0.9s + 0.1s);
+  }
+  li:nth-child(2) .fill {
+    animation-name: b2;
+  }
+  li:nth-child(3n) .fill {
+    animation-name: b3;
+  }
+  :root[dir='rtl'] .fill {
+    transform-origin: right;
+  }
+  @keyframes b1 {
+    0% { transform: scaleX(0); }
+    10%, 100% { transform: scaleX(1); }
+  }
+  @keyframes b2 {
+    0% { transform: scaleX(0); }
+    17%, 100% { transform: scaleX(1); }
+  }
+  @keyframes b3 {
+    0% { transform: scaleX(0); }
+    7%, 100% { transform: scaleX(1); }
+  }
+</style>

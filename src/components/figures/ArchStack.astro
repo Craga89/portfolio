@@ -1,0 +1,78 @@
+---
+// One architecture, top (the internet) to bottom, each layer a <Layer>. `after` is the new one:
+// highlighted, with its layers popping in and its notes in green rather than red.
+interface Props {
+  label: string;
+  /** How operators reach it, under the layers. */
+  access: string;
+  after?: boolean;
+}
+const { label, access, after } = Astro.props;
+---
+
+<div class="stack" data-after={after ? '' : undefined}>
+  <div class="label">{label}</div>
+  <ol class="layers" aria-label={label}><slot /></ol>
+  <div class="access">{access}</div>
+</div>
+
+<style>
+  .stack {
+    flex: 1 1 300px;
+    min-width: 0;
+    border: 1px dashed var(--line3);
+    border-radius: 12px;
+    padding: 20px;
+  }
+  .stack[data-after] {
+    border: 1px solid var(--acc);
+  }
+  .label {
+    margin-bottom: 14px;
+    font-size: 13px;
+    color: var(--mute);
+  }
+  .stack[data-after] .label {
+    color: var(--acc);
+  }
+  .layers {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .access {
+    margin-top: 10px;
+    font-size: 13px;
+    color: var(--mute);
+  }
+  .stack[data-after] .access {
+    color: var(--ok-text);
+    animation: c-pop 0.5s ease both;
+    animation-delay: 1.1s;
+  }
+  /* Layer.astro's tones, the arrows between layers, and the "after" entrance. */
+  .stack :global(.layer + .layer)::before {
+    content: '↓' / '';
+    display: block;
+    margin-bottom: 4px;
+    text-align: center;
+    color: var(--dim);
+  }
+  .stack[data-after] :global(.layer + .layer)::before {
+    color: var(--acc);
+  }
+  .stack:not([data-after]) :global(.note) {
+    color: var(--bad);
+  }
+  .stack[data-after] :global(.box) {
+    color: var(--head);
+    animation: c-pop 0.5s ease both;
+    animation-delay: calc(var(--i) * 0.2s + 0.1s);
+  }
+  .stack[data-after] :global(.layer:first-child .box) {
+    color: var(--text);
+  }
+</style>

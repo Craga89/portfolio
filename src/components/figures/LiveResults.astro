@@ -1,0 +1,81 @@
+---
+// this-site.md: the latest CI results. The fallbacks below are replaced from live.json when the
+// page loads (scripts/live.ts).
+const cards = [
+  { key: 'lh', name: 'Lighthouse', sub: 'performance, accessibility and best practices, mobile and desktop' },
+  { key: 'a11y', name: 'WCAG 2.2 AA suite', sub: 'axe-core in every page state, plus keyboard, focus, reflow and motion checks' },
+  { key: 'ev', name: 'ask.sh answer tests', sub: 'right facts, nothing invented, no prompt injection' },
+];
+---
+
+<div>
+  <div class="label">Latest results</div>
+  <ul class="live" aria-label="Latest CI results">
+    {
+      cards.map((c) => (
+        <li data-live={c.key}>
+          <div class="k">{c.name}</div>
+          <div class="v" data-live-line>loads on the live site</div>
+          <div class="s" data-live-sub={c.key === 'ev' ? undefined : ''}>{c.sub}</div>
+          <div class="m">
+            <span data-live-meta>from the latest CI run</span>
+            {c.key === 'ev' ? (
+              <>
+                {' · '}
+                <a href="/#c-tests" data-open-tests>see the tests</a>
+              </>
+            ) : (
+              <span data-live-run hidden>
+                {' · '}
+                <a href="">view run</a>
+              </span>
+            )}
+          </div>
+        </li>
+      ))
+    }
+  </ul>
+</div>
+
+<style>
+  .label {
+    margin-bottom: 10px;
+    font-size: 13px;
+    color: var(--mute);
+  }
+  .live {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+    gap: 10px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  li {
+    border: 1px solid var(--line2);
+    border-radius: 8px;
+    padding: 12px 14px;
+  }
+  .k {
+    font-size: 12px;
+    color: var(--acc);
+  }
+  .v {
+    margin: 4px 0 2px;
+    font-family: var(--f-mono);
+    font-size: 18px;
+    line-height: 1.45;
+    font-weight: 700;
+    color: var(--head);
+    white-space: pre-wrap;
+  }
+  .s {
+    font-size: 13px;
+    color: var(--text3);
+  }
+  .m {
+    margin-top: 6px;
+    font-size: 12px;
+    color: var(--dim);
+  }
+</style>

@@ -2,7 +2,11 @@
 import { defineConfig } from 'astro/config';
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
+import { createHash } from 'node:crypto';
 import { postBuild } from './integrations/post-build.mjs';
+import { INLINE_SCRIPTS } from './src/scripts/inline.mjs';
+
+const sha256 = (s) => `sha256-${createHash('sha256').update(s).digest('base64')}`;
 
 // Search engines stay out until the content is finished: build with ALLOW_INDEXING=true to open up.
 const indexing = process.env.ALLOW_INDEXING === 'true';
@@ -16,7 +20,7 @@ export default defineConfig({
   security: {
     csp: {
       directives: ["default-src 'self'", "img-src 'self' data:", "connect-src 'self' https://*.workers.dev https://cloudflareinsights.com", "object-src 'none'", "base-uri 'self'"],
-      scriptDirective: { resources: ["'self'", 'https://static.cloudflareinsights.com'] },
+      scriptDirective: { resources: ["'self'", 'https://static.cloudflareinsights.com'], hashes: INLINE_SCRIPTS.map(sha256) },
     },
   },
   markdown: { syntaxHighlight: false },

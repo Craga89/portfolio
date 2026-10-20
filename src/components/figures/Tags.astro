@@ -1,0 +1,53 @@
+---
+// Small tags inside a <Stage>. `tick` makes them checks that pass in turn as the pipeline runs.
+interface Props {
+  items: string[];
+  tick?: boolean;
+}
+const { items, tick } = Astro.props;
+---
+
+<ul class="tags" data-tick={tick ? '' : undefined}>{items.map((t) => <li>{t}</li>)}</ul>
+
+<style>
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin: 6px 0 0;
+    padding: 0;
+    list-style: none;
+    font-size: 11px;
+  }
+  li {
+    border: 1px solid var(--line3);
+    border-radius: 4px;
+    padding: 1px 6px;
+  }
+  .tags[data-tick] {
+    max-width: 170px;
+    margin-top: 8px;
+  }
+  /* The checks pass one after another, as the run reaches this stage (stage --i × 0.9s). */
+  .tags[data-tick] li {
+    border-color: var(--ok);
+    color: var(--ok);
+    animation: tick 6s linear infinite;
+    animation-delay: calc(var(--i) * 0.9s + (sibling-index() * 0.1s));
+  }
+  @keyframes tick {
+    0% {
+      color: var(--dim);
+      border-color: var(--line2);
+    }
+    2%,
+    80% {
+      color: var(--ok);
+      border-color: var(--ok);
+    }
+    100% {
+      color: var(--dim);
+      border-color: var(--line2);
+    }
+  }
+</style>

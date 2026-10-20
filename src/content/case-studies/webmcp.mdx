@@ -7,9 +7,7 @@ title: "A site AI agents can use, not just read"
 ---
 AI assistants are starting to work inside the browser, on the page a person has open. Rather than leave them to read the screen and guess, I've given this site its own tools through WebMCP, a draft web standard. An agent calls a tool and gets structured answers, drawn from the same content visitors read. The same tools also run as an MCP server, so any MCP client can use them without the site open.
 
-{/* TODO */}<p class="c-mcp-live" data-on="false"><span class="c-mcp-dot" aria-hidden="true"></span>In this browser: no WebMCP, so the page skips it.</p>
-
-{/* TODO */}<p class="c-mcp-url"><span class="c-mcp-url-k">MCP server</span><code>https://craga-ask.craga89.workers.dev/mcp</code><button type="button" class="c-mcp-copy" data-dc-click="85">copy</button></p>
+<McpStatus />
 
 <Flow label="How an agent uses the tools">
   <FlowStep term="AI agent">in the browser, or any MCP client</FlowStep>

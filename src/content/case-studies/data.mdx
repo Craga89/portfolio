@@ -7,28 +7,20 @@ title: "Making the flagship report fast at scale"
 ---
 Reporting is often the first place a SaaS platform slows down: large aggregations sliced by many dimensions at once. I led the redesign of a core reporting data model and its queries on MongoDB, and we proved the new version matched the old one in production before switching over.
 
-{/* TODO */}
-<div style="display: flex; flex-direction: column; gap: 16px">
-<div>
-<div style="font-size: 13px; color: var(--mute); margin-bottom: 8px">before: work done at read time, on every request</div>
-<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 14px">
-<span style="border: 1px solid var(--line3); border-radius: 6px; padding: 8px 12px; color: var(--text3)">every response</span><span aria-hidden="true" style="color: var(--dim)">→</span>
-<span style="border: 1px solid var(--line3); border-radius: 6px; padding: 8px 12px; color: var(--text3)">unwind all facets</span><span aria-hidden="true" style="color: var(--dim)">→</span>
-<span style="border: 1px solid var(--line3); border-radius: 6px; padding: 8px 12px; color: var(--text3)">group everything</span><span aria-hidden="true" style="color: var(--dim)">→</span>
-<span style="border: 1px solid var(--line3); border-radius: 6px; padding: 8px 12px; color: var(--text3)">confidentiality in the query</span>
-</div>
-</div>
-<div>
-<div style="font-size: 13px; color: var(--acc); margin-bottom: 8px">after: work moved to write time, reads stay lean</div>
-<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 14px">
-<span class="c-pop" style="border: 1px solid var(--acc); background: var(--acc-bg); border-radius: 6px; padding: 8px 12px; color: var(--head); animation-delay: .1s">facets denormalised on write</span><span aria-hidden="true" style="color: var(--acc)">→</span>
-<span class="c-pop" style="border: 1px solid var(--ok); border-radius: 6px; padding: 8px 12px; color: var(--head); animation-delay: .3s">purpose-built collection</span><span aria-hidden="true" style="color: var(--acc)">→</span>
-<span class="c-pop" style="border: 1px solid var(--ok); border-radius: 6px; padding: 8px 12px; color: var(--head); animation-delay: .5s">high-cardinality-first index</span><span aria-hidden="true" style="color: var(--acc)">→</span>
-<span class="c-pop" style="border: 1px solid var(--ok); border-radius: 6px; padding: 8px 12px; color: var(--head); animation-delay: .7s">analytics-node read</span><span aria-hidden="true" style="color: var(--acc)">→</span>
-<span class="c-pop" style="border: 1px solid var(--ok); border-radius: 6px; padding: 8px 12px; color: var(--head); animation-delay: .9s">confidentiality in code, cacheable</span>
-</div>
-</div>
-</div>
+<Chain faded label="before: work done at read time, on every request">
+  <Step>every response</Step>
+  <Step>unwind all facets</Step>
+  <Step>group everything</Step>
+  <Step>confidentiality in the query</Step>
+</Chain>
+
+<Chain tone="acc" label="after: work moved to write time, reads stay lean">
+  <Step tone="acc">facets denormalised on write</Step>
+  <Step tone="ok">purpose-built collection</Step>
+  <Step tone="ok">high-cardinality-first index</Step>
+  <Step tone="ok">analytics-node read</Step>
+  <Step tone="ok">confidentiality in code, cacheable</Step>
+</Chain>
 
 <Stats>
   <Stat value="10×">higher complexity ceiling for core reports</Stat>

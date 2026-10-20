@@ -7,21 +7,17 @@ title: "Keep the toolchain modern, one reviewed change at a time"
 ---
 Tooling ages fast. Rather than letting it drift, I've led a steady run of repo-wide migrations: linting, packages, bundling, types, runtime and the compiler itself. Each one was scripted with a <Term id="codemod">codemod</Term> and landed as a single reviewed change, so there was never a long-lived branch or a half-migrated codebase.
 
-{/* TODO */}
-<div>
-<div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 6px 16px; margin-bottom: 12px"><span style="font-size: 13px; color: var(--mute)">Repo-wide migrations I've led</span><span style="font-size: 13px; color: var(--acc)">9,700+ files moved across them</span></div>
-<ol style="margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr)); gap: 12px">
-<li class="c-pop" style="border: 1px solid var(--line2); border-radius: 10px; padding: 16px; animation-delay: 0.00s"><div style="font-size: 12px; color: var(--mute); margin-bottom: 6px">linting</div><div style="line-height: 1.4"><span class="c-strike" style="animation-delay: 0.30s">TSLint</span> <span style="color: var(--acc)">→</span> <strong style="color: var(--head)">ESLint</strong></div><div style="font-size: 13px; color: var(--acc); margin-top: 8px">455 files</div></li>
-<li class="c-pop" style="border: 1px solid var(--line2); border-radius: 10px; padding: 16px; animation-delay: 0.08s"><div style="font-size: 12px; color: var(--mute); margin-bottom: 6px">ci</div><div style="line-height: 1.4"><span class="c-strike" style="animation-delay: 0.38s">Semaphore</span> <span style="color: var(--acc)">→</span> <strong style="color: var(--head)">self-hosted Buildkite</strong></div><div style="font-size: 13px; color: var(--acc); margin-top: 8px">CI as code</div></li>
-<li class="c-pop" style="border: 1px solid var(--line2); border-radius: 10px; padding: 16px; animation-delay: 0.16s"><div style="font-size: 12px; color: var(--mute); margin-bottom: 6px">packages</div><div style="line-height: 1.4"><span class="c-strike" style="animation-delay: 0.46s">yarn</span> <span style="color: var(--acc)">→</span> <strong style="color: var(--head)">pnpm workspaces</strong></div><div style="font-size: 13px; color: var(--acc); margin-top: 8px">619 files</div></li>
-<li class="c-pop" style="border: 1px solid var(--line2); border-radius: 10px; padding: 16px; animation-delay: 0.24s"><div style="font-size: 12px; color: var(--mute); margin-bottom: 6px">bundling</div><div style="line-height: 1.4"><span class="c-strike" style="animation-delay: 0.54s">Webpack</span> <span style="color: var(--acc)">→</span> <strong style="color: var(--head)">Vite</strong></div><div style="font-size: 13px; color: var(--acc); margin-top: 8px">3 front ends</div></li>
-<li class="c-pop" style="border: 1px solid var(--line2); border-radius: 10px; padding: 16px; animation-delay: 0.32s"><div style="font-size: 12px; color: var(--mute); margin-bottom: 6px">types</div><div style="line-height: 1.4"><span class="c-strike" style="animation-delay: 0.62s">type aliases</span> <span style="color: var(--acc)">→</span> <strong style="color: var(--head)">interfaces</strong></div><div style="font-size: 13px; color: var(--acc); margin-top: 8px">804-file codemod</div></li>
-<li class="c-pop" style="border: 1px solid var(--line2); border-radius: 10px; padding: 16px; animation-delay: 0.40s"><div style="font-size: 12px; color: var(--mute); margin-bottom: 6px">lint + format</div><div style="line-height: 1.4"><span class="c-strike" style="animation-delay: 0.70s">ESLint + Prettier</span> <span style="color: var(--acc)">→</span> <strong style="color: var(--head)">oxlint + oxfmt</strong></div><div style="font-size: 13px; color: var(--acc); margin-top: 8px">4,366 files</div></li>
-<li class="c-pop" style="border: 1px solid var(--line2); border-radius: 10px; padding: 16px; animation-delay: 0.48s"><div style="font-size: 12px; color: var(--mute); margin-bottom: 6px">runtime</div><div style="line-height: 1.4"><span class="c-strike" style="animation-delay: 0.78s">compiled JS</span> <span style="color: var(--acc)">→</span> <strong style="color: var(--head)">TypeScript run natively by Node</strong></div><div style="font-size: 13px; color: var(--acc); margin-top: 8px">3,502 files</div></li>
-<li class="c-pop" style="border: 1px solid var(--line2); border-radius: 10px; padding: 16px; animation-delay: 0.56s"><div style="font-size: 12px; color: var(--mute); margin-bottom: 6px">compiler</div><div style="line-height: 1.4"><span class="c-strike" style="animation-delay: 0.86s">TypeScript 5.8</span> <span style="color: var(--acc)">→</span> <strong style="color: var(--head)">TypeScript 7</strong></div><div style="font-size: 13px; color: var(--acc); margin-top: 8px">~10× faster typechecks</div></li>
-<li class="c-pop" style="border: 1px solid var(--line2); border-radius: 10px; padding: 16px; animation-delay: 0.64s"><div style="font-size: 12px; color: var(--mute); margin-bottom: 6px">e2e testing</div><div style="line-height: 1.4"><span class="c-strike" style="animation-delay: 0.94s">Cypress</span> <span style="color: var(--acc)">→</span> <strong style="color: var(--head)">Playwright</strong></div><div style="font-size: 13px; color: var(--acc); margin-top: 8px">faster, more stable CI</div></li>
-</ol>
-</div>
+<Migrations label="Repo-wide migrations I've led" total="9,700+ files moved across them">
+  <Migration area="linting" from="TSLint" to="ESLint">455 files</Migration>
+  <Migration area="ci" from="Semaphore" to="self-hosted Buildkite">CI as code</Migration>
+  <Migration area="packages" from="yarn" to="pnpm workspaces">619 files</Migration>
+  <Migration area="bundling" from="Webpack" to="Vite">3 front ends</Migration>
+  <Migration area="types" from="type aliases" to="interfaces">804-file codemod</Migration>
+  <Migration area="lint + format" from="ESLint + Prettier" to="oxlint + oxfmt">4,366 files</Migration>
+  <Migration area="runtime" from="compiled JS" to="TypeScript run natively by Node">3,502 files</Migration>
+  <Migration area="compiler" from="TypeScript 5.8" to="TypeScript 7">~10× faster typechecks</Migration>
+  <Migration area="e2e testing" from="Cypress" to="Playwright">faster, more stable CI</Migration>
+</Migrations>
 
 <InPractice>
 - Upgrades land across the repo in one change, so the codebase doesn't drift into "old" and "new".
