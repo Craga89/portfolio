@@ -1,12 +1,6 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": [
-    "import",
-    "jsdoc",
-    "node",
-    "promise",
-    "unicorn"
-  ],
+  "plugins": ["import", "jsdoc", "node", "promise", "unicorn"],
   "categories": {
     "correctness": "error",
     "suspicious": "error",
@@ -15,10 +9,7 @@
   "env": {
     "es2024": true
   },
-  "ignorePatterns": [
-    "site/**",
-    "tools/vendor/**"
-  ],
+  "ignorePatterns": ["site/**", "tools/vendor/**"],
   "rules": {
     "no-empty": [
       "error",
@@ -40,9 +31,7 @@
     "jsdoc/check-tag-names": [
       "error",
       {
-        "definedTags": [
-          "satisfies"
-        ]
+        "definedTags": ["satisfies"]
       }
     ],
     "no-underscore-dangle": "off",
@@ -54,22 +43,13 @@
   },
   "overrides": [
     {
-      "files": [
-        "src/**/*.js",
-        "shared/**/*.js",
-        "tools/dc-runtime.js",
-        "tools/translator-stub.mjs"
-      ],
+      "files": ["src/**/*.js", "shared/**/*.js", "tools/dc-runtime.js", "tools/translator-stub.mjs"],
       "env": {
         "browser": true
       }
     },
     {
-      "files": [
-        "tools/**/*.mjs",
-        "worker/test/**",
-        "tests/**"
-      ],
+      "files": ["tools/**/*.mjs", "worker/test/**", "tests/**"],
       "env": {
         "node": true
       },
@@ -78,9 +58,7 @@
       }
     },
     {
-      "files": [
-        "worker/src/**"
-      ],
+      "files": ["worker/src/**"],
       "env": {
         "worker": true
       }

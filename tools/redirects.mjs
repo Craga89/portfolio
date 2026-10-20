@@ -292,7 +292,8 @@ async function targets(archivedFile) {
     host[h][k] = (host[h][k] || 0) + 1;
   }
   const bad = res.filter(
-    (r) => !(r.status >= 200 && r.status < 400) || (new URL(r.t).pathname.endsWith('.js') && !/javascript/.test(r.type)),
+    (r) =>
+      !(r.status >= 200 && r.status < 400) || (new URL(r.t).pathname.endsWith('.js') && !/javascript/.test(r.type)),
   );
   const lines = [
     '# Redirect destinations',
