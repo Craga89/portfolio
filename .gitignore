@@ -13,3 +13,4 @@ a11y.json
 # Screenshot baselines live on the visual-baselines branch.
 tests/visual/__screenshots__/
 .astro/
+.shot.mjs
