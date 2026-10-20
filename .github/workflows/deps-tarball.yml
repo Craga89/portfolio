@@ -1,0 +1,31 @@
+# Development aid (not on main): installs the dependencies and publishes node_modules as a
+# tarball on the node-modules branch, for a sandbox that can't reach the npm registry.
+name: node_modules tarball
+
+on:
+  push:
+    branches: ['deps/**']
+
+permissions:
+  contents: write
+
+jobs:
+  tarball:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
+        with:
+          node-version-file: .node-version
+      - run: npm install --no-audit --no-fund
+      - name: Pack
+        run: |
+          mkdir -p out
+          cp package.json package-lock.json out/
+          tar -czf - node_modules | split -b 45m - out/node_modules.tgz.part-
+          ls -la out
+      - uses: ./.github/actions/publish-branch
+        with:
+          branch: node-modules
+          source: out
+          message: node_modules for ${{ github.sha }}
