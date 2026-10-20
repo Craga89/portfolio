@@ -14,7 +14,9 @@ export const env = (bindings = {}) => /** @type {Env} */ (/** @type {unknown} */
  * A Workers AI stand-in.
  * @param {(model: string, input: any) => unknown} run
  */
-export const ai = (run) => ({ run: async (/** @type {string} */ model, /** @type {any} */ input) => run(model, input) });
+export const ai = (run) => ({
+  run: async (/** @type {string} */ model, /** @type {any} */ input) => run(model, input),
+});
 
 /**
  * A POST from the site (or another origin) to one of the worker's endpoints.

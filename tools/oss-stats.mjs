@@ -7,7 +7,13 @@ const USER = 'Craga89';
 const OWN = ['Craga89', 'qTip2']; // my own accounts and projects don't count as "other projects"
 const token = process.env.GITHUB_TOKEN;
 const gh = async (path) => {
-  const r = await fetch('https://api.github.com' + path, { headers: { accept: 'application/vnd.github+json', 'x-github-api-version': '2022-11-28', ...(token ? { authorization: 'Bearer ' + token } : {}) } });
+  const r = await fetch('https://api.github.com' + path, {
+    headers: {
+      accept: 'application/vnd.github+json',
+      'x-github-api-version': '2022-11-28',
+      ...(token ? { authorization: 'Bearer ' + token } : {}),
+    },
+  });
   if (!r.ok) throw new Error(path + ' → HTTP ' + r.status + ' ' + (await r.text()).slice(0, 200));
   return { body: await r.json(), link: r.headers.get('link') || '' };
 };
@@ -20,13 +26,17 @@ for (let page = 1; page <= 10; page++) {
   if (prs.length >= body.total_count || !body.items.length) break;
 }
 const repos = new Set(prs.map((p) => p.repository_url.replace('https://api.github.com/repos/', '').toLowerCase()));
-const years = prs.map((p) => +(p.pull_request && p.pull_request.merged_at || p.closed_at || p.created_at).slice(0, 4));
+const years = prs.map(
+  (p) => +((p.pull_request && p.pull_request.merged_at) || p.closed_at || p.created_at).slice(0, 4),
+);
 
 // Merged pull requests by quarter, for the open-source heatmap on the site.
 const quarters = {};
 for (const p of prs) {
   const at = (p.pull_request && p.pull_request.merged_at) || p.closed_at || p.created_at;
-  const y = +at.slice(0, 4), q = Math.floor((+at.slice(5, 7) - 1) / 3) + 1, k = y + 'Q' + q;
+  const y = +at.slice(0, 4),
+    q = Math.floor((+at.slice(5, 7) - 1) / 3) + 1,
+    k = y + 'Q' + q;
   const repo = p.repository_url.replace('https://api.github.com/repos/', '');
   const e = quarters[k] || (quarters[k] = { y, q, n: 0, repos: [] });
   e.n++;
@@ -49,4 +59,7 @@ const out = {
 };
 console.log(JSON.stringify(out));
 if (process.argv[2]) writeFileSync(process.argv[2], JSON.stringify(out, null, 2));
-if (process.env.GITHUB_ACTIONS) console.log(`::notice title=Open source::${out.prs} merged PRs across ${out.repos} other projects since ${out.since}; qTip2 ${out.qtip.stars} stars, ${out.qtip.forks} forks, ${out.qtip.commits} commits`);
+if (process.env.GITHUB_ACTIONS)
+  console.log(
+    `::notice title=Open source::${out.prs} merged PRs across ${out.repos} other projects since ${out.since}; qTip2 ${out.qtip.stars} stars, ${out.qtip.forks} forks, ${out.qtip.commits} commits`,
+  );

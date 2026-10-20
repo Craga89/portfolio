@@ -23,7 +23,8 @@ describe('blog posts', () => {
       if (p.original) assert.match(p.original, /^https?:\/\/(blog\.)?craigsworks\.com\//);
       assert.ok(p.summary.length > 20 && p.summary.length <= 260, 'summary length ' + p.summary.length);
       assert.ok(p.minutes >= 1);
-      for (const [, img] of p.md.matchAll(/!\[[^\]]*\]\(img\/([^)\s]+)\)/g)) assert.ok(existsSync(join(BLOG, 'img', img)), 'img/' + img);
+      for (const [, img] of p.md.matchAll(/!\[[^\]]*\]\(img\/([^)\s]+)\)/g))
+        assert.ok(existsSync(join(BLOG, 'img', img)), 'img/' + img);
     });
   }
 

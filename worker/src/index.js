@@ -19,7 +19,11 @@ const MODELS = [
   '@cf/qwen/qwen3-30b-a3b-fp8',
   '@cf/meta/llama-3.1-8b-instruct-fp8-fast',
 ];
-const ALLOWED = [/^https:\/\/(www\.)?craigthompson\.dev$/, /^https:\/\/craga89\.github\.io$/, /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/];
+const ALLOWED = [
+  /^https:\/\/(www\.)?craigthompson\.dev$/,
+  /^https:\/\/craga89\.github\.io$/,
+  /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/,
+];
 const ALWAYS = ['intro', 'profile', 'faq-1', 'recognition'];
 const CONTEXT_CHARS = 14000;
 const MAX_Q = 300;
@@ -56,7 +60,8 @@ export function pickContext(q) {
   };
   ALWAYS.forEach((id) => take(BY_ID[id]));
   // Career-history questions ("before Hive", "previous job", "where has he worked") get every career entry.
-  if (/\b(before|previous|previously|prior|earlier|past|history|employers?|worked|jobs?|companies|career)\b/i.test(q)) PASSAGES.filter((p) => /^career-/.test(p.id)).forEach(take);
+  if (/\b(before|previous|previously|prior|earlier|past|history|employers?|worked|jobs?|companies|career)\b/i.test(q))
+    PASSAGES.filter((p) => p.id.startsWith('career-')).forEach(take);
   scored.forEach((x) => take(x.p));
   // Questions with no keyword overlap still get the career history and FAQ.
   if (chosen.length < 6) PASSAGES.filter((p) => /^career-|^faq-/.test(p.id)).forEach(take);
@@ -72,21 +77,42 @@ export function fileOf(id) {
   const p = BY_ID[id];
   if (!p) return null;
   if (p.kind === 'resp' || p.kind === 'case') return String(p.title).split(':')[0].trim();
-  if (/^faq-/.test(id)) return 'faq.md';
-  if (/^career-/.test(id)) return 'career.log';
+  if (id.startsWith('faq-')) return 'faq.md';
+  if (id.startsWith('career-')) return 'career.log';
   /** @type {Record<string, string>} */
-  const FILES = { intro: 'README.md', profile: 'README.md', stack: 'stack/', oss: 'open-source/', recommendations: 'recommendations.txt', recognition: 'recommendations.txt' };
+  const FILES = {
+    intro: 'README.md',
+    profile: 'README.md',
+    stack: 'stack/',
+    oss: 'open-source/',
+    recommendations: 'recommendations.txt',
+    recognition: 'recommendations.txt',
+  };
   return FILES[id] || null;
 }
 
 // Passage ids the model sometimes cites as if they were files ("faq-1.md", "resp-bud") become the real file name.
-const DASHED = PASSAGES.map((p) => p.id).filter((id) => id.includes('-')).sort((a, b) => b.length - a.length);
+const DASHED = PASSAGES.map((p) => p.id)
+  .filter((id) => id.includes('-'))
+  .sort((a, b) => b.length - a.length);
 const PLAIN = PASSAGES.map((p) => p.id).filter((id) => !id.includes('-'));
-const ID_RE = new RegExp('(?<![\\w./-])(?:(' + DASHED.join('|') + ')(?:\\.(?:md|log|txt))?|(' + PLAIN.join('|') + ')\\.(?:md|log|txt))(?![\\w/-])', 'g');
+const ID_RE = new RegExp(
+  '(?<![\\w./-])(?:(' +
+    DASHED.join('|') +
+    ')(?:\\.(?:md|log|txt))?|(' +
+    PLAIN.join('|') +
+    ')\\.(?:md|log|txt))(?![\\w/-])',
+  'g',
+);
 /** @param {string} t */
-export const fixRefs = (t) => t
-  .replace(ID_RE, (/** @type {string} */ all, /** @type {string | undefined} */ a, /** @type {string | undefined} */ b) => fileOf(a || b || '') || all)
-  .replace(/(\b[\w/.-]+\.(?:md|log|txt)) and \1(?![\w/-])/g, '$1');
+export const fixRefs = (t) =>
+  t
+    .replace(
+      ID_RE,
+      (/** @type {string} */ all, /** @type {string | undefined} */ a, /** @type {string | undefined} */ b) =>
+        fileOf(a || b || '') || all,
+    )
+    .replace(/(\b[\w/.-]+\.(?:md|log|txt)) and \1(?![\w/-])/g, '$1');
 
 /**
  * @param {unknown} raw
@@ -94,24 +120,44 @@ export const fixRefs = (t) => t
  * @returns {Answer}
  */
 export function parse(raw, ctx) {
-  let text = String(raw || '').replace(/<think>[\s\S]*?<\/think>/gi, '').replace(/^\s*<think>[\s\S]*$/i, '').trim();
+  let text = String(raw || '')
+    .replace(/<think>[\s\S]*?<\/think>/gi, '')
+    .replace(/^\s*<think>[\s\S]*$/i, '')
+    .trim();
   /** @type {string[]} */
   const sources = [];
   const m = text.match(/\n?\s*\**SOURCES?\**:?\**\s*([\s\S]*)$/i);
   if (m) {
     // Ids are expected, but the model sometimes lists file names (budget.md); map those to the passages it was given.
     const pool = ctx && ctx.length ? ctx : PASSAGES;
-    m[1].split(/[,\s]+/).map((s) => s.replace(/^[^\w]+|[^\w/.-]+$/g, '').replace(/\.$/, '')).filter(Boolean).forEach((tok) => {
-      if (BY_ID[tok]) { sources.push(tok); return; }
-      const f = tok.toLowerCase();
-      pool.filter((p) => (fileOf(p.id) || '').toLowerCase() === f).slice(0, 2).forEach((p) => sources.push(p.id));
-    });
+    m[1]
+      .split(/[,\s]+/)
+      .map((s) => s.replace(/^[^\w]+|[^\w/.-]+$/g, '').replace(/\.$/, ''))
+      .filter(Boolean)
+      .forEach((tok) => {
+        if (BY_ID[tok]) {
+          sources.push(tok);
+          return;
+        }
+        const f = tok.toLowerCase();
+        pool
+          .filter((p) => (fileOf(p.id) || '').toLowerCase() === f)
+          .slice(0, 2)
+          .forEach((p) => sources.push(p.id));
+      });
     text = text.slice(0, m.index).trim();
   }
   text = text
     .replace(/\s*\((?:file|source)s?:\s*[^)]*\)/gi, '')
-    .replace(/\s*\[([\w, -]+)\]/g, (/** @type {string} */ all, /** @type {string} */ ids) => (ids.split(/[,\s]+/).every((id) => !id || BY_ID[id]) ? '' : all))
-    .replace(/\*\*/g, '').replace(/[ \t]+\n/g, '\n').replace(/ {2,}/g, ' ').replace(/\s+([.,;:])/g, '$1').replace(/\.{2,}/g, '.').trim();
+    .replace(/\s*\[([\w, -]+)\]/g, (/** @type {string} */ all, /** @type {string} */ ids) =>
+      ids.split(/[,\s]+/).every((id) => !id || BY_ID[id]) ? '' : all,
+    )
+    .replace(/\*\*/g, '')
+    .replace(/[ \t]+\n/g, '\n')
+    .replace(/ {2,}/g, ' ')
+    .replace(/\s+([.,;:])/g, '$1')
+    .replace(/\.{2,}/g, '.')
+    .trim();
   text = fixRefs(text);
   return { answer: text, sources: [...new Set(sources)].slice(0, 3) };
 }
@@ -132,20 +178,30 @@ async function answer(env, q, kind = 'ask') {
     try {
       const user = `CONTEXT:\n${context}\n\nQUESTION: ${q}${model.includes('qwen3') ? ' /no_think' : ''}`;
       const r = await env.AI.run(model, {
-        messages: [{ role: 'system', content: SYSTEM }, { role: 'user', content: user }],
+        messages: [
+          { role: 'system', content: SYSTEM },
+          { role: 'user', content: user },
+        ],
         max_tokens: 400,
         temperature: 0.2,
         // Answers are short lookups; skip the reasoning pass to save time and allowance.
         ...(/gemma-4|qwen3/.test(model) ? { chat_template_kwargs: { enable_thinking: false } } : {}),
       });
       const raw = r && (r.response ?? r.choices?.[0]?.message?.content ?? r.result?.response);
-      await charge(env, kind, textCost(model, r && r.usage, SYSTEM.length + user.length, typeof raw === 'string' ? raw.length : 0));
+      await charge(
+        env,
+        kind,
+        textCost(model, r && r.usage, SYSTEM.length + user.length, typeof raw === 'string' ? raw.length : 0),
+      );
       const out = parse(typeof raw === 'string' ? raw : '', ctx);
       if (out.answer) return { ...out, model };
       lastErr = new Error('empty answer from ' + model);
     } catch (e) {
       lastErr = e;
-      if (exhausted(e)) { await closeDay(env); throw new BudgetError('free allocation used up'); }
+      if (exhausted(e)) {
+        await closeDay(env);
+        throw new BudgetError('free allocation used up');
+      }
     }
   }
   throw lastErr || new Error('no model answered');
@@ -164,7 +220,10 @@ const MAX_SPEAK = 1000;
 // File names and addresses read as words, not "budget dot m d".
 /** @param {unknown} text */
 export function speakable(text) {
-  return String(text || '').replace(/\s+/g, ' ').trim().slice(0, MAX_SPEAK)
+  return String(text || '')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .slice(0, MAX_SPEAK)
     .replace(/\bREADME\.md\b/gi, 'the README')
     .replace(/\bfaq\.md\b/gi, 'the FAQ')
     .replace(/\bcareer\.log\b/gi, 'the career log')
@@ -172,14 +231,22 @@ export function speakable(text) {
     .replace(/\bai\/platform\.md\b/gi, 'the AI platform case study')
     .replace(/\bget-in-touch\.md\b/gi, 'the contact section')
     .replace(/\bthis-site\.md\b/gi, 'the case study about this site')
-    .replace(/\b([a-z][\w-]*)\.md\b/gi, (/** @type {string} */ m, /** @type {string} */ f) => 'the ' + f.replace(/-/g, ' ') + ' file')
+    .replace(
+      /\b([a-z][\w-]*)\.md\b/gi,
+      (/** @type {string} */ m, /** @type {string} */ f) => 'the ' + f.replace(/-/g, ' ') + ' file',
+    )
     .replace(/\bcv\.pdf\b/gi, 'the PDF CV')
     .replace(/craga89@gmail\.com/gi, 'craga89 at gmail dot com')
     .replace(/\bcraigthompson\.dev\b/gi, 'craigthompson dot dev')
     .replace(/\bask\.sh\b/gi, 'ask');
 }
 /** @param {string} b64 */
-const b64bytes = (b64) => { const bin = atob(b64); const out = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i); return out; };
+const b64bytes = (b64) => {
+  const bin = atob(b64);
+  const out = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
+  return out;
+};
 /**
  * Workers AI returns audio in several shapes depending on the model.
  * @param {any} result
@@ -189,7 +256,8 @@ async function audioBytes(result) {
   if (!result) return null;
   if (result instanceof ArrayBuffer) return new Uint8Array(result);
   if (result instanceof Uint8Array) return new Uint8Array(result);
-  if (typeof ReadableStream !== 'undefined' && result instanceof ReadableStream) return new Uint8Array(await new Response(result).arrayBuffer());
+  if (typeof ReadableStream !== 'undefined' && result instanceof ReadableStream)
+    return new Uint8Array(await new Response(result).arrayBuffer());
   if (result instanceof Response) return result.ok ? new Uint8Array(await result.arrayBuffer()) : null;
   if (typeof result.audio === 'string') return b64bytes(result.audio);
   return null;
@@ -208,12 +276,18 @@ export async function speak(env, text, kind = 'speak') {
     try {
       const input = model.includes('melotts') ? { prompt: text, ...opts } : { text, ...opts };
       const bytes = await audioBytes(await env.AI.run(model, input));
-      if (bytes && bytes.length > 200) { await charge(env, kind, voiceCost(model, text.length)); return { bytes, model }; }
+      if (bytes && bytes.length > 200) {
+        await charge(env, kind, voiceCost(model, text.length));
+        return { bytes, model };
+      }
       lastErr = new Error(model + ': no audio');
     } catch (e) {
       lastErr = e;
       console.log('voice', model, 'failed:', errorMessage(e));
-      if (exhausted(e)) { await closeDay(env); throw new BudgetError('free allocation used up'); }
+      if (exhausted(e)) {
+        await closeDay(env);
+        throw new BudgetError('free allocation used up');
+      }
     }
   }
   throw lastErr || new Error('no voice');
@@ -233,14 +307,29 @@ function cors(origin, allowHeaders = 'content-type') {
   };
 }
 /** @type {(body: unknown, status: number, headers: Record<string, string>) => Response} */
-const json = (body, status, headers) => new Response(JSON.stringify(body), { status, headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store', ...headers } });
+const json = (body, status, headers) =>
+  new Response(JSON.stringify(body), {
+    status,
+    headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store', ...headers },
+  });
 
 // ---------- anonymous logging (D1) ----------
 // Nothing here identifies a visitor: no IP addresses, cookies or user agents are stored.
-const BOT = /bot|crawl|spider|slurp|headless|lighthouse|preview|facebookexternalhit|embedly|pingdom|monitor|curl|wget|python|node-fetch|axios/i;
+const BOT =
+  /bot|crawl|spider|slurp|headless|lighthouse|preview|facebookexternalhit|embedly|pingdom|monitor|curl|wget|python|node-fetch|axios/i;
 import { LANGS as TR_LANGS } from '../../shared/langs.js';
 const LANGS = new Set(TR_LANGS);
-const SECTIONS = new Set(['top', 'career', 'responsibilities', 'case-studies', 'stack', 'oss', 'recommendations', 'faq', 'ask']);
+const SECTIONS = new Set([
+  'top',
+  'career',
+  'responsibilities',
+  'case-studies',
+  'stack',
+  'oss',
+  'recommendations',
+  'faq',
+  'ask',
+]);
 /** @param {Request} request */
 const isTest = (request) => request.headers.get('x-craga-test') === '1';
 /** @param {Request} request */
@@ -256,10 +345,21 @@ const NOT_COVERED = /isn't covered on the site/i;
 export async function logQuestion(env, request, q, result, via = 'site') {
   if (!env.DB || isTest(request) || BOT.test(request.headers.get('user-agent') || '')) return;
   try {
-    await env.DB.prepare('INSERT INTO questions (question, answered, model, sources, country, via) VALUES (?, ?, ?, ?, ?, ?)')
-      .bind(q, result && result.answer && !NOT_COVERED.test(result.answer) ? 1 : 0, (result && result.model) || 'unavailable', result && result.sources ? result.sources.join(',') : '', country(request), via)
+    await env.DB.prepare(
+      'INSERT INTO questions (question, answered, model, sources, country, via) VALUES (?, ?, ?, ?, ?, ?)',
+    )
+      .bind(
+        q,
+        result && result.answer && !NOT_COVERED.test(result.answer) ? 1 : 0,
+        (result && result.model) || 'unavailable',
+        result && result.sources ? result.sources.join(',') : '',
+        country(request),
+        via,
+      )
       .run();
-  } catch (e) { console.log('log question failed:', errorMessage(e)); }
+  } catch (e) {
+    console.log('log question failed:', errorMessage(e));
+  }
 }
 
 /**
@@ -274,9 +374,15 @@ export function cleanHit(body, origin) {
   try {
     const host = new URL(String(body.ref || '')).hostname.replace(/^www\./, '');
     if (host && host !== new URL(origin).hostname.replace(/^www\./, '')) referrer = host.slice(0, 80);
-  } catch { /* no referrer, or not a URL */ }
+  } catch {
+    /* no referrer, or not a URL */
+  }
   const device = ['mobile', 'tablet', 'desktop'].includes(body.device) ? body.device : null;
-  const sections = Array.isArray(body.sections) ? [...new Set(body.sections.filter((/** @type {unknown} */ x) => typeof x === 'string' && SECTIONS.has(x)))].join(',') : '';
+  const sections = Array.isArray(body.sections)
+    ? [...new Set(body.sections.filter((/** @type {unknown} */ x) => typeof x === 'string' && SECTIONS.has(x)))].join(
+        ',',
+      )
+    : '';
   const seconds = Math.max(0, Math.min(3600, Math.round(Number(body.seconds) || 0)));
   // The language the page was translated into on the visitor's device, and what they did with the offer.
   const lang = typeof body.lang === 'string' && LANGS.has(body.lang) ? body.lang : null;
@@ -286,17 +392,30 @@ export function cleanHit(body, origin) {
 
 /** @param {Request} request @param {Env} env @param {string} origin */
 async function hit(request, env, origin) {
-  if (!env.DB || isTest(request) || BOT.test(request.headers.get('user-agent') || '') || /localhost|127\.0\.0\.1/.test(origin)) return;
+  if (
+    !env.DB ||
+    isTest(request) ||
+    BOT.test(request.headers.get('user-agent') || '') ||
+    /localhost|127\.0\.0\.1/.test(origin)
+  )
+    return;
   if (env.HIT_LIMITER) {
     const { success } = await env.HIT_LIMITER.limit({ key: request.headers.get('cf-connecting-ip') || 'anon' });
     if (!success) return;
   }
   let body = {};
-  try { body = JSON.parse(await request.text()); } catch { return; } // not JSON: ignore the beacon
+  try {
+    body = JSON.parse(await request.text());
+  } catch {
+    return;
+  } // not JSON: ignore the beacon
   const v = cleanHit(body, origin);
   if (!v) return;
-  await env.DB.prepare('INSERT INTO visits (path, referrer, country, device, sections, seconds, lang, offer) VALUES (?, ?, ?, ?, ?, ?, ?, ?)')
-    .bind(v.path, v.referrer, country(request), v.device, v.sections, v.seconds, v.lang, v.offer).run();
+  await env.DB.prepare(
+    'INSERT INTO visits (path, referrer, country, device, sections, seconds, lang, offer) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+  )
+    .bind(v.path, v.referrer, country(request), v.device, v.sections, v.seconds, v.lang, v.offer)
+    .run();
 }
 
 // ---------- MCP ----------
@@ -323,15 +442,21 @@ export function agentSource(env, request, wait = (p) => p) {
     projects: async () => agentData.projects,
     oss: async () => agentData.oss || null,
     build: () => null,
-    live: () => (liveP = liveP || fetch(site + '/live.json', { cf: { cacheTtl: 300, cacheEverything: true } })
-      .then((r) => (r.ok ? r.json() : {}))
-      .then((d) => (d && typeof d === 'object' ? d : {}))
-      .catch(() => ({}))),
+    live: () =>
+      (liveP =
+        liveP ||
+        fetch(site + '/live.json', { cf: { cacheTtl: 300, cacheEverything: true } })
+          .then((r) => (r.ok ? r.json() : {}))
+          .then((d) => (d && typeof d === 'object' ? d : {}))
+          .catch(() => ({}))),
     /** @param {string} q */
     async ask(q) {
       if (env.ASK_LIMITER) {
         const { success } = await env.ASK_LIMITER.limit({ key: request.headers.get('cf-connecting-ip') || 'anon' });
-        if (!success) throw new ToolError('Too many questions in a minute. Wait a moment, or use search_site and read_file, which have no limit.');
+        if (!success)
+          throw new ToolError(
+            'Too many questions in a minute. Wait a moment, or use search_site and read_file, which have no limit.',
+          );
       }
       try {
         const result = await answer(env, q.slice(0, MAX_Q), isTest(request) ? 'test' : 'ask');
@@ -360,7 +485,8 @@ export default {
     const h = okOrigin ? cors(origin) : {};
     // Cookie-free visit counts, sent with navigator.sendBeacon (text/plain, so no preflight).
     if (url.pathname === '/hit') {
-      if (request.method === 'POST' && okOrigin) await wait(hit(request, env, origin).catch((e) => console.log('hit failed:', errorMessage(e))));
+      if (request.method === 'POST' && okOrigin)
+        await wait(hit(request, env, origin).catch((e) => console.log('hit failed:', errorMessage(e))));
       return new Response(null, { status: 204, headers: h });
     }
     if (url.pathname === '/speak') {
@@ -372,11 +498,24 @@ export default {
         if (!success) return json({ error: 'slow down' }, 429, h);
       }
       let text = '';
-      try { text = speakable(/** @type {{ text?: unknown }} */ (await request.json()).text); } catch { /* not JSON: answered as missing text below */ }
+      try {
+        text = speakable(/** @type {{ text?: unknown }} */ (await request.json()).text);
+      } catch {
+        /* not JSON: answered as missing text below */
+      }
       if (!text) return json({ error: 'missing text' }, 400, h);
       try {
         const { bytes, model } = await speak(env, text, isTest(request) ? 'test' : 'speak');
-        return new Response(bytes, { status: 200, headers: { 'content-type': 'audio/mpeg', 'cache-control': 'no-store', 'x-voice': model.split('/').pop() || model, 'access-control-expose-headers': 'x-voice', ...h } });
+        return new Response(bytes, {
+          status: 200,
+          headers: {
+            'content-type': 'audio/mpeg',
+            'cache-control': 'no-store',
+            'x-voice': model.split('/').pop() || model,
+            'access-control-expose-headers': 'x-voice',
+            ...h,
+          },
+        });
       } catch (e) {
         // Over today's budget: the page reads it with the browser's own voice instead.
         return json({ error: e instanceof BudgetError ? 'budget' : 'unavailable' }, 503, h);
@@ -384,11 +523,17 @@ export default {
     }
     if (url.pathname === '/mcp') {
       // Server-side MCP clients send no Origin; browsers do, and only known origins are let in.
-      if (origin && !okOrigin) return json({ jsonrpc: '2.0', id: null, error: { code: -32600, message: 'Origin not allowed' } }, 403, {});
+      if (origin && !okOrigin)
+        return json({ jsonrpc: '2.0', id: null, error: { code: -32600, message: 'Origin not allowed' } }, 403, {});
       const mh = okOrigin ? cors(origin, MCP_HEADERS) : {};
       if (request.method === 'POST' && env.MCP_LIMITER) {
         const { success } = await env.MCP_LIMITER.limit({ key: request.headers.get('cf-connecting-ip') || 'anon' });
-        if (!success) return json({ jsonrpc: '2.0', id: null, error: { code: -32000, message: 'Too many requests; try again in a minute' } }, 429, { ...mh, 'retry-after': '60' });
+        if (!success)
+          return json(
+            { jsonrpc: '2.0', id: null, error: { code: -32000, message: 'Too many requests; try again in a minute' } },
+            429,
+            { ...mh, 'retry-after': '60' },
+          );
       }
       return handleMcp(request, agentSource(env, request, wait), mh);
     }
@@ -409,7 +554,9 @@ export default {
       const b = /** @type {{ q?: unknown, via?: unknown }} */ (await request.json());
       q = String(b.q || '');
       if (b.via === 'webmcp') via = 'webmcp';
-    } catch { /* not JSON: answered as missing q below */ }
+    } catch {
+      /* not JSON: answered as missing q below */
+    }
     q = q.replace(/\s+/g, ' ').trim().slice(0, MAX_Q);
     if (!q) return json({ error: 'missing q' }, 400, h);
 

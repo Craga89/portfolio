@@ -12,36 +12,74 @@ const since = `strftime('%Y-%m-%dT%H:%M:%SZ','now','-${days} days')`;
 const q = (sql) => {
   let out;
   try {
-    out = execFileSync('npx', ['-y', 'wrangler@4', 'd1', 'execute', 'craga-ask', '--remote', '--json', '--command', sql], { cwd: join(ROOT, 'worker'), encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
+    out = execFileSync(
+      'npx',
+      ['-y', 'wrangler@4', 'd1', 'execute', 'craga-ask', '--remote', '--json', '--command', sql],
+      { cwd: join(ROOT, 'worker'), encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] },
+    );
   } catch (err) {
     const e = /** @type {Error & { stdout?: string, stderr?: string }} */ (err);
-    const msg = String((e.stdout || '') + ' ' + (e.stderr || '') || e.message).replace(/\s+/g, ' ').slice(0, 900);
-    const hint = /7403|not authorized/.test(msg) ? 'The CLOUDFLARE_API_TOKEN secret needs the Account → D1 → Edit permission (Cloudflare dashboard → My Profile → API Tokens → edit the token). ' : '';
+    const msg = String((e.stdout || '') + ' ' + (e.stderr || '') || e.message)
+      .replace(/\s+/g, ' ')
+      .slice(0, 900);
+    const hint = /7403|not authorized/.test(msg)
+      ? 'The CLOUDFLARE_API_TOKEN secret needs the Account → D1 → Edit permission (Cloudflare dashboard → My Profile → API Tokens → edit the token). '
+      : '';
     console.log(`::error title=D1 query failed::${hint}${msg}`);
     process.exit(1);
   }
   // wrangler can print a banner before the JSON.
   return JSON.parse(out.slice(out.indexOf('[')))[0].results;
 };
-const table = (rows, cols) => rows.length ? `| ${cols.join(' | ')} |\n|${cols.map(() => '---').join('|')}|\n` + rows.map((r) => `| ${cols.map((c) => String(r[c] ?? '–').replace(/\|/g, '\\|')).join(' | ')} |`).join('\n') + '\n' : '_none_\n';
+const table = (rows, cols) =>
+  rows.length
+    ? `| ${cols.join(' | ')} |\n|${cols.map(() => '---').join('|')}|\n` +
+      rows.map((r) => `| ${cols.map((c) => String(r[c] ?? '–').replace(/\|/g, '\\|')).join(' | ')} |`).join('\n') +
+      '\n'
+    : '_none_\n';
 
 const visits = q(`SELECT COUNT(*) AS n, ROUND(AVG(seconds)) AS avg_s FROM visits WHERE at >= ${since}`)[0];
-const byPath = q(`SELECT path, COUNT(*) AS visits FROM visits WHERE at >= ${since} GROUP BY path ORDER BY visits DESC LIMIT 10`);
-const refs = q(`SELECT COALESCE(referrer,'(direct or hidden)') AS referrer, COUNT(*) AS visits FROM visits WHERE at >= ${since} GROUP BY referrer ORDER BY visits DESC LIMIT 10`);
-const devices = q(`SELECT COALESCE(device,'?') AS device, COUNT(*) AS visits FROM visits WHERE at >= ${since} GROUP BY device ORDER BY visits DESC`);
-const countries = q(`SELECT COALESCE(country,'?') AS country, COUNT(*) AS visits FROM visits WHERE at >= ${since} GROUP BY country ORDER BY visits DESC LIMIT 8`);
-const langs = q(`SELECT COALESCE(lang,'English (original)') AS language, COUNT(*) AS visits FROM visits WHERE at >= ${since} GROUP BY lang ORDER BY visits DESC`);
-const offers = q(`SELECT offer, COUNT(*) AS visits FROM visits WHERE at >= ${since} AND offer IS NOT NULL GROUP BY offer ORDER BY visits DESC`);
-const channels = q(`SELECT COALESCE(via,'site') AS via, COUNT(*) AS questions FROM questions WHERE at >= ${since} GROUP BY via ORDER BY questions DESC`);
-const ai = q(`SELECT day, kind, ROUND(neurons) AS neurons, calls FROM ai_budget WHERE day >= substr(${since},1,10) ORDER BY day DESC, kind`);
+const byPath = q(
+  `SELECT path, COUNT(*) AS visits FROM visits WHERE at >= ${since} GROUP BY path ORDER BY visits DESC LIMIT 10`,
+);
+const refs = q(
+  `SELECT COALESCE(referrer,'(direct or hidden)') AS referrer, COUNT(*) AS visits FROM visits WHERE at >= ${since} GROUP BY referrer ORDER BY visits DESC LIMIT 10`,
+);
+const devices = q(
+  `SELECT COALESCE(device,'?') AS device, COUNT(*) AS visits FROM visits WHERE at >= ${since} GROUP BY device ORDER BY visits DESC`,
+);
+const countries = q(
+  `SELECT COALESCE(country,'?') AS country, COUNT(*) AS visits FROM visits WHERE at >= ${since} GROUP BY country ORDER BY visits DESC LIMIT 8`,
+);
+const langs = q(
+  `SELECT COALESCE(lang,'English (original)') AS language, COUNT(*) AS visits FROM visits WHERE at >= ${since} GROUP BY lang ORDER BY visits DESC`,
+);
+const offers = q(
+  `SELECT offer, COUNT(*) AS visits FROM visits WHERE at >= ${since} AND offer IS NOT NULL GROUP BY offer ORDER BY visits DESC`,
+);
+const channels = q(
+  `SELECT COALESCE(via,'site') AS via, COUNT(*) AS questions FROM questions WHERE at >= ${since} GROUP BY via ORDER BY questions DESC`,
+);
+const ai = q(
+  `SELECT day, kind, ROUND(neurons) AS neurons, calls FROM ai_budget WHERE day >= substr(${since},1,10) ORDER BY day DESC, kind`,
+);
 const home = q(`SELECT COUNT(*) AS n FROM visits WHERE at >= ${since} AND path IN ('/','/portfolio/')`)[0].n || 0;
-const reach = ['career', 'responsibilities', 'case-studies', 'stack', 'oss', 'recommendations', 'faq', 'ask'].map((s) => {
-  const n = q(`SELECT COUNT(*) AS n FROM visits WHERE at >= ${since} AND path IN ('/','/portfolio/') AND (',' || sections || ',') LIKE '%,${s},%'`)[0].n || 0;
-  return { section: s, reached: n, share: home ? Math.round((n / home) * 100) + '%' : '–' };
-});
+const reach = ['career', 'responsibilities', 'case-studies', 'stack', 'oss', 'recommendations', 'faq', 'ask'].map(
+  (s) => {
+    const n =
+      q(
+        `SELECT COUNT(*) AS n FROM visits WHERE at >= ${since} AND path IN ('/','/portfolio/') AND (',' || sections || ',') LIKE '%,${s},%'`,
+      )[0].n || 0;
+    return { section: s, reached: n, share: home ? Math.round((n / home) * 100) + '%' : '–' };
+  },
+);
 const qs = q(`SELECT COUNT(*) AS n, SUM(answered) AS answered FROM questions WHERE at >= ${since}`)[0];
-const unanswered = q(`SELECT substr(at,1,10) AS day, question, model FROM questions WHERE at >= ${since} AND answered = 0 ORDER BY at DESC LIMIT 25`);
-const recent = q(`SELECT substr(at,1,10) AS day, question FROM questions WHERE at >= ${since} AND answered = 1 ORDER BY at DESC LIMIT 25`);
+const unanswered = q(
+  `SELECT substr(at,1,10) AS day, question, model FROM questions WHERE at >= ${since} AND answered = 0 ORDER BY at DESC LIMIT 25`,
+);
+const recent = q(
+  `SELECT substr(at,1,10) AS day, question FROM questions WHERE at >= ${since} AND answered = 1 ORDER BY at DESC LIMIT 25`,
+);
 
 const md = `## craigthompson.dev · last ${days} days
 

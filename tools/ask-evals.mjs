@@ -8,7 +8,9 @@ import { fileURLToPath } from 'node:url';
 import { errorMessage } from '../shared/errors.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
-const endpoint = (process.argv[2] && !process.argv[2].startsWith('--') ? process.argv[2] : '') || JSON.parse(readFileSync(join(ROOT, 'ask.config.json'), 'utf8')).endpoint;
+const endpoint =
+  (process.argv[2] && !process.argv[2].startsWith('--') ? process.argv[2] : '') ||
+  JSON.parse(readFileSync(join(ROOT, 'ask.config.json'), 'utf8')).endpoint;
 const { cases } = JSON.parse(readFileSync(join(ROOT, 'worker', 'evals.json'), 'utf8'));
 const ORIGIN = 'https://craigthompson.dev';
 
@@ -23,9 +25,25 @@ async function ask(q) {
     const wait = last + PACE - Date.now();
     if (wait > 0) await sleep(wait);
     last = Date.now();
-    const r = await fetch(endpoint, { method: 'POST', headers: { origin: ORIGIN, 'content-type': 'application/json', 'x-craga-test': '1' }, body: JSON.stringify({ q }) });
-    if (r.status === 429 && tries < 3) { await sleep(30000); continue; }
-    if (r.status === 503 && (await r.clone().json().catch(() => ({}))).error === 'budget') throw new OverBudget();
+    const r = await fetch(endpoint, {
+      method: 'POST',
+      headers: { origin: ORIGIN, 'content-type': 'application/json', 'x-craga-test': '1' },
+      body: JSON.stringify({ q }),
+    });
+    if (r.status === 429 && tries < 3) {
+      await sleep(30000);
+      continue;
+    }
+    if (
+      r.status === 503 &&
+      (
+        await r
+          .clone()
+          .json()
+          .catch(() => ({}))
+      ).error === 'budget'
+    )
+      throw new OverBudget();
     if (!r.ok) throw new Error('HTTP ' + r.status);
     return r.json();
   }
@@ -43,33 +61,67 @@ function grade(c, d) {
 let failed = 0;
 const rows = [];
 for (const c of cases) {
-  let d = null, problems = ['no answer'];
+  let d = null,
+    problems = ['no answer'];
   for (let attempt = 0; attempt < 2 && problems.length; attempt++) {
-    try { d = await ask(c.q); problems = grade(c, d); } catch (e) {
-      if (e instanceof OverBudget) { console.log((process.env.GITHUB_ACTIONS ? '::notice title=ask.sh answer tests::' : '') + "Skipped: today's AI allowance for tests is used up. They'll run again on the next schedule."); process.exit(0); }
+    try {
+      d = await ask(c.q);
+      problems = grade(c, d);
+    } catch (e) {
+      if (e instanceof OverBudget) {
+        console.log(
+          (process.env.GITHUB_ACTIONS ? '::notice title=ask.sh answer tests::' : '') +
+            "Skipped: today's AI allowance for tests is used up. They'll run again on the next schedule.",
+        );
+        process.exit(0);
+      }
       problems = [errorMessage(e)];
     }
   }
   const pass = !problems.length;
   if (!pass) failed++;
-  rows.push({ q: c.q, expect: c.expect || '', pass, problems, answer: d && d.answer, sources: (d && d.sources) || [], model: d && d.model });
+  rows.push({
+    q: c.q,
+    expect: c.expect || '',
+    pass,
+    problems,
+    answer: d && d.answer,
+    sources: (d && d.sources) || [],
+    model: d && d.model,
+  });
   console.log(`${pass ? 'PASS' : 'FAIL'} ${c.q}${pass ? '' : '  → ' + problems.join('; ')}`);
   if (!pass && d) console.log('     ' + String(d.answer).replace(/\n/g, ' ').slice(0, 300));
   if (process.env.GITHUB_ACTIONS) {
     const esc = (x) => String(x).replace(/%/g, '%25').replace(/\r?\n/g, ' ').replace(/::/g, ': :');
     const line = esc((d ? `${d.answer} [sources: ${(d.sources || []).join(', ')}] [${d.model}]` : '').slice(0, 600));
-    console.log(pass ? `::notice title=${esc(c.q)}::PASS ${line}` : `::error title=${esc(c.q)}::${esc(problems.join('; '))} — ${line}`);
+    console.log(
+      pass
+        ? `::notice title=${esc(c.q)}::PASS ${line}`
+        : `::error title=${esc(c.q)}::${esc(problems.join('; '))} — ${line}`,
+    );
   }
 }
 if (process.env.GITHUB_STEP_SUMMARY) {
   const { appendFileSync } = await import('node:fs');
-  appendFileSync(process.env.GITHUB_STEP_SUMMARY, `## ask.sh evals: ${cases.length - failed}/${cases.length} pass\n\n| | question | notes |\n|---|---|---|\n` + rows.map((r) => `| ${r.pass ? '✅' : '❌'} | ${r.q} | ${r.pass ? '' : r.problems.join('; ')} |`).join('\n') + '\n');
+  appendFileSync(
+    process.env.GITHUB_STEP_SUMMARY,
+    `## ask.sh evals: ${cases.length - failed}/${cases.length} pass\n\n| | question | notes |\n|---|---|---|\n` +
+      rows.map((r) => `| ${r.pass ? '✅' : '❌'} | ${r.q} | ${r.pass ? '' : r.problems.join('; ')} |`).join('\n') +
+      '\n',
+  );
 }
 console.log(`${cases.length - failed}/${cases.length} pass`);
 // --out file.json: the full results, for the site's "how ask.sh is tested" panel.
 const outAt = process.argv.indexOf('--out');
 if (outAt > 0 && process.argv[outAt + 1]) {
   const { writeFileSync } = await import('node:fs');
-  writeFileSync(process.argv[outAt + 1], JSON.stringify({ at: new Date().toISOString(), total: cases.length, passed: cases.length - failed, cases: rows }, null, 2));
+  writeFileSync(
+    process.argv[outAt + 1],
+    JSON.stringify(
+      { at: new Date().toISOString(), total: cases.length, passed: cases.length - failed, cases: rows },
+      null,
+      2,
+    ),
+  );
 }
 process.exit(failed ? 1 : 0);

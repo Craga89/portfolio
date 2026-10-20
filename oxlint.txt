@@ -1,0 +1,214 @@
+::error file=tests/fixtures.mjs,line=39,endLine=39,col=20,endColumn=22,title=eslint(no-empty-pattern)::tests/fixtures.mjs:39:20: Empty object binding pattern
+::error file=tools/translator-stub.mjs,line=5,endLine=5,col=17,endColumn=31,title=unicorn(consistent-function-scoping)::tools/translator-stub.mjs:5:17: Function `avail` does not capture any variables from its parent scope
+::error file=tools/translator-stub.mjs,line=7,endLine=7,col=5,endColumn=14,title=eslint(no-underscore-dangle)::tools/translator-stub.mjs:7:5: Unexpected dangling '_' in '`__trCalls`'.
+::error file=tools/translator-stub.mjs,line=35,endLine=35,col=13,endColumn=22,title=eslint(no-underscore-dangle)::tools/translator-stub.mjs:35:13: Unexpected dangling '_' in '`__trCalls`'.
+::error file=tests/unit/worker/budget.test.mjs,line=76,endLine=76,col=9,endColumn=12,title=unicorn(consistent-function-scoping)::tests/unit/worker/budget.test.mjs:76:9: Function `run` does not capture any variables from its parent scope
+::warning file=tests/a11y/translated.spec.mjs,line=26,endLine=26,col=19,endColumn=24,title=eslint(no-await-in-loop)::tests/a11y/translated.spec.mjs:26:19: Unexpected `await` inside a loop.
+::warning file=tests/a11y/translated.spec.mjs,line=27,endLine=27,col=9,endColumn=14,title=eslint(no-await-in-loop)::tests/a11y/translated.spec.mjs:27:9: Unexpected `await` inside a loop.
+::warning file=tests/a11y/translated.spec.mjs,line=28,endLine=28,col=9,endColumn=14,title=eslint(no-await-in-loop)::tests/a11y/translated.spec.mjs:28:9: Unexpected `await` inside a loop.
+::warning file=tests/a11y/translated.spec.mjs,line=29,endLine=29,col=9,endColumn=14,title=eslint(no-await-in-loop)::tests/a11y/translated.spec.mjs:29:9: Unexpected `await` inside a loop.
+::warning file=tests/a11y/translated.spec.mjs,line=30,endLine=30,col=9,endColumn=14,title=eslint(no-await-in-loop)::tests/a11y/translated.spec.mjs:30:9: Unexpected `await` inside a loop.
+::warning file=worker/src/budget.js,line=96,endLine=96,col=66,endColumn=71,title=eslint(no-await-in-loop)::worker/src/budget.js:96:66: Unexpected `await` inside a loop.
+::error file=tests/reporters/a11y-report.mjs,line=55,endLine=55,col=76,endColumn=82,title=eslint(no-control-regex)::tests/reporters/a11y-report.mjs:55:76: Unexpected control character
+::error file=tests/reporters/a11y-report.mjs,line=66,endLine=66,col=8,endColumn=12,title=unicorn(no-array-sort)::tests/reporters/a11y-report.mjs:66:8: Use `Array#toSorted()` instead of `Array#sort()`.
+::error file=tests/unit/worker/helpers.mjs,line=30,endLine=30,col=5,endColumn=9,title=unicorn(no-invalid-fetch-options)::tests/unit/worker/helpers.mjs:30:5: "body" is not allowed when method is "GET"
+::error file=tests/unit/tools/blog.test.mjs,line=14,endLine=14,col=47,endColumn=54,title=unicorn(no-array-reverse)::tests/unit/tools/blog.test.mjs:14:47: Use `Array#toReversed()` instead of `Array#reverse()`.
+::error file=tests/unit/tools/blog.test.mjs,line=14,endLine=14,col=40,endColumn=44,title=unicorn(no-array-sort)::tests/unit/tools/blog.test.mjs:14:40: Use `Array#toSorted()` instead of `Array#sort()`.
+::error file=tests/unit/tools/blog.test.mjs,line=32,endLine=32,col=53,endColumn=57,title=unicorn(no-array-sort)::tests/unit/tools/blog.test.mjs:32:53: Use `Array#toSorted()` instead of `Array#sort()`.
+::error file=tests/unit/worker/ask.test.mjs,line=139,endLine=139,col=9,endColumn=12,title=unicorn(consistent-function-scoping)::tests/unit/worker/ask.test.mjs:139:9: Function `ids` does not capture any variables from its parent scope
+::error file=tests/e2e/read-aloud.spec.mjs,line=46,endLine=46,col=18,endColumn=30,title=unicorn(consistent-function-scoping)::tests/e2e/read-aloud.spec.mjs:46:18: Function `askAndListen` does not capture any variables from its parent scope
+::error file=tests/e2e/read-aloud.spec.mjs,line=32,endLine=32,col=9,endColumn=17,title=eslint(no-underscore-dangle)::tests/e2e/read-aloud.spec.mjs:32:9: Unexpected dangling '_' in '`__spoken`'.
+::error file=tests/e2e/read-aloud.spec.mjs,line=35,endLine=35,col=11,endColumn=19,title=eslint(no-underscore-dangle)::tests/e2e/read-aloud.spec.mjs:35:11: Unexpected dangling '_' in '`__spoken`'.
+::error file=tests/e2e/read-aloud.spec.mjs,line=62,endLine=62,col=79,endColumn=85,title=eslint(no-underscore-dangle)::tests/e2e/read-aloud.spec.mjs:62:79: Unexpected dangling '_' in '`_audio`'.
+::error file=tests/e2e/read-aloud.spec.mjs,line=68,endLine=68,col=66,endColumn=74,title=eslint(no-underscore-dangle)::tests/e2e/read-aloud.spec.mjs:68:66: Unexpected dangling '_' in '`__spoken`'.
+::error file=tests/e2e/read-aloud.spec.mjs,line=79,endLine=79,col=77,endColumn=85,title=eslint(no-underscore-dangle)::tests/e2e/read-aloud.spec.mjs:79:77: Unexpected dangling '_' in '`__spoken`'.
+::error file=tests/e2e/read-aloud.spec.mjs,line=80,endLine=80,col=76,endColumn=84,title=eslint(no-underscore-dangle)::tests/e2e/read-aloud.spec.mjs:80:76: Unexpected dangling '_' in '`__spoken`'.
+::error file=tools/blog.mjs,line=70,endLine=70,col=6,endColumn=10,title=unicorn(no-array-sort)::tools/blog.mjs:70:6: Use `Array#toSorted()` instead of `Array#sort()`.
+::error file=tests/unit/worker/mcp.test.mjs,line=130,endLine=130,col=41,endColumn=42,title=eslint(no-shadow)::tests/unit/worker/mcp.test.mjs:130:41: 'p' is already declared in the upper scope.
+::error file=tests/unit/worker/mcp.test.mjs,line=149,endLine=149,col=11,endColumn=14,title=eslint(no-shadow)::tests/unit/worker/mcp.test.mjs:149:11: 'env' is already declared in the upper scope.
+::error file=tests/unit/worker/mcp.test.mjs,line=218,endLine=218,col=32,endColumn=37,title=eslint(no-underscore-dangle)::tests/unit/worker/mcp.test.mjs:218:32: Unexpected dangling '_' in '`_meta`'.
+::warning file=tests/e2e/translation.spec.mjs,line=48,endLine=48,col=7,endColumn=12,title=eslint(no-await-in-loop)::tests/e2e/translation.spec.mjs:48:7: Unexpected `await` inside a loop.
+::warning file=tests/e2e/translation.spec.mjs,line=49,endLine=49,col=7,endColumn=12,title=eslint(no-await-in-loop)::tests/e2e/translation.spec.mjs:49:7: Unexpected `await` inside a loop.
+::error file=tests/e2e/translation.spec.mjs,line=81,endLine=81,col=68,endColumn=77,title=eslint(no-underscore-dangle)::tests/e2e/translation.spec.mjs:81:68: Unexpected dangling '_' in '`__trCalls`'.
+::warning file=tests/e2e/translation.spec.mjs,line=173,endLine=173,col=7,endColumn=12,title=eslint(no-await-in-loop)::tests/e2e/translation.spec.mjs:173:7: Unexpected `await` inside a loop.
+::warning file=tests/e2e/translation.spec.mjs,line=174,endLine=174,col=7,endColumn=12,title=eslint(no-await-in-loop)::tests/e2e/translation.spec.mjs:174:7: Unexpected `await` inside a loop.
+::error file=tests/a11y/axe.mjs,line=5,endLine=5,col=8,endColumn=18,title=import(no-named-as-default)::tests/a11y/axe.mjs:5:8: Module "@axe-core/playwright" has named export "AxeBuilder"
+::error file=worker/src/mcp.js,line=131,endLine=131,col=42,endColumn=47,title=eslint(no-underscore-dangle)::worker/src/mcp.js:131:42: Unexpected dangling '_' in '`_meta`'.
+::warning file=worker/src/mcp.js,line=219,endLine=219,col=21,endColumn=26,title=eslint(no-await-in-loop)::worker/src/mcp.js:219:21: Unexpected `await` inside a loop.
+::error file=worker/src/index.js,line=97,endLine=97,col=4,endColumn=8,title=unicorn(no-array-sort)::worker/src/index.js:97:4: Use `Array#toSorted()` instead of `Array#sort()`.
+::warning file=worker/src/index.js,line=180,endLine=180,col=17,endColumn=22,title=eslint(no-await-in-loop)::worker/src/index.js:180:17: Unexpected `await` inside a loop.
+::warning file=worker/src/index.js,line=191,endLine=191,col=7,endColumn=12,title=eslint(no-await-in-loop)::worker/src/index.js:191:7: Unexpected `await` inside a loop.
+::warning file=worker/src/index.js,line=202,endLine=202,col=9,endColumn=14,title=eslint(no-await-in-loop)::worker/src/index.js:202:9: Unexpected `await` inside a loop.
+::warning file=worker/src/index.js,line=278,endLine=278,col=21,endColumn=26,title=eslint(no-await-in-loop)::worker/src/index.js:278:21: Unexpected `await` inside a loop.
+::warning file=worker/src/index.js,line=278,endLine=278,col=38,endColumn=43,title=eslint(no-await-in-loop)::worker/src/index.js:278:38: Unexpected `await` inside a loop.
+::warning file=worker/src/index.js,line=280,endLine=280,col=9,endColumn=14,title=eslint(no-await-in-loop)::worker/src/index.js:280:9: Unexpected `await` inside a loop.
+::warning file=worker/src/index.js,line=288,endLine=288,col=9,endColumn=14,title=eslint(no-await-in-loop)::worker/src/index.js:288:9: Unexpected `await` inside a loop.
+::error file=shared/agent-tools.js,line=32,endLine=32,col=4,endColumn=13,title=jsdoc(require-property-description)::shared/agent-tools.js:32:4: Missing description in `@property` tag.
+::error file=shared/agent-tools.js,line=33,endLine=33,col=4,endColumn=13,title=jsdoc(require-property-description)::shared/agent-tools.js:33:4: Missing description in `@property` tag.
+::error file=shared/agent-tools.js,line=34,endLine=34,col=4,endColumn=13,title=jsdoc(require-property-description)::shared/agent-tools.js:34:4: Missing description in `@property` tag.
+::error file=shared/agent-tools.js,line=35,endLine=35,col=4,endColumn=13,title=jsdoc(require-property-description)::shared/agent-tools.js:35:4: Missing description in `@property` tag.
+::error file=shared/agent-tools.js,line=36,endLine=36,col=4,endColumn=13,title=jsdoc(require-property-description)::shared/agent-tools.js:36:4: Missing description in `@property` tag.
+::error file=shared/agent-tools.js,line=37,endLine=37,col=4,endColumn=13,title=jsdoc(require-property-description)::shared/agent-tools.js:37:4: Missing description in `@property` tag.
+::error file=shared/agent-tools.js,line=38,endLine=38,col=4,endColumn=13,title=jsdoc(require-property-description)::shared/agent-tools.js:38:4: Missing description in `@property` tag.
+::error file=shared/agent-tools.js,line=39,endLine=39,col=4,endColumn=13,title=jsdoc(require-property-description)::shared/agent-tools.js:39:4: Missing description in `@property` tag.
+::error file=shared/agent-tools.js,line=40,endLine=40,col=4,endColumn=13,title=jsdoc(require-property-description)::shared/agent-tools.js:40:4: Missing description in `@property` tag.
+::error file=shared/agent-tools.js,line=41,endLine=41,col=4,endColumn=13,title=jsdoc(require-property-description)::shared/agent-tools.js:41:4: Missing description in `@property` tag.
+::error file=shared/agent-tools.js,line=50,endLine=50,col=4,endColumn=13,title=jsdoc(require-property-description)::shared/agent-tools.js:50:4: Missing description in `@property` tag.
+::error file=shared/agent-tools.js,line=51,endLine=51,col=4,endColumn=13,title=jsdoc(require-property-description)::shared/agent-tools.js:51:4: Missing description in `@property` tag.
+::error file=shared/agent-tools.js,line=52,endLine=52,col=4,endColumn=13,title=jsdoc(require-property-description)::shared/agent-tools.js:52:4: Missing description in `@property` tag.
+::error file=shared/agent-tools.js,line=55,endLine=55,col=4,endColumn=13,title=jsdoc(require-property-description)::shared/agent-tools.js:55:4: Missing description in `@property` tag.
+::error file=shared/agent-tools.js,line=56,endLine=56,col=4,endColumn=13,title=jsdoc(require-property-description)::shared/agent-tools.js:56:4: Missing description in `@property` tag.
+::error file=shared/agent-tools.js,line=57,endLine=57,col=4,endColumn=13,title=jsdoc(require-property-description)::shared/agent-tools.js:57:4: Missing description in `@property` tag.
+::error file=shared/agent-tools.js,line=600,endLine=600,col=23,endColumn=31,title=unicorn(consistent-function-scoping)::shared/agent-tools.js:600:23: Function `fail` does not capture any variables from its parent scope
+::error file=shared/agent-tools.js,line=124,endLine=124,col=15,endColumn=17,title=eslint(no-underscore-dangle)::shared/agent-tools.js:124:15: Unexpected dangling '_' in '`_t`'.
+::error file=shared/agent-tools.js,line=124,endLine=124,col=27,endColumn=29,title=eslint(no-underscore-dangle)::shared/agent-tools.js:124:27: Unexpected dangling '_' in '`_b`'.
+::error file=shared/agent-tools.js,line=162,endLine=162,col=6,endColumn=10,title=unicorn(no-array-sort)::shared/agent-tools.js:162:6: Use `Array#toSorted()` instead of `Array#sort()`.
+::error file=shared/agent-tools.js,line=157,endLine=157,col=25,endColumn=27,title=eslint(no-underscore-dangle)::shared/agent-tools.js:157:25: Unexpected dangling '_' in '`_t`'.
+::error file=shared/agent-tools.js,line=157,endLine=157,col=46,endColumn=48,title=eslint(no-underscore-dangle)::shared/agent-tools.js:157:46: Unexpected dangling '_' in '`_b`'.
+::error file=shared/agent-tools.js,line=159,endLine=159,col=43,endColumn=45,title=eslint(no-underscore-dangle)::shared/agent-tools.js:159:43: Unexpected dangling '_' in '`_b`'.
+::warning file=tools/fetch-fonts.mjs,line=35,endLine=35,col=29,endColumn=34,title=eslint(no-await-in-loop)::tools/fetch-fonts.mjs:35:29: Unexpected `await` inside a loop.
+::warning file=tools/fetch-fonts.mjs,line=35,endLine=35,col=36,endColumn=41,title=eslint(no-await-in-loop)::tools/fetch-fonts.mjs:35:36: Unexpected `await` inside a loop.
+::error file=tools/blog-fetch.mjs,line=57,endLine=57,col=14,endColumn=15,title=eslint(no-unused-vars)::tools/blog-fetch.mjs:57:14: Catch parameter 'e' is caught but never used.
+::error file=tools/blog-fetch.mjs,line=160,endLine=160,col=16,endColumn=17,title=eslint(no-unused-vars)::tools/blog-fetch.mjs:160:16: Catch parameter 'e' is caught but never used.
+::warning file=tools/blog-fetch.mjs,line=35,endLine=35,col=17,endColumn=22,title=eslint(no-await-in-loop)::tools/blog-fetch.mjs:35:17: Unexpected `await` inside a loop.
+::warning file=tools/blog-fetch.mjs,line=40,endLine=40,col=7,endColumn=12,title=eslint(no-await-in-loop)::tools/blog-fetch.mjs:40:7: Unexpected `await` inside a loop.
+::warning file=tools/blog-fetch.mjs,line=101,endLine=101,col=17,endColumn=22,title=eslint(no-await-in-loop)::tools/blog-fetch.mjs:101:17: Unexpected `await` inside a loop.
+::warning file=tools/blog-fetch.mjs,line=101,endLine=101,col=24,endColumn=29,title=eslint(no-await-in-loop)::tools/blog-fetch.mjs:101:24: Unexpected `await` inside a loop.
+::warning file=tools/blog-fetch.mjs,line=103,endLine=103,col=7,endColumn=12,title=eslint(no-await-in-loop)::tools/blog-fetch.mjs:103:7: Unexpected `await` inside a loop.
+::error file=tools/blog-fetch.mjs,line=105,endLine=105,col=50,endColumn=54,title=unicorn(no-array-sort)::tools/blog-fetch.mjs:105:50: Use `Array#toSorted()` instead of `Array#sort()`.
+::warning file=tools/blog-fetch.mjs,line=113,endLine=113,col=24,endColumn=29,title=eslint(no-await-in-loop)::tools/blog-fetch.mjs:113:24: Unexpected `await` inside a loop.
+::warning file=tools/blog-fetch.mjs,line=126,endLine=126,col=19,endColumn=24,title=eslint(no-await-in-loop)::tools/blog-fetch.mjs:126:19: Unexpected `await` inside a loop.
+::warning file=tools/blog-fetch.mjs,line=131,endLine=131,col=22,endColumn=27,title=eslint(no-await-in-loop)::tools/blog-fetch.mjs:131:22: Unexpected `await` inside a loop.
+::warning file=tools/blog-fetch.mjs,line=145,endLine=145,col=7,endColumn=12,title=eslint(no-await-in-loop)::tools/blog-fetch.mjs:145:7: Unexpected `await` inside a loop.
+::warning file=tools/blog-fetch.mjs,line=174,endLine=174,col=19,endColumn=24,title=eslint(no-await-in-loop)::tools/blog-fetch.mjs:174:19: Unexpected `await` inside a loop.
+::warning file=tools/blog-fetch.mjs,line=177,endLine=177,col=61,endColumn=66,title=eslint(no-await-in-loop)::tools/blog-fetch.mjs:177:61: Unexpected `await` inside a loop.
+::warning file=tools/blog-fetch.mjs,line=183,endLine=183,col=7,endColumn=12,title=eslint(no-await-in-loop)::tools/blog-fetch.mjs:183:7: Unexpected `await` inside a loop.
+::warning file=tools/blog-fetch.mjs,line=208,endLine=208,col=15,endColumn=20,title=eslint(no-await-in-loop)::tools/blog-fetch.mjs:208:15: Unexpected `await` inside a loop.
+::warning file=tools/blog-fetch.mjs,line=213,endLine=213,col=15,endColumn=20,title=eslint(no-await-in-loop)::tools/blog-fetch.mjs:213:15: Unexpected `await` inside a loop.
+::error file=tools/blog-import.mjs,line=97,endLine=97,col=18,endColumn=19,title=eslint(no-unused-vars)::tools/blog-import.mjs:97:18: Catch parameter 'e' is caught but never used.
+::error file=tools/blog-import.mjs,line=143,endLine=143,col=18,endColumn=22,title=eslint(no-unused-vars)::tools/blog-import.mjs:143:18: Parameter 'name' is declared but never used. Unused parameters should start with a '_'.
+::error file=tools/blog-import.mjs,line=53,endLine=53,col=13,endColumn=14,title=unicorn(consistent-function-scoping)::tools/blog-import.mjs:53:13: Function `$` does not capture any variables from its parent scope
+::error file=tools/blog-import.mjs,line=54,endLine=54,col=13,endColumn=17,title=unicorn(consistent-function-scoping)::tools/blog-import.mjs:54:13: Function `meta` does not capture any variables from its parent scope
+::error file=tools/blog-import.mjs,line=101,endLine=101,col=13,endColumn=16,title=unicorn(consistent-function-scoping)::tools/blog-import.mjs:101:13: Function `esc` does not capture any variables from its parent scope
+::error file=tools/blog-import.mjs,line=52,endLine=52,col=14,endColumn=20,title=eslint(no-shadow)::tools/blog-import.mjs:52:14: 'imgMap' is already declared in the upper scope.
+::error file=tools/blog-import.mjs,line=52,endLine=52,col=22,endColumn=27,title=eslint(no-shadow)::tools/blog-import.mjs:52:22: 'gists' is already declared in the upper scope.
+::warning file=tools/blog-import.mjs,line=49,endLine=49,col=3,endColumn=8,title=eslint(no-await-in-loop)::tools/blog-import.mjs:49:3: Unexpected `await` inside a loop.
+::warning file=tools/blog-import.mjs,line=51,endLine=51,col=13,endColumn=18,title=eslint(no-await-in-loop)::tools/blog-import.mjs:51:13: Unexpected `await` inside a loop.
+::error file=tools/blog-import.mjs,line=278,endLine=278,col=18,endColumn=22,title=unicorn(no-array-sort)::tools/blog-import.mjs:278:18: Use `Array#toSorted()` instead of `Array#sort()`.
+::warning file=tests/e2e/blog.spec.mjs,line=26,endLine=26,col=7,endColumn=12,title=eslint(no-await-in-loop)::tests/e2e/blog.spec.mjs:26:7: Unexpected `await` inside a loop.
+::warning file=tests/e2e/blog.spec.mjs,line=27,endLine=27,col=7,endColumn=12,title=eslint(no-await-in-loop)::tests/e2e/blog.spec.mjs:27:7: Unexpected `await` inside a loop.
+::error file=tests/e2e/webmcp.spec.mjs,line=37,endLine=37,col=9,endColumn=13,title=unicorn(consistent-function-scoping)::tests/e2e/webmcp.spec.mjs:37:9: Function `call` does not capture any variables from its parent scope
+::error file=tests/e2e/webmcp.spec.mjs,line=39,endLine=39,col=15,endColumn=19,title=eslint(no-shadow)::tests/e2e/webmcp.spec.mjs:39:15: 'name' is already declared in the upper scope.
+::error file=tests/e2e/webmcp.spec.mjs,line=39,endLine=39,col=21,endColumn=26,title=eslint(no-shadow)::tests/e2e/webmcp.spec.mjs:39:21: 'input' is already declared in the upper scope.
+::error file=tests/e2e/webmcp.spec.mjs,line=12,endLine=12,col=9,endColumn=16,title=eslint(no-underscore-dangle)::tests/e2e/webmcp.spec.mjs:12:9: Unexpected dangling '_' in '`__tools`'.
+::error file=tests/e2e/webmcp.spec.mjs,line=13,endLine=13,col=9,endColumn=18,title=eslint(no-underscore-dangle)::tests/e2e/webmcp.spec.mjs:13:9: Unexpected dangling '_' in '`__aborted`'.
+::error file=tests/e2e/webmcp.spec.mjs,line=19,endLine=19,col=15,endColumn=22,title=eslint(no-underscore-dangle)::tests/e2e/webmcp.spec.mjs:19:15: Unexpected dangling '_' in '`__tools`'.
+::error file=tests/e2e/webmcp.spec.mjs,line=20,endLine=20,col=61,endColumn=70,title=eslint(no-underscore-dangle)::tests/e2e/webmcp.spec.mjs:20:61: Unexpected dangling '_' in '`__aborted`'.
+::error file=tests/e2e/webmcp.spec.mjs,line=27,endLine=27,col=77,endColumn=84,title=eslint(no-underscore-dangle)::tests/e2e/webmcp.spec.mjs:27:77: Unexpected dangling '_' in '`__tools`'.
+::error file=tests/e2e/webmcp.spec.mjs,line=40,endLine=40,col=50,endColumn=57,title=eslint(no-underscore-dangle)::tests/e2e/webmcp.spec.mjs:40:50: Unexpected dangling '_' in '`__tools`'.
+::error file=tests/e2e/webmcp.spec.mjs,line=56,endLine=56,col=35,endColumn=42,title=eslint(no-underscore-dangle)::tests/e2e/webmcp.spec.mjs:56:35: Unexpected dangling '_' in '`__tools`'.
+::error file=tests/e2e/webmcp.spec.mjs,line=72,endLine=72,col=66,endColumn=75,title=eslint(no-underscore-dangle)::tests/e2e/webmcp.spec.mjs:72:66: Unexpected dangling '_' in '`__aborted`'.
+::error file=tests/e2e/webmcp.spec.mjs,line=136,endLine=136,col=39,endColumn=46,title=eslint(no-underscore-dangle)::tests/e2e/webmcp.spec.mjs:136:39: Unexpected dangling '_' in '`__tools`'.
+::warning file=tests/a11y/states.spec.mjs,line=26,endLine=26,col=11,endColumn=16,title=eslint(no-await-in-loop)::tests/a11y/states.spec.mjs:26:11: Unexpected `await` inside a loop.
+::warning file=tests/a11y/states.spec.mjs,line=27,endLine=27,col=11,endColumn=16,title=eslint(no-await-in-loop)::tests/a11y/states.spec.mjs:27:11: Unexpected `await` inside a loop.
+::warning file=tests/a11y/states.spec.mjs,line=28,endLine=28,col=11,endColumn=16,title=eslint(no-await-in-loop)::tests/a11y/states.spec.mjs:28:11: Unexpected `await` inside a loop.
+::warning file=tests/a11y/states.spec.mjs,line=31,endLine=31,col=11,endColumn=16,title=eslint(no-await-in-loop)::tests/a11y/states.spec.mjs:31:11: Unexpected `await` inside a loop.
+::warning file=tests/a11y/states.spec.mjs,line=39,endLine=39,col=11,endColumn=16,title=eslint(no-await-in-loop)::tests/a11y/states.spec.mjs:39:11: Unexpected `await` inside a loop.
+::warning file=tests/a11y/states.spec.mjs,line=40,endLine=40,col=11,endColumn=16,title=eslint(no-await-in-loop)::tests/a11y/states.spec.mjs:40:11: Unexpected `await` inside a loop.
+::warning file=tests/a11y/states.spec.mjs,line=42,endLine=42,col=11,endColumn=16,title=eslint(no-await-in-loop)::tests/a11y/states.spec.mjs:42:11: Unexpected `await` inside a loop.
+::warning file=tests/a11y/states.spec.mjs,line=43,endLine=43,col=11,endColumn=16,title=eslint(no-await-in-loop)::tests/a11y/states.spec.mjs:43:11: Unexpected `await` inside a loop.
+::warning file=tests/a11y/states.spec.mjs,line=130,endLine=130,col=13,endColumn=18,title=eslint(no-await-in-loop)::tests/a11y/states.spec.mjs:130:13: Unexpected `await` inside a loop.
+::warning file=tests/a11y/states.spec.mjs,line=131,endLine=131,col=13,endColumn=18,title=eslint(no-await-in-loop)::tests/a11y/states.spec.mjs:131:13: Unexpected `await` inside a loop.
+::warning file=tests/a11y/states.spec.mjs,line=132,endLine=132,col=13,endColumn=18,title=eslint(no-await-in-loop)::tests/a11y/states.spec.mjs:132:13: Unexpected `await` inside a loop.
+::error file=tools/lighthouse-summary.mjs,line=8,endLine=8,col=41,endColumn=45,title=unicorn(no-array-sort)::tools/lighthouse-summary.mjs:8:41: Use `Array#toSorted()` instead of `Array#sort()`.
+::error file=tools/lighthouse-summary.mjs,line=27,endLine=27,col=29,endColumn=33,title=unicorn(no-array-sort)::tools/lighthouse-summary.mjs:27:29: Use `Array#toSorted()` instead of `Array#sort()`.
+::error file=tests/a11y/keyboard.spec.mjs,line=102,endLine=102,col=13,endColumn=21,title=unicorn(consistent-function-scoping)::tests/a11y/keyboard.spec.mjs:102:13: Function `describe` does not capture any variables from its parent scope
+::error file=tests/a11y/keyboard.spec.mjs,line=87,endLine=87,col=19,endColumn=20,title=eslint(no-shadow)::tests/a11y/keyboard.spec.mjs:87:19: 'w' is already declared in the upper scope.
+::warning file=tests/a11y/keyboard.spec.mjs,line=29,endLine=29,col=9,endColumn=14,title=eslint(no-await-in-loop)::tests/a11y/keyboard.spec.mjs:29:9: Unexpected `await` inside a loop.
+::warning file=tests/a11y/keyboard.spec.mjs,line=31,endLine=31,col=22,endColumn=27,title=eslint(no-await-in-loop)::tests/a11y/keyboard.spec.mjs:31:22: Unexpected `await` inside a loop.
+::error file=tests/a11y/keyboard.spec.mjs,line=35,endLine=35,col=13,endColumn=19,title=eslint(no-underscore-dangle)::tests/a11y/keyboard.spec.mjs:35:13: Unexpected dangling '_' in '`__seen`'.
+::error file=tests/a11y/keyboard.spec.mjs,line=35,endLine=35,col=24,endColumn=30,title=eslint(no-underscore-dangle)::tests/a11y/keyboard.spec.mjs:35:24: Unexpected dangling '_' in '`__seen`'.
+::error file=tests/a11y/keyboard.spec.mjs,line=36,endLine=36,col=17,endColumn=23,title=eslint(no-underscore-dangle)::tests/a11y/keyboard.spec.mjs:36:17: Unexpected dangling '_' in '`__seen`'.
+::error file=tests/a11y/keyboard.spec.mjs,line=37,endLine=37,col=13,endColumn=19,title=eslint(no-underscore-dangle)::tests/a11y/keyboard.spec.mjs:37:13: Unexpected dangling '_' in '`__seen`'.
+::warning file=tests/a11y/keyboard.spec.mjs,line=85,endLine=85,col=27,endColumn=32,title=eslint(no-await-in-loop)::tests/a11y/keyboard.spec.mjs:85:27: Unexpected `await` inside a loop.
+::warning file=tests/a11y/keyboard.spec.mjs,line=86,endLine=86,col=11,endColumn=16,title=eslint(no-await-in-loop)::tests/a11y/keyboard.spec.mjs:86:11: Unexpected `await` inside a loop.
+::error file=tests/a11y/keyboard.spec.mjs,line=88,endLine=88,col=15,endColumn=21,title=eslint(no-underscore-dangle)::tests/a11y/keyboard.spec.mjs:88:15: Unexpected dangling '_' in '`__last`'.
+::error file=tests/a11y/keyboard.spec.mjs,line=89,endLine=89,col=15,endColumn=21,title=eslint(no-underscore-dangle)::tests/a11y/keyboard.spec.mjs:89:15: Unexpected dangling '_' in '`__last`'.
+::warning file=tests/a11y/keyboard.spec.mjs,line=91,endLine=91,col=27,endColumn=32,title=eslint(no-await-in-loop)::tests/a11y/keyboard.spec.mjs:91:27: Unexpected `await` inside a loop.
+::warning file=tests/a11y/keyboard.spec.mjs,line=94,endLine=94,col=11,endColumn=16,title=eslint(no-await-in-loop)::tests/a11y/keyboard.spec.mjs:94:11: Unexpected `await` inside a loop.
+::error file=tests/a11y/keyboard.spec.mjs,line=95,endLine=95,col=41,endColumn=47,title=eslint(no-underscore-dangle)::tests/a11y/keyboard.spec.mjs:95:41: Unexpected dangling '_' in '`__last`'.
+::error file=src/i18n.js,line=828,endLine=828,col=12,endColumn=13,title=eslint(no-unused-vars)::src/i18n.js:828:12: Catch parameter 'e' is caught but never used.
+::error file=src/i18n.js,line=466,endLine=466,col=42,endColumn=47,title=eslint(no-shadow)::src/i18n.js:466:42: 'stash' is already declared in the upper scope.
+::error file=src/i18n.js,line=1036,endLine=1036,col=58,endColumn=59,title=eslint(no-shadow)::src/i18n.js:1036:58: 'c' is already declared in the upper scope.
+::error file=src/i18n.js,line=438,endLine=438,col=16,endColumn=44,title=unicorn(no-new-array)::src/i18n.js:438:16: Do not use `new Array(singleArgument)`.
+::error file=src/i18n.js,line=439,endLine=439,col=18,endColumn=46,title=unicorn(no-new-array)::src/i18n.js:439:18: Do not use `new Array(singleArgument)`.
+::warning file=src/i18n.js,line=592,endLine=592,col=28,endColumn=33,title=eslint(no-await-in-loop)::src/i18n.js:592:28: Unexpected `await` inside a loop.
+::warning file=src/i18n.js,line=607,endLine=607,col=15,endColumn=20,title=eslint(no-await-in-loop)::src/i18n.js:607:15: Unexpected `await` inside a loop.
+::error file=src/i18n.js,line=738,endLine=738,col=17,endColumn=25,title=eslint(no-underscore-dangle)::src/i18n.js:738:17: Unexpected dangling '_' in '`__trOrig`'.
+::error file=src/i18n.js,line=739,endLine=739,col=8,endColumn=16,title=eslint(no-underscore-dangle)::src/i18n.js:739:8: Unexpected dangling '_' in '`__trOrig`'.
+::error file=src/i18n.js,line=745,endLine=745,col=6,endColumn=14,title=eslint(no-underscore-dangle)::src/i18n.js:745:6: Unexpected dangling '_' in '`__trAttr`'.
+::error file=src/i18n.js,line=745,endLine=745,col=20,endColumn=28,title=eslint(no-underscore-dangle)::src/i18n.js:745:20: Unexpected dangling '_' in '`__trAttr`'.
+::error file=src/i18n.js,line=746,endLine=746,col=17,endColumn=25,title=eslint(no-underscore-dangle)::src/i18n.js:746:17: Unexpected dangling '_' in '`__trAttr`'.
+::error file=src/i18n.js,line=747,endLine=747,col=8,endColumn=16,title=eslint(no-underscore-dangle)::src/i18n.js:747:8: Unexpected dangling '_' in '`__trAttr`'.
+::error file=src/i18n.js,line=756,endLine=756,col=12,endColumn=20,title=eslint(no-underscore-dangle)::src/i18n.js:756:12: Unexpected dangling '_' in '`__trOrig`'.
+::error file=src/i18n.js,line=757,endLine=757,col=32,endColumn=40,title=eslint(no-underscore-dangle)::src/i18n.js:757:32: Unexpected dangling '_' in '`__trOrig`'.
+::error file=src/i18n.js,line=758,endLine=758,col=17,endColumn=25,title=eslint(no-underscore-dangle)::src/i18n.js:758:17: Unexpected dangling '_' in '`__trOrig`'.
+::error file=src/i18n.js,line=760,endLine=760,col=12,endColumn=20,title=eslint(no-underscore-dangle)::src/i18n.js:760:12: Unexpected dangling '_' in '`__trAttr`'.
+::error file=src/i18n.js,line=761,endLine=761,col=46,endColumn=54,title=eslint(no-underscore-dangle)::src/i18n.js:761:46: Unexpected dangling '_' in '`__trAttr`'.
+::error file=src/i18n.js,line=762,endLine=762,col=17,endColumn=25,title=eslint(no-underscore-dangle)::src/i18n.js:762:17: Unexpected dangling '_' in '`__trAttr`'.
+::warning file=src/i18n.js,line=854,endLine=854,col=85,endColumn=90,title=eslint(no-await-in-loop)::src/i18n.js:854:85: Unexpected `await` inside a loop.
+::error file=src/i18n.js,line=870,endLine=870,col=8,endColumn=12,title=unicorn(no-array-sort)::src/i18n.js:870:8: Use `Array#toSorted()` instead of `Array#sort()`.
+::warning file=src/i18n.js,line=967,endLine=967,col=62,endColumn=67,title=eslint(no-await-in-loop)::src/i18n.js:967:62: Unexpected `await` inside a loop.
+::error file=tools/live.mjs,line=33,endLine=33,col=9,endColumn=13,title=unicorn(consistent-function-scoping)::tools/live.mjs:33:9: Function `pick` does not capture any variables from its parent scope
+::error file=tools/oss-stats.mjs,line=38,endLine=38,col=5,endColumn=6,title=eslint(no-shadow)::tools/oss-stats.mjs:38:5: 'q' is already declared in the upper scope.
+::warning file=tools/oss-stats.mjs,line=24,endLine=24,col=20,endColumn=25,title=eslint(no-await-in-loop)::tools/oss-stats.mjs:24:20: Unexpected `await` inside a loop.
+::error file=tools/oss-stats.mjs,line=45,endLine=45,col=42,endColumn=46,title=unicorn(no-array-sort)::tools/oss-stats.mjs:45:42: Use `Array#toSorted()` instead of `Array#sort()`.
+::error file=tools/redirects.mjs,line=84,endLine=84,col=16,endColumn=17,title=eslint(no-unused-vars)::tools/redirects.mjs:84:16: Catch parameter 'e' is caught but never used.
+::error file=tools/redirects.mjs,line=22,endLine=22,col=10,endColumn=13,title=unicorn(consistent-function-scoping)::tools/redirects.mjs:22:10: Function `b` does not capture any variables from its parent scope
+::error file=tools/redirects.mjs,line=210,endLine=210,col=9,endColumn=16,title=eslint(no-shadow)::tools/redirects.mjs:210:9: 'targets' is already declared in the upper scope.
+::warning file=tools/redirects.mjs,line=50,endLine=50,col=19,endColumn=24,title=eslint(no-await-in-loop)::tools/redirects.mjs:50:19: Unexpected `await` inside a loop.
+::warning file=tools/redirects.mjs,line=54,endLine=54,col=19,endColumn=24,title=eslint(no-await-in-loop)::tools/redirects.mjs:54:19: Unexpected `await` inside a loop.
+::warning file=tools/redirects.mjs,line=61,endLine=61,col=9,endColumn=14,title=eslint(no-await-in-loop)::tools/redirects.mjs:61:9: Unexpected `await` inside a loop.
+::error file=tools/redirects.mjs,line=99,endLine=99,col=6,endColumn=10,title=unicorn(no-array-sort)::tools/redirects.mjs:99:6: Use `Array#toSorted()` instead of `Array#sort()`.
+::warning file=tools/redirects.mjs,line=217,endLine=217,col=19,endColumn=24,title=eslint(no-await-in-loop)::tools/redirects.mjs:217:19: Unexpected `await` inside a loop.
+::warning file=tools/redirects.mjs,line=235,endLine=235,col=50,endColumn=55,title=eslint(no-await-in-loop)::tools/redirects.mjs:235:50: Unexpected `await` inside a loop.
+::error file=tools/redirects.mjs,line=257,endLine=257,col=8,endColumn=12,title=unicorn(no-array-sort)::tools/redirects.mjs:257:8: Use `Array#toSorted()` instead of `Array#sort()`.
+::warning file=tools/redirects.mjs,line=283,endLine=283,col=39,endColumn=44,title=eslint(no-await-in-loop)::tools/redirects.mjs:283:39: Unexpected `await` inside a loop.
+::error file=tools/dc-runtime.js,line=48,endLine=48,col=9,endColumn=12,title=unicorn(consistent-function-scoping)::tools/dc-runtime.js:48:9: Function `str` does not capture any variables from its parent scope
+::error file=tools/dc-runtime.js,line=59,endLine=59,col=12,endColumn=17,title=eslint(no-underscore-dangle)::tools/dc-runtime.js:59:12: Unexpected dangling '_' in '`__app`'.
+::error file=tools/dc-runtime.js,line=66,endLine=66,col=16,endColumn=21,title=eslint(no-underscore-dangle)::tools/dc-runtime.js:66:16: Unexpected dangling '_' in '`__app`'.
+::error file=tools/dc-runtime.js,line=66,endLine=66,col=28,endColumn=33,title=eslint(no-underscore-dangle)::tools/dc-runtime.js:66:28: Unexpected dangling '_' in '`__app`'.
+::error file=tools/dc-runtime.js,line=103,endLine=103,col=14,endColumn=19,title=eslint(no-underscore-dangle)::tools/dc-runtime.js:103:14: Unexpected dangling '_' in '`__app`'.
+::error file=tools/ask-evals.mjs,line=95,endLine=95,col=11,endColumn=14,title=unicorn(consistent-function-scoping)::tools/ask-evals.mjs:95:11: Function `esc` does not capture any variables from its parent scope
+::warning file=tools/ask-evals.mjs,line=26,endLine=26,col=19,endColumn=24,title=eslint(no-await-in-loop)::tools/ask-evals.mjs:26:19: Unexpected `await` inside a loop.
+::warning file=tools/ask-evals.mjs,line=28,endLine=28,col=15,endColumn=20,title=eslint(no-await-in-loop)::tools/ask-evals.mjs:28:15: Unexpected `await` inside a loop.
+::warning file=tools/ask-evals.mjs,line=34,endLine=34,col=7,endColumn=12,title=eslint(no-await-in-loop)::tools/ask-evals.mjs:34:7: Unexpected `await` inside a loop.
+::warning file=tools/ask-evals.mjs,line=40,endLine=40,col=9,endColumn=14,title=eslint(no-await-in-loop)::tools/ask-evals.mjs:40:9: Unexpected `await` inside a loop.
+::warning file=tools/ask-evals.mjs,line=68,endLine=68,col=11,endColumn=16,title=eslint(no-await-in-loop)::tools/ask-evals.mjs:68:11: Unexpected `await` inside a loop.
+::error file=tools/build.mjs,line=142,endLine=142,col=14,endColumn=15,title=eslint(no-unused-vars)::tools/build.mjs:142:14: Catch parameter 'e' is caught but never used.
+::error file=tools/build.mjs,line=368,endLine=368,col=12,endColumn=13,title=eslint(no-unused-vars)::tools/build.mjs:368:12: Catch parameter 'e' is caught but never used.
+::error file=tools/build.mjs,line=382,endLine=382,col=14,endColumn=15,title=eslint(no-unused-vars)::tools/build.mjs:382:14: Catch parameter 'e' is caught but never used.
+::error file=tools/build.mjs,line=398,endLine=398,col=12,endColumn=13,title=eslint(no-unused-vars)::tools/build.mjs:398:12: Catch parameter 'e' is caught but never used.
+::error file=tools/build.mjs,line=491,endLine=491,col=12,endColumn=13,title=eslint(no-unused-vars)::tools/build.mjs:491:12: Catch parameter 'e' is caught but never used.
+::error file=tools/build.mjs,line=621,endLine=621,col=10,endColumn=25,title=unicorn(consistent-function-scoping)::tools/build.mjs:621:10: Function `clean` does not capture any variables from its parent scope
+::error file=tools/build.mjs,line=621,endLine=621,col=10,endColumn=25,title=unicorn(consistent-function-scoping)::tools/build.mjs:621:10: Function `q` does not capture any variables from its parent scope
+::error file=tools/build.mjs,line=621,endLine=621,col=10,endColumn=25,title=unicorn(consistent-function-scoping)::tools/build.mjs:621:10: Function `qa` does not capture any variables from its parent scope
+::error file=tools/build.mjs,line=918,endLine=918,col=16,endColumn=28,title=unicorn(consistent-function-scoping)::tools/build.mjs:918:16: Function `font` does not capture any variables from its parent scope
+::error file=tools/build.mjs,line=1004,endLine=1004,col=10,endColumn=20,title=unicorn(consistent-function-scoping)::tools/build.mjs:1004:10: Function `tipFor` does not capture any variables from its parent scope
+::error file=tools/build.mjs,line=1046,endLine=1046,col=16,endColumn=23,title=unicorn(consistent-function-scoping)::tools/build.mjs:1046:16: Function `font` does not capture any variables from its parent scope
+::error file=tools/build.mjs,line=1307,endLine=1307,col=16,endColumn=25,title=unicorn(consistent-function-scoping)::tools/build.mjs:1307:16: Function `cta` does not capture any variables from its parent scope
+::error file=tools/build.mjs,line=1449,endLine=1449,col=16,endColumn=26,title=unicorn(consistent-function-scoping)::tools/build.mjs:1449:16: Function `fold` does not capture any variables from its parent scope
+::error file=tools/build.mjs,line=1488,endLine=1488,col=10,endColumn=24,title=unicorn(consistent-function-scoping)::tools/build.mjs:1488:10: Function `job` does not capture any variables from its parent scope
+::error file=tools/build.mjs,line=1604,endLine=1604,col=57,endColumn=58,title=eslint(no-shadow)::tools/build.mjs:1604:57: 'f' is already declared in the upper scope.
+::warning file=tools/build.mjs,line=795,endLine=795,col=7,endColumn=12,title=eslint(no-await-in-loop)::tools/build.mjs:795:7: Unexpected `await` inside a loop.
+::warning file=tools/build.mjs,line=796,endLine=796,col=7,endColumn=12,title=eslint(no-await-in-loop)::tools/build.mjs:796:7: Unexpected `await` inside a loop.
+::warning file=tools/build.mjs,line=797,endLine=797,col=21,endColumn=26,title=eslint(no-await-in-loop)::tools/build.mjs:797:21: Unexpected `await` inside a loop.
+::warning file=tools/build.mjs,line=900,endLine=900,col=5,endColumn=10,title=eslint(no-await-in-loop)::tools/build.mjs:900:5: Unexpected `await` inside a loop.
+::warning file=tools/build.mjs,line=904,endLine=904,col=5,endColumn=10,title=eslint(no-await-in-loop)::tools/build.mjs:904:5: Unexpected `await` inside a loop.
+::warning file=tools/build.mjs,line=1219,endLine=1219,col=7,endColumn=12,title=eslint(no-await-in-loop)::tools/build.mjs:1219:7: Unexpected `await` inside a loop.
+::warning file=tools/build.mjs,line=1278,endLine=1278,col=21,endColumn=26,title=eslint(no-await-in-loop)::tools/build.mjs:1278:21: Unexpected `await` inside a loop.
+::warning file=tools/build.mjs,line=1323,endLine=1323,col=18,endColumn=23,title=eslint(no-await-in-loop)::tools/build.mjs:1323:18: Unexpected `await` inside a loop.
+::warning file=tools/build.mjs,line=1325,endLine=1325,col=5,endColumn=10,title=eslint(no-await-in-loop)::tools/build.mjs:1325:5: Unexpected `await` inside a loop.
+
+Found 80 warnings and 131 errors.
+Finished in 82ms on 53 files with 127 rules using 4 threads.

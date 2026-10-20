@@ -1,14 +1,32 @@
 // The agent tools shared by the page (WebMCP) and the worker (MCP): search, files and arguments.
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
-import { bestAnswer, callTool, checkArgs, describeTools, files, hasTool, NOT_FOUND, prepareIndex, rank, slug, toks, ToolError } from '../../../shared/agent-tools.js';
+import {
+  bestAnswer,
+  callTool,
+  checkArgs,
+  describeTools,
+  files,
+  hasTool,
+  NOT_FOUND,
+  prepareIndex,
+  rank,
+  slug,
+  toks,
+  ToolError,
+} from '../../../shared/agent-tools.js';
 
 /** @param {string} id @param {string} title @param {string} text @param {string} [kind] */
 const passage = (id, title, text, kind = 'section') => ({ id, title, text, href: '#' + id, kind, key: id });
 const INDEX = prepareIndex({
   passages: [
     passage('intro', 'About', 'Head of Engineering in Newcastle. Leads teams of engineers.'),
-    passage('case-cost', 'cost.md: Cutting the AWS bill', 'Cut the monthly AWS bill by a third. Rightsized databases.', 'case'),
+    passage(
+      'case-cost',
+      'cost.md: Cutting the AWS bill',
+      'Cut the monthly AWS bill by a third. Rightsized databases.',
+      'case',
+    ),
     passage('resp-hire', 'hiring.md: Hiring', 'Hired twenty engineers with structured interviews.', 'resp'),
     passage('blog-x', 'durandal-and-webpack.md: Durandal and webpack', 'A post about module formats.', 'blog'),
   ],
@@ -56,7 +74,12 @@ describe('arguments', () => {
   /** @type {import('../../../shared/agent-tools.js').Schema} */
   const schema = {
     type: 'object',
-    properties: { q: { type: 'string', maxLength: 5 }, n: { type: 'integer', minimum: 1, maximum: 3 }, on: { type: 'boolean' }, kind: { enum: ['a', 'b'] } },
+    properties: {
+      q: { type: 'string', maxLength: 5 },
+      n: { type: 'integer', minimum: 1, maximum: 3 },
+      on: { type: 'boolean' },
+      kind: { enum: ['a', 'b'] },
+    },
     required: ['q'],
   };
 
@@ -90,14 +113,17 @@ describe('tools', () => {
   it('offers page-only tools on the page and not over MCP', () => {
     assert.ok(hasTool('show_section', 'page'));
     assert.ok(!hasTool('show_section', 'mcp'));
-    const page = describeTools('page', src).map((t) => t.name);
+    const page = new Set(describeTools('page', src).map((t) => t.name));
     const mcp = describeTools('mcp', src).map((t) => t.name);
-    assert.ok(mcp.every((n) => page.includes(n)));
+    assert.ok(mcp.every((n) => page.has(n)));
     assert.ok(describeTools('mcp', src).every((t) => t.annotations.readOnlyHint && !t.annotations.destructiveHint));
   });
 
   it('returns failures as results the agent can act on, never throws', async () => {
-    assert.deepEqual(await callTool('nope', {}, src, 'mcp'), { content: [{ type: 'text', text: 'No tool called "nope".' }], isError: true });
+    assert.deepEqual(await callTool('nope', {}, src, 'mcp'), {
+      content: [{ type: 'text', text: 'No tool called "nope".' }],
+      isError: true,
+    });
     assert.equal((await callTool('search_site', { query: 42 }, src, 'mcp')).isError, true);
     const failed = await callTool('get_profile', {}, src, 'mcp');
     assert.deepEqual(failed, { content: [{ type: 'text', text: 'The CV is unavailable.' }], isError: true });

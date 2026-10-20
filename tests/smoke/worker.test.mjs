@@ -65,13 +65,26 @@ describe('ask.sh', { skip: !AI && 'set SMOKE_AI=1 to ask real questions' }, () =
 
 describe('/mcp over HTTP', () => {
   it('initialize (protocol 2025-11-25)', async () => {
-    const r = await post('/mcp', { jsonrpc: '2.0', id: 1, method: 'initialize', params: { protocolVersion: '2025-11-25', capabilities: {}, clientInfo: { name: 'ci', version: '1' } } }, TEST);
+    const r = await post(
+      '/mcp',
+      {
+        jsonrpc: '2.0',
+        id: 1,
+        method: 'initialize',
+        params: { protocolVersion: '2025-11-25', capabilities: {}, clientInfo: { name: 'ci', version: '1' } },
+      },
+      TEST,
+    );
     assert.equal(r.status, 200);
     assert.equal((await r.json()).result.serverInfo.name, 'craigthompson-dev');
   });
 
   it('server/discover (protocol 2026-07-28)', async () => {
-    const r = await post('/mcp', { jsonrpc: '2.0', id: 1, method: 'server/discover', params: { _meta: META } }, { ...TEST, 'mcp-protocol-version': '2026-07-28', 'mcp-method': 'server/discover' });
+    const r = await post(
+      '/mcp',
+      { jsonrpc: '2.0', id: 1, method: 'server/discover', params: { _meta: META } },
+      { ...TEST, 'mcp-protocol-version': '2026-07-28', 'mcp-method': 'server/discover' },
+    );
     assert.equal(r.status, 200);
     const { result } = await r.json();
     assert.equal(result.resultType, 'complete');
@@ -119,6 +132,9 @@ describe('/mcp with the official MCP SDK client', () => {
 describe('other origins', () => {
   it('are refused on /ask and /mcp', async () => {
     assert.equal((await post('/ask', { q: 'hi' }, { origin: 'https://example.com' })).status, 403);
-    assert.equal((await post('/mcp', { jsonrpc: '2.0', id: 1, method: 'tools/list' }, { origin: 'https://example.com' })).status, 403);
+    assert.equal(
+      (await post('/mcp', { jsonrpc: '2.0', id: 1, method: 'tools/list' }, { origin: 'https://example.com' })).status,
+      403,
+    );
   });
 });

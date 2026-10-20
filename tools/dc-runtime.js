@@ -16,7 +16,12 @@
   const HOLE = /\{\{\s*([^}]+?)\s*\}\}/g;
   const ONE_HOLE = /^\{\{\s*([^}]+?)\s*\}\}$/;
   /** Template attribute → DOM event it binds. */
-  const EVENTS = /** @type {Record<string, string>} */ ({ onclick: 'click', onchange: 'input', onkeydown: 'keydown', oninput: 'input' });
+  const EVENTS = /** @type {Record<string, string>} */ ({
+    onclick: 'click',
+    onchange: 'input',
+    onkeydown: 'keydown',
+    oninput: 'input',
+  });
 
   /** @typedef {Record<string, any>} Scope */
   /** @typedef {(this: DCLogic, e: Event) => void} Handler */
@@ -260,7 +265,8 @@
       a.removeAttribute(name);
     }
     // Typed values only: a checkbox's or radio's value attribute isn't what the user changes.
-    const typed = (a instanceof HTMLInputElement && !/^(checkbox|radio)$/i.test(a.type)) || a instanceof HTMLTextAreaElement;
+    const typed =
+      (a instanceof HTMLInputElement && !/^(checkbox|radio)$/i.test(a.type)) || a instanceof HTMLTextAreaElement;
     if (typed && document.activeElement !== a) {
       const v = b.getAttribute('value') || '';
       if (a.value !== v) a.value = v;
@@ -315,15 +321,24 @@
    * @param {Node} next
    */
   function patchKeep(live, prev, next) {
-    const L = Array.from(live.childNodes), P = Array.from(prev.childNodes), N = Array.from(next.childNodes);
+    const L = Array.from(live.childNodes),
+      P = Array.from(prev.childNodes),
+      N = Array.from(next.childNodes);
     if (P.length !== N.length || L.length !== N.length) {
       patchChildren(live, next);
       return;
     }
     N.forEach((n, i) => {
-      const a = L[i], o = P[i];
+      const a = L[i],
+        o = P[i];
       if (o.isEqualNode(n)) return;
-      if (a instanceof Element && o instanceof Element && n instanceof Element && sameNode(a, n) && o.localName === n.localName) {
+      if (
+        a instanceof Element &&
+        o instanceof Element &&
+        n instanceof Element &&
+        sameNode(a, n) &&
+        o.localName === n.localName
+      ) {
         syncAttrs(a, n);
         if (a.localName !== 'canvas') patchKeep(a, o, n);
       } else if (a instanceof Text && n instanceof Text) {

@@ -24,7 +24,13 @@ for (const path of ['blog/', ...POSTS.map((slug) => `blog/${slug}/`)]) {
     const images = page.locator('.sp-post-b img');
     for (const img of await images.all()) {
       await img.scrollIntoViewIfNeeded();
-      await expect.poll(() => img.evaluate((i) => /** @type {HTMLImageElement} */ (i).complete && /** @type {HTMLImageElement} */ (i).naturalWidth > 0)).toBe(true);
+      await expect
+        .poll(() =>
+          img.evaluate(
+            (i) => /** @type {HTMLImageElement} */ (i).complete && /** @type {HTMLImageElement} */ (i).naturalWidth > 0,
+          ),
+        )
+        .toBe(true);
     }
   });
 }

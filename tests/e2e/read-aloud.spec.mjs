@@ -51,7 +51,10 @@ test.describe('read aloud', { tag: '@desktop' }, () => {
   }
 
   test('the natural voice plays at 1.15×, pitch kept, and the button resets', async ({ page, services }) => {
-    services.ask = { status: 200, json: { answer: 'He has led engineering teams for twelve years.', sources: ['intro'] } };
+    services.ask = {
+      status: 200,
+      json: { answer: 'He has led engineering teams for twelve years.', sources: ['intro'] },
+    };
     services.speak = { status: 200, contentType: 'audio/wav', body: silentWav() };
     await askAndListen(page);
     const audio = () =>

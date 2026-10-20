@@ -3,7 +3,10 @@
 // The stand-in returns the English text tagged «xx» (tools/translator-stub.mjs).
 import { test, expect, translated } from '../fixtures.mjs';
 
-const ANSWER = { status: 200, json: { answer: 'He has led engineering teams. See leadership.md.', sources: ['intro'] } };
+const ANSWER = {
+  status: 200,
+  json: { answer: 'He has led engineering teams. See leadership.md.', sources: ['intro'] },
+};
 
 /**
  * Ask ask.sh a question and return the newest answer and its note.
@@ -18,35 +21,40 @@ async function ask(page, question) {
   return page.locator('.c-ask-log .c-ask-a').last();
 }
 
-test('the browser’s page translation survives scrolling, tab switches and the scroll spy', { tag: '@desktop' }, async ({ page }) => {
-  await page.goto('/');
-  // Chrome Translate swaps each text node for a translated copy wrapped in <font>.
-  await page.evaluate(() => {
-    document.documentElement.classList.add('translated-ltr');
-    const app = /** @type {HTMLElement} */ (document.getElementById('app'));
-    const walker = document.createTreeWalker(app, NodeFilter.SHOW_TEXT);
-    /** @type {Text[]} */
-    const nodes = [];
-    for (let n = walker.nextNode(); n; n = walker.nextNode()) if (/\p{L}{2}/u.test(/** @type {Text} */ (n).data)) nodes.push(/** @type {Text} */ (n));
-    for (const n of nodes) {
-      const f = document.createElement('font');
-      f.textContent = 'GT:' + n.data;
-      n.replaceWith(f);
+test(
+  'the browser’s page translation survives scrolling, tab switches and the scroll spy',
+  { tag: '@desktop' },
+  async ({ page }) => {
+    await page.goto('/');
+    // Chrome Translate swaps each text node for a translated copy wrapped in <font>.
+    await page.evaluate(() => {
+      document.documentElement.classList.add('translated-ltr');
+      const app = /** @type {HTMLElement} */ (document.getElementById('app'));
+      const walker = document.createTreeWalker(app, NodeFilter.SHOW_TEXT);
+      /** @type {Text[]} */
+      const nodes = [];
+      for (let n = walker.nextNode(); n; n = walker.nextNode())
+        if (/\p{L}{2}/u.test(/** @type {Text} */ (n).data)) nodes.push(/** @type {Text} */ (n));
+      for (const n of nodes) {
+        const f = document.createElement('font');
+        f.textContent = 'GT:' + n.data;
+        n.replaceWith(f);
+      }
+    });
+    const fonts = () => page.locator('#app font').count();
+    const before = await fonts();
+    // Each section renders as it scrolls into view (content-visibility), which mustn't undo the translation.
+    for (const id of ['career', 'case-studies', 'faq', 'top']) {
+      await page.locator('#' + id).evaluate((el) => el.scrollIntoView({ behavior: 'instant' }));
+      await page.evaluate(() => new Promise((done) => requestAnimationFrame(() => requestAnimationFrame(done))));
     }
-  });
-  const fonts = () => page.locator('#app font').count();
-  const before = await fonts();
-  // Each section renders as it scrolls into view (content-visibility), which mustn't undo the translation.
-  for (const id of ['career', 'case-studies', 'faq', 'top']) {
-    await page.locator('#' + id).evaluate((el) => el.scrollIntoView({ behavior: 'instant' }));
-    await page.evaluate(() => new Promise((done) => requestAnimationFrame(() => requestAnimationFrame(done))));
-  }
-  await page.locator('#case-studies [role="tab"]').nth(2).click();
-  await expect(page.locator('#case-studies [role="tab"]').nth(2)).toHaveAttribute('aria-selected', 'true');
-  expect(await fonts()).toBeGreaterThanOrEqual(before * 0.95);
-  await page.locator('#career').evaluate((el) => el.scrollIntoView({ behavior: 'instant' }));
-  await expect(page.locator('.v2-tree a[aria-current="true"]')).toHaveAttribute('href', '#career');
-});
+    await page.locator('#case-studies [role="tab"]').nth(2).click();
+    await expect(page.locator('#case-studies [role="tab"]').nth(2)).toHaveAttribute('aria-selected', 'true');
+    expect(await fonts()).toBeGreaterThanOrEqual(before * 0.95);
+    await page.locator('#career').evaluate((el) => el.scrollIntoView({ behavior: 'instant' }));
+    await expect(page.locator('.v2-tree a[aria-current="true"]')).toHaveAttribute('href', '#career');
+  },
+);
 
 test.describe('without the Translator API (Safari, Firefox)', () => {
   test.use({ translator: 'none' });
@@ -62,20 +70,26 @@ test.describe('without the Translator API (Safari, Firefox)', () => {
 test.describe('an English browser', () => {
   test.use({ translator: 'stub', locale: 'en-GB' });
 
-  test('gets the language menu, not the offer, and loads no translation code', { tag: '@desktop' }, async ({ page }) => {
-    await page.goto('/');
-    await expect(page.locator('.v2-side .v2-lang-s')).toHaveCount(1);
-    await expect(page.locator('.tr-offer')).toHaveCount(0);
-    expect(await page.locator('script[src*="i18n."]').count()).toBe(0);
-    expect(await page.evaluate(() => /** @type {any} */ (window).__trCalls)).toBe(0);
-  });
+  test(
+    'gets the language menu, not the offer, and loads no translation code',
+    { tag: '@desktop' },
+    async ({ page }) => {
+      await page.goto('/');
+      await expect(page.locator('.v2-side .v2-lang-s')).toHaveCount(1);
+      await expect(page.locator('.tr-offer')).toHaveCount(0);
+      expect(await page.locator('script[src*="i18n."]').count()).toBe(0);
+      expect(await page.evaluate(() => /** @type {any} */ (window).__trCalls)).toBe(0);
+    },
+  );
 
   test('a question in German is answered in German, and says it was machine-translated', async ({ page, services }) => {
     services.ask = ANSWER;
     await page.goto('/');
     const answer = await ask(page, 'Welche Erfahrung hat er mit Teams?');
     await expect(answer).toContainText('«de» He has led');
-    await expect(page.locator('.c-ask-log .c-ask-meta').last()).toContainText('Machine-translated from English by your browser');
+    await expect(page.locator('.c-ask-log .c-ask-meta').last()).toContainText(
+      'Machine-translated from English by your browser',
+    );
   });
 });
 
@@ -134,7 +148,12 @@ test.describe('a German browser', () => {
         new Promise((done) => {
           let n = 0;
           const mo = new MutationObserver((list) => (n += list.length));
-          mo.observe(/** @type {Node} */ (document.getElementById('app')), { subtree: true, childList: true, characterData: true, attributes: true });
+          mo.observe(/** @type {Node} */ (document.getElementById('app')), {
+            subtree: true,
+            childList: true,
+            characterData: true,
+            attributes: true,
+          });
           setTimeout(() => (mo.disconnect(), done(n)), 2000);
         }),
     );
@@ -143,7 +162,12 @@ test.describe('a German browser', () => {
 
   test('when markup is lost in translation, highlighted phrases stay working buttons', async ({ page }) => {
     // The stand-in drops the markup tokens for text mentioning "monorepo".
-    const buttons = page.locator('#app p').filter({ hasText: /monorepo/i }).filter({ has: page.locator('button.v2-x') }).first().locator('button.v2-x');
+    const buttons = page
+      .locator('#app p')
+      .filter({ hasText: /monorepo/i })
+      .filter({ has: page.locator('button.v2-x') })
+      .first()
+      .locator('button.v2-x');
     expect(await buttons.count()).toBeGreaterThanOrEqual(2);
     for (const b of await buttons.all()) {
       await expect(b).toHaveText(/^«de»/);
@@ -194,12 +218,17 @@ test.describe('Arabic', () => {
   for (const path of ['/', '/cv/']) {
     test(`is right to left, with no sideways scrolling (${path})`, async ({ page }) => {
       await page.goto(path);
-      if (path === '/') await page.evaluate(() => /** @type {any} */ (window).CRAGA_I18N.load().then((/** @type {any} */ m) => m.setLanguage('ar')));
+      if (path === '/')
+        await page.evaluate(() =>
+          /** @type {any} */ (window).CRAGA_I18N.load().then((/** @type {any} */ m) => m.setLanguage('ar')),
+        );
       else await page.locator('.v-lang').selectOption('ar');
       await translated(page);
       await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');
       await page.evaluate(() => document.documentElement.classList.add('cv-all'));
-      await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBeLessThanOrEqual(1);
+      await expect
+        .poll(() => page.evaluate(() => document.documentElement.scrollWidth - innerWidth))
+        .toBeLessThanOrEqual(1);
       // The case-study "next" arrow points left.
       const next = page.locator('.c-deck-ctl button[aria-label]:last-child span');
       if (await next.count()) await expect(next).toHaveText('←');

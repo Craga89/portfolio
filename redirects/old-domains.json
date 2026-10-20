@@ -1,14 +1,8 @@
 {
   "about": "Redirects from Craig's old domains to craigthompson.dev. tools/redirects.mjs turns this into a Cloudflare Bulk Redirects CSV and checks the live redirects. The craigsworks.com rules carry over what the old site's .htaccess files did (github.com/Craga89/craigsworks: projects/.htaccess, and projects/simpletip from github.com/Craga89/simpletip). Each recovered blog post (src/blog/*.md, its 'original' address) also redirects to its new page.",
   "home": "https://craigthompson.dev/",
-  "domains": [
-    "craigsworks.com",
-    "craigs.works",
-    "craigswork.com"
-  ],
-  "discoverSkip": [
-    "/projects/forums/"
-  ],
+  "domains": ["craigsworks.com", "craigs.works", "craigswork.com"],
+  "discoverSkip": ["/projects/forums/"],
   "rules": [
     {
       "source": "craigsworks.com/projects/qtip2/forum",
@@ -171,101 +165,32 @@
       "https://blog.craigsworks.com/durandal-and-webpack-part-1-module-format/",
       "https://craigthompson.dev/blog/durandal-and-webpack-part-1-module-format/"
     ],
-    [
-      "https://blog.craigsworks.com/tag/javascript/",
-      "https://craigthompson.dev/blog/"
-    ],
-    [
-      "http://craigsworks.com/blog/2010/07/where-are-you-using-qtip",
-      "https://craigthompson.dev/blog/"
-    ],
-    [
-      "http://craigsworks.com/",
-      "https://craigthompson.dev/"
-    ],
-    [
-      "https://www.craigsworks.com/",
-      "https://craigthompson.dev/"
-    ],
-    [
-      "http://craigsworks.com/projects/qtip2/",
-      "https://github.com/qTip2/qTip2"
-    ],
-    [
-      "http://craigsworks.com/projects/qtip2/download/",
-      "https://github.com/qTip2/qTip2"
-    ],
-    [
-      "http://craigsworks.com/projects/qtip/",
-      "https://github.com/Craga89/qTip1"
-    ],
-    [
-      "http://craigsworks.com/projects/qtip/docs/",
-      "https://github.com/Craga89/qTip1"
-    ],
-    [
-      "https://craigsworks.com/projects/simpletip",
-      "https://github.com/Craga89/simpletip"
-    ],
+    ["https://blog.craigsworks.com/tag/javascript/", "https://craigthompson.dev/blog/"],
+    ["http://craigsworks.com/blog/2010/07/where-are-you-using-qtip", "https://craigthompson.dev/blog/"],
+    ["http://craigsworks.com/", "https://craigthompson.dev/"],
+    ["https://www.craigsworks.com/", "https://craigthompson.dev/"],
+    ["http://craigsworks.com/projects/qtip2/", "https://github.com/qTip2/qTip2"],
+    ["http://craigsworks.com/projects/qtip2/download/", "https://github.com/qTip2/qTip2"],
+    ["http://craigsworks.com/projects/qtip/", "https://github.com/Craga89/qTip1"],
+    ["http://craigsworks.com/projects/qtip/docs/", "https://github.com/Craga89/qTip1"],
+    ["https://craigsworks.com/projects/simpletip", "https://github.com/Craga89/simpletip"],
     [
       "https://craigsworks.com/projects/simpletip/download/1.3.1/jquery.simpletip-1.3.1.min.js",
       "https://cdn.jsdelivr.net/gh/Craga89/simpletip@master/download/1.3.1/jquery.simpletip-1.3.1.min.js"
     ],
-    [
-      "https://craigsworks.com/projects/",
-      "https://craigthompson.dev/#oss"
-    ],
-    [
-      "http://craigsworks.com/projects/qtip/forum/showthread.php?t=1234",
-      "https://github.com/qTip2/qTip2"
-    ],
-    [
-      "http://craigsworks.com/projects/qtip2docs/core/",
-      "https://github.com/qTip2/qTip2"
-    ],
-    [
-      "http://craigsworks.com/projects/qtip_new/demos/ajax",
-      "https://github.com/qTip2/qTip2"
-    ],
-    [
-      "http://craigsworks.com/simpletip/docs/",
-      "https://github.com/Craga89/simpletip"
-    ],
-    [
-      "https://craigsworks.com/cv.pdf",
-      "https://craigthompson.dev/cv.pdf"
-    ],
-    [
-      "https://craigsworks.com/CV.pdf",
-      "https://craigthompson.dev/cv.pdf"
-    ],
-    [
-      "http://craigsworks.com/projects/forums/archive/index.php/forum-10.html",
-      "https://github.com/qTip2/qTip2"
-    ],
-    [
-      "https://www.craigsworks.com/projects/qtip2/demos/",
-      "https://github.com/qTip2/qTip2"
-    ],
-    [
-      "https://craigsworks.com/no-such-page",
-      "https://craigthompson.dev/"
-    ],
-    [
-      "https://craigs.works/",
-      "https://craigthompson.dev/"
-    ],
-    [
-      "https://www.craigs.works/anything",
-      "https://craigthompson.dev/"
-    ],
-    [
-      "https://craigswork.com/",
-      "https://craigthompson.dev/"
-    ],
-    [
-      "https://blog.craigsworks.com/",
-      "https://craigthompson.dev/blog/"
-    ]
+    ["https://craigsworks.com/projects/", "https://craigthompson.dev/#oss"],
+    ["http://craigsworks.com/projects/qtip/forum/showthread.php?t=1234", "https://github.com/qTip2/qTip2"],
+    ["http://craigsworks.com/projects/qtip2docs/core/", "https://github.com/qTip2/qTip2"],
+    ["http://craigsworks.com/projects/qtip_new/demos/ajax", "https://github.com/qTip2/qTip2"],
+    ["http://craigsworks.com/simpletip/docs/", "https://github.com/Craga89/simpletip"],
+    ["https://craigsworks.com/cv.pdf", "https://craigthompson.dev/cv.pdf"],
+    ["https://craigsworks.com/CV.pdf", "https://craigthompson.dev/cv.pdf"],
+    ["http://craigsworks.com/projects/forums/archive/index.php/forum-10.html", "https://github.com/qTip2/qTip2"],
+    ["https://www.craigsworks.com/projects/qtip2/demos/", "https://github.com/qTip2/qTip2"],
+    ["https://craigsworks.com/no-such-page", "https://craigthompson.dev/"],
+    ["https://craigs.works/", "https://craigthompson.dev/"],
+    ["https://www.craigs.works/anything", "https://craigthompson.dev/"],
+    ["https://craigswork.com/", "https://craigthompson.dev/"],
+    ["https://blog.craigsworks.com/", "https://craigthompson.dev/blog/"]
   ]
 }

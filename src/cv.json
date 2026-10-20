@@ -139,29 +139,11 @@
     },
     {
       "name": "Languages",
-      "keywords": [
-        "TypeScript",
-        "JavaScript",
-        "HTML",
-        "CSS",
-        "Node.js",
-        "Bash",
-        "HCL"
-      ]
+      "keywords": ["TypeScript", "JavaScript", "HTML", "CSS", "Node.js", "Bash", "HCL"]
     },
     {
       "name": "Back end",
-      "keywords": [
-        "Express",
-        "GraphQL",
-        "Apollo",
-        "Koa",
-        "REST",
-        "OpenAPI",
-        "Zod",
-        "RxJS",
-        "Microservices"
-      ]
+      "keywords": ["Express", "GraphQL", "Apollo", "Koa", "REST", "OpenAPI", "Zod", "RxJS", "Microservices"]
     },
     {
       "name": "Front end",
@@ -179,13 +161,7 @@
     },
     {
       "name": "Data",
-      "keywords": [
-        "MongoDB Atlas",
-        "Atlas Search",
-        "Elasticsearch",
-        "Redis",
-        "DynamoDB"
-      ]
+      "keywords": ["MongoDB Atlas", "Atlas Search", "Elasticsearch", "Redis", "DynamoDB"]
     },
     {
       "name": "Cloud",
@@ -219,13 +195,7 @@
     },
     {
       "name": "Security & compliance",
-      "keywords": [
-        "GDPR",
-        "ISO 27001",
-        "Penetration testing",
-        "SAML SSO",
-        "2FA"
-      ]
+      "keywords": ["GDPR", "ISO 27001", "Penetration testing", "SAML SSO", "2FA"]
     },
     {
       "name": "IT",
@@ -243,13 +213,7 @@
     },
     {
       "name": "Observability",
-      "keywords": [
-        "Sentry",
-        "OpenTelemetry",
-        "Grafana",
-        "CloudWatch",
-        "AWS X-Ray"
-      ]
+      "keywords": ["Sentry", "OpenTelemetry", "Grafana", "CloudWatch", "AWS X-Ray"]
     },
     {
       "name": "AI",

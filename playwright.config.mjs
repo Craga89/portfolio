@@ -21,12 +21,23 @@ export default defineConfig({
   timeout: 60_000,
   expect: {
     timeout: 10_000,
-    toHaveScreenshot: { maxDiffPixelRatio: 0.001, threshold: 0.12, animations: 'disabled', caret: 'hide', scale: 'css' },
+    toHaveScreenshot: {
+      maxDiffPixelRatio: 0.001,
+      threshold: 0.12,
+      animations: 'disabled',
+      caret: 'hide',
+      scale: 'css',
+    },
   },
   // Screenshot baselines are kept on the visual-baselines branch; CI checks them out here.
   snapshotPathTemplate: '{testDir}/__screenshots__/{arg}{ext}',
   reporter: CI
-    ? [['github'], ['list'], ['html', { open: 'never' }], ['./tests/reporters/a11y-report.mjs', { outputFile: 'a11y.json' }]]
+    ? [
+        ['github'],
+        ['list'],
+        ['html', { open: 'never' }],
+        ['./tests/reporters/a11y-report.mjs', { outputFile: 'a11y.json' }],
+      ]
     : [['list'], ['./tests/reporters/a11y-report.mjs', { outputFile: 'test-results/a11y.json' }]],
   use: {
     baseURL: BASE_URL,
@@ -46,6 +57,10 @@ export default defineConfig({
     { name: 'a11y-desktop', testDir: 'tests/a11y', use: desktop, grepInvert: /@mobile/ },
     { name: 'a11y-mobile', testDir: 'tests/a11y', use: mobile, grepInvert: /@desktop/ },
     // Screenshots compared with the baselines. Each test sets its own viewport.
-    { name: 'visual', testDir: 'tests/visual', use: { ...desktop, deviceScaleFactor: 1, contextOptions: { reducedMotion: 'reduce' } } },
+    {
+      name: 'visual',
+      testDir: 'tests/visual',
+      use: { ...desktop, deviceScaleFactor: 1, contextOptions: { reducedMotion: 'reduce' } },
+    },
   ],
 });

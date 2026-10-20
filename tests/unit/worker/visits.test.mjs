@@ -7,8 +7,16 @@ import { ORIGIN, ai, env, fakeDB, request } from './helpers.mjs';
 describe('question log', () => {
   it('logs questions anonymously, with whether they were answered', async () => {
     const DB = fakeDB();
-    await worker.fetch(request({ q: 'Has he owned a budget?' }), env({ DB, AI: ai(() => ({ response: 'He has. See budget.md.\nSOURCES: resp-bud' })) }));
-    const notCovered = env({ DB, AI: ai(() => ({ response: "That isn't covered on the site, but Craig can answer it directly: craga89@gmail.com." })) });
+    await worker.fetch(
+      request({ q: 'Has he owned a budget?' }),
+      env({ DB, AI: ai(() => ({ response: 'He has. See budget.md.\nSOURCES: resp-bud' })) }),
+    );
+    const notCovered = env({
+      DB,
+      AI: ai(() => ({
+        response: "That isn't covered on the site, but Craig can answer it directly: craga89@gmail.com.",
+      })),
+    });
     await worker.fetch(request({ q: 'What is his favourite colour?' }), notCovered);
     assert.equal(DB.rows.length, 2);
     assert.match(DB.rows[0].sql, /INSERT INTO questions/);
@@ -19,7 +27,10 @@ describe('question log', () => {
 
   it("doesn't log CI and smoke-test traffic", async () => {
     const DB = fakeDB();
-    await worker.fetch(request({ q: 'hi' }, { headers: { 'x-craga-test': '1' } }), env({ DB, AI: ai(() => ({ response: 'x' })) }));
+    await worker.fetch(
+      request({ q: 'hi' }, { headers: { 'x-craga-test': '1' } }),
+      env({ DB, AI: ai(() => ({ response: 'x' })) }),
+    );
     assert.equal(DB.rows.length, 0);
   });
 });
@@ -37,7 +48,13 @@ describe('visit beacons', () => {
         }),
         e,
       );
-    const r = await beacon({ path: '/', ref: 'https://www.linkedin.com/feed/?x=1', device: 'mobile', sections: ['career', 'faq', 'evil', 'faq'], seconds: 99999 });
+    const r = await beacon({
+      path: '/',
+      ref: 'https://www.linkedin.com/feed/?x=1',
+      device: 'mobile',
+      sections: ['career', 'faq', 'evil', 'faq'],
+      seconds: 99999,
+    });
     assert.equal(r.status, 204);
     assert.deepEqual(DB.rows[0].args, ['/', 'linkedin.com', null, 'mobile', 'career,faq', 3600, null, null]);
     await beacon({ path: '/cv/', ref: 'https://craigthompson.dev/' });
