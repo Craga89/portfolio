@@ -1,0 +1,18 @@
+# The open-source projects. Counts in {braces} come from the weekly stats in live.json.
+qtip2:
+  path: open-source/qtip2
+  title: qTip2 — pretty powerful tooltips
+  url: https://github.com/qTip2/qTip2
+  text: >-
+    Widely adopted jQuery plugin and a go-to tooltip library in its day: {stars} stars, {forks} forks and {commits} commits, built with extensive help from community contributors. Featured in [*Smashing jQuery*](https://www.wiley.com/en-ae/shop/general-end-user-computing/smashing-jquery-p-9780470977231) (2011).
+micromouse:
+  path: open-source/micromouse
+  title: Micromouse simulator
+  url: https://github.com/Craga89/Micromouse
+  text: >-
+    Interactive maze-solving simulation using the classic flood-fill algorithm, with the Arduino code to run it.
+email-designer:
+  path: communicator/email-designer
+  title: WYSIWYG Email Designer
+  text: >-
+    React drag-and-drop builder with a Node.js CSS-inlining service behind it, for a platform sending billions of emails.

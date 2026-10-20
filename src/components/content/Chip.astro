@@ -1,0 +1,36 @@
+---
+// A small bordered label: a tool, a skill or a role.
+---
+
+<li class="c-chip"><slot /></li>
+
+<style>
+  .c-chip {
+    display: inline-block;
+    border: 1px solid var(--line3);
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-family: var(--f-mono);
+    font-size: 14px;
+    transition:
+      background 0.2s ease,
+      color 0.2s ease;
+  }
+  .c-chip:hover {
+    background: var(--acc);
+    color: var(--bg);
+  }
+  @supports (animation-timeline: view()) {
+    .c-chip {
+      animation: c-rise linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 100%;
+    }
+  }
+  @keyframes c-rise {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+  }
+</style>

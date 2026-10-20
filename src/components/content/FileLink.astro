@@ -1,0 +1,51 @@
+---
+import { findFile } from '../../lib/files';
+
+interface Props {
+  file: string;
+}
+const f = await findFile(Astro.props.file);
+---
+
+<a class="c-dd" href={'/' + f.page} data-open={`${f.kind}/${f.id}`}><span><slot /></span><span class="file" translate="no">{f.file} <span class="c-go">→</span></span></a>
+
+<style>
+  .c-dd {
+    box-sizing: border-box;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    min-height: 48px;
+    padding: 10px 14px;
+    border: 1px solid var(--line2);
+    border-radius: 8px;
+    color: var(--head);
+    font-size: 14px;
+    text-decoration: none;
+    transition:
+      border-color 0.2s ease,
+      background 0.2s ease;
+  }
+  .c-dd:hover {
+    border-color: var(--acc);
+    background: var(--panel2);
+    color: var(--head);
+  }
+  .c-dd:focus-visible {
+    outline: 2px solid var(--acc);
+    outline-offset: 2px;
+  }
+  .file {
+    color: var(--acc);
+  }
+  :root[dir='rtl'] .c-go {
+    display: inline-block;
+    scale: -1 1;
+  }
+  @media (forced-colors: active) {
+    .c-dd {
+      border: 1px solid ButtonText;
+    }
+  }
+</style>

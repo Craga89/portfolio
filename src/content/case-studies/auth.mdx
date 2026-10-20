@@ -1,0 +1,63 @@
+---
+id: auth
+order: 9
+file: auth.md
+kicker: "authentication & identity · 2024 → 2026"
+title: "Sign-in that enterprises trust and users don't notice"
+---
+I led the replacement of a legacy, multi-tenant sign-in system with a new auth framework, rolled out organisation by organisation behind a per-tenant switch. Before that, we hardened the old one: expiring tokens, central signing and key rotation.
+
+{/* TODO */}
+<div>
+<div style="font-size: 13px; color: var(--mute); margin-bottom: 14px">Every sign-in, end to end</div>
+<ol aria-label="Sign-in flow" style="margin: 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 0">
+<li class="c-glow" style="flex: 0 1 auto; border: 1px solid var(--line3); border-radius: 10px; padding: 12px 14px; background: var(--panel); color: var(--text); animation-delay: 0s"><div style="font-weight: 700">sign-in request</div><div style="font-size: 12px; color: var(--mute)">from a tenant domain</div></li>
+<li aria-hidden="true" style="flex: 1 1 24px; min-width: 24px; height: 2px; position: relative; background: repeating-linear-gradient(90deg, var(--conn) 0 6px, transparent 6px 10px)"><span class="c-trav" style="position: absolute; top: -3px; width: 8px; height: 8px; border-radius: 50%; background: var(--acc); animation-delay: 0.4s"></span><span class="c-arr" style="position: absolute; inset-inline-end: -3px; top: -9px; color: var(--conn); font-size: 12px">▶</span></li>
+<li class="c-glow" style="flex: 0 1 auto; border: 1px solid var(--line3); border-radius: 10px; padding: 12px 14px; background: var(--panel); color: var(--text); animation-delay: 0.9s"><div style="font-weight: 700">resolve organisation</div><div style="font-size: 12px; color: var(--mute)">from the host name</div></li>
+<li aria-hidden="true" style="flex: 1 1 24px; min-width: 24px; height: 2px; position: relative; background: repeating-linear-gradient(90deg, var(--conn) 0 6px, transparent 6px 10px)"><span class="c-trav" style="position: absolute; top: -3px; width: 8px; height: 8px; border-radius: 50%; background: var(--acc); animation-delay: 1.3s"></span><span class="c-arr" style="position: absolute; inset-inline-end: -3px; top: -9px; color: var(--conn); font-size: 12px">▶</span></li>
+<li class="c-glow" style="flex: 0 1 auto; border: 1px solid var(--line3); border-radius: 10px; padding: 12px 14px; background: var(--panel); color: var(--text); animation-delay: 1.8s"><div style="font-weight: 700">choose a method</div><div style="margin-top: 6px; display: flex; flex-wrap: wrap; gap: 4px; font-size: 11px"><span style="border: 1px solid var(--line3); border-radius: 4px; padding: 1px 6px">SAML SSO</span><span style="border: 1px solid var(--line3); border-radius: 4px; padding: 1px 6px">magic link</span><span style="border: 1px solid var(--line3); border-radius: 4px; padding: 1px 6px">password</span></div></li>
+<li aria-hidden="true" style="flex: 1 1 24px; min-width: 24px; height: 2px; position: relative; background: repeating-linear-gradient(90deg, var(--conn) 0 6px, transparent 6px 10px)"><span class="c-trav" style="position: absolute; top: -3px; width: 8px; height: 8px; border-radius: 50%; background: var(--acc); animation-delay: 2.6s"></span><span class="c-arr" style="position: absolute; inset-inline-end: -3px; top: -9px; color: var(--conn); font-size: 12px">▶</span></li>
+<li class="c-glow" style="flex: 0 1 auto; border: 1px solid var(--line3); border-radius: 10px; padding: 12px 14px; background: var(--panel); color: var(--text); animation-delay: 3.1s"><div style="font-weight: 700">2FA</div><div style="font-size: 12px; color: var(--mute)">enforced per org</div></li>
+<li aria-hidden="true" style="flex: 1 1 24px; min-width: 24px; height: 2px; position: relative; background: repeating-linear-gradient(90deg, var(--conn) 0 6px, transparent 6px 10px)"><span class="c-trav" style="position: absolute; top: -3px; width: 8px; height: 8px; border-radius: 50%; background: var(--acc); animation-delay: 3.6s"></span><span class="c-arr" style="position: absolute; inset-inline-end: -3px; top: -9px; color: var(--conn); font-size: 12px">▶</span></li>
+<li class="c-glow" style="flex: 0 1 auto; border: 1px solid var(--line3); border-radius: 10px; padding: 12px 14px; background: var(--panel); color: var(--text); animation-delay: 4.1s"><div style="font-weight: 700">rate-limit check</div><div style="font-size: 12px; color: var(--mute)">per identity</div></li>
+<li aria-hidden="true" style="flex: 1 1 24px; min-width: 24px; height: 2px; position: relative; background: repeating-linear-gradient(90deg, var(--conn) 0 6px, transparent 6px 10px)"><span class="c-trav" style="position: absolute; top: -3px; width: 8px; height: 8px; border-radius: 50%; background: var(--acc); animation-delay: 4.6s"></span><span class="c-arr" style="position: absolute; inset-inline-end: -3px; top: -9px; color: var(--conn); font-size: 12px">▶</span></li>
+<li class="c-glowg" style="flex: 0 1 auto; border: 1px solid var(--ok); border-radius: 10px; padding: 12px 14px; background: var(--ok-bg); color: var(--text); animation-delay: 5.1s"><div style="font-weight: 700">session + signed token</div><div style="font-size: 12px; color: var(--mute)">EdDSA · published keys</div></li>
+</ol>
+</div>
+
+{/* TODO */}
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px">
+<div style="border: 1px solid var(--line2); border-radius: 10px; padding: 20px">
+<div style="font-size: 13px; color: var(--acc); margin-bottom: 6px">rate limiting by identity, not just IP</div>
+<p style="margin: 0 0 16px; color: var(--text3); font-size: 15px">Separate buckets per user, email, token and IP, per organisation, so one noisy office network can't lock out everyone behind it.</p>
+<div aria-hidden="true" style="display: flex; gap: 18px; align-items: flex-end">
+<div style="display: flex; flex-direction: column; align-items: center; gap: 6px"><div style="position: relative; width: 34px; height: 64px; border: 1px solid var(--line3); border-radius: 6px; overflow: hidden"><span class="c-gx" style="position: absolute; left: 0; right: 0; bottom: 0; height: 62%; background: var(--acc); opacity: .85; transform-origin: bottom; animation-name: c-grow; animation-delay: 0s"></span></div><span style="font-size: 12px; color: var(--text3)">user</span></div>
+<div style="display: flex; flex-direction: column; align-items: center; gap: 6px"><div style="position: relative; width: 34px; height: 64px; border: 1px solid var(--line3); border-radius: 6px; overflow: hidden"><span class="c-gx" style="position: absolute; left: 0; right: 0; bottom: 0; height: 38%; background: var(--acc); opacity: .85; transform-origin: bottom; animation-name: c-grow; animation-delay: 0.15s"></span></div><span style="font-size: 12px; color: var(--text3)">email</span></div>
+<div style="display: flex; flex-direction: column; align-items: center; gap: 6px"><div style="position: relative; width: 34px; height: 64px; border: 1px solid var(--line3); border-radius: 6px; overflow: hidden"><span class="c-gx" style="position: absolute; left: 0; right: 0; bottom: 0; height: 20%; background: var(--acc); opacity: .85; transform-origin: bottom; animation-name: c-grow; animation-delay: 0.3s"></span></div><span style="font-size: 12px; color: var(--text3)">token</span></div>
+<div style="display: flex; flex-direction: column; align-items: center; gap: 6px"><div style="position: relative; width: 34px; height: 64px; border: 1px solid var(--line3); border-radius: 6px; overflow: hidden"><span class="c-gx" style="position: absolute; left: 0; right: 0; bottom: 0; height: 80%; background: var(--acc); opacity: .85; transform-origin: bottom; animation-name: c-grow; animation-delay: 0.45s"></span></div><span style="font-size: 12px; color: var(--text3)">IP</span></div>
+</div>
+</div>
+<div style="border: 1px solid var(--line2); border-radius: 10px; padding: 20px">
+<div style="font-size: 13px; color: var(--acc); margin-bottom: 6px">zero-downtime key rotation</div>
+<p style="margin: 0 0 16px; color: var(--text3); font-size: 15px">Verifiers accept old and new keys during an overlap window, so signing keys rotate without logging anyone out.</p>
+<div aria-hidden="true" style="display: flex; flex-direction: column; gap: 8px; font-size: 12px">
+<div style="display: flex; align-items: center; gap: 10px"><span style="flex: 0 0 6ch; color: var(--mute)">key v1</span><span style="flex: 1; height: 10px; position: relative"><span class="c-gx" style="position: absolute; inset-inline-start: 0; width: 65%; height: 10px; background: var(--bar0); border-radius: 4px"></span></span></div>
+<div style="display: flex; align-items: center; gap: 10px"><span style="flex: 0 0 6ch; color: var(--mute)">key v2</span><span style="flex: 1; height: 10px; position: relative"><span class="c-gx" style="position: absolute; inset-inline-start: 40%; width: 60%; height: 10px; background: var(--acc); border-radius: 4px; animation-delay: .4s"></span></span></div>
+<div style="display: flex; align-items: center; gap: 10px"><span style="flex: 0 0 6ch"></span><span style="flex: 1; position: relative; height: 16px"><span class="c-pop" style="position: absolute; inset-inline-start: 40%; width: 25%; border-top: 1px dashed var(--ok); padding-top: 2px; text-align: center; color: var(--ok-text); animation-delay: .9s">overlap</span></span></div>
+</div>
+</div>
+</div>
+
+<Evolution label="How it evolved: legacy service → enterprise-grade sign-in" name="identity evolution">
+  <Era>legacy auth service</Era>
+  <Era>shared auth library</Era>
+  <Era>expiring, rotated tokens</Era>
+  <Era>new auth framework</Era>
+</Evolution>
+
+<InPractice>
+- Enterprise customers sign in through their own identity provider and can require 2FA for everyone.
+- Sign-in links in emails still work after Slack or Outlook previews them.
+- Tokens expire and keys rotate on a schedule, with no forced logouts.
+- Services can verify tokens themselves against published keys, ready for service-to-service auth.
+</InPractice>

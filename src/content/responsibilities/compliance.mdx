@@ -1,0 +1,36 @@
+---
+id: comp
+order: 11
+file: compliance.md
+group: organisation
+kicker: "compliance & assurance · gdpr · iso 27001 · pen testing"
+title: Security you can evidence
+lede: "Enterprise customers need more than good intentions. I've been part of GDPR and ISO 27001 accreditation, acting as the technical point of contact for the InfoSec Manager on every engineering question, and taking part in the annual audits. I've also arranged the yearly penetration test, liaising with the testing vendors so the work could be carried out."
+points:
+  - Auditors and the InfoSec Manager had one technical contact for engineering questions.
+  - Penetration-test findings were fixed in code and tracked to closure.
+  - Accreditation was kept up year on year through the annual audits, not treated as a one-off.
+stat:
+  value: ISO 27001
+  label: and GDPR, audited every year
+flow:
+  label: the yearly cycle
+  steps:
+    - "GDPR & ISO 27001 controls"
+    - annual audit
+    - yearly pen test
+    - "findings fixed & tracked ↻"
+---
+<Chain label="The yearly cycle" loop>
+  <Step>GDPR & ISO 27001 controls</Step>
+  <Step tone="acc">annual audit</Step>
+  <Step tone="acc">yearly pen test</Step>
+  <Step tone="ok">findings fixed & tracked</Step>
+</Chain>
+
+<Cards>
+  <Card title="GDPR">Was part of the accreditation work, handling the technical queries alongside the InfoSec Manager.</Card>
+  <Card title="ISO 27001">Was part of the accreditation and the annual audits, as the engineering contact for the InfoSec Manager.</Card>
+  <Card title="Penetration testing">Arranged the yearly test with external vendors and liaised with them so it could be carried out, with findings then fixed in code.</Card>
+  <Card title="Device compliance">Oversaw the <Term id="mdm">MDM</Term> that provisions every Mac and enforces central InfoSec and compliance policies. See <See file="it.md" />.</Card>
+</Cards>

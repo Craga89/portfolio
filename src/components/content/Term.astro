@@ -1,0 +1,52 @@
+---
+// A jargon term: tapping it opens its definition (src/data/glossary.yaml) in the shared popover
+// (Toggletip.astro). `trail` is punctuation that has to stay on the same line as the term.
+import { getEntry } from 'astro:content';
+
+interface Props {
+  id: string;
+  trail?: string;
+}
+const { id, trail } = Astro.props;
+if (!(await getEntry('glossary', id))) throw new Error(`No glossary entry "${id}" (src/data/glossary.yaml)`);
+---
+
+{
+  trail ? (
+    <span class="c-nb"><button type="button" class="c-term" popovertarget="c-tip" aria-controls="c-tip" aria-expanded="false" data-term={id}><slot /></button>{trail}</span>
+  ) : (
+    <button type="button" class="c-term" popovertarget="c-tip" aria-controls="c-tip" aria-expanded="false" data-term={id}><slot /></button>
+  )
+}
+
+<style>
+  .c-term {
+    all: unset;
+    cursor: help;
+    border-bottom: 1px dotted currentColor;
+    color: inherit;
+  }
+  .c-term:hover,
+  .c-term[aria-expanded='true'] {
+    color: var(--head);
+  }
+  .c-term[aria-expanded='true'] {
+    border-bottom-style: solid;
+    anchor-name: --c-tip;
+  }
+  .c-term:focus-visible {
+    outline: 2px solid var(--acc);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+  @media print {
+    .c-term {
+      border-bottom: 0;
+    }
+  }
+  @media (forced-colors: active) {
+    .c-term {
+      border-bottom: 1px dotted CanvasText;
+    }
+  }
+</style>

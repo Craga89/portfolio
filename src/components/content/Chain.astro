@@ -1,0 +1,37 @@
+---
+// Steps in order, joined by arrows: how something flows from one stage to the next. `loop` adds a
+// ↻ after the last step, for a cycle.
+import Block from './Block.astro';
+
+interface Props {
+  label?: string;
+  loop?: boolean;
+}
+const { label, loop } = Astro.props;
+---
+
+<Block label={label}>
+  <div class="chain" data-loop={loop ? '' : undefined}><slot /></div>
+</Block>
+
+<style>
+  .chain {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+  }
+  /* Arrows between the steps (and the loop mark), as flex items of their own. */
+  .chain :global(.step + .step)::before,
+  .chain[data-loop]::after {
+    content: '→' / '';
+    color: var(--acc);
+  }
+  .chain[data-loop]::after {
+    content: '↻' / '';
+  }
+  .chain :global(.step) {
+    display: contents;
+  }
+</style>

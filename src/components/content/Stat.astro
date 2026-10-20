@@ -1,0 +1,33 @@
+---
+// One headline number: the value, and what it measures (the slot).
+interface Props {
+  value: string;
+}
+---
+
+<div class="c-pop stat">
+  <div class="value">{Astro.props.value}</div>
+  <div class="label"><slot /></div>
+</div>
+
+<style>
+  .stat {
+    border: 1px solid var(--line2);
+    border-radius: 10px;
+    padding: 18px;
+  }
+  .stat:nth-child(2) { animation-delay: 0.1s; }
+  .stat:nth-child(3) { animation-delay: 0.2s; }
+  .stat:nth-child(4) { animation-delay: 0.3s; }
+  .value {
+    font-size: 30px;
+    font-weight: 800;
+    color: var(--head);
+    line-height: 1.1;
+  }
+  .label {
+    margin-top: 4px;
+    color: var(--mute);
+    font-size: 14px;
+  }
+</style>

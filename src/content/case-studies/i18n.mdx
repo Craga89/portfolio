@@ -1,0 +1,62 @@
+---
+id: i18n
+order: 6
+file: i18n.md
+kicker: "internationalisation · 2019 → 2026"
+title: "One product in 36 languages, kept in step"
+---
+Customers survey their people in their own language, so the interface and the questions have to work in every language they turn on. I've kept the platform's 36 interface languages in step with English, and made translating customers' own content cache-first and selective.
+
+<Stats>
+  <Stat value="36">interface languages, including Welsh and Arabic</Stat>
+  <Stat value="~116k">blank strings removed, so nothing renders empty</Stat>
+  <Stat value="cache first">translations checked inside the VPC before any network call</Stat>
+</Stats>
+
+{/* TODO */}
+<div style="display: flex; flex-direction: column; gap: 18px">
+<div>
+<div style="font-size: 13px; color: var(--mute); margin-bottom: 10px">Interface text, kept in step by the build</div>
+<ol class="c-mcp-flow" aria-label="Interface text, kept in step by the build">
+<li><span class="c-mcp-s"><b>messages</b> in components</span><span class="c-mcp-a" aria-hidden="true">→</span></li>
+<li><span class="c-mcp-s"><b>extracted</b> to English</span><span class="c-mcp-a" aria-hidden="true">→</span></li>
+<li><span class="c-mcp-s"><b>keys synced</b> to every language</span><span class="c-mcp-a" aria-hidden="true">→</span></li>
+<li><span class="c-mcp-s c-mcp-end"><b>gaps</b> fall back to English</span></li>
+</ol>
+</div>
+<div>
+<div style="font-size: 13px; color: var(--mute); margin-bottom: 10px">Customer content, translated at runtime, cache first</div>
+<ol class="c-mcp-flow" aria-label="Customer content, translated at runtime, cache first">
+<li><span class="c-mcp-s"><b>survey question</b></span><span class="c-mcp-a" aria-hidden="true">→</span></li>
+<li><span class="c-mcp-s"><b>Redis cache</b> inside the VPC</span><span class="c-mcp-a" aria-hidden="true">→</span></li>
+<li><span class="c-mcp-s"><b>translation service</b> + DynamoDB</span><span class="c-mcp-a" aria-hidden="true">→</span></li>
+<li><span class="c-mcp-s c-mcp-end"><b>Google Cloud Translation</b></span></li>
+</ol>
+</div>
+</div>
+
+<Compare label="Internationalisation before and after">
+  <Row area="language files" before="drifted as keys changed">Every build adds and removes keys in every language to match English</Row>
+  <Row area="missing text" before="shown as a blank">Falls back to the English message</Row>
+  <Row area="new languages" before="wired in by hand; three dropped">Generated from the language files present</Row>
+  <Row area="translation calls" before="a network round trip each, often timing out">Cache inside the VPC first, with one set of timeouts across services</Row>
+  <Row area="what's translated" before="every name, on every read and write">Only content written to be read in other languages; place names stay as written</Row>
+  <Row area="language picker" before="each language in its own script">Every language named in the reader's own language</Row>
+  <Row area="emoji" before="sent to the translator as-is">Swapped for keywords and restored, so they come through translation intact</Row>
+</Compare>
+
+<Evolution label="How it evolved: drifting files → in step on every build" name="internationalisation evolution">
+  <Era>language service (2019)</Era>
+  <Era>locale pipeline rebuilt</Era>
+  <Era>translations in the survey builder</Era>
+  <Era>cache-first translation</Era>
+  <Era>synced on every build</Era>
+</Evolution>
+
+<InPractice>
+- A changed or removed string updates every language in the same change, so no file falls behind.
+- Untranslated text shows in English rather than as a gap on screen.
+- Adding a language means adding its file; the build generates the rest.
+- Customer content is translated only when it should be, and served from a cache next to the services.
+- This site follows the same ideas on the visitor's own device: English fills any gap, translations are cached, and names and file names are never translated. See <See file="this-site.md" />.
+</InPractice>

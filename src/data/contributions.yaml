@@ -1,0 +1,15 @@
+# A selection of merged pull requests to other projects, newest first.
+shuding-nextra-4995: { date: 2026-05-11, repo: shuding/nextra, pr: 4995, title: "Git worktree support for the docs framework" }
+better-auth-better-auth-9398: { date: 2026-04-29, repo: better-auth/better-auth, pr: 9398, title: "Fixed SAML metadata so an organisation's default SSO provider works" }
+buildkite-test-collector-javascript-30: { date: 2022-06-09, repo: buildkite/test-collector-javascript, pr: 30, title: "Path prefixes so Test Analytics works in monorepos" }
+swc-project-swc-node-647: { date: 2022-03-31, repo: swc-project/swc-node, pr: 647, title: "Made the require hook revertible" }
+popmotion-popmotion-506: { date: 2018-09-21, repo: Popmotion/popmotion, pr: 506, title: "IE11 compatibility fix for the animation library" }
+tomkp-react-split-pane-226: { date: 2017-11-12, repo: tomkp/react-split-pane, pr: 226, title: "Custom pane class names and CSS order support" }
+lerna-lerna-904: { date: 2017-07-06, repo: lerna/lerna, pr: 904, title: "Improved canary releases for the monorepo tool" }
+ianstormtaylor-slate-728: { date: 2017-04-19, repo: ianstormtaylor/slate, pr: 728, title: "Selection and node-lookup utilities for the rich-text editor" }
+robinweser-fela-193: { date: 2017-02-10, repo: robinweser/fela, pr: 193, title: "Clearer display names for themed React components" }
+shipshapecode-tether-179: { date: 2016-07-14, repo: shipshapecode/tether, pr: 179, title: "Positioning for elements inside iframes" }
+preactjs-preact-66: { date: 2016-02-25, repo: preactjs/preact, pr: 66, title: "Fixed handling of multiple camelCase CSS properties" }
+bluespire-durandal-486: { date: 2014-04-24, repo: BlueSpire/Durandal, pr: 486, title: "Observable app titles and an optional view plugin for the SPA framework" }
+jsdelivr-jsdelivr-203: { date: 2013-12-12, repo: jsdelivr/jsdelivr, pr: 203, title: "Published qTip2 releases to jsDelivr" }
+cdnjs-cdnjs-1071: { date: 2013-03-23, repo: cdnjs/cdnjs, pr: 1071, title: "Published qTip2 releases to cdnjs" }

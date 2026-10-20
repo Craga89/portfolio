@@ -1,0 +1,84 @@
+---
+id: ci
+order: 3
+file: ci-cd.md
+kicker: "ci/cd & release engineering · 2019 → today"
+title: "Build only what changed, ship every merge"
+---
+I built a CI/CD platform from scratch and have kept evolving it as the team and codebase grew. Today it runs on self-hosted Buildkite defined in Terraform, driven by an in-house TypeScript build-and-deploy engine. It models the monorepo's dependency graph, so each change builds and deploys only the packages it affects.
+
+{/* TODO */}
+<div class="c-fxwrap" style="padding: 18px 0">
+<canvas id="c-fx-ci" class="c-fx" aria-hidden="true"></canvas>
+<div style="font-size: 13px; color: var(--mute); margin-bottom: 14px">Every merge to master, end to end</div>
+<ol aria-label="Release pipeline" style="margin: 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 0">
+
+<li class="c-glow" style="flex: 0 1 auto; border: 1px solid var(--line3); border-radius: 10px; padding: 12px 14px; background: var(--panel); color: var(--text); animation-delay: 0s">
+<div style="font-size: 18px; color: var(--acc); line-height: 1" aria-hidden="true">⎇</div>
+<div style="font-weight: 700; margin-top: 4px">merge</div>
+<div style="font-size: 12px; color: var(--mute)">to master</div>
+</li>
+
+<li aria-hidden="true" style="flex: 1 1 24px; min-width: 24px; height: 2px; position: relative; background: repeating-linear-gradient(90deg, var(--conn) 0 6px, transparent 6px 10px)"><span class="c-trav" style="position: absolute; top: -3px; width: 8px; height: 8px; border-radius: 50%; background: var(--acc); animation-delay: .4s"></span><span class="c-arr" style="position: absolute; inset-inline-end: -3px; top: -9px; color: var(--conn); font-size: 12px">▶</span></li>
+
+<li class="c-glow" style="flex: 0 1 auto; border: 1px solid var(--line3); border-radius: 10px; padding: 12px 14px; background: var(--panel); color: var(--text); animation-delay: .9s">
+<div aria-hidden="true" style="display: flex; gap: 4px; align-items: center; height: 18px"><span style="width: 6px; height: 6px; border-radius: 50%; background: var(--acc)"></span><span style="width: 10px; height: 1px; background: var(--dim)"></span><span style="width: 6px; height: 6px; border-radius: 50%; background: var(--ok)"></span><span style="width: 10px; height: 1px; background: var(--dim)"></span><span style="width: 6px; height: 6px; border-radius: 50%; background: var(--line3)"></span></div>
+<div style="font-weight: 700; margin-top: 4px">package graph</div>
+<div style="font-size: 12px; color: var(--mute)">what's affected?</div>
+</li>
+
+<li aria-hidden="true" style="flex: 1 1 24px; min-width: 24px; height: 2px; position: relative; background: repeating-linear-gradient(90deg, var(--conn) 0 6px, transparent 6px 10px)"><span class="c-trav" style="position: absolute; top: -3px; width: 8px; height: 8px; border-radius: 50%; background: var(--acc); animation-delay: 1.3s"></span><span class="c-arr" style="position: absolute; inset-inline-end: -3px; top: -9px; color: var(--conn); font-size: 12px">▶</span></li>
+
+<li class="c-glow" style="flex: 0 1 200px; min-width: 170px; border: 1px solid var(--line3); border-radius: 10px; padding: 12px 14px; background: var(--panel); color: var(--text); animation-delay: 1.8s">
+<div style="font-weight: 700">build in parallel</div>
+<div style="font-size: 12px; color: var(--mute); margin-bottom: 8px">affected packages only</div>
+<div style="display: flex; flex-direction: column; gap: 6px; font-size: 11px; color: var(--text3)">
+<div style="display: flex; align-items: center; gap: 8px"><span style="flex: 0 0 9ch">lib</span><span style="flex: 1; height: 6px; background: var(--line); border-radius: 3px; overflow: hidden"><span class="c-b1" style="display: block; height: 6px; background: var(--ok); transform-origin: left; animation-delay: 1.9s"></span></span></div>
+<div style="display: flex; align-items: center; gap: 8px"><span style="flex: 0 0 9ch">service</span><span style="flex: 1; height: 6px; background: var(--line); border-radius: 3px; overflow: hidden"><span class="c-b2" style="display: block; height: 6px; background: var(--ok); transform-origin: left; animation-delay: 1.9s"></span></span></div>
+<div style="display: flex; align-items: center; gap: 8px"><span style="flex: 0 0 9ch">app</span><span style="flex: 1; height: 6px; background: var(--line); border-radius: 3px; overflow: hidden"><span class="c-b3" style="display: block; height: 6px; background: var(--ok); transform-origin: left; animation-delay: 1.9s"></span></span></div>
+</div>
+</li>
+
+<li aria-hidden="true" style="flex: 1 1 24px; min-width: 24px; height: 2px; position: relative; background: repeating-linear-gradient(90deg, var(--conn) 0 6px, transparent 6px 10px)"><span class="c-trav" style="position: absolute; top: -3px; width: 8px; height: 8px; border-radius: 50%; background: var(--acc); animation-delay: 3.1s"></span><span class="c-arr" style="position: absolute; inset-inline-end: -3px; top: -9px; color: var(--conn); font-size: 12px">▶</span></li>
+
+<li class="c-glow" style="flex: 0 1 auto; border: 1px solid var(--line3); border-radius: 10px; padding: 12px 14px; background: var(--panel); color: var(--text); animation-delay: 3.5s">
+<div style="font-weight: 700">Validate gate</div>
+<div style="margin-top: 8px; display: flex; flex-wrap: wrap; gap: 4px; max-width: 170px; font-size: 11px">
+<span class="c-tick" style="border: 1px solid var(--ok); color: var(--ok); border-radius: 4px; padding: 1px 6px; animation-delay: 3.6s">format</span>
+<span class="c-tick" style="border: 1px solid var(--ok); color: var(--ok); border-radius: 4px; padding: 1px 6px; animation-delay: 3.7s">lint</span>
+<span class="c-tick" style="border: 1px solid var(--ok); color: var(--ok); border-radius: 4px; padding: 1px 6px; animation-delay: 3.8s">types</span>
+<span class="c-tick" style="border: 1px solid var(--ok); color: var(--ok); border-radius: 4px; padding: 1px 6px; animation-delay: 3.9s">tests</span>
+<span class="c-tick" style="border: 1px solid var(--ok); color: var(--ok); border-radius: 4px; padding: 1px 6px; animation-delay: 4s">drift</span>
+</div>
+</li>
+
+<li aria-hidden="true" style="flex: 1 1 24px; min-width: 24px; height: 2px; position: relative; background: repeating-linear-gradient(90deg, var(--conn) 0 6px, transparent 6px 10px)"><span class="c-trav" style="position: absolute; top: -3px; width: 8px; height: 8px; border-radius: 50%; background: var(--acc); animation-delay: 4.3s"></span><span class="c-arr" style="position: absolute; inset-inline-end: -3px; top: -9px; color: var(--conn); font-size: 12px">▶</span></li>
+
+<li class="c-glow" style="flex: 0 1 auto; border: 1px solid var(--line3); border-radius: 10px; padding: 12px 14px; background: var(--panel); color: var(--text); animation-delay: 4.7s">
+<div style="font-weight: 700">staging</div>
+<div style="font-size: 12px; color: var(--mute)">auto-deploy</div>
+</li>
+
+<li aria-hidden="true" style="flex: 1 1 24px; min-width: 24px; height: 2px; position: relative; background: repeating-linear-gradient(90deg, var(--conn) 0 6px, transparent 6px 10px)"><span class="c-trav" style="position: absolute; top: -3px; width: 8px; height: 8px; border-radius: 50%; background: var(--acc); animation-delay: 5.1s"></span><span class="c-arr" style="position: absolute; inset-inline-end: -3px; top: -9px; color: var(--conn); font-size: 12px">▶</span></li>
+
+<li class="c-glowg" style="flex: 0 1 auto; border: 1px solid var(--ok); border-radius: 10px; padding: 12px 14px; background: var(--ok-bg); color: var(--text); animation-delay: 5.5s">
+<div style="display: flex; align-items: center; gap: 8px; font-weight: 700">production <span class="c-dot" aria-hidden="true" style="width: 8px; height: 8px; border-radius: 50%; background: var(--ok)"></span></div>
+<div style="font-size: 12px; color: var(--ok-text)">live, no release train</div>
+</li>
+</ol>
+</div>
+
+<Evolution label="How it evolved: pipelines → a graph-aware release engine" name="delivery evolution">
+  <Era>hosted pipelines</Era>
+  <Era>Buildkite + build engine</Era>
+  <Era>continuous deployment</Era>
+  <Era>merge queue · staging</Era>
+  <Era>one Validate gate</Era>
+</Evolution>
+
+<InPractice>
+- Merged work reaches customers automatically. There has been no release train since 2022.
+- A small fix rebuilds a handful of packages, not the whole platform.
+- Every PR passes one required quality gate, and `/deploy` on a PR puts it into a test environment.
+- Deploys wait for healthy tasks and detect rollbacks, so a bad release stops itself.
+</InPractice>

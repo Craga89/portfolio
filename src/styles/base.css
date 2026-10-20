@@ -1,0 +1,199 @@
+/* Page-wide styles: the document, links, focus, motion, and the few utilities used everywhere.
+   Everything else is styled by its own component. */
+
+html {
+  scroll-behavior: smooth;
+  /* Keep focused and linked-to elements clear of the sticky header and the chat bar. */
+  scroll-padding-top: calc(var(--hdr-h) + 12px);
+  scroll-padding-bottom: 72px;
+  scrollbar-color: var(--line3) var(--bg);
+  background: var(--bg);
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--f-body);
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+:where(h1, h2, h3, h4) {
+  font-family: var(--f-head);
+  text-wrap: balance;
+}
+
+:where(p, li, blockquote) {
+  text-wrap: pretty;
+}
+
+:where(p, blockquote) {
+  hanging-punctuation: first allow-end;
+}
+
+:where(code, kbd, samp, pre, input) {
+  font-family: var(--f-mono);
+}
+
+a {
+  color: var(--acc);
+}
+
+a:hover {
+  color: var(--acc-h);
+}
+
+main a:not([class]) {
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+  transition:
+    color 0.2s ease,
+    text-underline-offset 0.2s ease;
+}
+
+main a:not([class]):hover {
+  text-underline-offset: 6px;
+}
+
+/* A visible focus ring on anything focusable that has no ring of its own. */
+:where(a, button, summary, input, textarea, select, [tabindex]):focus-visible {
+  outline: 2px solid var(--acc);
+  outline-offset: 2px;
+}
+
+[id] {
+  scroll-margin-top: calc(var(--hdr-h) + 24px);
+}
+
+[tabindex='-1']:focus {
+  outline: none;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--acc) 38%, transparent);
+  color: var(--head);
+}
+
+* {
+  scrollbar-color: var(--line3) transparent;
+}
+
+kbd {
+  display: inline-block;
+  min-width: 1.5em;
+  box-sizing: border-box;
+  padding: 0 4px;
+  border: 1px solid var(--line3);
+  border-bottom-width: 2px;
+  border-radius: 4px;
+  font-size: 0.85em;
+  line-height: 1.5;
+  text-align: center;
+  color: var(--text3);
+  background: var(--panel2);
+}
+
+/* Visually hidden, still read by screen readers. */
+.c-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* An inline button in prose is an atomic inline, so punctuation after it stays on its line. */
+.c-nb {
+  white-space: nowrap;
+}
+
+/* Left-to-right content (charts, code, commands, addresses) in right-to-left pages. */
+.c-ltr {
+  direction: ltr;
+}
+
+/* Where an in-page link lands flashes briefly. */
+.c-flash {
+  animation: c-flash 1.4s ease-out both;
+  border-radius: 4px;
+}
+
+@keyframes c-flash {
+  0%,
+  15% {
+    background-color: color-mix(in srgb, var(--acc) 26%, transparent);
+    box-shadow: 0 0 0 8px color-mix(in srgb, var(--acc) 26%, transparent);
+  }
+  100% {
+    background-color: transparent;
+    box-shadow: 0 0 0 8px transparent;
+  }
+}
+
+/* Shared entrance and loop animations. */
+@keyframes c-pop {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+@keyframes c-pulse {
+  50% {
+    opacity: 0.3;
+  }
+}
+
+@keyframes c-up {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+}
+
+.c-pop {
+  animation: c-pop 0.5s ease both;
+}
+
+/* Motion off: the visitor's system setting, or "pause animations" on the site (WCAG 2.2.2). */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+:root[data-motion='off'] *,
+:root[data-motion='off'] *::before,
+:root[data-motion='off'] *::after {
+  animation: none !important;
+  transition: none !important;
+}
+
+/* Windows High Contrast and other forced-colour modes. */
+@media (forced-colors: active) {
+  :where(a, button, summary, input, textarea, select, [tabindex]):focus-visible {
+    outline: 2px solid Highlight !important;
+  }
+}
+
+@media print {
+  html,
+  body {
+    background: #fff !important;
+  }
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}

@@ -1,0 +1,53 @@
+---
+id: mono
+order: 1
+file: monorepo.md
+kicker: "monorepo & developer experience · 2019 → today"
+title: "One codebase, kept modern without stopping delivery"
+---
+I've taken a platform spread across about 18 separate repositories and led merging them into one TypeScript monorepo with their history intact, along with the tooling around it: CI/CD, Docker and local dev. That one codebase is what makes the repo-wide migrations in refactor.md possible.
+
+{/* TODO */}
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 24px 32px">
+<div style="flex: 1 1 300px; min-width: 0">
+<div style="font-size: 13px; color: var(--mute); margin-bottom: 12px">2019 · 18 repositories</div>
+<div aria-hidden="true" style="display: grid; grid-template-columns: repeat(6, 30px); gap: 8px">
+<span class="c-sq" style="width: 30px; height: 30px; border-radius: 4px; background: var(--acc); animation-delay: 0s"></span>
+<span class="c-sq" style="width: 30px; height: 30px; border-radius: 4px; background: var(--acc); animation-delay: .04s"></span>
+<span class="c-sq" style="width: 30px; height: 30px; border-radius: 4px; background: var(--acc); animation-delay: .08s"></span>
+<span class="c-sq" style="width: 30px; height: 30px; border-radius: 4px; background: var(--acc); animation-delay: .12s"></span>
+<span class="c-sq" style="width: 30px; height: 30px; border-radius: 4px; background: var(--acc); animation-delay: .16s"></span>
+<span class="c-sq" style="width: 30px; height: 30px; border-radius: 4px; background: var(--acc); animation-delay: .2s"></span>
+<span class="c-sq" style="width: 30px; height: 30px; border-radius: 4px; background: var(--acc); animation-delay: .24s"></span>
+<span class="c-sq" style="width: 30px; height: 30px; border-radius: 4px; background: var(--acc); animation-delay: .28s"></span>
+<span class="c-sq" style="width: 30px; height: 30px; border-radius: 4px; background: var(--acc); animation-delay: .32s"></span>
+<span class="c-sq" style="width: 30px; height: 30px; border-radius: 4px; background: var(--acc); animation-delay: .36s"></span>
+<span class="c-sq" style="width: 30px; height: 30px; border-radius: 4px; background: var(--acc); animation-delay: .4s"></span>
+<span class="c-sq" style="width: 30px; height: 30px; border-radius: 4px; background: var(--acc); animation-delay: .44s"></span>
+<span class="c-sq" style="width: 30px; height: 30px; border-radius: 4px; background: var(--ok); animation-delay: .48s"></span>
+<span class="c-sq" style="width: 30px; height: 30px; border-radius: 4px; background: var(--blue); animation-delay: .52s"></span>
+<span class="c-sq" style="width: 30px; height: 30px; border-radius: 4px; background: var(--blue); animation-delay: .56s"></span>
+<span class="c-sq" style="width: 30px; height: 30px; border-radius: 4px; background: var(--blue); animation-delay: .6s"></span>
+<span class="c-sq" style="width: 30px; height: 30px; border-radius: 4px; background: var(--lilac); animation-delay: .64s"></span>
+<span class="c-sq" style="width: 30px; height: 30px; border-radius: 4px; background: var(--text); animation-delay: .68s"></span>
+</div>
+<ul style="margin: 14px 0 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: 13px; color: var(--text3)">
+<li><span aria-hidden="true" style="color: var(--acc)">■</span> 12 services</li>
+<li><span aria-hidden="true" style="color: var(--ok)">■</span> React app</li>
+<li><span aria-hidden="true" style="color: var(--blue)">■</span> 3 Lambdas</li>
+<li><span aria-hidden="true" style="color: var(--lilac)">■</span> Terraform</li>
+<li><span aria-hidden="true" style="color: var(--text)">■</span> QA suite</li>
+</ul>
+</div>
+<div class="c-pop" aria-hidden="true" style="flex: 0 0 auto; color: var(--acc); font-size: 15px; text-align: center; animation-delay: .8s">merged with<br>full history<br><span style="font-size: 28px">→</span></div>
+<div class="c-pop" style="flex: 1 1 260px; min-width: 0; border: 2px solid var(--acc); border-radius: 12px; padding: 24px; animation-delay: 1s">
+<div style="font-size: 13px; color: var(--mute)">today · one monorepo</div>
+<div style="font-size: clamp(36px, 5vw, 52px); font-weight: 800; color: var(--head); line-height: 1.1">100+</div>
+<div style="color: var(--text)">packages today, including the shared React design system</div>
+</div>
+</div>
+
+<InPractice>
+- Every engineer works in one repo, with one toolchain and one way to build, test and deploy.
+- Generated OpenAPI 3.1 docs for 12 services replaced a hand-maintained Postman collection.
+</InPractice>

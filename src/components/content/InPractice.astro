@@ -1,0 +1,35 @@
+---
+// What a file's work means day to day: a short list under "# in practice".
+---
+
+<div class="in-practice">
+  <div class="label"># in practice</div>
+  <slot />
+</div>
+
+<style>
+  .in-practice {
+    border-inline-start: 3px solid var(--ok);
+    padding-block: 4px;
+    padding-inline: 18px 0;
+  }
+  .label {
+    margin-bottom: 8px;
+    font-size: 13px;
+    color: var(--ok);
+  }
+  .in-practice :global(ul) {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin: 0;
+    padding-inline-start: 18px;
+    color: var(--text);
+  }
+  .in-practice :global(p) {
+    margin: 0;
+  }
+  .in-practice :global(code) {
+    color: var(--acc);
+  }
+</style>

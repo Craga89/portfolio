@@ -1,0 +1,20 @@
+---
+// A labelled part of a file: a small caption, then its content.
+interface Props {
+  label?: string;
+}
+const { label } = Astro.props;
+---
+
+<div class="block">
+  {label && <div class="label">{label}</div>}
+  <slot />
+</div>
+
+<style>
+  .label {
+    margin-bottom: 12px;
+    font-size: 13px;
+    color: var(--mute);
+  }
+</style>

@@ -1,0 +1,45 @@
+---
+id: cost
+order: 11
+file: cost.md
+kicker: "cloud cost · 2022 → 2026"
+title: "Measure first, then cut"
+---
+Every saving started with data: flow logs, utilisation history or a line in the bill. Each change landed with the numbers that justified it in the pull request.
+
+<Method>
+  <Step>measure</Step>
+  <Step>attribute</Step>
+  <Step>change</Step>
+  <Step>verify</Step>
+</Method>
+
+{/* TODO */}
+<div>
+<div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 8px 24px; margin-bottom: 14px">
+<span style="font-size: 13px; color: var(--mute)">Documented monthly savings</span>
+<span style="font-size: 15px; color: var(--head)"><strong style="color: var(--acc); font-size: 22px">≈ $1.3k / month</strong> from the first three alone</span>
+</div>
+<div role="table" aria-label="Documented monthly AWS savings" style="display: flex; flex-direction: column; gap: 12px">
+<div role="row" style="display: flex; flex-wrap: wrap; align-items: center; gap: 4px 14px"><span role="cell" style="flex: 1 1 240px; font-size: 14px; color: var(--text)">Container Insights: enhanced → standard</span><span role="cell" aria-hidden="true" style="flex: 2 1 200px; height: 12px"><span class="c-gx" style="display: block; height: 12px; width: 100%; background: var(--acc); border-start-end-radius: 4px; border-end-end-radius: 4px"></span></span><span role="cell" style="flex: 0 0 9ch; text-align: end; font-weight: 700; color: var(--head)">$620/mo</span></div>
+<div role="row" style="display: flex; flex-wrap: wrap; align-items: center; gap: 4px 14px"><span role="cell" style="flex: 1 1 240px; font-size: 14px; color: var(--text)">Duplicate CloudTrail trails removed</span><span role="cell" aria-hidden="true" style="flex: 2 1 200px; height: 12px"><span class="c-gx" style="display: block; height: 12px; width: 72.6%; background: var(--acc); border-start-end-radius: 4px; border-end-end-radius: 4px; animation-delay: .1s"></span></span><span role="cell" style="flex: 0 0 9ch; text-align: end; font-weight: 700; color: var(--head)">$450/mo</span></div>
+<div role="row" style="display: flex; flex-wrap: wrap; align-items: center; gap: 4px 14px"><span role="cell" style="flex: 1 1 240px; font-size: 14px; color: var(--text)">BI network: 3 AZs and NATs → 1</span><span role="cell" aria-hidden="true" style="flex: 2 1 200px; height: 12px"><span class="c-gx" style="display: block; height: 12px; width: 43.5%; background: var(--acc); border-start-end-radius: 4px; border-end-end-radius: 4px; animation-delay: .2s"></span></span><span role="cell" style="flex: 0 0 9ch; text-align: end; font-weight: 700; color: var(--head)">$270/mo</span></div>
+<div role="row" style="display: flex; flex-wrap: wrap; align-items: center; gap: 4px 14px"><span role="cell" style="flex: 1 1 240px; font-size: 14px; color: var(--text)">VPC flow logs off (per account)</span><span role="cell" aria-hidden="true" style="flex: 2 1 200px; height: 12px"><span class="c-gx" style="display: block; height: 12px; width: 40.3%; background: var(--acc-dim); border-start-end-radius: 4px; border-end-end-radius: 4px; animation-delay: .3s"></span></span><span role="cell" style="flex: 0 0 9ch; text-align: end; font-weight: 700; color: var(--head)">$250/mo</span></div>
+</div>
+</div>
+
+{/* TODO */}
+<div>
+<div style="font-size: 13px; color: var(--mute); margin-bottom: 10px">Also cut, from measured utilisation</div>
+<ul style="margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px; font-size: 14px">
+<li style="border: 1px solid var(--line2); border-radius: 8px; padding: 12px 14px; color: var(--text3)">Traced ~1.2 TB/day of CI NAT traffic; replaced managed NAT with endpoints, image caching and fck-nat</li>
+<li style="border: 1px solid var(--line2); border-radius: 8px; padding: 12px 14px; color: var(--text3)">Halved CPU and memory on services idling at 1–3% CPU</li>
+<li style="border: 1px solid var(--line2); border-radius: 8px; padding: 12px 14px; color: var(--text3)">Right-sized Redis after 15 months under 4% CPU</li>
+<li style="border: 1px solid var(--line2); border-radius: 8px; padding: 12px 14px; color: var(--text3)">Non-production environments scale down every night</li>
+</ul>
+</div>
+
+<InPractice>
+- Spend tracks real usage, and every cut has the evidence behind it on record.
+- The NAT investigation became a reusable audit any engineer can rerun.
+</InPractice>

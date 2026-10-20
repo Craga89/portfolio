@@ -1,0 +1,37 @@
+# Definitions shown when a jargon term is tapped (<Term id="…">), and listed on each file page.
+multitenant:
+  title: Multi-tenant
+  text: One shared platform serving many customer organisations, with each one's data kept separate.
+cicd:
+  title: CI/CD
+  text: 'Continuous integration and delivery: every change is built and tested automatically, then released.'
+cd:
+  title: Continuous deployment
+  text: Every change that passes the automated checks goes to production automatically, with no manual release step.
+fargate:
+  title: AWS Fargate
+  text: "AWS's serverless way to run containers: no servers to manage, and you pay only for what runs."
+cloudfront:
+  title: Amazon CloudFront
+  text: AWS's content delivery network, serving traffic from locations close to each user.
+waf:
+  title: WAF
+  text: 'Web application firewall: filters malicious traffic before it reaches the application.'
+svcconnect:
+  title: ECS Service Connect
+  text: An AWS feature that lets services in a container cluster find and call each other, with traffic metrics built in.
+codemod:
+  title: Codemod
+  text: A script that rewrites source code automatically, so one change can land across thousands of files at once.
+mastra:
+  title: Mastra
+  text: An open-source TypeScript framework for building AI agents and workflows.
+bedrock:
+  title: Amazon Bedrock
+  text: AWS's service for using foundation AI models through an API, inside your own AWS account.
+evals:
+  title: Eval suite
+  text: 'Automated tests for AI behaviour: set inputs checked against expected qualities, run on every change to catch regressions.'
+mdm:
+  title: MDM
+  text: 'Mobile device management: software that sets up company laptops and enforces security settings remotely.'

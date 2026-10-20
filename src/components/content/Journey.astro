@@ -1,0 +1,51 @@
+---
+// Milestones along a line, each a <Milestone>. Scrolls sideways on narrow screens.
+import Block from './Block.astro';
+
+interface Props {
+  label: string;
+}
+const { label } = Astro.props;
+---
+
+<Block label={label}>
+  <div class="scroll" tabindex="0" role="region" aria-label="Wide content, scrolls sideways">
+    <div class="track">
+      <span class="line" aria-hidden="true"><span class="c-fill"></span></span>
+      <ol aria-label={label}><slot /></ol>
+    </div>
+  </div>
+</Block>
+
+<style>
+  .scroll {
+    overflow-x: auto;
+  }
+  .track {
+    position: relative;
+    min-width: 700px;
+    padding: 4px 0;
+  }
+  .line {
+    position: absolute;
+    inset-inline: 20px;
+    top: 50%;
+    height: 2px;
+    margin-top: -1px;
+  }
+  .c-fill {
+    display: block;
+    height: 2px;
+    width: 100%;
+    background: var(--line3);
+    transform-origin: left;
+  }
+  ol {
+    position: relative;
+    display: flex;
+    gap: 10px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+</style>

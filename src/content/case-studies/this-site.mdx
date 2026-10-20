@@ -1,0 +1,50 @@
+---
+id: site
+order: 14
+file: this-site.md
+kicker: "this site · craigthompson.dev · [github.com/Craga89/portfolio](https://github.com/Craga89/portfolio)"
+title: "This site, run like a production system"
+---
+It's a small site, but it's built and run the way I'd run a product. Everything lives in one public repository, every change goes through automated quality gates, and the AI feature has tests of its own. The results below come live from the latest CI runs.
+
+{/* TODO */}
+<div>
+<div style="font-size: 13px; color: var(--mute); margin-bottom: 10px">Latest results</div>
+<ul class="c-live" aria-label="Latest CI results">
+<li><div class="c-live-k">Lighthouse</div><div class="c-live-v">loads on the live site</div><div class="c-live-s">performance, accessibility and best practices, mobile and desktop</div><div class="c-live-m">from the latest CI run</div></li>
+<li><div class="c-live-k">WCAG 2.2 AA suite</div><div class="c-live-v">loads on the live site</div><div class="c-live-s">axe-core in every page state, plus keyboard, focus, reflow and motion checks</div><div class="c-live-m">from the latest CI run</div></li>
+<li><div class="c-live-k">ask.sh answer tests</div><div class="c-live-v">loads on the live site</div><div class="c-live-s">right facts, nothing invented, no prompt injection</div><div class="c-live-m">from the latest CI run · <a href="#c-tests">see the tests</a></div></li>
+</ul>
+</div>
+
+{/* TODO */}
+<div>
+<div style="font-size: 13px; color: var(--mute); margin-bottom: 10px">How a visit works</div>
+<ul class="c-arch" aria-label="How a visit works">
+<li><span class="c-arch-k">the page</span><span class="c-arch-c"><b>Browser</b></span><span class="c-arch-a" aria-hidden="true">→</span><span class="c-arch-c"><b>GitHub Pages</b><small>static, prerendered, works offline</small></span></li>
+<li><span class="c-arch-k">ask.sh</span><span class="c-arch-c"><b>Browser</b></span><span class="c-arch-a" aria-hidden="true">→</span><span class="c-arch-c"><b>Cloudflare Worker</b><small>rate-limited per visitor, and capped within the free daily AI allowance</small></span><span class="c-arch-a" aria-hidden="true">→</span><span class="c-arch-c"><b>Workers AI</b><small>three models, each a fallback for the one before; answers only from this site</small></span></li>
+<li><span class="c-arch-k">counts</span><span class="c-arch-c"><b>Browser</b></span><span class="c-arch-a" aria-hidden="true">→</span><span class="c-arch-c"><b>Cloudflare Worker</b></span><span class="c-arch-a" aria-hidden="true">→</span><span class="c-arch-c"><b>D1</b><small>anonymous question log and visit counts</small></span></li>
+<li><span class="c-arch-k">agents</span><span class="c-arch-c"><b>AI agent</b><small>in the browser</small></span><span class="c-arch-a" aria-hidden="true">→</span><span class="c-arch-c"><b>WebMCP or MCP</b><small>the same tools, on the page or on the Worker: profile, career, files, search and ask.sh</small></span></li>
+<li><span class="c-arch-k">translation</span><span class="c-arch-c"><b>Browser</b><small>its built-in Translator API, when the visitor wants another language</small></span><span class="c-arch-a" aria-hidden="true">→</span><span class="c-arch-c"><b>on the device</b><small>38 languages, right-to-left included; nothing is sent anywhere</small></span></li>
+</ul>
+</div>
+
+{/* TODO */}
+<div>
+<div style="font-size: 13px; color: var(--mute); margin-bottom: 10px">What every change goes through</div>
+<ol class="c-gates" aria-label="Quality gates">
+<li><span class="c-gate-k">quality</span><span>lint, format and type checks, and unit tests with a coverage threshold</span></li>
+<li><span class="c-gate-k">build</span><span>prerender the page, self-host fonts, resize images, print cv.pdf, write the contact card and the ask.sh index</span></li>
+<li><span class="c-gate-k">test</span><span>end-to-end tests on a desktop and a phone, the WCAG 2.2 AA suite and a screenshot comparison against approved baselines</span></li>
+<li><span class="c-gate-k">deploy</span><span>GitHub Pages, only when every gate passes, stamped with the commit; then Lighthouse thresholds</span></li>
+<li><span class="c-gate-k">worker</span><span>deploy, a smoke test, then the ask.sh answer tests</span></li>
+<li><span class="c-gate-k">weekly</span><span>every check again, plus a dead-link check, visit and question stats, and the open-source counts</span></li>
+</ol>
+</div>
+
+<InPractice>
+- The same gates I'd put on a product: a change that hurts accessibility, performance or the visuals fails its check.
+- The AI feature is tested like any other code, for the right facts, invented ones and prompt injection.
+- Anonymous counts instead of tracking: no cookies, no IP addresses, nothing that identifies a visitor.
+- It runs on the free tiers of GitHub Pages and Cloudflare.
+</InPractice>
