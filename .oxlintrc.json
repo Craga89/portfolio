@@ -1,28 +1,89 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["import", "jsdoc", "node", "promise", "unicorn"],
+  "plugins": [
+    "import",
+    "jsdoc",
+    "node",
+    "promise",
+    "unicorn"
+  ],
   "categories": {
     "correctness": "error",
     "suspicious": "error",
     "perf": "warn"
   },
-  "env": { "es2024": true },
-  "ignorePatterns": ["site/**", "tools/vendor/**"],
+  "env": {
+    "es2024": true
+  },
+  "ignorePatterns": [
+    "site/**",
+    "tools/vendor/**"
+  ],
   "rules": {
-    "no-empty": ["error", { "allowEmptyCatch": false }],
+    "no-empty": [
+      "error",
+      {
+        "allowEmptyCatch": false
+      }
+    ],
     "no-console": "off",
-    "eqeqeq": ["error", "always", { "null": "ignore" }],
+    "eqeqeq": [
+      "error",
+      "always",
+      {
+        "null": "ignore"
+      }
+    ],
     "prefer-const": "error",
     "no-var": "error",
     "import/no-cycle": "error",
-    "jsdoc/check-tag-names": ["error", { "definedTags": ["satisfies"] }]
+    "jsdoc/check-tag-names": [
+      "error",
+      {
+        "definedTags": [
+          "satisfies"
+        ]
+      }
+    ],
+    "no-underscore-dangle": "off",
+    "no-await-in-loop": "off",
+    "unicorn/consistent-function-scoping": "off",
+    "unicorn/no-array-sort": "off",
+    "unicorn/no-array-reverse": "off",
+    "jsdoc/require-property-description": "off"
   },
   "overrides": [
     {
-      "files": ["src/**/*.js", "shared/**/*.js", "tools/dc-runtime.js", "tools/translator-stub.mjs"],
-      "env": { "browser": true }
+      "files": [
+        "src/**/*.js",
+        "shared/**/*.js",
+        "tools/dc-runtime.js",
+        "tools/translator-stub.mjs"
+      ],
+      "env": {
+        "browser": true
+      }
     },
-    { "files": ["tools/**/*.mjs", "worker/test/**", "tests/**"], "env": { "node": true } },
-    { "files": ["worker/src/**"], "env": { "worker": true } }
+    {
+      "files": [
+        "tools/**/*.mjs",
+        "worker/test/**",
+        "tests/**"
+      ],
+      "env": {
+        "node": true
+      },
+      "rules": {
+        "no-empty-pattern": "off"
+      }
+    },
+    {
+      "files": [
+        "worker/src/**"
+      ],
+      "env": {
+        "worker": true
+      }
+    }
   ]
 }

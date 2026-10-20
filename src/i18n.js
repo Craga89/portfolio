@@ -435,8 +435,8 @@ const tidy = (t) => String(t).replace(/[{｛]\s*(\/?)\s*(\d+)\s*[}｝]/g, '{$1$2
  * @param {Pick<Meta, 'nodes' | 'parent' | 'paired'>} meta
  */
 export function fits(out, meta) {
-  const seen = new Array(meta.nodes.length).fill(0);
-  const closed = new Array(meta.nodes.length).fill(0);
+  const seen = Array.from(meta.nodes, () => 0);
+  const closed = Array.from(meta.nodes, () => 0);
   const stack = [-1];
   let m;
   TOKEN.lastIndex = 0;
@@ -461,13 +461,13 @@ export function fits(out, meta) {
  * @param {Element} unit
  * @param {string} out a translation that fits(meta)
  * @param {Meta} meta
- * @param {((el: Node) => void) | null} [stash] called with each element before it's emptied
+ * @param {((el: Node) => void) | null} [keep] called with each element before it's emptied
  */
-export function rebuild(unit, out, meta, stash) {
+export function rebuild(unit, out, meta, keep) {
   const doc = unit.ownerDocument || document;
   /** @param {Node} el */
   const clear = (el) => {
-    if (stash) stash(el);
+    if (keep) keep(el);
     while (el.firstChild) el.removeChild(el.firstChild);
   };
   clear(unit);
@@ -825,7 +825,7 @@ export async function start(code, opts = {}) {
     translator = await makeTranslator('en', lang, (p) => {
       if (!state.active) ui('downloading', lang, p);
     });
-  } catch (e) {
+  } catch {
     if (opts.silent) {
       removeUi();
       return false;
@@ -1033,7 +1033,7 @@ function languageSelect(current) {
     'aria-label': (state.strings && state.strings.language) || UI.language,
     onchange: (/** @type {Event} */ e) => setLanguage(/** @type {HTMLSelectElement} */ (e.target).value),
   });
-  for (const [c, n] of [['en', 'English'], ...LANGS.map((c) => [c, langName(c)])]) {
+  for (const [c, n] of [['en', 'English'], ...LANGS.map((code) => [code, langName(code)])]) {
     const o = /** @type {HTMLOptionElement} */ (el('option', { value: c, lang: c, text: n }));
     if (c === current) o.selected = true;
     s.appendChild(o);

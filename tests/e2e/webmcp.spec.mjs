@@ -36,9 +36,9 @@ test.describe('WebMCP tools', { tag: '@desktop' }, () => {
    */
   const call = (page, name, input = {}) =>
     page.evaluate(
-      async ([name, input]) => {
-        const tool = /** @type {any} */ (window).__tools.find((/** @type {any} */ t) => t.name === name);
-        const r = await tool.execute(input, { signal: new AbortController().signal });
+      async ([toolName, args]) => {
+        const tool = /** @type {any} */ (window).__tools.find((/** @type {any} */ t) => t.name === toolName);
+        const r = await tool.execute(args, { signal: new AbortController().signal });
         const txt = r?.content?.[0]?.text ?? '';
         let data = null;
         try {

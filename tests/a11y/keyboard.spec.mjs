@@ -84,9 +84,9 @@ for (const [colorScheme, tag] of /** @type {const} */ ([
         if (info.inView && clip.width > 2 && clip.height > 2) {
           const focused = await page.screenshot({ clip });
           await page.evaluate(() => {
-            const w = /** @type {any} */ (window);
-            w.__last = document.activeElement;
-            w.__last?.blur();
+            const win = /** @type {any} */ (window);
+            win.__last = document.activeElement;
+            win.__last?.blur();
           });
           const blurred = await page.screenshot({ clip });
           focusVisible = !focused.equals(blurred);

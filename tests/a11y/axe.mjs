@@ -2,7 +2,7 @@
 // WCAG 2.0, 2.1 and 2.2 A and AA rule on the page as it is now. Each run is attached to the test
 // (for the report, tests/reporters/a11y-report.mjs) and checked softly, so one test can audit
 // several states and still report them all.
-import AxeBuilder from '@axe-core/playwright';
+import { AxeBuilder } from '@axe-core/playwright';
 import { test as base, expect } from '../fixtures.mjs';
 
 export { expect, renderAll, settle, translated } from '../fixtures.mjs';

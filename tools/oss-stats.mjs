@@ -18,10 +18,10 @@ const gh = async (path) => {
   return { body: await r.json(), link: r.headers.get('link') || '' };
 };
 
-const q = encodeURIComponent(`is:pr is:merged author:${USER} ${OWN.map((o) => '-user:' + o).join(' ')}`);
+const query = encodeURIComponent(`is:pr is:merged author:${USER} ${OWN.map((o) => '-user:' + o).join(' ')}`);
 const prs = [];
 for (let page = 1; page <= 10; page++) {
-  const { body } = await gh(`/search/issues?q=${q}&per_page=100&page=${page}`);
+  const { body } = await gh(`/search/issues?q=${query}&per_page=100&page=${page}`);
   prs.push(...body.items);
   if (prs.length >= body.total_count || !body.items.length) break;
 }

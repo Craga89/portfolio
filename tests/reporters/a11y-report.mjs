@@ -16,6 +16,10 @@ import { dirname } from 'node:path';
  * @typedef {{ label: string, violations: Violation[] }} AxeRun
  */
 
+// Terminal colour codes in error messages.
+// oxlint-disable-next-line no-control-regex
+const ANSI = /\u001b\[[\d;]*m/g;
+
 /** @implements {Reporter} */
 export default class A11yReport {
   /** @param {{ outputFile?: string }} [options] */
@@ -52,7 +56,7 @@ export default class A11yReport {
     if (result.status === 'failed' || result.status === 'timedOut') {
       const isAxe = result.attachments.some((a) => a.name === 'axe');
       if (!isAxe || !result.errors.every((e) => /axe/i.test(e.message || ''))) {
-        const what = (result.errors[0]?.message || result.status).replace(/\u001b\[[\d;]*m/g, '').split('\n')[0];
+        const what = (result.errors[0]?.message || result.status).replace(ANSI, '').split('\n')[0];
         this.failures.push({ check: test.title, state: project.replace('a11y-', ''), what });
       }
     }

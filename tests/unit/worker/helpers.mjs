@@ -27,7 +27,7 @@ export const request = (body, { origin = ORIGIN, method = 'POST', path = '/ask',
   new Request(WORKER + path, {
     method,
     headers: { 'content-type': 'application/json', ...(origin ? { origin } : {}), ...headers },
-    body: method === 'POST' ? JSON.stringify(body) : undefined,
+    ...(method === 'POST' ? { body: JSON.stringify(body) } : {}),
   });
 
 /**

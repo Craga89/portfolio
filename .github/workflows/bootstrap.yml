@@ -26,7 +26,7 @@ jobs:
           # Exact versions in package.json; package-lock.json pins the rest.
           npm install --save-exact --no-audit --no-fund --save-dev \
             @axe-core/playwright@latest @modelcontextprotocol/sdk@1 @playwright/test@latest playwright@latest \
-            @types/node@22 axe-core@latest marked@latest oxfmt@latest oxlint@latest sharp@latest typescript@latest
+            @types/node@22 axe-core@latest marked@latest oxfmt@latest oxlint@latest sharp@latest typescript@6
       - name: Format and fix
         run: |
           npx oxfmt --version && npx oxfmt .

@@ -11,7 +11,7 @@ describe('blog posts', () => {
   it('are there, newest first', () => {
     assert.ok(posts.length > 8);
     const dates = posts.map((p) => p.date);
-    assert.deepEqual(dates, [...dates].sort().reverse());
+    assert.deepEqual(dates, dates.toSorted().toReversed());
   });
 
   for (const p of posts) {
