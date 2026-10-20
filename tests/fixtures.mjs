@@ -76,7 +76,8 @@ export const test = base.extend({
     page.on('console', (m) => {
       if (m.type() !== 'error') return;
       // The browser logs every failed response; the service stand-ins fail on purpose.
-      if (m.text().startsWith('Failed to load resource') && new URL(m.location().url || baseURL || '').host !== site) return;
+      if (m.text().startsWith('Failed to load resource') && new URL(m.location().url || baseURL || '').host !== site)
+        return;
       errors.push('console: ' + m.text());
     });
     await use(page);

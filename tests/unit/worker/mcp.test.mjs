@@ -160,7 +160,10 @@ describe('/mcp', () => {
       },
       ASK_LIMITER: { limit: async () => ({ success: true }) },
     };
-    const r = await call(rpc('tools/call', { name: 'ask', arguments: { question: 'Has he owned a budget?' } }), bindings);
+    const r = await call(
+      rpc('tools/call', { name: 'ask', arguments: { question: 'Has he owned a budget?' } }),
+      bindings,
+    );
     const d = r.body.result.structuredContent;
     assert.equal(d.via, 'ai');
     assert.match(d.answer, /AWS budget/);
