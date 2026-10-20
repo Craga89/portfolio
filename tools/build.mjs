@@ -139,7 +139,7 @@ function seoHead(head, { title, desc, url, type, today }) {
         d.inLanguage = 'en-GB';
       }
       return `<script type="application/ld+json">${JSON.stringify(d)}</script>`;
-    } catch (e) {
+    } catch {
       return all;
     }
   });
@@ -365,7 +365,7 @@ const ORIGIN_TRIALS = (() => {
       .split('\n')
       .map((l) => l.trim())
       .filter((l) => l && !l.startsWith('#'));
-  } catch (e) {
+  } catch {
     return {};
   }
   const map = {};
@@ -379,7 +379,7 @@ const ORIGIN_TRIALS = (() => {
         continue;
       }
       (map[origin] = map[origin] || []).push(token);
-    } catch (e) {
+    } catch {
       console.warn('origin trial: skipped a token that could not be read');
     }
   }
@@ -395,7 +395,7 @@ const OSS_SNAPSHOT = (() => {
       }),
     );
     return d && Array.isArray(d.timeline) ? d : null;
-  } catch (e) {
+  } catch {
     return null;
   }
 })();
@@ -488,7 +488,7 @@ ${beacon(ASK.endpoint, true)}
   HOME.css = (localFonts(d.helmet.trim()).match(/<style>([\s\S]*?)<\/style>/) || [])[1] || '';
   try {
     HOME.tips = JSON.parse((code.match(/const TIPS = (\{[\s\S]*?\});\n/) || [])[1] || '{}');
-  } catch (e) {
+  } catch {
     HOME.tips = {};
   }
   HOME.themeHead = themeHead;
@@ -1601,7 +1601,7 @@ self.addEventListener('fetch', (e) => {
 const TODAY = new Date().toISOString().slice(0, 10);
 rmSync(OUT, { recursive: true, force: true });
 mkdirSync(join(OUT, 'assets', 'fonts'), { recursive: true });
-for (const f of readdirSync(join(SRC, 'fonts')).filter((f) => f.endsWith('.woff2')))
+for (const f of readdirSync(join(SRC, 'fonts')).filter((name) => name.endsWith('.woff2')))
   copyFileSync(join(SRC, 'fonts', f), join(OUT, 'assets', 'fonts', f));
 writeOut('index.html', buildHome(TODAY));
 writeOut('cv/index.html', buildCV());

@@ -54,7 +54,7 @@ else {
     let u;
     try {
       u = new URL(x.url);
-    } catch (e) {
+    } catch {
       continue;
     }
     const segs = u.pathname.split('/').filter(Boolean);
@@ -157,7 +157,7 @@ else {
       let src = m[1].replace(/^https?:\/\/web\.archive\.org\/web\/\d+(im_|id_)?\//, '');
       try {
         src = new URL(src, saved.orig).href;
-      } catch (e) {
+      } catch {
         continue;
       }
       if (

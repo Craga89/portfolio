@@ -127,7 +127,7 @@ describe('/mcp', () => {
     const blog = await call(rpc('tools/call', { name: 'list_files', arguments: { section: 'blog' } }));
     const posts = toolData(blog.body).files;
     assert.ok(
-      posts.length > 10 && posts.every((p) => /\/blog\/[\w-]+\/$/.test(p.url)),
+      posts.length > 10 && posts.every((/** @type {any} */ post) => /\/blog\/[\w-]+\/$/.test(post.url)),
       'blog posts are listed with their pages',
     );
     const post = await call(rpc('tools/call', { name: 'read_file', arguments: { file: 'blog/' + posts[0].file } }));
@@ -146,7 +146,7 @@ describe('/mcp', () => {
 
   it('ask: answers from the model, logs as mcp, and respects the limit', async () => {
     const logged = [];
-    const env = {
+    const bindings = {
       AI: { run: async () => ({ response: 'Yes, he has owned the AWS budget. See budget.md.\nSOURCES: resp-bud' }) },
       DB: {
         prepare: (sql) => ({
@@ -160,7 +160,7 @@ describe('/mcp', () => {
       },
       ASK_LIMITER: { limit: async () => ({ success: true }) },
     };
-    const r = await call(rpc('tools/call', { name: 'ask', arguments: { question: 'Has he owned a budget?' } }), env);
+    const r = await call(rpc('tools/call', { name: 'ask', arguments: { question: 'Has he owned a budget?' } }), bindings);
     const d = r.body.result.structuredContent;
     assert.equal(d.via, 'ai');
     assert.match(d.answer, /AWS budget/);

@@ -81,7 +81,7 @@ async function discover(dir) {
       let u;
       try {
         u = new URL(/^https?:\/\//i.test(orig) ? orig : 'http://' + orig);
-      } catch (e) {
+      } catch {
         continue;
       }
       u.protocol = 'https:';
@@ -207,7 +207,7 @@ async function check(archivedFile) {
     }
   }
   const results = [];
-  const targets = new Map();
+  const destinations = new Map();
   let i = 0;
   const work = async () => {
     while (i < cases.length) {
@@ -227,15 +227,15 @@ async function check(archivedFile) {
         res = Object.assign({}, c, { ok: false, why: 'no response: ' + errorMessage(e) });
       }
       results.push(res);
-      if (res.ok) targets.set(c.to, null);
+      if (res.ok) destinations.set(c.to, null);
     }
   };
   await Promise.all(Array.from({ length: 6 }, work));
   // Each distinct destination should load (and Simpletip's scripts should still be JavaScript).
-  for (const t of targets.keys()) targets.set(t, await lands(t));
+  for (const t of destinations.keys()) destinations.set(t, await lands(t));
   for (const r of results) {
     if (!r.ok) continue;
-    const l = targets.get(r.to);
+    const l = destinations.get(r.to);
     if (!(l.status >= 200 && l.status < 400)) {
       r.ok = false;
       r.why = `redirects correctly, but ${r.to} gives HTTP ${l.status}${l.error ? ' (' + l.error + ')' : ''}`;

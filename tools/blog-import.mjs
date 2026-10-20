@@ -49,7 +49,7 @@ for (const p of posts) {
   await page.setContent(html, { waitUntil: 'domcontentloaded' });
   const imgMap = Object.fromEntries((p.images || []).filter((i) => i.file).map((i) => [i.src, i.file]));
   const r = await page.evaluate(
-    ({ orig, imgMap, gists }) => {
+    ({ orig, images, gistData }) => {
       const $ = (s) => document.querySelector(s);
       const meta = (k) => {
         const m = document.querySelector(`meta[property="${k}"],meta[name="${k}"]`);
@@ -94,7 +94,7 @@ for (const p of posts) {
       const abs = (u) => {
         try {
           return new URL(u.replace(/^https?:\/\/web\.archive\.org\/web\/\d+[a-z_]*\//, ''), orig).href;
-        } catch (e) {
+        } catch {
           return u;
         }
       };
@@ -126,7 +126,7 @@ for (const p of posts) {
         }
         if (t === 'img') {
           const s = abs(n.getAttribute('src') || '');
-          const f = imgMap[s];
+          const f = images[s];
           return f ? `![${(n.getAttribute('alt') || '').replace(/[[\]]/g, '')}](img/${f})` : '';
         }
         if (t === 'x-gist' || t === 'script' || t === 'style' || t === 'iframe') return '';
@@ -136,11 +136,11 @@ for (const p of posts) {
         const src = n.getAttribute('src') || '';
         const id = (src.match(/\/([0-9a-f]{12,}|\d{5,})\.js/) || [])[1],
           file = (src.match(/[?&]file=([^&]+)/) || [])[1];
-        const g = gists[id];
+        const g = gistData[id];
         if (!g) return `[See the code on GitHub](https://gist.github.com/${id})`;
         const files = Object.entries(g.files).filter(([name]) => !file || name === decodeURIComponent(file));
         return files
-          .map(([name, f]) => {
+          .map(([, f]) => {
             const lang = (f.language || '').toLowerCase().replace('javascript', 'js');
             const fence = f.content.includes('```') ? '~~~~' : '```';
             return `${fence}${lang}\n${f.content.replace(/\s+$/, '')}\n${fence}`;
@@ -238,7 +238,7 @@ for (const p of posts) {
         .trim();
       return { title, date: (date || '').slice(0, 10), tags: [...new Set(tags)], md };
     },
-    { orig: p.from, imgMap, gists },
+    { orig: p.from, images: imgMap, gistData: gists },
   );
   if (!r || !r.md) {
     console.log(`${p.slug}: no post body found`);
