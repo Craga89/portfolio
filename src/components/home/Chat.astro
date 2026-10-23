@@ -1,0 +1,251 @@
+---
+// The chat bar at the foot of the screen: ask.sh in a smaller window, for questions from anywhere
+// on the page (scripts/ask.ts). It shares its conversation with the ask.sh section.
+import { getImage } from 'astro:assets';
+import portrait from '../../assets/portrait.webp';
+import Icon from '../Icon.astro';
+import '../../styles/answers.css';
+import { SUGGESTIONS } from '../../lib/ask';
+
+const avatar = await getImage({ src: portrait, width: 56, height: 56, format: 'webp' });
+---
+
+<div class="chat" data-chat data-open="false" data-hide="false">
+  <button type="button" class="bar" aria-expanded="false" aria-controls="c-chat-panel" title="Ask about my experience" data-chat-toggle>
+    <span class="av"><img src={avatar.src} alt="" width="28" height="28" loading="lazy" decoding="async" /><i aria-hidden="true"></i></span>
+    <span class="t"><b>ask.sh</b><span data-chat-sub>Ask about my experience</span></span>
+    <Icon name="chevron" size={16} stroke={2.2} class="chev" />
+  </button>
+  <div id="c-chat-panel" class="panel" role="region" aria-label="Ask about Craig" hidden>
+    <div class="log" aria-live="polite" data-chat-log>
+      <div class="c-chat-msg c-chat-them" dir="auto"><p>Hi! Ask me anything about Craig's experience, roles or skills. Answers come from this site, with links to where they were found. Questions are kept anonymously.</p></div>
+      <div class="c-chat-sugg" data-chat-sugg>{SUGGESTIONS.map((q) => <button type="button" class="c-ask-chip" data-ask-q={q}>{q}</button>)}</div>
+    </div>
+    <form class="in" data-chat-form>
+      <input id="c-chat-field" class="field" type="text" dir="auto" maxlength="300" autocomplete="off" aria-label="Ask a question about Craig" placeholder="Ask a question…" />
+      <button type="button" class="c-mic" aria-pressed="false" aria-label="Dictate a question" title="Dictate a question" data-mic hidden><Icon name="mic" size={18} /></button>
+      <button type="submit" class="go" aria-label="Send" title="Send"><Icon name="send" size={18} /></button>
+    </form>
+  </div>
+</div>
+
+<style>
+  .chat {
+    position: fixed;
+    inset-inline-end: calc(var(--side-w, 0px) + 24px);
+    bottom: 0;
+    z-index: 30;
+    display: flex;
+    flex-direction: column;
+    width: 272px;
+    border: 1px solid var(--line3);
+    border-bottom: 0;
+    border-radius: 10px 10px 0 0;
+    background: var(--panel);
+    box-shadow: 0 -4px 22px rgb(0 0 0 / 0.18);
+    font-family: var(--f-body);
+    transition:
+      transform 0.25s ease,
+      width 0.2s ease;
+  }
+  .chat[data-open='true'] {
+    width: 360px;
+  }
+  .chat[data-hide='true'] {
+    visibility: hidden;
+    transform: translateY(calc(100% + 16px));
+    transition:
+      transform 0.25s ease,
+      visibility 0s linear 0.25s;
+  }
+  .bar {
+    all: unset;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    min-height: 48px;
+    padding-block: 8px;
+    padding-inline: 12px 14px;
+    border-radius: 10px 10px 0 0;
+    cursor: pointer;
+    color: var(--head);
+  }
+  .bar:hover {
+    background: var(--panel2);
+  }
+  .bar:focus-visible {
+    outline: 2px solid var(--acc);
+    outline-offset: -2px;
+  }
+  .chat[data-open='true'] .bar {
+    border-bottom: 1px solid var(--line2);
+  }
+  .av {
+    position: relative;
+    flex: none;
+    width: 28px;
+    height: 28px;
+  }
+  .av img {
+    display: block;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    object-fit: cover;
+    box-shadow: 0 0 0 1px var(--line3);
+  }
+  .av i {
+    position: absolute;
+    inset-inline-end: -2px;
+    bottom: -1px;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--ok);
+    box-shadow: 0 0 0 2px var(--panel);
+  }
+  .t {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 1px;
+    min-width: 0;
+    line-height: 1.25;
+  }
+  .t b {
+    font-family: var(--f-mono);
+    font-size: 14px;
+    color: var(--head);
+  }
+  .t span {
+    overflow: hidden;
+    font-size: 12px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    color: var(--mute);
+  }
+  .bar :global(.chev) {
+    flex: none;
+    color: var(--mute);
+    transition: transform 0.2s ease;
+  }
+  .chat[data-open='true'] .bar :global(.chev) {
+    transform: rotate(180deg);
+  }
+  .panel {
+    display: flex;
+    flex-direction: column;
+    height: min(460px, calc(100vh - 120px));
+  }
+  .panel[hidden] {
+    display: none;
+  }
+  .log {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 8px;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    padding: 14px 12px;
+  }
+  .in {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0;
+    padding: 8px;
+    border-top: 1px solid var(--line2);
+  }
+  .field {
+    all: unset;
+    box-sizing: border-box;
+    flex: 1;
+    min-width: 0;
+    min-height: 40px;
+    padding: 0 14px;
+    border-radius: 999px;
+    background: var(--panel2);
+    font-size: 14px;
+    color: var(--head);
+    caret-color: var(--acc);
+  }
+  .field::placeholder {
+    color: var(--dim);
+  }
+  .field:focus-visible,
+  .go:focus-visible {
+    outline: 2px solid var(--acc);
+    outline-offset: 1px;
+  }
+  .go {
+    all: unset;
+    box-sizing: border-box;
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    color: var(--acc);
+  }
+  .go:hover {
+    background: var(--panel2);
+  }
+  .go[disabled] {
+    opacity: 0.45;
+    cursor: default;
+  }
+  @media (min-width: 601px) and (max-width: 900px) {
+    .chat {
+      inset-inline-end: calc(var(--side-w, 0px) + 12px);
+    }
+    .chat[data-open='true'] {
+      width: min(360px, calc(100vw - var(--side-w, 0px) - 24px));
+    }
+  }
+  @media (max-width: 600px), (max-width: 900px) and (max-height: 599px) {
+    .chat {
+      inset-inline-end: 12px;
+    }
+    :global(:root:has(#v2-menu[open])) .chat {
+      visibility: hidden;
+    }
+  }
+  @media (max-width: 600px) {
+    .chat {
+      width: 236px;
+    }
+    .chat[data-open='true'] {
+      left: 8px;
+      right: 8px;
+      width: auto;
+    }
+    .panel {
+      height: min(520px, calc(100vh - 110px));
+    }
+    .field {
+      font-size: 16px;
+    }
+  }
+  @media print {
+    .chat {
+      display: none;
+    }
+  }
+  @media (forced-colors: active) {
+    .chat {
+      border: 1px solid CanvasText;
+    }
+    .av i {
+      forced-color-adjust: none;
+      background: CanvasText;
+      box-shadow: none;
+    }
+  }
+</style>

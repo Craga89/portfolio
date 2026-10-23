@@ -35,6 +35,6 @@ const files = all.map((e) => ({ file: e.data.file, href: `/responsibilities/${sl
 >
   <Crumb folder="responsibilities/" file={file} home={home} />
   <h1 class="c-sr">{title}</h1>
-  <ResponsibilityCard entry={entry} index={current} total={all.length} level={2} open />
+  <ResponsibilityCard entry={entry} index={current} total={all.length} level={2} standalone />
   <FileFooter folder="responsibilities/" files={files} current={current} source={entry.body ?? ''} home={home} />
 </FilePage>

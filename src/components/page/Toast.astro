@@ -1,0 +1,45 @@
+---
+// A short note after an action ("Link copied"), shown by scripts/toast.ts, and announced through
+// the status line for screen readers.
+---
+
+<div class="toast" data-toast aria-hidden="true"></div>
+<span class="c-sr" role="status" data-status></span>
+
+<style>
+  .toast {
+    position: fixed;
+    left: 50%;
+    bottom: 76px;
+    z-index: 40;
+    max-width: calc(100vw - 32px);
+    padding: 10px 16px;
+    border: 1px solid var(--acc);
+    border-radius: 10px;
+    background: var(--panel);
+    box-shadow: 0 12px 30px -14px rgb(0 0 0 / 0.6);
+    font-family: var(--f-mono);
+    font-size: 13.5px;
+    color: var(--head);
+    opacity: 0;
+    visibility: hidden;
+    transform: translate(-50%, 12px);
+    transition:
+      opacity 0.3s ease,
+      transform 0.3s ease,
+      visibility 0s linear 0.3s;
+  }
+  .toast[data-show] {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(-50%, 0);
+    transition:
+      opacity 0.3s ease,
+      transform 0.3s ease;
+  }
+  @media print {
+    .toast {
+      display: none;
+    }
+  }
+</style>

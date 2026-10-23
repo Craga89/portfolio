@@ -1,0 +1,259 @@
+---
+// stack/: every tool, by area (src/data/stack.yaml). Each area opens to show its tools; typing
+// filters them, matching tools and the words in src/data/stack.yaml (scripts/stack.ts).
+import { getCollection } from 'astro:content';
+import Section from '../home/Section.astro';
+import { EMAIL } from '../../site';
+
+const areas = await getCollection('stack').then((all) => all.sort((a, b) => a.data.order - b.data.order));
+const tools = areas.reduce((n, a) => n + a.data.tools.length, 0);
+const summary = `${tools} tools across ${areas.length} areas · type to search`;
+---
+
+<Section id="stack" cmd="ls ./stack" note="skills" file="stack/" gap={28}>
+  <div class="box" data-stack data-summary={summary}>
+    <div class="bar">
+      <span class="prompt" aria-hidden="true">$ grep -ri</span>
+      <span class="field">
+        <input class="in" type="text" autocomplete="off" spellcheck="false" aria-label="Search the stack" placeholder="try aws, test, type, ai…" data-stack-q />
+        <span class="c-cursor" aria-hidden="true"></span>
+      </span>
+    </div>
+    <div class="results" aria-live="polite">
+      <p class="count" data-stack-count>{summary}</p>
+      {
+        areas.map((a) => (
+          <details class="row" data-keywords={`${a.id} ${a.data.keywords}`}>
+            <summary>
+              <span class="tg">{a.id}/</span>
+              <span class="tn" data-stack-n>{a.data.tools.length}</span>
+              <span class="tp">{a.data.tools.join(', ')}</span>
+            </summary>
+            <ul class="chips">
+              {a.data.tools.map((t) => (
+                <li class="hit">{t}</li>
+              ))}
+            </ul>
+          </details>
+        ))
+      }
+      <p class="none" data-stack-none hidden>grep: no matches. <span class="ask">Ask me anyway:</span> <a href={`mailto:${EMAIL}`}>{EMAIL}</a></p>
+    </div>
+  </div>
+</Section>
+
+<style>
+  .box {
+    overflow: hidden;
+    border: 1px solid var(--line2);
+    border-radius: 12px;
+    background: var(--panel);
+  }
+  .bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 16px;
+    border-bottom: 1px solid var(--line2);
+    background: var(--panel2);
+    font-family: var(--f-mono);
+  }
+  .prompt {
+    color: var(--ok);
+  }
+  .field {
+    position: relative;
+    display: flex;
+    flex: 1;
+    align-items: center;
+    min-width: 0;
+  }
+  .in {
+    all: unset;
+    box-sizing: border-box;
+    flex: 1;
+    min-width: 0;
+    min-height: 48px;
+    font: inherit;
+    font-size: 16px;
+    color: var(--head);
+    caret-color: var(--acc);
+  }
+  .in::placeholder {
+    color: var(--dim);
+  }
+  /* A block cursor over the start of the placeholder, until the box is focused. */
+  .c-cursor {
+    position: absolute;
+    inset-inline-start: 0;
+    top: 50%;
+    width: 0.62em;
+    height: 1.2em;
+    margin-top: -0.6em;
+    pointer-events: none;
+    background: var(--acc);
+    animation: blink 1.06s steps(1, end) infinite;
+  }
+  .in:not(:focus):placeholder-shown {
+    padding-inline-start: calc(0.62em + 8px);
+  }
+  .in:focus ~ .c-cursor,
+  .in:not(:placeholder-shown) ~ .c-cursor {
+    display: none;
+  }
+  @keyframes blink {
+    50% {
+      opacity: 0;
+    }
+  }
+  .results {
+    padding: 16px 16px 20px;
+  }
+  .count {
+    margin: 0 0 10px;
+    font-size: 13px;
+    color: var(--mute);
+  }
+  .none {
+    margin: 0;
+    color: var(--text3);
+  }
+  .none .ask {
+    color: var(--mute);
+  }
+  .row {
+    border-top: 1px dashed var(--line);
+    break-inside: avoid;
+  }
+  .row[hidden] {
+    display: none;
+  }
+  summary {
+    display: grid;
+    grid-template-columns: auto auto minmax(0, 1fr) 12px;
+    align-items: center;
+    gap: 10px;
+    min-height: 48px;
+    padding: 6px 0;
+    list-style: none;
+    cursor: pointer;
+    font-size: 13px;
+  }
+  summary::-webkit-details-marker {
+    display: none;
+  }
+  /* A chevron that turns as the area opens. */
+  summary::after {
+    content: '';
+    inline-size: 7px;
+    block-size: 7px;
+    border-inline-end: 1.5px solid var(--mute);
+    border-block-end: 1.5px solid var(--mute);
+    rotate: 45deg;
+    translate: 0 -2px;
+    transition: rotate 0.2s ease;
+  }
+  .row[open] summary::after {
+    rotate: -135deg;
+    translate: 0 2px;
+  }
+  summary:focus-visible {
+    outline: 2px solid var(--acc);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+  .tg {
+    font-family: var(--f-mono);
+    color: var(--acc);
+  }
+  summary:hover .tg {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .tn {
+    font-family: var(--f-mono);
+    font-size: 12px;
+    color: var(--dim);
+  }
+  .tp {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--text3);
+  }
+  .row[open] .tp {
+    visibility: hidden;
+  }
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 0;
+    padding: 2px 0 14px;
+    list-style: none;
+  }
+  .hit {
+    display: inline-block;
+    border: 1px solid var(--line3);
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 14px;
+    transition:
+      border-color 0.2s ease,
+      transform 0.2s ease;
+    animation: hit-pop 0.35s ease both;
+  }
+  .hit:hover {
+    border-color: var(--acc);
+    transform: translateY(-2px);
+  }
+  .hit :global(mark) {
+    border-radius: 2px;
+    padding: 0 1px;
+    background: var(--acc);
+    color: var(--bg);
+  }
+  .hit[hidden] {
+    display: none;
+  }
+  @keyframes hit-pop {
+    from {
+      opacity: 0;
+      transform: translateY(6px) scale(0.96);
+    }
+  }
+  @media (max-width: 640px) {
+    .hit {
+      padding: 4px 9px;
+      font-size: 13px;
+    }
+    summary {
+      gap: 8px;
+    }
+  }
+  @media print {
+    .bar,
+    .c-cursor {
+      display: none;
+    }
+    .row::details-content {
+      content-visibility: visible;
+      display: block;
+    }
+  }
+  @media (forced-colors: active) {
+    .c-cursor {
+      forced-color-adjust: none;
+      background: CanvasText;
+    }
+    .hit {
+      border: 1px solid ButtonText;
+    }
+    .hit :global(mark) {
+      forced-color-adjust: none;
+      background: Mark;
+      color: MarkText;
+    }
+  }
+</style>

@@ -75,7 +75,7 @@ const glossary = defineCollection({
 
 const stack = defineCollection({
   loader: file('./src/data/stack.yaml'),
-  schema: z.object({ keywords: z.string(), tools: z.array(z.string()).min(1) }),
+  schema: z.object({ order: z.number().int(), keywords: z.string(), tools: z.array(z.string()).min(1) }),
 });
 
 const focus = defineCollection({
@@ -90,13 +90,13 @@ const focus = defineCollection({
 
 const recommendations = defineCollection({
   loader: file('./src/data/recommendations.yaml'),
-  schema: z.object({ name: z.string(), role: z.string(), when: z.string(), quote: z.string() }),
+  schema: z.object({ order: z.number().int(), name: z.string(), role: z.string(), when: z.string(), quote: z.string() }),
 });
 
 /** Open-source projects. `{stars}`, `{forks}` and `{commits}` in the text are qTip2's live counts. */
 const projects = defineCollection({
   loader: file('./src/data/projects.yaml'),
-  schema: z.object({ path: z.string(), title: z.string(), url: z.url().optional(), text: z.string() }),
+  schema: z.object({ order: z.number().int(), path: z.string(), title: z.string(), url: z.url().optional(), text: z.string() }),
 });
 
 /** Merged pull requests to other projects, shown in the open-source section. */

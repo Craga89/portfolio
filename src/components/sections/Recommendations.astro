@@ -1,0 +1,103 @@
+---
+// recommendations.txt: LinkedIn recommendations, quoted as written (src/data/recommendations.yaml).
+import { getCollection } from 'astro:content';
+import Section from '../home/Section.astro';
+import { LINKEDIN } from '../../site';
+
+const recs = await getCollection('recommendations').then((all) => all.sort((a, b) => a.data.order - b.data.order));
+---
+
+<Section id="recommendations" cmd="cat recommendations.txt" note="recommendations" file="recommendations.txt" gap={8}>
+  <p class="intro">From LinkedIn, quoted as written. <a href={`${LINKEDIN}details/recommendations/`}>See them on LinkedIn →</a></p>
+  <div class="grid">
+    {
+      recs.map(({ data: r }) => (
+        <figure class="c-card">
+          <blockquote>
+            <span class="q" aria-hidden="true">
+              “
+            </span>
+            {r.quote}
+          </blockquote>
+          <figcaption>
+            <div class="name">{r.name}</div>
+            <div class="role">{r.role}</div>
+            <div class="when">{r.when}</div>
+          </figcaption>
+        </figure>
+      ))
+    }
+  </div>
+</Section>
+
+<style>
+  .intro {
+    max-width: 72ch;
+    margin: 0 0 24px;
+    font-size: 14px;
+    color: var(--mute);
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr));
+    gap: 18px;
+  }
+  .c-card {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    margin: 0;
+    padding: 26px;
+    border: 1px solid var(--line2);
+    border-radius: 12px;
+    background: var(--panel);
+    transition:
+      transform 0.25s ease,
+      border-color 0.25s ease;
+  }
+  .c-card:hover {
+    border-color: var(--acc);
+    transform: translateY(-4px);
+  }
+  blockquote {
+    margin: 0;
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--text2);
+  }
+  .q {
+    margin-inline-end: 4px;
+    font-size: 28px;
+    line-height: 0;
+    vertical-align: -10px;
+    color: var(--acc);
+  }
+  figcaption {
+    margin-top: auto;
+    padding-top: 14px;
+    border-top: 1px solid var(--line);
+  }
+  .name {
+    font-weight: 700;
+    color: var(--head);
+  }
+  .role {
+    font-size: 13px;
+    color: var(--mute);
+  }
+  .when {
+    margin-top: 2px;
+    font-size: 12px;
+    color: var(--dim);
+  }
+  @media print {
+    .c-card {
+      break-inside: avoid;
+    }
+  }
+  @media (forced-colors: active) {
+    .c-card {
+      border: 1px solid CanvasText;
+    }
+  }
+</style>

@@ -1,0 +1,66 @@
+---
+// recognition.txt and education.txt, side by side (src/content/sections/).
+import { getEntry, render } from 'astro:content';
+
+const load = async (id: string) => {
+  const e = await getEntry('sections', id);
+  if (!e) throw new Error(`src/content/sections/${id}.mdx is missing`);
+  return (await render(e)).Content;
+};
+const Recognition = await load('recognition');
+const Education = await load('education');
+---
+
+<section aria-labelledby="c-awards" class="pair">
+  <div class="recognition">
+    <h2 id="c-awards" class="c-cmd"><span translate="no">$ cat recognition.txt</span></h2>
+    <Recognition />
+  </div>
+  <div class="education">
+    <h2 class="c-cmd"><span translate="no">$ cat education.txt</span> <span class="note"># education</span></h2>
+    <Education />
+  </div>
+</section>
+
+<style>
+  .pair {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+    gap: 40px;
+    margin-top: clamp(72px, 10vw, 128px);
+  }
+  h2 {
+    margin: 0 0 20px;
+    font-size: clamp(16px, 2vw, 20px);
+    font-weight: 500;
+    color: var(--ok);
+  }
+  .note {
+    color: var(--dim);
+  }
+  .recognition :global(ul) {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    color: var(--text2);
+  }
+  .recognition :global(li)::before {
+    content: '→ ' / '';
+    color: var(--acc);
+  }
+  .education :global(p) {
+    margin: 0;
+    color: var(--text2);
+  }
+  .education :global(strong) {
+    color: var(--head);
+  }
+  @media print {
+    .pair {
+      margin-top: 20pt;
+    }
+  }
+</style>

@@ -9,6 +9,7 @@ import headFont from '../assets/fonts/big-shoulders-display-latin-600.woff2?url'
 import monoFont from '../assets/fonts/red-hat-mono-latin-400.woff2?url';
 import { SITE, CHROME, INDEXING } from '../site';
 import { THEME_BOOT, ANALYTICS } from '../scripts/inline.mjs';
+import Toast from '../components/page/Toast.astro';
 
 interface Props {
   title: string;
@@ -101,6 +102,7 @@ const prerender = {
   </head>
   <body>
     <slot />
+    <Toast />
     <script>
       import '../scripts/boot';
     </script>

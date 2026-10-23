@@ -14,3 +14,4 @@ a11y.json
 tests/visual/__screenshots__/
 .astro/
 .shot.mjs
+.secshot.mjs

@@ -1,8 +1,88 @@
 ---
+// The home page.
 import Base from '../layouts/Base.astro';
+import MobileBar from '../components/home/MobileBar.astro';
+import Sidebar from '../components/home/Sidebar.astro';
+import Chat from '../components/home/Chat.astro';
+import Toggletip from '../components/page/Toggletip.astro';
+import Keys from '../components/page/Keys.astro';
+import Intro from '../components/sections/Intro.astro';
+import Career from '../components/sections/Career.astro';
+import Responsibilities from '../components/sections/Responsibilities.astro';
+import CaseStudies from '../components/sections/CaseStudies.astro';
+import Stack from '../components/sections/Stack.astro';
+import OpenSource from '../components/sections/OpenSource.astro';
+import Blog from '../components/sections/Blog.astro';
+import Recommendations from '../components/sections/Recommendations.astro';
+import Recognition from '../components/sections/Recognition.astro';
+import Faq from '../components/sections/Faq.astro';
+import Ask from '../components/sections/Ask.astro';
+import Contact from '../components/sections/Contact.astro';
 import { HOME_TITLE, HOME_DESC } from '../site';
+import { homeLd } from '../lib/seo';
 ---
 
-<Base title={HOME_TITLE} description={HOME_DESC} path="" type="profile">
-  <main id="top"><h1>Craig Michael Thompson</h1></main>
+<Base title={HOME_TITLE} description={HOME_DESC} path="" type="profile" ld={await homeLd()} mono>
+  <MobileBar />
+  <div class="shell">
+    <Sidebar />
+    <main id="top" class="main">
+      <Intro />
+      <Career />
+      <Responsibilities />
+      <CaseStudies />
+      <Stack />
+      <OpenSource />
+      <Blog />
+      <Recommendations />
+      <Recognition />
+      <Faq />
+      <Ask />
+      <Contact />
+    </main>
+    <Chat />
+  </div>
+  <Toggletip />
+  <Keys />
 </Base>
+
+<style>
+  .shell {
+    --side-w: 280px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) var(--side-w);
+    min-height: 100vh;
+  }
+  .main {
+    grid-column: 1;
+    grid-row: 1;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 1180px;
+    min-width: 0;
+    margin: 0 auto;
+    padding: clamp(28px, 4vw, 56px) clamp(20px, 4vw, 56px) 96px;
+  }
+  @media (min-width: 601px) and (max-width: 900px) {
+    .shell {
+      --side-w: 236px;
+    }
+  }
+  @media (max-width: 600px), (max-width: 900px) and (max-height: 599px) {
+    .shell {
+      --side-w: 0px;
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+  @media print {
+    .shell {
+      display: block;
+      min-height: 0;
+    }
+    .main {
+      max-width: none;
+      margin: 0;
+      padding: 0;
+    }
+  }
+</style>

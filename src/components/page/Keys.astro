@@ -1,0 +1,133 @@
+---
+// The keyboard shortcuts (?), with the switch for the single-key ones (WCAG 2.1.4).
+import Icon from '../Icon.astro';
+---
+
+<dialog id="c-keys" class="keys" aria-labelledby="c-keys-t">
+  <div class="b">
+    <h2 id="c-keys-t">Keyboard shortcuts</h2>
+    <dl>
+      <dt><kbd data-mod-key>Ctrl</kbd> <kbd>K</kbd></dt>
+      <dd>Search and jump to any section, file or action</dd>
+      <dt><kbd>/</kbd></dt>
+      <dd>Search and jump (single key)</dd>
+      <dt><kbd>?</kbd></dt>
+      <dd>This list (single key)</dd>
+      <dt><kbd>←</kbd> <kbd>→</kbd></dt>
+      <dd>Previous and next file in the responsibilities tour</dd>
+      <dt><kbd>esc</kbd></dt>
+      <dd>Close a dialog, the chat or a definition</dd>
+    </dl>
+    <label><input type="checkbox" checked data-keys-single /> Single-key shortcuts (<kbd>/</kbd> and <kbd>?</kbd>)</label>
+    <p>Turn these off if they clash with your screen reader or speech software. The setting is saved in this browser.</p>
+  </div>
+  <form method="dialog"><button class="x" aria-label="Close"><Icon name="close" size={18} /></button></form>
+</dialog>
+
+<style>
+  .keys {
+    box-sizing: border-box;
+    width: min(580px, calc(100vw - 24px));
+    max-height: min(560px, calc(100dvh - 48px));
+    margin: min(14vh, 120px) auto auto;
+    padding: 0;
+    overflow: hidden;
+    border: 1px solid var(--line3);
+    border-radius: 12px;
+    background: var(--panel);
+    box-shadow: 0 24px 60px -20px rgb(0 0 0 / 0.6);
+    font-family: var(--f-body);
+    color: var(--text);
+  }
+  .keys[open] {
+    display: flex;
+    flex-direction: column;
+  }
+  .keys::backdrop {
+    background: rgb(8 14 11 / 0.55);
+    backdrop-filter: blur(3px);
+  }
+  :global(:root[data-theme='light']) .keys::backdrop {
+    background: rgb(15 29 22 / 0.28);
+  }
+  .b {
+    overflow-y: auto;
+    padding: 18px 20px 20px;
+  }
+  h2 {
+    margin: 0 0 12px;
+    font-size: 28px;
+    line-height: 1;
+    color: var(--head);
+  }
+  dl {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 10px 16px;
+    margin: 0 0 18px;
+    font-size: 14.5px;
+    color: var(--text2);
+  }
+  dt {
+    white-space: nowrap;
+  }
+  dd {
+    margin: 0;
+  }
+  label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 44px;
+    cursor: pointer;
+    font-size: 14.5px;
+    color: var(--head);
+  }
+  input {
+    width: 18px;
+    height: 18px;
+    margin: 0;
+    accent-color: var(--acc);
+  }
+  p {
+    margin: 0;
+    font-size: 13px;
+    color: var(--mute);
+  }
+  form {
+    position: absolute;
+    top: 10px;
+    inset-inline-end: 10px;
+    margin: 0;
+  }
+  .x {
+    all: unset;
+    box-sizing: border-box;
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    cursor: pointer;
+    color: var(--mute);
+  }
+  .x:hover {
+    background: var(--panel2);
+    color: var(--head);
+  }
+  .x:focus-visible {
+    outline: 2px solid var(--acc);
+    outline-offset: 2px;
+    border-radius: 5px;
+  }
+  @media print {
+    .keys {
+      display: none;
+    }
+  }
+  @media (forced-colors: active) {
+    .keys {
+      border: 1px solid CanvasText;
+    }
+  }
+</style>

@@ -1,0 +1,23 @@
+---
+// faq.md: questions recruiters ask (src/content/sections/faq.mdx), each one a disclosure.
+import { getEntry, render } from 'astro:content';
+import Section from '../home/Section.astro';
+import { components } from '../mdx';
+
+const faq = await getEntry('sections', 'faq');
+if (!faq) throw new Error('src/content/sections/faq.mdx is missing');
+const { Content } = await render(faq);
+---
+
+<Section id="faq" cmd="cat faq.md" note="faq" file="faq.md">
+  <div class="grid"><Content components={components} /></div>
+</Section>
+
+<style>
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 460px), 1fr));
+    gap: 0 32px;
+    border-top: 1px solid var(--line2);
+  }
+</style>

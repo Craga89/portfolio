@@ -1,0 +1,441 @@
+---
+// The sidebar on wider screens: who and where, the explorer (the sections, with the one in view
+// marked by scripts/spy.ts), get in touch, and the build it came from.
+import Icon from '../Icon.astro';
+import ContactLinks from './ContactLinks.astro';
+import { SECTIONS } from '../../lib/sections';
+import { NAME, SOURCE } from '../../site';
+
+const MAPS = 'https://www.google.com/maps/search/?api=1&query=Newcastle+upon+Tyne%2C+UK';
+const built = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'Europe/London' });
+---
+
+<aside class="side" aria-label="Site">
+  <div class="inner">
+    <div class="top">
+      <a href="#top" class="brand"><span class="c-dot" aria-hidden="true"></span>craigthompson.dev</a>
+      <button type="button" class="c-theme" data-theme-toggle title="Switch theme">
+        <span class="when-dark"><Icon name="sun" size={18} /><span class="c-sr">Switch to light theme</span></span>
+        <span class="when-light"><Icon name="moon" size={18} /><span class="c-sr">Switch to dark theme</span></span>
+      </button>
+    </div>
+    <div class="id">
+      <b>{NAME}</b>
+      <span class="role"><Icon name="code" size={14} />Full-stack engineer</span>
+      <a class="loc" href={MAPS} target="_blank" rel="noopener" title="Open Newcastle upon Tyne in Google Maps"><Icon name="angel" size={13} width={28} class="angel" />Newcastle upon Tyne, UK</a>
+      {/* The time in Newcastle, filled in by scripts/clock.ts. */}
+      <span class="time" data-clock hidden>
+        <Icon name="clock" size={14} />
+        <span class="time-t"><span class="time-v" aria-hidden="true"><span data-clock-h></span><span class="colon">:</span><span data-clock-m></span><span class="off" data-clock-off></span></span><span class="c-sr" data-clock-sr></span> in Newcastle</span>
+      </span>
+      <a class="open" href="#open-to-roles">open to new roles</a>
+    </div>
+    <div class="exprow">
+      <div class="exp">EXPLORER</div>
+      <button type="button" class="pal" aria-haspopup="dialog" aria-label="Search and jump, Ctrl K" title="Search and jump (Ctrl K)" data-palette><Icon name="search" size={12} stroke={2.4} /><kbd data-mod-key>Ctrl K</kbd></button>
+    </div>
+    <nav class="tree" aria-label="Main" translate="no">
+      {
+        SECTIONS.map((s, i) => (
+          <a href={`#${s.id}`} aria-current={i === 0 ? 'true' : 'false'} data-spy={s.id} data-dir={s.dir ? '' : undefined}>
+            <i aria-hidden="true" />
+            <bdi>{s.file}</bdi>
+          </a>
+        ))
+      }
+    </nav>
+    <div class="foot">
+      <a class="c-btn" href="#contact">./get-in-touch</a>
+      <ContactLinks />
+      <button type="button" class="motion" data-motion-toggle><Icon name="pause" size={14} /><span data-motion-label>pause animations</span></button>
+      <a class="ver" href={`${SOURCE}/commit/__BUILD_SHA__`} title={`Built from commit __BUILD_SHORT__, ${built}`} data-built="__BUILD_AT__">main@__BUILD_SHORT__ · <span data-built-ago>just now</span></a>
+      <a class="ver qual" href="/?case=site#case-studies" data-open="case/site" data-live-side>CI checks · this-site.md</a>
+    </div>
+  </div>
+</aside>
+
+<style>
+  .side {
+    grid-column: 2;
+    grid-row: 1;
+    border-inline-start: 1px solid var(--line2);
+    background: var(--panel);
+  }
+  .inner {
+    position: sticky;
+    top: 0;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    height: 100vh;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    padding-block: 24px;
+    padding-inline: 22px 18px;
+  }
+  .top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--f-mono);
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--head);
+    text-decoration: none;
+  }
+  .brand:hover {
+    color: var(--head);
+  }
+  .c-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--ok);
+    animation: c-pulse 2s ease-in-out infinite;
+  }
+  .c-theme {
+    display: inline-grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    margin: -8px 0;
+    border: 1px solid var(--line3);
+    border-radius: 8px;
+    background: transparent;
+    color: var(--text3);
+    cursor: pointer;
+    transition:
+      border-color 0.2s ease,
+      color 0.2s ease;
+  }
+  .c-theme > span {
+    display: contents;
+  }
+  .c-theme:hover {
+    border-color: var(--acc);
+    color: var(--acc);
+  }
+  .id {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    font-size: 13px;
+    color: var(--mute);
+  }
+  .id b {
+    margin-bottom: 2px;
+    font-family: var(--f-head);
+    font-size: 15px;
+    letter-spacing: 0.005em;
+    color: var(--head);
+  }
+  .role,
+  .time {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .time {
+    align-items: flex-start;
+  }
+  .time[hidden] {
+    display: none;
+  }
+  .role :global(.ico),
+  .time :global(.ico) {
+    flex: none;
+    margin-inline: 7px;
+  }
+  .time :global(.ico) {
+    margin-top: 0.3em;
+  }
+  .time-t {
+    min-width: 0;
+    text-wrap: balance;
+  }
+  .time-v {
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+  .off {
+    margin-inline-start: 5px;
+    font-size: 0.92em;
+    color: var(--dim);
+  }
+  .colon {
+    animation: colon 1s steps(1, end) infinite;
+  }
+  @keyframes colon {
+    50% {
+      opacity: 0;
+    }
+  }
+  .loc {
+    display: inline-flex;
+    align-items: flex-start;
+    gap: 6px;
+    width: fit-content;
+    color: inherit;
+    text-decoration: none;
+    text-wrap: balance;
+    transition: color 0.2s ease;
+  }
+  .loc:hover {
+    color: var(--acc);
+    text-decoration: underline;
+  }
+  .loc :global(.angel) {
+    flex: none;
+    margin-top: 0.45em;
+  }
+  .open {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    width: fit-content;
+    min-height: 24px;
+    margin-top: 10px;
+    font-size: 12.5px;
+    color: var(--ok);
+    text-decoration: none;
+  }
+  .open:hover {
+    color: var(--ok);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .open::before {
+    content: '';
+    flex: none;
+    width: 8px;
+    height: 8px;
+    margin-inline: 10px;
+    border-radius: 50%;
+    background: var(--ok);
+    box-shadow: 0 0 0 3px var(--ok-bg);
+    animation: glow 3.4s ease-in-out infinite;
+  }
+  @keyframes glow {
+    0%,
+    100% {
+      opacity: 0.45;
+      box-shadow: 0 0 0 3px var(--ok-bg);
+    }
+    50% {
+      opacity: 1;
+      box-shadow:
+        0 0 0 3px var(--ok-bg),
+        0 0 9px 2px color-mix(in srgb, var(--ok) 45%, transparent);
+    }
+  }
+  .exprow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: -12px;
+  }
+  .exp {
+    font-family: var(--f-mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    color: var(--dim);
+  }
+  .pal {
+    all: unset;
+    box-sizing: border-box;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 28px;
+    padding: 0 8px;
+    border: 1px solid var(--line3);
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: var(--f-mono);
+    font-size: 11.5px;
+    color: var(--mute);
+    transition:
+      border-color 0.2s ease,
+      color 0.2s ease;
+  }
+  .pal:hover {
+    border-color: var(--acc);
+    color: var(--head);
+  }
+  .pal:focus-visible {
+    outline: 2px solid var(--acc);
+    outline-offset: 2px;
+    border-radius: 5px;
+  }
+  .pal kbd {
+    min-width: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    font: inherit;
+    color: inherit;
+  }
+  .tree {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    font-family: var(--f-mono);
+    font-size: 14px;
+  }
+  .tree a {
+    display: grid;
+    grid-template-columns: 20px minmax(0, 1fr);
+    align-items: center;
+    min-height: 36px;
+    padding: 0 10px;
+    border-inline-start: 2px solid transparent;
+    border-radius: 4px;
+    color: var(--text3);
+    text-decoration: none;
+    transition:
+      background 0.2s ease,
+      color 0.2s ease,
+      border-color 0.2s ease;
+  }
+  .tree a:hover {
+    background: var(--panel2);
+    color: var(--head);
+  }
+  .tree a[aria-current='true'] {
+    border-inline-start-color: var(--acc);
+    background: var(--acc-bg);
+    color: var(--head);
+    font-weight: 700;
+  }
+  .tree i {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-style: normal;
+  }
+  .tree i::before {
+    content: '○';
+    font-size: 9px;
+    color: var(--line3);
+  }
+  .tree a[data-dir] i::before {
+    content: '●';
+  }
+  .tree a[aria-current='true'] i::before {
+    color: var(--acc);
+  }
+  .foot {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: auto;
+    padding-top: 18px;
+    border-top: 1px solid var(--line2);
+    font-size: 13px;
+  }
+  .c-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 0 16px;
+    border-radius: 4px;
+    background: var(--acc);
+    color: var(--bg);
+    font-weight: 700;
+    text-decoration: none;
+    transition:
+      transform 0.2s ease,
+      background 0.2s ease;
+  }
+  .c-btn:hover {
+    color: var(--bg);
+    transform: translateY(-2px);
+  }
+  .motion {
+    all: unset;
+    box-sizing: border-box;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 24px;
+    cursor: pointer;
+    font-size: 12px;
+    color: var(--mute);
+  }
+  .motion:hover {
+    color: var(--head);
+    text-decoration: underline;
+  }
+  .motion:focus-visible {
+    outline: 2px solid var(--acc);
+    outline-offset: 2px;
+    border-radius: 3px;
+  }
+  .ver {
+    font-family: var(--f-mono);
+    font-size: 11.5px;
+    color: var(--dim);
+    text-decoration: none;
+  }
+  .ver:hover {
+    color: var(--head);
+    text-decoration: underline;
+  }
+  .qual {
+    display: block;
+    margin-top: -4px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  @media (min-width: 601px) and (max-width: 900px) {
+    .inner {
+      padding-block: 22px;
+      padding-inline: 16px 14px;
+    }
+    .brand {
+      gap: 8px;
+      min-width: 0;
+      font-size: 13px;
+    }
+  }
+  @media (max-width: 600px), (max-width: 900px) and (max-height: 599px) {
+    .side {
+      display: none;
+    }
+  }
+  @media print {
+    .side {
+      display: none !important;
+    }
+  }
+  @media (forced-colors: active) {
+    .side {
+      border: 1px solid CanvasText;
+    }
+    .tree a[aria-current='true'] {
+      forced-color-adjust: none;
+      border-inline-start-color: HighlightText;
+      background: Highlight;
+      color: HighlightText;
+    }
+    .tree a[aria-current='true'] i::before {
+      color: HighlightText;
+    }
+    .c-dot,
+    .open::before {
+      forced-color-adjust: none;
+      background: CanvasText;
+      box-shadow: none;
+    }
+  }
+</style>

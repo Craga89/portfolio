@@ -1,0 +1,225 @@
+---
+// The header on phones (and short landscape screens), where the sidebar doesn't fit: the brand,
+// get in touch, and a menu with the sections, search, theme and contact links.
+import Icon from '../Icon.astro';
+import ContactLinks from './ContactLinks.astro';
+import { SECTIONS } from '../../lib/sections';
+---
+
+<header id="c-hdr" class="mbar">
+  <a class="brand" href="#top"><span class="c-dot" aria-hidden="true"></span>craigthompson.dev</a>
+  <a class="cta" href="#contact">./get-in-touch</a>
+  <details id="v2-menu" class="menu">
+    <summary aria-label="Menu" title="Menu"><Icon name="menu" size={20} class="open" /><Icon name="close" size={20} class="shut" /></summary>
+    <div class="panel">
+      <nav aria-label="Sections" translate="no">
+        <ul>{SECTIONS.map((s, i) => <li><a href={`#${s.id}`} aria-current={i === 0 ? 'true' : 'false'} data-spy={s.id}><bdi>{s.file}</bdi></a></li>)}</ul>
+      </nav>
+      <div class="tools">
+        <button type="button" class="b" aria-haspopup="dialog" data-palette><Icon name="search" size={16} />search</button>
+        <button type="button" class="b" data-theme-toggle><Icon name="theme" size={16} /><span class="when-dark">light theme</span><span class="when-light">dark theme</span></button>
+      </div>
+      <ContactLinks class="grid" label="Contact and CV" />
+    </div>
+  </details>
+</header>
+
+<style>
+  .mbar {
+    display: none;
+  }
+  @media (max-width: 600px), (max-width: 900px) and (max-height: 599px) {
+    .mbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 56px;
+      padding-block: 0;
+      padding-inline: 16px 8px;
+      border-bottom: 1px solid var(--line);
+      background: var(--hdr);
+      backdrop-filter: blur(8px);
+    }
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+    font-family: var(--f-mono);
+    font-size: 14px;
+    font-weight: 700;
+    white-space: nowrap;
+    color: var(--head);
+    text-decoration: none;
+  }
+  .brand:hover {
+    color: var(--head);
+  }
+  .c-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--ok);
+    animation: c-pulse 2s ease-in-out infinite;
+  }
+  .cta {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    min-height: 34px;
+    margin-block: 0;
+    margin-inline: auto 2px;
+    padding: 0 12px;
+    border-radius: 6px;
+    background: var(--acc);
+    color: var(--bg);
+    font-size: 13.5px;
+    font-weight: 700;
+    white-space: nowrap;
+    text-decoration: none;
+  }
+  .cta:hover {
+    color: var(--bg);
+  }
+  summary {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 8px;
+    list-style: none;
+    cursor: pointer;
+    color: var(--head);
+  }
+  summary::-webkit-details-marker {
+    display: none;
+  }
+  summary:hover {
+    background: var(--panel2);
+  }
+  summary:focus-visible {
+    outline-offset: -2px;
+  }
+  .menu :global(.shut),
+  .menu[open] :global(.open) {
+    display: none;
+  }
+  .menu[open] :global(.shut) {
+    display: block;
+  }
+  .panel {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 100%;
+    max-height: calc(100dvh - 56px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 6px 16px 16px;
+    border-bottom: 1px solid var(--line2);
+    background: var(--panel);
+    box-shadow: 0 18px 30px -18px rgb(0 0 0 / 0.55);
+  }
+  .menu[open] .panel {
+    animation: c-pop 0.2s ease both;
+  }
+  ul {
+    display: grid;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  li a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 44px;
+    padding: 0 10px;
+    border-inline-start: 2px solid transparent;
+    border-radius: 6px;
+    font-family: var(--f-mono);
+    font-size: 15px;
+    color: var(--text3);
+    text-decoration: none;
+  }
+  li a::before {
+    content: '○' / '';
+    font-size: 9px;
+    color: var(--line3);
+  }
+  li a[aria-current='true'] {
+    border-inline-start-color: var(--acc);
+    background: var(--acc-bg);
+    color: var(--head);
+    font-weight: 700;
+  }
+  li a[aria-current='true']::before {
+    content: '●' / '';
+    color: var(--acc);
+  }
+  .tools {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+    padding-top: 12px;
+    border-top: 1px solid var(--line2);
+  }
+  .b {
+    all: unset;
+    box-sizing: border-box;
+    flex: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 44px;
+    border: 1px solid var(--line3);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    color: var(--text2);
+  }
+  .b:hover {
+    border-color: var(--acc);
+    color: var(--head);
+  }
+  .b:focus-visible {
+    outline: 2px solid var(--acc);
+    outline-offset: -2px;
+  }
+  .panel :global(.grid) {
+    margin-top: 10px;
+    padding-top: 12px;
+    border-top: 1px solid var(--line2);
+  }
+  @media (max-width: 374px) {
+    .brand {
+      gap: 6px;
+      font-size: 12.5px;
+    }
+    .cta {
+      padding: 0 9px;
+      font-size: 12.5px;
+    }
+  }
+  @media (max-width: 340px) {
+    .brand .c-dot {
+      display: none;
+    }
+  }
+  @media print {
+    .mbar {
+      display: none !important;
+    }
+  }
+  @media (forced-colors: active) {
+    .c-dot {
+      forced-color-adjust: none;
+      background: CanvasText;
+    }
+  }
+</style>

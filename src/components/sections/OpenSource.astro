@@ -1,0 +1,133 @@
+---
+// open-source/: the heatmap of upstream pull requests, the projects, then a selection of the pull
+// requests themselves (src/data/projects.yaml, src/data/contributions.yaml).
+import { getCollection } from 'astro:content';
+import Section from '../home/Section.astro';
+import Heatmap from '../home/Heatmap.astro';
+import Ledger from '../home/Ledger.astro';
+import LedgerItem from '../home/LedgerItem.astro';
+import { FALLBACK, fmt, ossSnapshot, stars } from '../../lib/oss';
+import { inlineMd } from '../../lib/inline-md';
+import { GITHUB } from '../../site';
+
+const snap = ossSnapshot();
+const counts = snap ?? FALLBACK;
+const vars = { stars: stars(counts.qtip.stars), forks: fmt(counts.qtip.forks), commits: fmt(counts.qtip.commits) };
+const projects = await getCollection('projects').then((all) => all.sort((a, b) => a.data.order - b.data.order));
+const prs = (await getCollection('contributions')).sort((a, b) => +b.data.date - +a.data.date);
+const allPrs = `https://github.com/search?q=author%3A${GITHUB.split('/').pop()}+type%3Apr+is%3Amerged+-user%3A${GITHUB.split('/').pop()}&type=pullrequests`;
+---
+
+<Section id="oss" cmd="ls ./open-source" note="open source" file="open-source/" gap={28}>
+  {snap && <Heatmap timeline={snap.timeline} />}
+  <div class="cards">
+    {
+      projects.map((p) => (
+        <article class="c-card">
+          <div class="path">{p.data.path}</div>
+          <h3>{p.data.url ? <a href={p.data.url}>{p.data.title}</a> : p.data.title}</h3>
+          <p set:html={inlineMd(p.data.text, vars)} />
+        </article>
+      ))
+    }
+  </div>
+  <div class="prs">
+    <p class="lead">
+      <strong><span data-oss="prs">{fmt(counts.prs)}</span> merged pull requests across <span data-oss="repos">{fmt(counts.repos)}</span> other projects</strong> since <span data-oss="since">{counts.since}</span>, usually fixing something I hit in production. A selection:
+    </p>
+    <Ledger label="Selected upstream contributions, newest first">
+      {
+        prs.map(({ data: c }) => (
+          <LedgerItem
+            date={c.date}
+            title={c.title}
+            sub={c.repo}
+            button={{ href: `https://github.com/${c.repo}/pull/${c.pr}`, text: `PR #${c.pr}`, label: `Pull request ${c.pr} to ${c.repo} on GitHub` }}
+          />
+        ))
+      }
+    </Ledger>
+    <p class="all"><a href={allPrs}>See them all on GitHub →</a></p>
+  </div>
+</Section>
+
+<style>
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
+    gap: 18px;
+  }
+  .c-card {
+    padding: 26px;
+    border: 1px solid var(--line2);
+    border-radius: 12px;
+    background: var(--panel);
+    transition:
+      transform 0.25s ease,
+      border-color 0.25s ease;
+  }
+  .c-card:hover {
+    border-color: var(--acc);
+    transform: translateY(-4px);
+  }
+  @supports (animation-timeline: view()) {
+    .c-card {
+      animation: c-rise linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 40%;
+    }
+  }
+  @keyframes c-rise {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+  }
+  .path {
+    font-size: 13px;
+    color: var(--acc);
+  }
+  h3 {
+    margin: 8px 0 10px;
+    font-size: clamp(28px, 3.2vw, 40px);
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: 0.005em;
+    color: var(--head);
+  }
+  h3 a {
+    color: var(--head);
+  }
+  .c-card p {
+    margin: 0;
+    font-size: 15px;
+    color: var(--text3);
+  }
+  .prs {
+    margin-top: 48px;
+  }
+  .lead {
+    max-width: 72ch;
+    margin: 0 0 20px;
+    font-size: 14px;
+    color: var(--mute);
+  }
+  .lead strong {
+    color: var(--head);
+  }
+  .all {
+    margin: 14px 0 0;
+    font-size: 14px;
+  }
+  @media print {
+    .c-card {
+      break-inside: avoid;
+      box-shadow: none;
+    }
+  }
+  @media (forced-colors: active) {
+    .c-card {
+      border: 1px solid CanvasText;
+    }
+  }
+</style>

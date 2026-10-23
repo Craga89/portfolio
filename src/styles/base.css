@@ -259,3 +259,69 @@ kbd {
   inherits: true;
   initial-value: 0;
 }
+
+/* Text for one theme only, such as a toggle's "light theme" / "dark theme". Hidden text isn't read
+   out, so the accessible name follows the theme without script. */
+:root[data-theme='dark'] .when-light,
+:root[data-theme='light'] .when-dark {
+  display: none !important;
+}
+
+/* A section's "$ cat file # note" line: mono, on a dotted rule, wiped in as it scrolls into view. */
+.c-cmd {
+  width: fit-content;
+  max-width: 100%;
+  padding-bottom: 12px;
+  font-family: var(--f-mono);
+  background: radial-gradient(circle, var(--line3) 2px, transparent 2.5px) left bottom / 16px 6px repeat-x;
+}
+
+@supports (animation-timeline: view()) {
+  .c-cmd {
+    animation: c-wipe steps(22, end) both;
+    animation-timeline: view();
+    animation-range: entry 20% entry 90%;
+  }
+}
+
+@keyframes c-wipe {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+:root[dir='rtl'] .c-cmd {
+  direction: ltr;
+  text-align: right;
+  unicode-bidi: isolate;
+}
+
+@media (forced-colors: active) {
+  .c-cmd {
+    background: none;
+  }
+}
+
+@media print {
+  .c-cmd {
+    background: none;
+  }
+}
+
+kbd {
+  box-sizing: border-box;
+  display: inline-block;
+  min-width: 1.5em;
+  padding: 0 4px;
+  border: 1px solid var(--line3);
+  border-bottom-width: 2px;
+  border-radius: 4px;
+  background: var(--panel2);
+  font-size: 0.85em;
+  line-height: 1.5;
+  text-align: center;
+  color: var(--text3);
+}

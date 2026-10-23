@@ -9,17 +9,26 @@ interface Props {
   index: number;
   total: number;
   level?: 2 | 3;
-  /** Show the full file straight away (on the file's own page). */
-  open?: boolean;
+  /** On the file's own page: framed, with the full file showing straight away. */
+  standalone?: boolean;
+  /** In the home page's tour: one tab panel of several, hidden until its tab is picked. */
+  panel?: { hidden: boolean };
 }
-const { entry, index, total, level = 3, open } = Astro.props;
+const { entry, index, total, level = 3, standalone, panel } = Astro.props;
 const { id, file, group, kicker, title, lede, points, stat, flow } = entry.data;
 const { Content } = await render(entry);
 const H = `h${level}` as const;
 const pad = (n: number) => String(n).padStart(2, '0');
 ---
 
-<article class="c-rs c-pop" id={`c-rs-${id}`}>
+<article
+  class="c-rs c-pop"
+  data-standalone={standalone ? '' : undefined}
+  id={panel ? `rp-${id}` : undefined}
+  role={panel ? 'tabpanel' : undefined}
+  aria-label={panel ? file : undefined}
+  hidden={panel?.hidden}
+>
   <div class="top"><span class="where">{pad(index + 1)} / {pad(total)} · {file}</span><span class="group">{group}</span></div>
   <div class="cols">
     <div>
@@ -35,7 +44,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
       <div class="flow">{flow.steps.map((s) => <span>{s}</span>)}</div>
     </div>
   </div>
-  <details class="c-rs-more" open={open}>
+  <details class="c-rs-more" open={standalone}>
     <summary><span class="cmd">$ cat {file}</span> <span class="note"># the full file</span></summary>
     <div class="body"><Content components={components} /></div>
   </details>
@@ -43,10 +52,17 @@ const pad = (n: number) => String(n).padStart(2, '0');
 
 <style>
   .c-rs {
+    padding: 22px clamp(22px, 4vw, 48px) 26px;
+  }
+  .c-rs[data-standalone] {
     border: 1px solid var(--line2);
     border-radius: 12px;
     background: var(--panel);
-    padding: 22px clamp(22px, 4vw, 48px) 26px;
+  }
+  @media (min-width: 821px) {
+    .c-rs:not([data-standalone]) {
+      min-height: 560px;
+    }
   }
   .top {
     display: flex;
@@ -191,6 +207,14 @@ const pad = (n: number) => String(n).padStart(2, '0');
   @media print {
     .c-rs-more {
       display: none;
+    }
+    .c-rs[hidden] {
+      display: block;
+    }
+    .c-rs:not([data-standalone]) {
+      margin: 0 0 14pt;
+      padding: 10pt 0 0;
+      border-top: 1px solid var(--line2);
     }
   }
   @media (forced-colors: active) {

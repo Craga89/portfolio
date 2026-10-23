@@ -7,13 +7,21 @@ interface Props {
   entry: CollectionEntry<'caseStudies'>;
   /** The heading level: h2 on its own page (under the page's h1), h3 in the home page's tabs. */
   level?: 2 | 3;
+  /** In the home page's tabs: one tab panel of several, hidden until its tab is picked. */
+  panel?: { hidden: boolean };
 }
-const { entry, level = 3 } = Astro.props;
+const { entry, level = 3, panel } = Astro.props;
 const { Content } = await render(entry);
 const H = `h${level}` as const;
 ---
 
-<article class="c-pop case">
+<article
+  class="c-pop case"
+  id={panel ? `cp-${entry.data.id}` : undefined}
+  role={panel ? 'tabpanel' : undefined}
+  aria-label={panel ? entry.data.file : undefined}
+  hidden={panel?.hidden}
+>
   <header>
     <div class="kicker">// {entry.data.kicker}</div>
     <H class="title">{entry.data.title}</H>
@@ -30,6 +38,19 @@ const H = `h${level}` as const;
     border-radius: 12px;
     background: var(--panel);
     padding: clamp(22px, 4vw, 40px);
+  }
+  .case[hidden] {
+    display: none;
+  }
+  @media print {
+    .case[role='tabpanel'] {
+      display: flex;
+      margin: 0 0 14pt;
+      padding: 10pt 0 0;
+      border: 0;
+      border-top: 1px solid var(--line2);
+      border-radius: 0;
+    }
   }
   .kicker {
     font-size: 13px;
