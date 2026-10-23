@@ -6,6 +6,7 @@ import { createHash } from 'node:crypto';
 import { postBuild } from './integrations/post-build.mjs';
 import { INLINE_SCRIPTS } from './src/scripts/inline.mjs';
 
+/** @param {string} s @returns {`sha256-${string}`} */
 const sha256 = (s) => `sha256-${createHash('sha256').update(s).digest('base64')}`;
 
 // Search engines stay out until the content is finished: build with ALLOW_INDEXING=true to open up.

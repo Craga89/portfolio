@@ -15,3 +15,6 @@ tests/visual/__screenshots__/
 .astro/
 .shot.mjs
 .secshot.mjs
+.jscheck.mjs
+.itest.mjs
+.dbg.mjs

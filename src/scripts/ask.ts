@@ -223,10 +223,10 @@ export async function ask(raw: string) {
   };
   // A question in another language: ask.sh works in English, so it's translated on the device,
   // and the answer translated back (unless the whole page is already in that language).
-  const I = isCmd ? null : i18n();
+  const I: ReturnType<typeof i18n> = isCmd ? null : i18n();
   const toEn = I ? within(I.then((m) => m.toEnglish(q)).catch(() => null), 8000) : Promise.resolve(null);
   let index: Index;
-  let tq: { text: string; lang?: string } | null;
+  let tq: { text: string; lang?: string } | null | undefined;
   try {
     [index, tq] = await Promise.all([askIndex(), toEn]);
   } catch {
@@ -252,7 +252,7 @@ export async function ask(raw: string) {
       I.then((m) => m.fromEnglish(patch.answer!, lang)),
       8000,
     )
-      .then((t) => finish(t ? { ...patch, answer: t, answerEn: patch.answer, lang } : patch))
+      .then((t) => finish(typeof t === 'string' ? { ...patch, answer: t, answerEn: patch.answer, lang } : patch))
       .catch(() => finish(patch));
   };
   const viaSearch = (why = '') => {

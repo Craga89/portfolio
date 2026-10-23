@@ -42,6 +42,8 @@ interface Window {
   /** What the visitor did with the translation offer, for the visit beacon. */
   CRAGA_I18N_OFFER?: 'shown' | 'accepted' | 'dismissed';
   CRAGA_APP?: CragaApp;
+  /** On-device translation, where the browser has it (src/scripts/i18n.ts). */
+  CRAGA_I18N?: { langs: readonly string[]; load(): Promise<typeof import('../src/i18n.js')> };
   /** Set by the build while it prerenders the page, so the page skips analytics and live data. */
   CRAGA_PRERENDER?: boolean;
   /** The shared agent tools, as the page exposes them (shared/agent-tools.js). */
@@ -49,3 +51,8 @@ interface Window {
 }
 declare let Translator: TranslatorStatic;
 declare let LanguageDetector: LanguageDetectorStatic;
+
+interface Document {
+  /** True while the page is being prerendered ahead of a click (speculation rules). */
+  readonly prerendering?: boolean;
+}
