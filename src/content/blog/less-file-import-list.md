@@ -41,7 +41,7 @@ module.exports = function(path, opts, cb) {
 
 > Disclaimer... **this relies on internal implementation details of the LESS.js library** and as such *could break at any time*. That being said, **this code should work on all LESS.js versions stretching right back to `v1.3`**!
 
-#### Sample use
+## Sample use
 
 ```js
 var getImports = require('./lessImportList');
@@ -52,7 +52,7 @@ getImports('less/themes/default/app.less', function(imports) {
 });
 ```
 
-#### gulp-watch-less
+## gulp-watch-less
 
 I've rolled the above code into a `gulp` plugin called [gulp-watch-less](https://github.com/Craga89/gulp-watch-less), which works exactly like the [gulp-watch](https://github.com/floatdrop/gulp-watch) plugin but also tracks changes to all `@import` paths of the files. Neat!
 

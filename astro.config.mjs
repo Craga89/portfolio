@@ -3,7 +3,9 @@ import { defineConfig } from 'astro/config';
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import { createHash } from 'node:crypto';
+import { satteri } from '@astrojs/markdown-satteri';
 import { postBuild } from './integrations/post-build.mjs';
+import { codeBlocks } from './integrations/markdown.mjs';
 import { INLINE_SCRIPTS } from './src/scripts/inline.mjs';
 
 /** @param {string} s @returns {`sha256-${string}`} */
@@ -24,7 +26,7 @@ export default defineConfig({
       scriptDirective: { resources: ["'self'", 'https://static.cloudflareinsights.com'], hashes: INLINE_SCRIPTS.map(sha256) },
     },
   },
-  markdown: { syntaxHighlight: false },
+  markdown: { syntaxHighlight: false, processor: satteri({ hastPlugins: [codeBlocks] }) },
   compressHTML: true,
   integrations: [mdx(), sitemap({ filter: (page) => !page.endsWith('/404/') }), postBuild({ indexing })],
   vite: {

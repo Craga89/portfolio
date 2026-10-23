@@ -13,7 +13,7 @@ This is actually a byproduct of the `number` type's [WHATWG specification](http:
 
 Luckily, the specification also provides a means of retrieving the input's value as a number, via the `valueAsNumber` property. When a non-numeric string is used, this will return `NaN`.
 
-#### The solution
+## The solution
 
 We can enhance Knockout's `selectExtensions.readValue`, which is utilised by the `value` binding to add support for this feature where possible:
 

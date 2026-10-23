@@ -1,0 +1,305 @@
+---
+// A post from the old blog, kept as it was written.
+import type { GetStaticPaths } from 'astro';
+import { render } from 'astro:content';
+import FilePage from '../../layouts/FilePage.astro';
+import Crumb from '../../components/page/Crumb.astro';
+import Cta from '../../components/page/Cta.astro';
+import { posts } from '../../lib/posts';
+import { author } from '../../lib/seo';
+import { SITE } from '../../site';
+
+export const getStaticPaths = (async () => {
+  const all = await posts();
+  return all.map((post, i) => ({ params: { slug: post.slug }, props: { all, i } }));
+}) satisfies GetStaticPaths;
+
+const { all, i } = Astro.props;
+const post = all[i];
+const { title, date, tags, original, archived } = post.data;
+const { Content } = await render(post);
+const newer = all[i - 1];
+const older = all[i + 1];
+const path = `blog/${post.slug}/`;
+const description = post.summary.length > 158 ? post.summary.slice(0, 155).replace(/\s\S*$/, '') + '…' : post.summary;
+const long = date.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
+const month = date.toLocaleDateString('en-GB', { month: 'long', year: 'numeric', timeZone: 'UTC' });
+const iso = date.toISOString().slice(0, 10);
+const ld = {
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  headline: title,
+  description,
+  url: `${SITE}/${path}`,
+  image: `${SITE}/${path}og.png`,
+  inLanguage: 'en-GB',
+  datePublished: iso,
+  keywords: tags.join(', '),
+  author,
+  isPartOf: { '@type': 'Blog', name: 'Craig Michael Thompson · blog', url: `${SITE}/blog/` },
+  ...(original ? { sameAs: original } : {}),
+};
+---
+
+<FilePage title={`${title} · blog · Craig Michael Thompson`} description={description} path={path} type="article" image={`/${path}og.png`} imageAlt={`${title}. blog/${post.slug}.md, Craig Michael Thompson`} ld={ld} mono>
+  <div class="prog" aria-hidden="true"></div>
+  <Crumb folder="blog/" file={`${post.slug}.md`} home="/blog/" />
+  <article class="post">
+    <header class="h">
+      <p class="k"><time datetime={iso}>{long}</time> · {post.minutes} min read</p>
+      <h1 data-vt={`p-${post.slug}`}>{title}</h1>
+      {tags.length > 0 && <ul class="tags" aria-label="Tags">{tags.map((t) => <li>{t}</li>)}</ul>}
+      <p class="note">
+        First published on my old blog{original && <> (<a href={archived || original}>{new URL(original).host}</a>)</>} in {month}, and kept as it was written. Some code and links are out of date.
+      </p>
+    </header>
+    <div class="b"><Content /></div>
+  </article>
+  <nav class="pn" aria-label="More posts">
+    {newer ? <a href={`/blog/${newer.slug}/`}><span>← newer</span><b>{newer.data.title}</b></a> : <span />}
+    {older && <a class="next" href={`/blog/${older.slug}/`}><span>older →</span><b>{older.data.title}</b></a>}
+  </nav>
+  <section class="more" aria-labelledby="sp-more-h">
+    <h2 id="sp-more-h">$ ls blog/</h2>
+    <ul>{all.map((x) => <li><a href={`/blog/${x.slug}/`} aria-current={x.slug === post.slug ? 'page' : undefined}>{x.slug}.md</a></li>)}</ul>
+  </section>
+  <Cta home="/#blog" homeText="the portfolio" />
+</FilePage>
+
+<style>
+  /* Reading progress, driven by scrolling: no script. */
+  .prog {
+    display: none;
+    position: fixed;
+    z-index: 60;
+    inset-inline: 0;
+    top: 0;
+    height: 3px;
+    background: var(--acc);
+    transform: scaleX(0);
+    transform-origin: left center;
+    pointer-events: none;
+  }
+  :global([dir='rtl']) .prog {
+    transform-origin: right center;
+  }
+  @supports (animation-timeline: scroll()) {
+    .prog {
+      display: block;
+      animation: prog linear both;
+      animation-timeline: scroll(root);
+    }
+  }
+  @keyframes prog {
+    to {
+      transform: scaleX(1);
+    }
+  }
+  .post {
+    max-width: 72ch;
+  }
+  .h {
+    margin: 0 0 28px;
+  }
+  .k {
+    margin: 0 0 10px;
+    font-family: var(--f-mono);
+    font-size: 13px;
+    color: var(--mute);
+  }
+  h1 {
+    margin: 0 0 14px;
+    font-size: clamp(34px, 5.4vw, 56px);
+    line-height: 1;
+    letter-spacing: 0.005em;
+    color: var(--head);
+    view-transition-name: attr(data-vt type(<custom-ident>), none);
+    view-transition-class: post-title;
+  }
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 0 0 16px;
+    padding: 0;
+    list-style: none;
+  }
+  .tags li {
+    padding: 2px 8px;
+    border: 1px solid var(--line3);
+    border-radius: 999px;
+    font-family: var(--f-mono);
+    font-size: 12px;
+    color: var(--text3);
+  }
+  .note {
+    margin: 0;
+    padding: 10px 14px;
+    border-inline-start: 3px solid var(--line3);
+    border-radius: 0 8px 8px 0;
+    background: var(--panel);
+    font-size: 14px;
+    color: var(--text3);
+  }
+  /* The post itself, as markdown renders it. */
+  .b {
+    font-size: 17px;
+    line-height: 1.75;
+    color: var(--text2);
+  }
+  .b > :global(*) {
+    margin: 0 0 1.1em;
+  }
+  .b :global(:is(h2, h3, h4, h5, h6)) {
+    margin: 1.8em 0 0.6em;
+    font-family: var(--f-head);
+    line-height: 1.15;
+    letter-spacing: 0.005em;
+    color: var(--head);
+  }
+  .b :global(h2) {
+    font-size: 30px;
+  }
+  .b :global(h3) {
+    font-size: 24px;
+  }
+  .b :global(:is(h4, h5, h6)) {
+    font-size: 20px;
+  }
+  .b :global(a) {
+    color: var(--acc);
+    text-underline-offset: 3px;
+  }
+  .b :global(code) {
+    padding: 0.08em 0.35em;
+    border: 1px solid var(--line2);
+    border-radius: 4px;
+    background: var(--panel2);
+    font-family: var(--f-mono);
+    font-size: 0.88em;
+  }
+  .b :global(pre) {
+    overflow: auto;
+    padding: 14px 16px;
+    border: 1px solid var(--line2);
+    border-radius: 10px;
+    background: var(--panel);
+    direction: ltr;
+    font-size: 14px;
+    line-height: 1.6;
+    text-align: left;
+  }
+  .b :global(pre:focus-visible) {
+    outline: 2px solid var(--acc);
+    outline-offset: 2px;
+  }
+  .b :global(pre code) {
+    padding: 0;
+    border: 0;
+    background: none;
+    font-size: inherit;
+  }
+  .b :global(img) {
+    max-width: 100%;
+    height: auto;
+    border: 1px solid var(--line2);
+    border-radius: 8px;
+  }
+  .b :global(blockquote) {
+    margin-inline: 0;
+    padding: 2px 16px;
+    border-inline-start: 3px solid var(--acc);
+    color: var(--text3);
+  }
+  .b :global(:is(ul, ol)) {
+    padding-inline-start: 1.4em;
+  }
+  .b :global(li) {
+    margin: 0.3em 0;
+  }
+  .b :global(table) {
+    display: block;
+    overflow: auto;
+    border-collapse: collapse;
+  }
+  .b :global(:is(th, td)) {
+    padding: 6px 10px;
+    border: 1px solid var(--line2);
+  }
+  .pn {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 28px;
+  }
+  .pn a {
+    display: inline-flex;
+    flex-direction: column;
+    gap: 2px;
+    max-width: 48%;
+    min-height: 44px;
+    padding: 10px 14px;
+    border: 1px solid var(--line3);
+    border-radius: 8px;
+    text-decoration: none;
+  }
+  .pn span {
+    font-size: 12px;
+    color: var(--dim);
+  }
+  .pn b {
+    font-family: var(--f-mono);
+    font-weight: 500;
+    color: var(--acc);
+  }
+  .pn .next {
+    margin-inline-start: auto;
+    text-align: end;
+  }
+  .more {
+    margin-top: 36px;
+  }
+  .more h2 {
+    margin: 0 0 10px;
+    font-family: var(--f-mono);
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ok);
+  }
+  .more ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .more a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 36px;
+    padding: 0 12px;
+    border: 1px solid var(--line3);
+    border-radius: 6px;
+    font-family: var(--f-mono);
+    font-size: 13px;
+    text-decoration: none;
+    color: var(--text3);
+  }
+  .more a[aria-current='page'] {
+    border-color: var(--acc);
+    background: var(--acc-bg);
+    color: var(--head);
+  }
+  @media print {
+    .b :global(pre) {
+      white-space: pre-wrap;
+    }
+    .prog,
+    .pn,
+    .more {
+      display: none;
+    }
+  }
+</style>

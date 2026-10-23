@@ -5,7 +5,7 @@ tags: [Knockout.js, Durandal, jQuery, Webpack, Guide, Require.js]
 original: https://blog.craigsworks.com/durandal-and-webpack-part-1-module-format/
 archived: https://web.archive.org/web/20180628012752/http://blog.craigsworks.com/durandal-and-webpack-part-1-module-format/
 ---
-*This post is part of a series of posts entitled **Durandal and Webpack**. Check-out the [Introduction](http://blog.craigsworks.com/durandal-and-webpack-introduction) here if you haven't already, as well as the [online examples](http://craga89.github.io/durandal-webpack)*
+*This post is part of a series of posts entitled **Durandal and Webpack**. Check-out the [Introduction](/blog/durandal-and-webpack-introduction/) here if you haven't already, as well as the [online examples](http://craga89.github.io/durandal-webpack)*
 
 ## AMD
 
@@ -84,4 +84,4 @@ Babel documentation
 
 on it.
 
-##### Next Chapter: [Durandal and Webpack: Part 2 - Composition](http://blog.craigsworks.com/durandal-and-webpack-part-2-composition)
+##### Next Chapter: [Durandal and Webpack: Part 2 - Composition](/blog/durandal-and-webpack-part-2-composition/)

@@ -5,17 +5,17 @@ tags: [JavaScript, Old, Delta Encoding]
 original: https://blog.craigsworks.com/efficient-javascript-delta-encoding-merging-json-objects/
 archived: https://web.archive.org/web/20170630123519/http://blog.craigsworks.com/efficient-javascript-delta-encoding-merging-json-objects/
 ---
-### NOTE
+## NOTE
 
 **This is a very old blog post and I would not recommend using it in production. Utilising the Function consutrctor in this way, whilst useful, opens up issues of security and XSS issues. Also, there are much better ways of doing this, especially relating to the re-usage of objects (object pooling), [discussed here](http://buildnewgames.com/garbage-collector-friendly-code/).**
 
-#### Preface
+### Preface
 
 As I’m now in my 3rd year at Newcastle University, I was expected to produce a 40-page thesis over the last few months on a subject of my choice: *2D Multiplayer game using browser-native HTML5 standards and the Node.js run-time.*
 
 I decided early on to use the Client-Server architecture after reading up on several articles, particularly Glenn Fiedler’s “What every programmer needs to know about game networking” and Valve’s awesome multiplayer networking overview. However this meant a lot of extra work would be needed to make it playable, including the topic of this post: Delta-encoding.
 
-#### Delta Encoding?
+### Delta Encoding?
 
 Delta encoding is a way of storing or transmitting data in the form of differences between sequential data rather than complete files.
 
@@ -23,7 +23,7 @@ That is, instead of sending a full game state to every client, we send only the 
 
 How do you implement something like this efficiently in JavaScript? It has no native method for merging objects, and using loops just doesn’t cut it performance-wise, at least cross-browser. Thankfully though, since the objects we’ll be merging have a pre-determined number of properties, we can avoid looping on each merge and take a shortcut.
 
-#### Implementation
+### Implementation
 
 Here’s the full code listing for you to digest before I go into the details of how it works:
 
@@ -69,7 +69,7 @@ Entity.prototype.merge = function(obj) {
 }
 ```
 
-##### Important notes:
+#### Important notes:
 
 1. This will only merge properties defined in the Entity.defaults object.
 2. Variables passed by reference i.e. Objects and Arrays, are not copied but simply set by reference.
