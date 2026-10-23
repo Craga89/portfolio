@@ -19,8 +19,7 @@ export const CHROME = { home: ['#16271F', '#EDF1EE'], cv: ['#111214', '#F4F4F2']
 /** Search engines stay out until the content is finished (see astro.config.mjs). */
 export const INDEXING = import.meta.env.ALLOW_INDEXING === 'true';
 
-export const PORTRAIT_ALT =
-  'Illustrated caricature of Craig Michael Thompson at his keyboard, with his dog on his shoulder';
+export const PORTRAIT_ALT = 'Illustrated portrait of Craig Michael Thompson smiling at his laptop';
 
 export const HOME_TITLE = 'Craig Michael Thompson · Head of Engineering, hands-on & AI-first';
 export const HOME_DESC =
