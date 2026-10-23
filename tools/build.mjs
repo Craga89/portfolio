@@ -291,7 +291,7 @@ const localFonts = (helmet) =>
 const hash = (s) => createHash('sha256').update(s).digest('hex').slice(0, 10);
 
 // Responsive portrait: AVIF and WebP at 1x/2x for each displayed size.
-const PORTRAIT_ALT = 'Illustrated caricature of Craig Michael Thompson at his keyboard, with his dog on his shoulder';
+const PORTRAIT_ALT = 'Illustrated portrait of Craig Michael Thompson smiling at his laptop';
 const portraitPicture = () =>
   `<picture><source type="image/avif" srcset="assets/img/portrait-96.avif 96w, assets/img/portrait-192.avif 192w, assets/img/portrait-352.avif 352w" sizes="(max-width: 370px) 68px, (max-width: 600px) 96px, 176px"><img src="assets/img/portrait-192.webp" srcset="assets/img/portrait-96.webp 96w, assets/img/portrait-192.webp 192w, assets/img/portrait-352.webp 352w" sizes="(max-width: 370px) 68px, (max-width: 600px) 96px, 176px" alt="${PORTRAIT_ALT}" width="512" height="512" fetchpriority="high" decoding="async"></picture>`;
 
@@ -416,7 +416,7 @@ function buildHome(today) {
   const template = d.template
     .replace(/href="\/cv\/?"/g, 'href="cv/"')
     .replace(
-      /<img src="\.\/portrait\.webp" alt="Illustrated caricature[^"]*" width="512" height="512" loading="eager" decoding="async">/g,
+      /<img src="\.\/portrait\.webp" alt="Illustrated portrait[^"]*" width="512" height="512" loading="eager" decoding="async">/g,
       portraitPicture(),
     )
     .replace(
