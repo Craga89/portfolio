@@ -3,8 +3,6 @@
 import { $$, store, transition } from './dom';
 import { note } from './toast';
 
-const COLOURS = { dark: '#16271F', light: '#EDF1EE' };
-
 export const theme = () => (document.documentElement.dataset.theme === 'light' ? 'light' : 'dark');
 
 export function setTheme(t: 'dark' | 'light') {
@@ -16,7 +14,7 @@ export function setTheme(t: 'dark' | 'light') {
   });
   setTimeout(() => delete h.dataset.vtTheme, 600);
   store.set('theme', t);
-  for (const m of $$<HTMLMetaElement>('meta[name="theme-color"]')) m.content = COLOURS[t];
+  for (const m of $$<HTMLMetaElement>('meta[name="theme-color"]')) m.content = m.dataset[t] ?? m.content;
   note(t === 'light' ? 'Light theme' : 'Dark theme');
 }
 

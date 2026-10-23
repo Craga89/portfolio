@@ -1,0 +1,21 @@
+---
+// A line on the CV with its dates on the right.
+interface Props {
+  when: string;
+}
+---
+
+<div class="meta"><span><slot /></span><span>{Astro.props.when}</span></div>
+
+<style>
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 2px 16px;
+    font-size: 14px;
+  }
+  .meta :global(p) {
+    margin: 0;
+  }
+</style>

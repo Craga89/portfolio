@@ -63,8 +63,8 @@ const prerender = {
     {!INDEXING && <meta name="robots" content="noindex, nofollow, noarchive" />}
     <link rel="canonical" href={url} />
     <meta name="color-scheme" content="dark light" />
-    <meta name="theme-color" content={dark} media="(prefers-color-scheme: dark)" />
-    <meta name="theme-color" content={light} media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content={dark} media="(prefers-color-scheme: dark)" data-dark={dark} data-light={light} />
+    <meta name="theme-color" content={light} media="(prefers-color-scheme: light)" data-dark={dark} data-light={light} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 

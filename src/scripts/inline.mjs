@@ -2,10 +2,8 @@
 // astro.config.mjs can put their hashes in the Content-Security-Policy (Astro hashes the scripts it
 // bundles itself, but not inline ones).
 
-const CHROME = { dark: '#16271F', light: '#EDF1EE' };
-
 /** The saved (or system) theme and motion setting, before anything paints. */
-export const THEME_BOOT = `try{var d=document.documentElement,t=localStorage.getItem('theme'),l=t?t==='light':matchMedia('(prefers-color-scheme: light)').matches;d.dataset.theme=l?'light':'dark';if(localStorage.getItem('motion')==='off')d.dataset.motion='off';if(t)document.querySelectorAll('meta[name="theme-color"]').forEach(function(m){m.content=l?'${CHROME.light}':'${CHROME.dark}'})}catch(e){}`;
+export const THEME_BOOT = `try{var d=document.documentElement,t=localStorage.getItem('theme'),l=t?t==='light':matchMedia('(prefers-color-scheme: light)').matches;d.dataset.theme=l?'light':'dark';if(localStorage.getItem('motion')==='off')d.dataset.motion='off';if(t)document.querySelectorAll('meta[name="theme-color"]').forEach(function(m){m.content=m.dataset[l?'light':'dark']})}catch(e){}`;
 
 const CF_ANALYTICS_TOKEN = '1115308102a141bdb2e944bd0144d4ee';
 
