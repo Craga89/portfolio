@@ -11,8 +11,6 @@ import { INLINE_SCRIPTS } from './src/scripts/inline.mjs';
 /** @param {string} s @returns {`sha256-${string}`} */
 const sha256 = (s) => `sha256-${createHash('sha256').update(s).digest('base64')}`;
 
-// Search engines stay out until the content is finished: build with ALLOW_INDEXING=true to open up.
-const indexing = process.env.ALLOW_INDEXING === 'true';
 
 export default defineConfig({
   site: 'https://craigthompson.dev',
@@ -28,7 +26,7 @@ export default defineConfig({
   },
   markdown: { syntaxHighlight: false, processor: satteri({ hastPlugins: [codeBlocks] }) },
   compressHTML: true,
-  integrations: [mdx(), sitemap({ filter: (page) => !page.endsWith('/404/') }), postBuild({ indexing })],
+  integrations: [mdx(), sitemap({ filter: (page) => !page.endsWith('/404/') && !page.includes('/og-card/') }), postBuild()],
   vite: {
     build: { assetsInlineLimit: 0 },
     // Astro's prerenderer needs cookie 2, but another dev dependency puts cookie 0.7 at the top of
