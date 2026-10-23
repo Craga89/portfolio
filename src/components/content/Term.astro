@@ -13,9 +13,9 @@ if (!(await getEntry('glossary', id))) throw new Error(`No glossary entry "${id}
 
 {
   trail ? (
-    <span class="c-nb"><button type="button" class="c-term" popovertarget="c-tip" aria-controls="c-tip" aria-expanded="false" data-term={id}><slot /></button>{trail}</span>
+    <span class="c-nb"><button type="button" class="c-term" popovertarget="c-tip" popovertargetaction="show" aria-controls="c-tip" aria-expanded="false" data-term={id}><slot /></button>{trail}</span>
   ) : (
-    <button type="button" class="c-term" popovertarget="c-tip" aria-controls="c-tip" aria-expanded="false" data-term={id}><slot /></button>
+    <button type="button" class="c-term" popovertarget="c-tip" popovertargetaction="show" aria-controls="c-tip" aria-expanded="false" data-term={id}><slot /></button>
   )
 }
 

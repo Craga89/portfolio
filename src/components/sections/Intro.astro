@@ -5,6 +5,7 @@ import { Picture } from 'astro:assets';
 import { getEntry, render } from 'astro:content';
 import portrait from '../../assets/portrait.webp';
 import ContactLinks from '../home/ContactLinks.astro';
+import Focus from '../home/Focus.astro';
 import Icon from '../Icon.astro';
 import { components } from '../mdx';
 import { EMAIL, NAME, PORTRAIT_ALT } from '../../site';
@@ -51,10 +52,11 @@ const lamps = [
   </div>
   <p class="print-only"><a href={`mailto:${EMAIL}`}>{EMAIL}</a> · <a href="https://craigthompson.dev/">craigthompson.dev</a> · github.com/Craga89 · linkedin.com/in/craigmichaelthompson · Newcastle upon Tyne, UK<br />The short CV is at craigthompson.dev/cv.</p>
   <div id="about" class="about"><Content components={components} /></div>
+  <Focus />
   <div class="mcta">
     <a class="c-btn" href="#contact">./get-in-touch</a>
     <ContactLinks />
-    <button type="button" class="motion" data-motion-toggle><Icon name="pause" size={14} /><span data-motion-label>pause animations</span></button>
+    <button type="button" class="motion" data-motion-toggle><span class="when-moving"><Icon name="pause" size={14} />pause animations</span><span class="when-still"><Icon name="play" size={14} />play animations</span></button>
   </div>
 </section>
 
@@ -270,6 +272,11 @@ const lamps = [
     cursor: pointer;
     font-size: 12px;
     color: var(--mute);
+  }
+  .motion > span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
   }
   .motion:hover {
     color: var(--head);

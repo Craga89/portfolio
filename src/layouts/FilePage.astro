@@ -21,8 +21,8 @@ const { tips, ...base } = Astro.props;
         <button type="button" class="b" data-palette aria-haspopup="dialog" aria-keyshortcuts="Control+K Meta+K" title="Search and jump (Ctrl+K)">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>search
         </button>
-        <button type="button" class="b" data-theme-toggle>theme</button>
-        <button type="button" class="b" data-motion-toggle hidden>pause animations</button>
+        <button type="button" class="b" data-theme-toggle><span class="when-dark">light theme</span><span class="when-light">dark theme</span></button>
+        <button type="button" class="b" data-motion-toggle><span class="when-moving">pause animations</span><span class="when-still">play animations</span></button>
       </div>
     </header>
     <main class="main">

@@ -325,3 +325,9 @@ kbd {
   text-align: center;
   color: var(--text3);
 }
+
+/* Likewise for the motion switch: "pause animations" / "play animations". */
+:root[data-motion='off'] .when-moving,
+:root:not([data-motion='off']) .when-still {
+  display: none !important;
+}

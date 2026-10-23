@@ -47,7 +47,9 @@ const built = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 's
     <div class="foot">
       <a class="c-btn" href="#contact">./get-in-touch</a>
       <ContactLinks />
-      <button type="button" class="motion" data-motion-toggle><Icon name="pause" size={14} /><span data-motion-label>pause animations</span></button>
+      <button type="button" class="motion" data-motion-toggle><span class="when-moving"><Icon name="pause" size={14} />pause animations</span><span class="when-still"><Icon name="play" size={14} />play animations</span></button>
+      {/* The language menu, where the browser can translate on the device (scripts/i18n.ts). */}
+      <label class="lang" data-lang hidden><Icon name="globe" size={14} /><span class="c-sr">Language</span><select class="lang-s" translate="no" data-tr-menu></select><span class="lang-mt" title="Translated by your browser on your device, not by a person." data-lang-mt hidden>machine translation</span></label>
       <a class="ver" href={`${SOURCE}/commit/__BUILD_SHA__`} title={`Built from commit __BUILD_SHORT__, ${built}`} data-built="__BUILD_AT__">main@__BUILD_SHORT__ · <span data-built-ago>just now</span></a>
       <a class="ver qual" href="/?case=site#case-studies" data-open="case/site" data-live-side>CI checks · this-site.md</a>
     </div>
@@ -371,6 +373,11 @@ const built = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 's
     font-size: 12px;
     color: var(--mute);
   }
+  .motion > span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
   .motion:hover {
     color: var(--head);
     text-decoration: underline;
@@ -379,6 +386,105 @@ const built = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 's
     outline: 2px solid var(--acc);
     outline-offset: 2px;
     border-radius: 3px;
+  }
+  .lang {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    min-height: 24px;
+    font-size: 12px;
+    color: var(--mute);
+  }
+  .lang[hidden],
+  .lang-mt[hidden] {
+    display: none;
+  }
+  .lang-s {
+    max-width: 12em;
+    min-height: 24px;
+    padding: 0 4px;
+    border: 1px solid var(--line3);
+    border-radius: 6px;
+    background: transparent;
+    cursor: pointer;
+    font: inherit;
+    font-size: 12px;
+    color: inherit;
+  }
+  .lang-s option {
+    background: #fff;
+    color: #1b2a22;
+  }
+  .lang-s:focus-visible {
+    outline: 2px solid var(--acc);
+    outline-offset: 2px;
+  }
+  /* A styled list where the browser allows it (customizable select). */
+  @supports (appearance: base-select) {
+    .lang-s,
+    .lang-s::picker(select) {
+      appearance: base-select;
+    }
+    .lang-s {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 0 8px;
+    }
+    .lang-s::picker-icon {
+      color: var(--mute);
+      transition: rotate 0.2s ease;
+    }
+    .lang-s:open::picker-icon {
+      rotate: 180deg;
+    }
+    .lang-s::picker(select) {
+      box-sizing: border-box;
+      min-inline-size: anchor-size(inline);
+      max-block-size: min(60vh, 26em);
+      margin-block: 6px;
+      padding: 4px;
+      overflow: auto;
+      border: 1px solid var(--line3);
+      border-radius: 10px;
+      background: var(--panel);
+      box-shadow: 0 18px 44px -18px rgb(0 0 0 / 0.55);
+      color: var(--text);
+      scrollbar-width: thin;
+    }
+    .lang-s option {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-block-size: 32px;
+      padding: 4px 10px;
+      border-radius: 6px;
+      background: transparent;
+      font-size: 13px;
+      color: var(--text3);
+    }
+    .lang-s option:hover,
+    .lang-s option:focus-visible {
+      outline: none;
+      background: var(--acc-bg);
+      color: var(--head);
+    }
+    .lang-s option:checked {
+      font-weight: 600;
+      color: var(--head);
+    }
+    .lang-s option::checkmark {
+      color: var(--acc);
+    }
+  }
+  .lang-mt {
+    font-size: 11.5px;
+    white-space: nowrap;
+    color: var(--mute);
+    text-decoration: underline dotted;
+    text-underline-offset: 3px;
+    cursor: help;
   }
   .ver {
     font-family: var(--f-mono);

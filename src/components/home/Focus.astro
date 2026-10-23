@@ -1,0 +1,141 @@
+---
+// Suggested reading orders (/?focus=…), one per view in src/data/focus.yaml. All hidden until
+// scripts/home.ts shows the one in the address.
+import { getCollection } from 'astro:content';
+import { findFile } from '../../lib/files';
+
+const views = await Promise.all(
+  (await getCollection('focus')).map(async (f) => ({
+    key: f.id,
+    label: f.data.label,
+    items: await Promise.all(f.data.read.map((ref) => findFile(ref))),
+  })),
+);
+---
+
+{
+  views.map((v) => (
+    <div class="focus" role="region" aria-label="Suggested reading" data-focus={v.key} hidden>
+      <div class="h">
+        <span class="c">$ ./readme --focus={v.key}</span>
+        <button type="button" class="x" data-focus-clear>
+          show everything <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <p class="p">A suggested reading order for {v.label}. Everything else is still here.</p>
+      <ol class="l">
+        {v.items.map((f) => (
+          <li>
+            <a href={`/${f.page}`} data-open={`${f.kind}/${f.id}`}>
+              <span class="f">
+                {f.section}/{f.file}
+              </span>
+              <span class="w">{f.title}</span>
+            </a>
+          </li>
+        ))}
+      </ol>
+    </div>
+  ))
+}
+
+<style>
+  .focus {
+    margin-top: 26px;
+    padding: 16px 18px 18px;
+    border: 1px solid var(--acc);
+    border-radius: 12px;
+    background: var(--acc-bg);
+  }
+  .focus[hidden] {
+    display: none;
+  }
+  .h {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px 12px;
+  }
+  .c {
+    font-family: var(--f-mono);
+    font-size: 14px;
+    color: var(--ok);
+  }
+  .x {
+    all: unset;
+    box-sizing: border-box;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 32px;
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--mute);
+  }
+  .x:hover {
+    color: var(--head);
+    text-decoration: underline;
+  }
+  .x:focus-visible {
+    outline: 2px solid var(--acc);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+  .p {
+    margin: 6px 0 12px;
+    font-size: 15px;
+    color: var(--text2);
+  }
+  .l {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr));
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    counter-reset: f;
+  }
+  .l a {
+    position: relative;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    height: 100%;
+    padding-block: 10px;
+    padding-inline: 38px 12px;
+    border: 1px solid var(--line3);
+    border-radius: 8px;
+    background: var(--panel);
+    text-decoration: none;
+    counter-increment: f;
+    transition: border-color 0.2s ease;
+  }
+  .l a::before {
+    content: counter(f);
+    position: absolute;
+    inset-inline-start: 12px;
+    top: 10px;
+    font-family: var(--f-mono);
+    font-size: 13px;
+    color: var(--acc);
+  }
+  .l a:hover {
+    border-color: var(--acc);
+  }
+  .f {
+    font-family: var(--f-mono);
+    font-size: 13.5px;
+    color: var(--acc);
+  }
+  .w {
+    font-size: 14px;
+    color: var(--head);
+  }
+  @media print {
+    .focus {
+      display: none;
+    }
+  }
+</style>

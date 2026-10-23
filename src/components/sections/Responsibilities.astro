@@ -31,7 +31,10 @@ const first = all[0].data;
     </div>
     <div class="ctl">
       <button type="button" aria-label="Previous file" data-deck-prev><span aria-hidden="true">←</span> prev</button>
-      <span class="next-l" data-deck-next-label>next: {all[1].data.file}</span>
+      <span class="mid">
+        <button type="button" aria-pressed="false" data-deck-play hidden><span class="when-on">❚❚ pause</span><span class="when-off">▶ play</span></button>
+        <span class="next-l" data-deck-next-label>next: {all[1].data.file}</span>
+      </span>
       <button type="button" aria-label="Next file" data-deck-next>next <span aria-hidden="true">→</span></button>
     </div>
   </div>
@@ -166,6 +169,20 @@ const first = all[0].data;
   .ctl button:focus-visible {
     outline: 2px solid var(--acc);
     outline-offset: 2px;
+  }
+  .mid {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+  }
+  .ctl button[hidden] {
+    display: none;
+  }
+  [data-deck-play][aria-pressed='true'] .when-on,
+  [data-deck-play][aria-pressed='false'] .when-off {
+    display: none;
   }
   .next-l {
     color: var(--dim);

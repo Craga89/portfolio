@@ -12,12 +12,13 @@ const { class: cls, label } = Astro.props;
 ---
 
 <div class:list={['links', cls]} role={label ? 'group' : undefined} aria-label={label}>
-  <a class="soc" href={`mailto:${EMAIL}`} title={EMAIL}><Icon name="mail" />email</a><button type="button" class="copy" aria-label="Copy email address" title="Copy email address" data-copy={EMAIL} data-copy-note="Email address copied"><Icon name="copy" size={14} /></button>
+  <a class="soc" href={`mailto:${EMAIL}`} title={EMAIL}><Icon name="mail" />email</a><button type="button" class="copy" aria-label="Copy email address" title="Copy email address" data-copy={EMAIL} data-copy-note="Email address copied"><Icon name="copy" size={14} class="idle" /><Icon name="check" size={14} class="done" /></button>
   <a class="soc" href={GITHUB}><Icon name="github" />github</a>
   <a class="soc" href={LINKEDIN}><Icon name="linkedin" size={14} />linkedin</a>
   <a class="soc" href="/cv/"><Icon name="file" />plain CV</a>
   <a class="soc" href="/cv.pdf" download="Craig-Michael-Thompson-CV.pdf"><Icon name="download" />cv.pdf</a>
   <a class="soc" href="/craig-thompson.vcf" download="Craig-Michael-Thompson.vcf"><Icon name="contact" />add contact</a>
+  <button type="button" class="share" data-share hidden><Icon name="share" />share</button>
 </div>
 
 <style>
@@ -56,6 +57,35 @@ const { class: cls, label } = Astro.props;
     background: var(--panel2);
     color: var(--head);
   }
+  .copy :global(.done),
+  .copy[data-done] :global(.idle) {
+    display: none;
+  }
+  .copy[data-done] :global(.done) {
+    display: block;
+  }
+  .share {
+    all: unset;
+    box-sizing: border-box;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 24px;
+    cursor: pointer;
+    font-size: 14px;
+    color: var(--acc);
+  }
+  .share[hidden] {
+    display: none;
+  }
+  .share:hover {
+    text-decoration: underline;
+  }
+  .share:focus-visible {
+    outline: 2px solid var(--acc);
+    outline-offset: 2px;
+    border-radius: 5px;
+  }
   .copy:focus-visible {
     outline: 2px solid var(--acc);
     outline-offset: 1px;
@@ -90,7 +120,8 @@ const { class: cls, label } = Astro.props;
     display: none;
   }
   @media print {
-    .copy {
+    .copy,
+    .share {
       display: none;
     }
   }
