@@ -26,7 +26,7 @@ jobs:
     env:
       BASE_URL: ${{ inputs.url || 'https://craigthompson.dev/' }}
     steps:
-      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: ./.github/actions/setup-node
       - uses: ./.github/actions/setup-playwright
       - name: Run the suite
@@ -47,7 +47,7 @@ jobs:
           source: out
           message: WCAG 2.2 AA report for ${{ env.BASE_URL }}
       - if: always()
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: a11y-report
           path: |
