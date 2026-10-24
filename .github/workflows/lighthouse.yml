@@ -41,11 +41,11 @@ jobs:
           mkdir -p out
           sleep 20 # let the Pages CDN pick up a fresh deploy
           # Use the first address that serves the site (the new domain, then the old one while DNS moves).
-          # A domain only counts if it serves this site (CRAGA_BUILD is in every build), not a redirect elsewhere.
+          # A domain only counts if it serves this site (the home page carries its build stamp, data-built), not a redirect elsewhere.
           if [ -z "$URL" ]; then
             for u in https://craigthompson.dev/ https://craga89.github.io/portfolio/; do
               final=$(curl -sfL -m 20 -o page.html -w '%{url_effective}' "$u" || true)
-              if grep -q CRAGA_BUILD page.html 2>/dev/null; then URL="$final"; break; fi
+              if grep -q "data-built=" page.html 2>/dev/null; then URL="$final"; break; fi
               echo "::warning title=Lighthouse::$u isn't serving this site yet (ended up at ${final:-no response})"
             done
           fi
