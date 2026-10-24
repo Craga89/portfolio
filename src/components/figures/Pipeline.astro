@@ -1,0 +1,32 @@
+---
+// A process that runs on a loop, stage by stage: each <Stage> lights up in turn, joined by a
+// dashed line with a dot travelling along it. Used for the release pipeline and the sign-in flow.
+interface Props {
+  label: string;
+  /** The list's accessible name. */
+  name: string;
+}
+const { label, name } = Astro.props;
+---
+
+<div>
+  <div class="label">{label}</div>
+  <ol class="pipeline" aria-label={name}><slot /></ol>
+</div>
+
+<style>
+  .label {
+    margin-bottom: 14px;
+    font-size: 13px;
+    color: var(--mute);
+  }
+  .pipeline {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px 0;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+</style>

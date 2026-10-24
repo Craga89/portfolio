@@ -1,0 +1,49 @@
+# The stack section: each area, words that also find it in the search, and its tools.
+languages:
+  order: 1
+  keywords: language code programming
+  tools: [TypeScript, JavaScript, HTML, CSS, Node.js, Bash, HCL]
+backend:
+  order: 2
+  keywords: api server backend
+  tools: [Express, GraphQL (Apollo), Koa, REST / OpenAPI, Zod, RxJS, Microservices]
+data:
+  order: 3
+  keywords: database db storage search
+  tools: [MongoDB Atlas, Atlas Search, Elasticsearch, Redis, DynamoDB]
+frontend:
+  order: 4
+  keywords: ui web browser test testing accessibility design
+  tools: [React, Apollo Client, Emotion, Vite, Storybook, Playwright, Cypress, WCAG]
+compute:
+  order: 5
+  keywords: aws amazon cloud containers serverless
+  tools: [ECS, Fargate, Service Connect, EC2, Auto Scaling, Lambda, Batch, ECR]
+networking:
+  order: 6
+  keywords: aws amazon cloud network cdn edge security
+  tools: [VPC, CloudFront, WAF, Route 53, Elastic Load Balancing, API Gateway, PrivateLink, VPC endpoints, NAT / fck-nat]
+messaging:
+  order: 7
+  keywords: aws amazon queue events
+  tools: [SNS, SQS]
+access:
+  order: 8
+  keywords: aws amazon cloud security governance sso
+  tools: [IAM, IAM Identity Center, Control Tower, Organizations, Systems Manager (Session Manager), CloudTrail, VPC Flow Logs]
+delivery:
+  order: 9
+  keywords: ci cd ci/cd devops infrastructure iac build deploy
+  tools: [Git, Terraform, CloudFormation, Packer, Docker / BuildKit, Buildkite, GitHub Actions, pnpm]
+it:
+  order: 10
+  keywords: workplace devices endpoint
+  tools: [Google Workspace, MDM, Mosyle, Jamf, Apple Business Manager (ABM), macOS fleet, ThreatDown, IT service desk, Jira Service Desk, Status page]
+observability:
+  order: 11
+  keywords: monitoring logs logging tracing metrics
+  tools: [Sentry, OpenTelemetry, Fluent Bit, Grafana, CloudWatch, Container Insights, AWS X-Ray]
+ai:
+  order: 12
+  keywords: llm agents ml machine learning
+  tools: [Claude Code, Anthropic API, Amazon Bedrock, Amazon Q, Mastra, promptfoo, Pi, Superset, GitHub Copilot]

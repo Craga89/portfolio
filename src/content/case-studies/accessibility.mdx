@@ -1,0 +1,40 @@
+---
+id: a11y
+order: 5
+file: accessibility.md
+kicker: "accessibility · wcag 2.2 aa · this site"
+title: "Accessible by default, checked on every deploy"
+---
+Accessible UI has been part of my work since building UI libraries held to WCAG for clients. This site is held to WCAG 2.2 AA, and an automated suite checks it after every deploy and every week, failing the check if anything regresses.
+
+<Method>
+  <Step>audit</Step>
+  <Step>walk it by keyboard</Step>
+  <Step>fix at the source</Step>
+  <Step>gate in CI</Step>
+</Method>
+
+<Checks label="What the suite checks">
+  <Check tag="axe-core · WCAG 2.0–2.2 A/AA" title="Every automated rule, in every state">Both themes, desktop and mobile, every tab, open FAQs, search results, ask.sh, the chat, the search dialogs and every file page: 284 page states per run.</Check>
+  <Check tag="2.1.1 · 2.4.7" title="Keyboard only">A Tab-key walk through every focus stop, confirming each one shows a visible focus ring.</Check>
+  <Check tag="2.4.11 · new in 2.2" title="Focus never hidden">Nothing focused can sit behind the sticky header or the chat bar.</Check>
+  <Check tag="2.5.8 · new in 2.2" title="Targets you can hit">Controls are at least 24px, or spaced so a miss won't land on a neighbour.</Check>
+  <Check tag="1.4.10 · 1.4.12" title="Reflow and spacing">Nothing scrolls sideways at 320px, and nothing clips with the WCAG text-spacing overrides applied.</Check>
+  <Check tag="2.2.2 · 2.3.3" title="Motion under control">Reduced-motion users get a still page, and the auto-playing tour can be paused.</Check>
+  <Check tag="2.1.4" title="Shortcuts you can switch off">The single-key shortcuts can be turned off, so they never clash with screen readers or speech input.</Check>
+</Checks>
+
+<Compare label="What the first full audit caught, before and after">
+  <Row area="contrast" before="muted text under 4.5:1">Every text colour at 4.6:1 or more on every background it sits on</Row>
+  <Row area="focus" before="some controls with no ring">A visible focus ring on everything that can take focus</Row>
+  <Row area="obscured focus" before="focus could hide off screen">Scroll padding clears the sticky bars; hidden UI leaves the tab order</Row>
+  <Row area="targets" before="18px links">24px minimum</Row>
+  <Row area="wide tables" before="unreachable by keyboard">Focusable, named scroll regions</Row>
+</Compare>
+
+<InPractice>
+- Lighthouse alone scored the site 100 for accessibility while these WCAG 2.2 AA failures were present; the full suite found them.
+- Fixes went into the shared design tokens and components, so each one holds across the whole site.
+- A regression fails the accessibility check, so it can't quietly slip back in.
+- Automated checks cover what tools can see; screen-reader passes cover the rest.
+</InPractice>

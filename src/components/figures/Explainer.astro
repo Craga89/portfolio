@@ -1,0 +1,32 @@
+---
+// A titled explanation; the text is the `text` prop, and the slot is its picture.
+interface Props {
+  title: string;
+  text: string;
+}
+const { title, text } = Astro.props;
+---
+
+<div class="explainer">
+  <div class="title">{title}</div>
+  <p>{text}</p>
+  <slot />
+</div>
+
+<style>
+  .explainer {
+    border: 1px solid var(--line2);
+    border-radius: 10px;
+    padding: 20px;
+  }
+  .title {
+    margin-bottom: 6px;
+    font-size: 13px;
+    color: var(--acc);
+  }
+  p {
+    margin: 0 0 16px;
+    font-size: 15px;
+    color: var(--text3);
+  }
+</style>

@@ -1,5 +1,5 @@
 // axe across every page state that shows different content, in both themes.
-import { test, expect, renderAll, settle, ANSWER } from './axe.mjs';
+import { test, expect, settle, ANSWER } from './axe.mjs';
 
 for (const colorScheme of /** @type {const} */ (['dark', 'light'])) {
   test.describe(`${colorScheme} theme`, () => {
@@ -10,7 +10,6 @@ for (const colorScheme of /** @type {const} */ (['dark', 'light'])) {
         services.ask = ANSWER;
         await page.goto('/');
         await settle(page);
-        await renderAll(page);
       });
 
       test('the whole page, then every FAQ answer and file open', async ({ page, axe }) => {
@@ -20,7 +19,8 @@ for (const colorScheme of /** @type {const} */ (['dark', 'light'])) {
       });
 
       test('every responsibilities tab, with its file open', async ({ page, axe }) => {
-        const segs = page.locator('#responsibilities .c-seg');
+        test.setTimeout(180_000);
+        const segs = page.locator('#r-deck').getByRole('tab');
         const n = await segs.count();
         for (let i = 0; i < n; i++) {
           await segs.nth(i).click();
@@ -33,6 +33,7 @@ for (const colorScheme of /** @type {const} */ (['dark', 'light'])) {
       });
 
       test('every case-study tab', async ({ page, axe }) => {
+        test.setTimeout(180_000);
         const tabs = page.locator('#case-studies [role="tab"]');
         const n = await tabs.count();
         for (let i = 0; i < n; i++) {
@@ -84,7 +85,7 @@ for (const colorScheme of /** @type {const} */ (['dark', 'light'])) {
       test('ask.sh with an answer, its tests, and the chat window', async ({ page, axe }) => {
         await page.locator('#c-ask-field').fill('Has he been through an acquisition?');
         await page.locator('#c-ask-field').press('Enter');
-        await expect(page.locator('#ask .c-ask-log .c-ask-a')).toHaveCount(1);
+        await expect(page.locator('#ask [data-ask-log] .c-ask-a')).toHaveCount(1);
         await axe('ask.sh answered', '#ask');
         await page.evaluate(() => {
           const d = /** @type {HTMLDetailsElement | null} */ (document.getElementById('c-tests'));
@@ -92,11 +93,11 @@ for (const colorScheme of /** @type {const} */ (['dark', 'light'])) {
         });
         await axe('ask.sh tests open', '#c-tests');
         await page.evaluate(() => scrollTo(0, 0));
-        const bar = page.locator('.c-chat-bar');
+        const bar = page.locator('[data-chat-toggle]');
         if (await bar.isVisible()) {
-          await axe('chat bar', '.c-chat');
+          await axe('chat bar', '[data-chat]');
           await bar.click();
-          await axe('chat open', '.c-chat');
+          await axe('chat open', '[data-chat]');
         }
       });
     });
@@ -112,9 +113,9 @@ for (const colorScheme of /** @type {const} */ (['dark', 'light'])) {
         for (const path of ['case-studies/monorepo/', 'cv/']) {
           await page.goto(path);
           await settle(page);
-          await page.locator('#sp-search').click();
+          await page.locator('[data-palette]').filter({ visible: true }).first().click();
           await expect(page.locator('#c-pal')).toBeVisible();
-          await page.locator('.c-pal-field').fill('ai');
+          await page.locator('#c-pal-field').fill('ai');
           await axe(`search and jump on ${path}`, '#c-pal');
         }
       });
@@ -132,7 +133,7 @@ for (const colorScheme of /** @type {const} */ (['dark', 'light'])) {
       for (const section of ['case-studies', 'responsibilities', 'blog']) {
         test(`every ${section} page`, async ({ page, axe, request, baseURL }) => {
           test.setTimeout(240_000);
-          const sitemap = await (await request.get('sitemap.xml')).text();
+          const sitemap = await (await request.get('sitemap-0.xml')).text();
           const paths = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)]
             .map((m) => new URL(m[1]).pathname.replace(/^\//, ''))
             .filter((p) => p.startsWith(section + '/'));

@@ -1,0 +1,17 @@
+---
+// A role's phases, drawn as a tree. Each child is a <Phase>.
+---
+
+<ol class="phases"><slot /></ol>
+
+<style>
+  .phases {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    max-width: 86ch;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+</style>

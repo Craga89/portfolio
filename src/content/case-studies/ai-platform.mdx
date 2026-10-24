@@ -1,0 +1,16 @@
+---
+id: ai
+order: 12
+file: ai/platform.md
+kicker: "ai platform · mastra + bedrock · 2024 → 2026"
+title: "AI where it earns its keep"
+---
+I helped introduce AI into the product: an agent service built with <Term id="mastra" trail=",">Mastra</Term> running models through <Term id="bedrock">Amazon Bedrock</Term> in its own isolated AWS account, with an <Term id="evals">eval suite</Term> that runs in CI.
+
+<AiPlatform />
+
+<InPractice>
+- AI features are built as agents and workflows in TypeScript, so any engineer on the team can work on them.
+- The AI service has its own account, with its own permissions and its own bill, separate from the core platform.
+- Changes to the AI service are checked by its eval suite in CI before they reach customers.
+</InPractice>

@@ -1,6 +1,9 @@
 // WebMCP: the page registers its agent tools (shared/agent-tools.js) with the browser. A stand-in
 // for document.modelContext records them, and each one is called as an agent would.
+import { readdirSync } from 'node:fs';
 import { test, expect } from '../fixtures.mjs';
+
+const POSTS = readdirSync(new URL('../../src/content/blog/', import.meta.url)).filter((f) => f.endsWith('.md')).length;
 
 /** @typedef {{ err: boolean, txt: string, data: any }} Call */
 
@@ -83,9 +86,8 @@ test.describe('WebMCP tools', { tag: '@desktop' }, () => {
   });
 
   test('list_files lists every file page', async ({ page }) => {
-    const posts = await page.evaluate(() => (/** @type {any} */ (window).CRAGA_POSTS || []).length);
     const all = (await call(page, 'list_files')).data.files;
-    expect(all).toHaveLength(26 + posts);
+    expect(all).toHaveLength(26 + POSTS);
     for (const f of all) expect(f.url).toMatch(/\/(case-studies|responsibilities|blog)\/[\w-]+\/$/);
     expect((await call(page, 'list_files', { section: 'case-studies' })).data.files).toHaveLength(14);
   });

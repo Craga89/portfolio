@@ -1,0 +1,20 @@
+---
+// A link to another file on the site (compliance.md). It goes to the file's own page; on the home
+// page it opens the file's tab there instead (src/scripts/home/files.ts).
+import { findFile } from '../../lib/files';
+
+interface Props {
+  /** The file name, e.g. compliance.md. */
+  file: string;
+}
+const f = await findFile(Astro.props.file);
+---
+
+<a class="c-see" href={'/' + f.page} data-open={`${f.kind}/${f.id}`} translate="no">{f.file}</a>
+
+<style>
+  .c-see {
+    font-family: var(--f-mono);
+    white-space: nowrap;
+  }
+</style>

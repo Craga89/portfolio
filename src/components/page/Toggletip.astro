@@ -1,0 +1,47 @@
+---
+// The one popover every <Term> opens: its title and definition are filled in from the glossary
+// when a term is tapped (scripts/tips.ts). Anchored to the term where CSS anchor positioning is
+// supported, and placed by script where it isn't.
+import { getCollection } from 'astro:content';
+
+const glossary = Object.fromEntries((await getCollection('glossary')).map((g) => [g.id, g.data]));
+---
+
+<div id="c-tip" class="c-tip" popover role="tooltip">
+  <strong class="title"></strong>
+  <span class="text"></span>
+</div>
+<script type="application/json" id="c-glossary" set:html={JSON.stringify(glossary)} />
+
+<style>
+  .c-tip {
+    position-anchor: --c-tip;
+    position-area: bottom span-right;
+    position-try-fallbacks: flip-block, flip-inline;
+    inset: auto;
+    margin: 8px 0 0;
+    box-sizing: border-box;
+    width: min(320px, calc(100vw - 24px));
+    padding: 12px 14px;
+    border: 1px solid var(--acc);
+    border-radius: 8px;
+    background: var(--panel2);
+    color: var(--text2);
+    font-size: 14px;
+    line-height: 1.55;
+    box-shadow: 0 12px 32px -12px rgb(0 0 0 / 0.55);
+  }
+  .c-tip:popover-open {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .title {
+    color: var(--head);
+  }
+  @media print {
+    .c-tip {
+      display: none !important;
+    }
+  }
+</style>

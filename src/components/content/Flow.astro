@@ -1,0 +1,31 @@
+---
+// A sequence of labelled stages, stacked on narrow screens. Each child is a <FlowStep>.
+import Block from './Block.astro';
+
+interface Props {
+  label: string;
+}
+const { label } = Astro.props;
+---
+
+<Block label={label}><ol class="flow" aria-label={label}><slot /></ol></Block>
+
+<style>
+  .flow {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: 14px;
+  }
+  @media (max-width: 560px) {
+    .flow {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 4px;
+    }
+  }
+</style>

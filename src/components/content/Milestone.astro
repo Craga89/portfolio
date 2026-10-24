@@ -1,0 +1,52 @@
+---
+interface Props {
+  title: string;
+  tone?: 'acc' | 'ok';
+}
+const { title, tone } = Astro.props;
+---
+
+<li class="c-pop milestone" data-tone={tone}>
+  <div class="title">{title}</div>
+  <div class="note"><slot /></div>
+</li>
+
+<style>
+  .milestone {
+    position: relative;
+    z-index: 1;
+    flex: 1 1 0;
+    min-width: 0;
+    text-align: center;
+    border: 1px solid var(--line3);
+    border-radius: 8px;
+    padding: 10px 8px;
+    background: var(--panel);
+    color: var(--text3);
+  }
+  .milestone:nth-child(2) { animation-delay: 0.15s; }
+  .milestone:nth-child(3) { animation-delay: 0.3s; }
+  .milestone:nth-child(4) { animation-delay: 0.45s; }
+  .milestone:nth-child(5) { animation-delay: 0.6s; }
+  .milestone:nth-child(n + 6) { animation-delay: 0.75s; }
+  .milestone[data-tone] {
+    color: var(--head);
+  }
+  .milestone[data-tone='acc'] {
+    border-color: var(--acc);
+    background: var(--acc-bg);
+  }
+  .milestone[data-tone='ok'] {
+    border-color: var(--ok);
+    background: var(--ok-bg);
+  }
+  .title {
+    font-weight: 700;
+    font-size: 14px;
+  }
+  .note {
+    margin-top: 2px;
+    font-size: 12px;
+    color: var(--mute);
+  }
+</style>

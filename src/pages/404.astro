@@ -1,0 +1,42 @@
+---
+// Not found: GitHub Pages serves this for any missing address.
+import FilePage from '../layouts/FilePage.astro';
+---
+
+<FilePage title="Not found · craigthompson.dev" description="That address doesn't exist on craigthompson.dev." path="404.html" mono>
+  <div class="nf">
+    <h1>$ cat this-page<br />cat: this-page: No such file or directory</h1>
+    <p>That address doesn't exist on craigthompson.dev. It may have moved when the site was rebuilt.</p>
+    <p><a href="/">Go to the home page</a> · <a href="/cv/">Read the CV</a> · <button type="button" class="s" data-palette>search the site</button></p>
+  </div>
+</FilePage>
+
+<style>
+  .nf {
+    max-width: 56ch;
+    padding: 8vh 0;
+    font-family: var(--f-mono);
+  }
+  h1 {
+    margin: 0 0 12px;
+    font-family: var(--f-mono);
+    font-size: 20px;
+    font-weight: 400;
+    color: var(--ok);
+  }
+  p {
+    margin: 0 0 20px;
+    line-height: 1.6;
+    color: var(--text3);
+  }
+  .s {
+    all: unset;
+    cursor: pointer;
+    color: var(--acc);
+    text-decoration: underline;
+  }
+  .s:focus-visible {
+    outline: 2px solid var(--acc);
+    outline-offset: 2px;
+  }
+</style>

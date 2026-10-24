@@ -1,0 +1,80 @@
+---
+// blog/: the newest posts, with the rest a click away (scripts/blog.ts shows them in place).
+import Section from '../home/Section.astro';
+import Ledger from '../home/Ledger.astro';
+import LedgerItem from '../home/LedgerItem.astro';
+import { posts } from '../../lib/posts';
+
+const SHOWN = 8;
+const all = await posts();
+const years = all.map((p) => p.data.date.getUTCFullYear());
+const span = `${Math.min(...years)}–${Math.max(...years)}`;
+---
+
+<Section id="blog" cmd="ls -t ./blog" note="writing" file="blog/" gap={8}>
+  <p class="intro">{all.length} posts from my old blog on craigsworks.com, {span}, kept as they were written. Some of the tools have since moved on.</p>
+  <Ledger label="Blog posts, newest first">
+    {
+      all.map((p, i) => (
+        <LedgerItem
+          date={p.data.date}
+          title={p.data.title}
+          sub={`${p.slug}.md`}
+          href={`/blog/${p.slug}/`}
+          vt={`p-${p.slug}`}
+          meta={[...p.data.tags.slice(0, 3), `${p.minutes} min`].join(' · ')}
+          hidden={i >= SHOWN}
+        />
+      ))
+    }
+  </Ledger>
+  <div class="more">
+    {all.length > SHOWN && <button type="button" class="b" aria-expanded="false" data-blog-more>show all {all.length} posts</button>}
+    <a class="b" href="/blog/">blog/ index →</a>
+  </div>
+</Section>
+
+<style>
+  .intro {
+    max-width: 72ch;
+    margin: 0 0 24px;
+    font-size: 14px;
+    color: var(--mute);
+  }
+  .more {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 16px;
+  }
+  .b {
+    all: unset;
+    box-sizing: border-box;
+    display: inline-flex;
+    align-items: center;
+    min-height: 40px;
+    padding: 0 14px;
+    border: 1px solid var(--line3);
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: var(--f-mono);
+    font-size: 13px;
+    color: var(--text3);
+  }
+  .b:hover {
+    border-color: var(--acc);
+    color: var(--head);
+  }
+  .b:focus-visible {
+    outline: 2px solid var(--acc);
+    outline-offset: 2px;
+  }
+  .b[hidden] {
+    display: none;
+  }
+  @media print {
+    .more {
+      display: none;
+    }
+  }
+</style>

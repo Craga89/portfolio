@@ -1,0 +1,77 @@
+---
+// One row of <Routes>: a name, then each hop, with an optional note under it.
+interface Hop {
+  name: string;
+  note?: string;
+}
+interface Props {
+  name: string;
+  hops: Hop[];
+}
+const { name, hops } = Astro.props;
+---
+
+<li class="route">
+  <span class="k">{name}</span>
+  {
+    hops.map((h, i) => (
+      <>
+        {i > 0 && (
+          <span class="a" aria-hidden="true">
+            →
+          </span>
+        )}
+        <span class="c">
+          <b>{h.name}</b>
+          {h.note && <small>{h.note}</small>}
+        </span>
+      </>
+    ))
+  }
+</li>
+
+<style>
+  .route {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+  }
+  .k {
+    flex: 0 0 72px;
+    font-family: var(--f-mono);
+    font-size: 12.5px;
+    color: var(--dim);
+  }
+  .c {
+    display: inline-flex;
+    flex-direction: column;
+    max-width: 340px;
+    border: 1px solid var(--line3);
+    border-radius: 8px;
+    padding: 7px 12px;
+    background: var(--panel2);
+  }
+  b {
+    font-size: 14.5px;
+    color: var(--head);
+  }
+  small {
+    font-size: 12.5px;
+    line-height: 1.4;
+    color: var(--mute);
+  }
+  .a {
+    font-family: var(--f-mono);
+    color: var(--acc);
+  }
+  :root[dir='rtl'] .a {
+    display: inline-block;
+    scale: -1 1;
+  }
+  @media (max-width: 640px) {
+    .k {
+      flex-basis: 100%;
+    }
+  }
+</style>

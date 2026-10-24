@@ -1,0 +1,32 @@
+---
+id: ci
+order: 3
+file: ci-cd.md
+kicker: "ci/cd & release engineering · 2019 → today"
+title: "Build only what changed, ship every merge"
+---
+I built a CI/CD platform from scratch and have kept evolving it as the team and codebase grew. Today it runs on self-hosted Buildkite defined in Terraform, driven by an in-house TypeScript build-and-deploy engine. It models the monorepo's dependency graph, so each change builds and deploys only the packages it affects.
+
+<Pipeline label="Every merge to master, end to end" name="Release pipeline">
+  <Stage icon="branch" title="merge" note="to master" />
+  <Stage icon="graph" title="package graph" note="what's affected?" />
+  <Stage wide title="build in parallel" note="affected packages only"><BuildBars items={['lib', 'service', 'app']} /></Stage>
+  <Stage title="Validate gate"><Tags tick items={['format', 'lint', 'types', 'tests', 'drift']} /></Stage>
+  <Stage title="staging" note="auto-deploy" />
+  <Stage final live title="production" note="live, no release train" />
+</Pipeline>
+
+<Evolution label="How it evolved: pipelines → a graph-aware release engine" name="delivery evolution">
+  <Era>hosted pipelines</Era>
+  <Era>Buildkite + build engine</Era>
+  <Era>continuous deployment</Era>
+  <Era>merge queue · staging</Era>
+  <Era>one Validate gate</Era>
+</Evolution>
+
+<InPractice>
+- Merged work reaches customers automatically. There has been no release train since 2022.
+- A small fix rebuilds a handful of packages, not the whole platform.
+- Every PR passes one required quality gate, and `/deploy` on a PR puts it into a test environment.
+- Deploys wait for healthy tasks and detect rollbacks, so a bad release stops itself.
+</InPractice>

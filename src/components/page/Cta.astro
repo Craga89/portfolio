@@ -1,0 +1,73 @@
+---
+// "Open to new roles", at the foot of the file pages and the blog.
+import { EMAIL } from '../../site';
+
+interface Props {
+  /** Where "see it in the portfolio" goes. */
+  home: string;
+  homeText?: string;
+}
+const { home, homeText = 'see it in the portfolio' } = Astro.props;
+---
+
+<aside class="cta" aria-label="About Craig">
+  <p><b>Craig Michael Thompson</b>, Head of Engineering: hands-on, AI-first, from start-up to acquisition. Open to new roles.</p>
+  <div class="links">
+    <a class="go" href={`mailto:${EMAIL}`}>./get-in-touch</a>
+    <a class="alt" href={home}>{homeText}</a>
+    <a class="alt" href="/cv/">CV</a>
+  </div>
+</aside>
+
+<style>
+  .cta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px 20px;
+    margin-top: 40px;
+    border: 1px solid var(--acc);
+    border-radius: 12px;
+    background: var(--acc-bg);
+    padding: 18px 20px;
+  }
+  p {
+    margin: 0;
+    max-width: 52ch;
+    color: var(--text2);
+  }
+  b {
+    color: var(--head);
+  }
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 16px;
+    border-radius: 8px;
+    font-weight: 700;
+    text-decoration: none;
+  }
+  .go {
+    background: var(--acc);
+    color: var(--bg);
+  }
+  .go:hover {
+    color: var(--bg);
+  }
+  .alt {
+    border: 1px solid var(--line3);
+    color: var(--head);
+  }
+  @media print {
+    .cta {
+      display: none;
+    }
+  }
+</style>

@@ -26,16 +26,22 @@ const BUDGET = { status: 503, json: { error: 'budget' } };
 
 test.describe('read aloud', { tag: '@desktop' }, () => {
   test.beforeEach(async ({ page }) => {
-    // Record what the browser's own voice is asked to say, and finish straight away.
+    // Record what the browser's own voice is asked to say, and finish straight away; and keep
+    // hold of the audio element the natural voice plays in.
     await page.addInitScript(() => {
       const w = /** @type {any} */ (window);
+      const play = HTMLMediaElement.prototype.play;
+      HTMLMediaElement.prototype.play = function () {
+        if (this.src) w.__audio = this;
+        return play.call(this);
+      };
       w.__spoken = [];
       if (!window.speechSynthesis) return;
       window.speechSynthesis.speak = (u) => {
         w.__spoken.push({ rate: u.rate, lang: u.lang });
         setTimeout(() => {
-          u.onstart?.(new SpeechSynthesisEvent('start', { utterance: u }));
-          u.onend?.(new SpeechSynthesisEvent('end', { utterance: u }));
+          u.dispatchEvent(new SpeechSynthesisEvent('start', { utterance: u }));
+          u.dispatchEvent(new SpeechSynthesisEvent('end', { utterance: u }));
         }, 50);
       };
       window.speechSynthesis.cancel = () => {};
@@ -47,7 +53,7 @@ test.describe('read aloud', { tag: '@desktop' }, () => {
     await page.goto('/#ask');
     await page.locator('#c-ask-field').fill('How long has he led teams?');
     await page.locator('#c-ask-field').press('Enter');
-    await page.locator('.c-ask-log .c-say').first().click();
+    await page.locator('#ask [data-ask-say]').first().click();
   }
 
   test('the natural voice plays at 1.15×, pitch kept, and the button resets', async ({ page, services }) => {
@@ -59,12 +65,12 @@ test.describe('read aloud', { tag: '@desktop' }, () => {
     await askAndListen(page);
     const audio = () =>
       page.evaluate(() => {
-        const a = window.CRAGA_APP && /** @type {any} */ (window.CRAGA_APP).c._audio;
+        const a = /** @type {any} */ (window).__audio;
         return a ? { rate: a.playbackRate, pitch: a.preservesPitch } : null;
       });
     await expect.poll(audio).toEqual({ rate: 1.15, pitch: true });
     // Half a second of audio, then the button goes back to "read aloud".
-    await expect(page.locator('.c-say[data-on="true"]')).toHaveCount(0);
+    await expect(page.locator('[data-ask-say][data-on="true"]')).toHaveCount(0);
     expect(await page.evaluate(() => /** @type {any} */ (window).__spoken)).toEqual([]);
   });
 
@@ -75,7 +81,7 @@ test.describe('read aloud', { tag: '@desktop' }, () => {
     services.ask = BUDGET;
     services.speak = BUDGET;
     await askAndListen(page);
-    await expect(page.locator('.c-ask-log')).toContainText("today's free AI allowance");
+    await expect(page.locator('#ask [data-ask-log]')).toContainText("today's free AI allowance");
     await expect.poll(() => page.evaluate(() => /** @type {any} */ (window).__spoken.length)).toBe(1);
     const [spoken] = await page.evaluate(() => /** @type {any} */ (window).__spoken);
     expect(spoken.rate).toBeGreaterThan(1);

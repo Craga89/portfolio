@@ -1,0 +1,23 @@
+---
+// The "$ cat folder/file.md" line at the top of a page; the folder links back to the home page.
+interface Props {
+  folder: string;
+  file: string;
+  home: string;
+}
+const { folder, file, home } = Astro.props;
+---
+
+<p class="crumb">$ cat <a href={home}>{folder}</a>{file}</p>
+
+<style>
+  .crumb {
+    margin: 0 0 18px;
+    font-family: var(--f-mono);
+    font-size: clamp(15px, 2vw, 18px);
+    color: var(--ok);
+  }
+  a {
+    color: inherit;
+  }
+</style>

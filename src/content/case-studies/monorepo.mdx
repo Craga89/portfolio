@@ -1,0 +1,26 @@
+---
+id: mono
+order: 1
+file: monorepo.md
+kicker: "monorepo & developer experience · 2019 → today"
+title: "One codebase, kept modern without stopping delivery"
+---
+I've taken a platform spread across about 18 separate repositories and led merging them into one TypeScript monorepo with their history intact, along with the tooling around it: CI/CD, Docker and local dev. That one codebase is what makes the repo-wide migrations in refactor.md possible.
+
+<RepoMerge
+  before="2019 · 18 repositories"
+  groups={[
+    { count: 12, tone: 'acc', name: '12 services' },
+    { count: 1, tone: 'ok', name: 'React app' },
+    { count: 3, tone: 'blue', name: '3 Lambdas' },
+    { count: 1, tone: 'lilac', name: 'Terraform' },
+    { count: 1, tone: 'text', name: 'QA suite' },
+  ]}
+  via="merged with full history"
+  after="today · one monorepo"
+  value="100+">packages today, including the shared React design system</RepoMerge>
+
+<InPractice>
+- Every engineer works in one repo, with one toolchain and one way to build, test and deploy.
+- Generated OpenAPI 3.1 docs for 12 services replaced a hand-maintained Postman collection.
+</InPractice>

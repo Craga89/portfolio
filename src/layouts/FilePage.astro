@@ -1,0 +1,114 @@
+---
+// The pages other than the home page: a file, a blog post, the blog index, the 404. A slim header
+// (home, search, theme, motion), then the page.
+import Base from './Base.astro';
+import Toggletip from '../components/page/Toggletip.astro';
+
+type BaseProps = Parameters<typeof Base>[0];
+type Props = BaseProps & {
+  /** Include the glossary popover (pages whose text has <Term>s). */
+  tips?: boolean;
+};
+const { tips, ...base } = Astro.props;
+---
+
+<Base {...base}>
+  <slot name="head" slot="head" />
+  <div class="sp">
+    <header class="top">
+      <a class="home" href="/"><span class="c-dot" aria-hidden="true"></span>craigthompson.dev</a>
+      <div class="tools">
+        <button type="button" class="b" data-palette aria-haspopup="dialog" aria-keyshortcuts="Control+K Meta+K" title="Search and jump (Ctrl+K)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>search
+        </button>
+        <button type="button" class="b" data-theme-toggle><span class="when-dark">light theme</span><span class="when-light">dark theme</span></button>
+        <button type="button" class="b" data-motion-toggle><span class="when-moving">pause animations</span><span class="when-still">play animations</span></button>
+      </div>
+    </header>
+    <main class="main">
+      <slot />
+    </main>
+  </div>
+  {tips && <Toggletip />}
+</Base>
+
+<style>
+  .sp {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: clamp(18px, 4vw, 40px) clamp(16px, 4vw, 40px) 72px;
+  }
+  .top {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px 16px;
+    margin-bottom: clamp(20px, 4vw, 36px);
+  }
+  .home {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+    font-family: var(--f-mono);
+    font-weight: 700;
+    color: var(--head);
+    text-decoration: none;
+  }
+  .home:hover {
+    color: var(--head);
+  }
+  .c-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--ok);
+    animation: c-pulse 2s ease-in-out infinite;
+  }
+  .tools {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .b {
+    all: unset;
+    box-sizing: border-box;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 40px;
+    padding: 0 12px;
+    border: 1px solid var(--line3);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--text3);
+  }
+  .b[hidden] {
+    display: none;
+  }
+  .b:hover {
+    border-color: var(--acc);
+    color: var(--head);
+  }
+  .b:focus-visible {
+    outline: 2px solid var(--acc);
+    outline-offset: 2px;
+  }
+  /* Entrances are for the home page; here the content is simply there. */
+  .main :global(.c-pop) {
+    animation: none;
+  }
+  @media print {
+    .tools {
+      display: none;
+    }
+  }
+  @media (forced-colors: active) {
+    .c-dot {
+      forced-color-adjust: none;
+      background: CanvasText;
+    }
+  }
+</style>

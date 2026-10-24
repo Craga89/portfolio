@@ -14,11 +14,11 @@ const ANSWER = {
  * @param {string} question
  */
 async function ask(page, question) {
-  const before = await page.locator('.c-ask-log .c-ask-a').count();
+  const before = await page.locator('#ask [data-ask-log] .c-ask-a').count();
   await page.locator('#c-ask-field').fill(question);
   await page.locator('#c-ask-field').press('Enter');
-  await expect(page.locator('.c-ask-log .c-ask-a')).toHaveCount(before + 1);
-  return page.locator('.c-ask-log .c-ask-a').last();
+  await expect(page.locator('#ask [data-ask-log] .c-ask-a')).toHaveCount(before + 1);
+  return page.locator('#ask [data-ask-log] .c-ask-a').last();
 }
 
 test(
@@ -29,8 +29,7 @@ test(
     // Chrome Translate swaps each text node for a translated copy wrapped in <font>.
     await page.evaluate(() => {
       document.documentElement.classList.add('translated-ltr');
-      const app = /** @type {HTMLElement} */ (document.getElementById('app'));
-      const walker = document.createTreeWalker(app, NodeFilter.SHOW_TEXT);
+      const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
       /** @type {Text[]} */
       const nodes = [];
       for (let n = walker.nextNode(); n; n = walker.nextNode())
@@ -41,9 +40,8 @@ test(
         n.replaceWith(f);
       }
     });
-    const fonts = () => page.locator('#app font').count();
+    const fonts = () => page.locator('body font').count();
     const before = await fonts();
-    // Each section renders as it scrolls into view (content-visibility), which mustn't undo the translation.
     for (const id of ['career', 'case-studies', 'faq', 'top']) {
       await page.locator('#' + id).evaluate((el) => el.scrollIntoView({ behavior: 'instant' }));
       await page.evaluate(() => new Promise((done) => requestAnimationFrame(() => requestAnimationFrame(done))));
@@ -52,7 +50,7 @@ test(
     await expect(page.locator('#case-studies [role="tab"]').nth(2)).toHaveAttribute('aria-selected', 'true');
     expect(await fonts()).toBeGreaterThanOrEqual(before * 0.95);
     await page.locator('#career').evaluate((el) => el.scrollIntoView({ behavior: 'instant' }));
-    await expect(page.locator('.v2-tree a[aria-current="true"]')).toHaveAttribute('href', '#career');
+    await expect(page.locator('nav[aria-label="Main"] a[aria-current="true"]')).toHaveAttribute('href', '#career');
   },
 );
 
@@ -61,9 +59,9 @@ test.describe('without the Translator API (Safari, Firefox)', () => {
 
   test('nothing about translation loads', async ({ page }) => {
     await page.goto('/');
-    await expect(page.locator('#app .c-root')).toBeVisible();
+    await expect(page.locator('main')).toBeVisible();
     expect(await page.evaluate(() => 'CRAGA_I18N' in window)).toBe(false);
-    await expect(page.locator('.v2-lang-s, .tr-offer')).toHaveCount(0);
+    await expect(page.locator('select[data-tr-menu]:visible, .tr-offer')).toHaveCount(0);
   });
 });
 
@@ -75,9 +73,13 @@ test.describe('an English browser', () => {
     { tag: '@desktop' },
     async ({ page }) => {
       await page.goto('/');
-      await expect(page.locator('.v2-side .v2-lang-s')).toHaveCount(1);
+      await expect(page.locator('aside select[data-tr-menu]')).toBeVisible();
       await expect(page.locator('.tr-offer')).toHaveCount(0);
-      expect(await page.locator('script[src*="i18n."]').count()).toBe(0);
+      expect(
+        await page.evaluate(
+          () => performance.getEntriesByType('resource').filter((r) => /\/i18n\.[\w-]+\.js$/.test(r.name)).length,
+        ),
+      ).toBe(0);
       expect(await page.evaluate(() => /** @type {any} */ (window).__trCalls)).toBe(0);
     },
   );
@@ -87,7 +89,7 @@ test.describe('an English browser', () => {
     await page.goto('/');
     const answer = await ask(page, 'Welche Erfahrung hat er mit Teams?');
     await expect(answer).toContainText('«de» He has led');
-    await expect(page.locator('.c-ask-log .c-ask-meta').last()).toContainText(
+    await expect(page.locator('#ask [data-ask-log] .c-ask-meta').last()).toContainText(
       'Machine-translated from English by your browser',
     );
   });
@@ -109,9 +111,9 @@ test.describe('a German browser', () => {
     await expect(page).toHaveTitle(/^«de» Craig Michael Thompson/);
     await expect(page.locator('h1')).toHaveText('Craig Michael Thompson');
     await expect(page.locator('.c-cmd').first()).toHaveText(/^\$ cat README\.md/);
-    await expect(page.locator('.v2-side .v2-lang-s')).toHaveValue('de');
+    await expect(page.locator('aside select[data-tr-menu]')).toHaveValue('de');
     const untranslated = await page.evaluate(() =>
-      [.../** @type {NodeListOf<HTMLElement>} */ (document.querySelectorAll('#app p, #app li, #app h2, #app h3'))]
+      [.../** @type {NodeListOf<HTMLElement>} */ (document.querySelectorAll('main p, main li, main h2, main h3'))]
         .filter(
           (e) =>
             e.offsetParent &&
@@ -129,7 +131,7 @@ test.describe('a German browser', () => {
 
   test('it says this is machine translation by the browser', { tag: '@desktop' }, async ({ page }) => {
     await expect(page.locator('.tr-bar [role="status"]')).toContainText('Maschinelle Übersetzung durch Ihren Browser');
-    await expect(page.locator('.v2-side .v2-lang-mt')).toBeAttached();
+    await expect(page.locator('aside [data-lang-mt]')).toBeVisible();
     await page.locator('.tr-info').click();
     const about = page.locator('#tr-about');
     await expect(about).toBeVisible();
@@ -148,7 +150,7 @@ test.describe('a German browser', () => {
         new Promise((done) => {
           let n = 0;
           const mo = new MutationObserver((list) => (n += list.length));
-          mo.observe(/** @type {Node} */ (document.getElementById('app')), {
+          mo.observe(document.body, {
             subtree: true,
             childList: true,
             characterData: true,
@@ -160,18 +162,17 @@ test.describe('a German browser', () => {
     expect(changes).toBe(0);
   });
 
-  test('when markup is lost in translation, highlighted phrases stay working buttons', async ({ page }) => {
+  test('when markup is lost in translation, highlighted phrases stay working links', async ({ page }) => {
     // The stand-in drops the markup tokens for text mentioning "monorepo".
-    const buttons = page
-      .locator('#app p')
+    const links = page
+      .locator('#about p')
       .filter({ hasText: /monorepo/i })
-      .filter({ has: page.locator('button.v2-x') })
       .first()
-      .locator('button.v2-x');
-    expect(await buttons.count()).toBeGreaterThanOrEqual(2);
-    for (const b of await buttons.all()) {
-      await expect(b).toHaveText(/^«de»/);
-      await expect(b).toHaveAttribute('data-dc-click');
+      .locator('a[data-open]');
+    expect(await links.count()).toBeGreaterThanOrEqual(2);
+    for (const a of await links.all()) {
+      await expect(a).toHaveText(/^«de»/);
+      await expect(a).toHaveAttribute('href', /^\/responsibilities\/[\w-]+\/$/);
     }
   });
 
@@ -191,7 +192,7 @@ test.describe('a German browser', () => {
     await expect(page.locator('html')).toHaveAttribute('lang', 'en-GB');
     await expect(page.locator('.tr-bar')).toHaveCount(0);
     await expect(page).not.toHaveTitle(/«/);
-    expect(await page.locator('#app').textContent()).not.toContain('«');
+    expect(await page.locator('main').textContent()).not.toContain('«');
 
     await page.evaluate(() => localStorage.setItem('craga-lang', 'de'));
     await page.reload();
@@ -207,7 +208,7 @@ test.describe('a French browser', () => {
     await page.goto('/');
     await page.getByRole('button', { name: 'Non merci' }).click();
     await page.reload();
-    await expect(page.locator('#app .c-root')).toBeVisible();
+    await expect(page.locator('main')).toBeVisible();
     await expect(page.locator('.tr-offer')).toHaveCount(0);
   });
 });
@@ -222,15 +223,14 @@ test.describe('Arabic', () => {
         await page.evaluate(() =>
           /** @type {any} */ (window).CRAGA_I18N.load().then((/** @type {any} */ m) => m.setLanguage('ar')),
         );
-      else await page.locator('.v-lang').selectOption('ar');
+      else await page.locator('select[data-tr-menu]').selectOption('ar');
       await translated(page);
       await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');
-      await page.evaluate(() => document.documentElement.classList.add('cv-all'));
       await expect
         .poll(() => page.evaluate(() => document.documentElement.scrollWidth - innerWidth))
         .toBeLessThanOrEqual(1);
-      // The case-study "next" arrow points left.
-      const next = page.locator('.c-deck-ctl button[aria-label]:last-child span');
+      // The responsibilities tour's "next" arrow points left.
+      const next = page.locator('[data-deck-next] span[aria-hidden]');
       if (await next.count()) await expect(next).toHaveText('←');
     });
   }

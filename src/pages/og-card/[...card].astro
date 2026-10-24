@@ -1,0 +1,179 @@
+---
+// A social preview card, at 1200×630, for the post-build step to screenshot (see lib/og.ts).
+import type { GetStaticPaths } from 'astro';
+import { Image } from 'astro:assets';
+import '../../styles/fonts.css';
+import portrait from '../../assets/portrait.webp';
+import { ogCards } from '../../lib/og';
+
+export const getStaticPaths = (async () => (await ogCards()).map((card) => ({ params: { card: card.path.replace(/\/$/, '') || 'home' }, props: { card } }))) satisfies GetStaticPaths;
+
+const { card } = Astro.props;
+const size = card.title.length > 56 ? 's' : card.title.length > 34 ? 'm' : 'l';
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="robots" content="noindex" />
+    <title>{card.title}</title>
+  </head>
+  <body>
+    <div class="card" data-home={card.home ? '' : undefined}>
+      <svg class="arc" viewBox="0 0 1040 200" preserveAspectRatio="none" aria-hidden="true"><path d="M0 200 Q520 -60 1040 200" fill="none" stroke="#E7EEEA" stroke-width="4"></path></svg>
+      {
+        card.home ? (
+          <>
+            <div class="cmd">
+              $ {card.cmd} <span>{card.kicker}</span>
+            </div>
+            <div class="row">
+              <Image class="ph" src={portrait} width={236} height={236} densities={[1]} alt="" />
+              <div>
+                <h1>
+                  Craig Michael
+                  <br />
+                  Thompson
+                </h1>
+                <p class="st">Head of Engineering · hands-on, AI-first</p>
+              </div>
+            </div>
+            <div class="ft">
+              <span>
+                <i class="dot"></i>open to new roles · Newcastle upon Tyne, UK
+              </span>
+              <b>craigthompson.dev</b>
+            </div>
+          </>
+        ) : (
+          <>
+            <div>
+              <div class="cmd">$ {card.cmd}</div>
+              {card.kicker && <div class="k">{card.kicker}</div>}
+            </div>
+            <h1 data-size={size}>{card.title}</h1>
+            <div class="ft">
+              <span>Craig Michael Thompson · Head of Engineering</span>
+              <b>craigthompson.dev</b>
+            </div>
+          </>
+        )
+      }
+    </div>
+  </body>
+</html>
+
+<style>
+  :global(html),
+  :global(body) {
+    margin: 0;
+    width: 1200px;
+    height: 630px;
+    overflow: hidden;
+    background: #16271f;
+    color: #f6f8f4;
+  }
+  .card {
+    --stud: #47685a;
+    position: relative;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 1200px;
+    height: 630px;
+    padding: 68px 80px;
+    background:
+      radial-gradient(circle at 24px 24px, var(--stud) 3px, transparent 3.5px),
+      radial-gradient(circle at calc(100% - 24px) 24px, var(--stud) 3px, transparent 3.5px),
+      radial-gradient(circle at 24px calc(100% - 24px), var(--stud) 3px, transparent 3.5px),
+      radial-gradient(circle at calc(100% - 24px) calc(100% - 24px), var(--stud) 3px, transparent 3.5px);
+  }
+  .card[data-home] {
+    padding: 72px 80px;
+  }
+  .arc {
+    position: absolute;
+    inset: auto 80px 120px;
+    height: 220px;
+    opacity: 0.1;
+  }
+  [data-home] .arc {
+    bottom: 150px;
+    height: 200px;
+    opacity: 0.12;
+  }
+  .cmd {
+    font: 500 30px 'Red Hat Mono', monospace;
+    color: #b7d47a;
+  }
+  .cmd span {
+    color: #7c9a8b;
+  }
+  .k {
+    margin-top: 14px;
+    font: 400 24px 'Red Hat Mono', monospace;
+    color: #8ec3e6;
+  }
+  h1 {
+    max-width: 1000px;
+    margin: 0;
+    font: 900 96px/0.92 'Big Shoulders Display', sans-serif;
+    letter-spacing: 0.005em;
+  }
+  h1[data-size='m'] {
+    font-size: 74px;
+  }
+  h1[data-size='s'] {
+    font-size: 60px;
+  }
+  [data-home] h1 {
+    font-size: 112px;
+    line-height: 0.88;
+  }
+  .row {
+    display: flex;
+    align-items: center;
+    gap: 52px;
+  }
+  .ph {
+    flex: none;
+    width: 236px;
+    height: 236px;
+    border-radius: 8px;
+    object-fit: cover;
+    background: #fff;
+    box-shadow:
+      0 0 0 6px #47685a,
+      0 0 0 8px #335041;
+  }
+  .st {
+    margin: 22px 0 0;
+    font: 600 38px/1.2 'Big Shoulders Display', sans-serif;
+    color: #8ec3e6;
+  }
+  .ft {
+    display: flex;
+    gap: 32px;
+    justify-content: space-between;
+    align-items: center;
+    font: 500 26px 'Red Hat Mono', monospace;
+    color: #a7bfb2;
+  }
+  [data-home] .ft {
+    font-size: 28px;
+  }
+  .ft b {
+    color: #f6f8f4;
+  }
+  .dot {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    margin-right: 14px;
+    border-radius: 50%;
+    background: #b7d47a;
+    vertical-align: middle;
+  }
+</style>

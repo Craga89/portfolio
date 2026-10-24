@@ -1,0 +1,217 @@
+---
+// ask.sh: questions answered by the Worker from this site's own content (scripts/ask.ts), and the
+// answer tests it's held to.
+import Section from '../home/Section.astro';
+import Icon from '../Icon.astro';
+import '../../styles/answers.css';
+import { SOURCE } from '../../site';
+import { SUGGESTIONS } from '../../lib/ask';
+---
+
+<Section id="ask" cmd="./ask.sh" note="ask about my experience" file="ask.sh" gap={12}>
+  <p class="intro">Ask anything about my experience, roles or skills. An AI model answers using only what's on this site and links to where it found it. Questions are kept anonymously, with nothing that identifies you, so I can improve the site.</p>
+  <div class="ask" data-ask>
+    <div class="log" aria-live="polite" data-ask-log>
+      <p class="hint" data-ask-hint>Pick a question below or type your own. Type <code>help</code> for commands.</p>
+    </div>
+    <div class="sugg">{SUGGESTIONS.map((q) => <button type="button" class="c-ask-chip" data-ask-q={q}>{q}</button>)}</div>
+    <form class="in" data-ask-form>
+      <label class="c-ask-p" for="c-ask-field">$ ./ask.sh</label>
+      <input id="c-ask-field" class="field" type="text" dir="auto" maxlength="300" autocomplete="off" spellcheck="false" placeholder="e.g. has he led on-call and incidents?" />
+      <button type="button" class="c-mic" aria-pressed="false" aria-label="Dictate a question" title="Dictate a question" data-mic hidden><Icon name="mic" size={18} /></button>
+      <button type="submit" class="go">ask ↵</button>
+    </form>
+  </div>
+  <details id="c-tests" class="tests">
+    <summary><span class="cmd">$ ./ask.sh --test</span> <span class="note"># how answers are checked</span><span class="n" data-live-ev-short></span></summary>
+    <div class="body">
+      <p>After every change to the Worker, and every week, a script asks ask.sh these questions and checks each answer: the right facts, nothing invented, and no response to instructions slipped into a question. One wrong answer fails the run. The tests are <a href={`${SOURCE}/blob/main/worker/evals.json`}>in the repo</a>.</p>
+      <ul class="list" data-live-ev-cases hidden></ul>
+      <p class="m" data-live-ev-none>The latest results load from CI on the live site.</p>
+    </div>
+  </details>
+</Section>
+
+<style>
+  .intro {
+    max-width: 72ch;
+    margin: 0 0 20px;
+    font-size: 14px;
+    color: var(--mute);
+  }
+  .ask {
+    overflow: hidden;
+    border: 1px solid var(--line2);
+    border-radius: 12px;
+    background: var(--panel);
+  }
+  .log {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    max-height: 560px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    padding: 18px 20px 6px;
+  }
+  .hint {
+    margin: 0;
+    font-size: 14px;
+    color: var(--mute);
+  }
+  .hint[hidden] {
+    display: none;
+  }
+  .sugg {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 10px 20px 16px;
+  }
+  .in {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0;
+    padding-block: 6px;
+    padding-inline: 16px 8px;
+    border-top: 1px solid var(--line2);
+    background: var(--panel2);
+  }
+  .in .c-ask-p {
+    font-size: 14px;
+    white-space: nowrap;
+  }
+  .field {
+    all: unset;
+    box-sizing: border-box;
+    flex: 1;
+    min-width: 0;
+    min-height: 44px;
+    font-family: var(--f-mono);
+    font-size: 15px;
+    color: var(--head);
+    caret-color: var(--acc);
+  }
+  .field::placeholder {
+    color: var(--dim);
+  }
+  .field:focus-visible,
+  .go:focus-visible {
+    outline: 2px solid var(--acc);
+    outline-offset: 2px;
+  }
+  .go {
+    all: unset;
+    box-sizing: border-box;
+    display: inline-flex;
+    align-items: center;
+    min-height: 40px;
+    padding: 0 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    background: var(--acc);
+    color: var(--bg);
+    font-size: 14px;
+    font-weight: 700;
+  }
+  .go[disabled] {
+    opacity: 0.5;
+    cursor: default;
+  }
+  .go::selection {
+    background: var(--head);
+    color: var(--bg);
+  }
+  /* The answer tests: a disclosure like a file's "the full file". */
+  .tests {
+    margin-top: 18px;
+    padding-top: 6px;
+    border-top: 1px dashed var(--line3);
+  }
+  .tests > summary {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+    list-style: none;
+    cursor: pointer;
+    font-family: var(--f-mono);
+    font-size: 14px;
+  }
+  .tests > summary::-webkit-details-marker {
+    display: none;
+  }
+  .tests > summary::before {
+    content: '▸' / '';
+    color: var(--acc);
+    transition: transform 0.2s ease;
+  }
+  .tests[open] > summary::before {
+    transform: rotate(90deg);
+  }
+  .cmd {
+    color: var(--ok);
+  }
+  .note {
+    color: var(--dim);
+  }
+  .n {
+    margin-inline-start: auto;
+    padding-inline-start: 12px;
+    font-size: 12.5px;
+    color: var(--ok);
+  }
+  .body {
+    padding-top: 14px;
+  }
+  .body > p:first-child {
+    max-width: 72ch;
+    margin: 0 0 14px;
+    font-size: 14.5px;
+    color: var(--text3);
+  }
+  .list {
+    display: grid;
+    gap: 10px;
+    margin: 0 0 10px;
+    padding: 0;
+    list-style: none;
+  }
+  .list[hidden],
+  .m[hidden] {
+    display: none;
+  }
+  .m {
+    margin: 0;
+    font-size: 12px;
+    color: var(--dim);
+  }
+  @media (max-width: 600px) {
+    .field {
+      font-size: 16px;
+    }
+    .in .c-ask-p {
+      display: none;
+    }
+    .log {
+      padding: 14px 14px 4px;
+    }
+    .sugg {
+      padding: 10px 14px 14px;
+    }
+  }
+  @media print {
+    .ask-sec {
+      display: none;
+    }
+  }
+  @media (forced-colors: active) {
+    .ask {
+      border: 1px solid CanvasText;
+    }
+    .go {
+      border: 1px solid ButtonText;
+    }
+  }
+</style>

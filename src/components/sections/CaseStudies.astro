@@ -1,0 +1,125 @@
+---
+// case-studies/: one tab per file (scripts/tabs.ts). Without script the first file shows, and the
+// rest are a link away on their own pages.
+import Section from '../home/Section.astro';
+import CaseStudyCard from '../files/CaseStudyCard.astro';
+import { caseStudies, slugOf } from '../../lib/files';
+
+const all = await caseStudies();
+const first = all[0].data;
+---
+
+<Section id="case-studies" cmd="ls ./case-studies" note="case studies" file="case-studies/" gap={8}>
+  <p class="intro">The technical projects I've led with my teams: what we built, what changed, and what it means in practice. Open a file.</p>
+  <div class="cs" data-tabs>
+    <div role="tablist" aria-label="Case studies" aria-orientation="vertical" class="tabs">
+      {
+        all.map((c, i) => (
+          <button type="button" role="tab" class="c-tab" id={`ct-${c.data.id}`} aria-selected={i === 0 ? 'true' : 'false'} aria-controls={`cp-${c.data.id}`} tabindex={i === 0 ? 0 : -1} data-page={`/case-studies/${slugOf(c.data.file)}/`}>
+            {c.data.file}
+          </button>
+        ))
+      }
+    </div>
+    <div class="panels">
+      {all.map((entry, i) => <CaseStudyCard entry={entry} panel={{ hidden: i > 0 }} />)}
+      <p class="c-perma"><a href={`/case-studies/${slugOf(first.file)}/`} data-tabs-perma>{first.file} on its own page <span aria-hidden="true">↗</span></a></p>
+    </div>
+  </div>
+</Section>
+
+<style>
+  .intro {
+    max-width: 72ch;
+    margin: 0 0 24px;
+    font-size: 14px;
+    color: var(--mute);
+  }
+  .cs {
+    display: grid;
+    grid-template-columns: minmax(170px, 210px) minmax(0, 1fr);
+    gap: 20px;
+    align-items: start;
+  }
+  .tabs {
+    position: sticky;
+    top: calc(var(--hdr-h, 72px) + 16px);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .c-tab {
+    box-sizing: border-box;
+    width: 100%;
+    min-height: 44px;
+    padding: 0 16px;
+    border: 1px solid var(--line3);
+    border-radius: 8px;
+    background: transparent;
+    cursor: pointer;
+    font: inherit;
+    font-family: var(--f-mono);
+    font-size: 14px;
+    text-align: start;
+    color: var(--text3);
+    transition:
+      background 0.2s ease,
+      color 0.2s ease,
+      border-color 0.2s ease;
+  }
+  .c-tab:hover {
+    border-color: var(--acc);
+  }
+  .c-tab[aria-selected='true'] {
+    border-color: var(--acc);
+    background: var(--acc);
+    color: var(--bg);
+    font-weight: 700;
+  }
+  .panels {
+    min-width: 0;
+    view-transition-name: c-cs;
+    touch-action: pan-y pinch-zoom;
+  }
+  :root[data-vt-theme] .panels {
+    view-transition-name: none;
+  }
+  .c-perma {
+    margin: 12px 0 0;
+    font-size: 13px;
+    text-align: end;
+  }
+  .c-perma a {
+    font-family: var(--f-mono);
+  }
+  @media (max-width: 820px) {
+    .cs {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .tabs {
+      position: static;
+      flex-direction: row;
+      flex-wrap: wrap;
+    }
+    .c-tab {
+      width: auto;
+    }
+  }
+  @media print {
+    .cs {
+      display: block;
+    }
+    .tabs,
+    .c-perma {
+      display: none;
+    }
+  }
+  @media (forced-colors: active) {
+    .c-tab[aria-selected='true'] {
+      forced-color-adjust: none;
+      border-color: Highlight;
+      background: Highlight;
+      color: HighlightText;
+    }
+  }
+</style>

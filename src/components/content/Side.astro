@@ -1,0 +1,50 @@
+---
+interface Props {
+  label: string;
+  /** acc for "now", ok for "after". */
+  tone?: 'acc' | 'ok';
+}
+const { label, tone } = Astro.props;
+---
+
+<div class="c-pop side" data-tone={tone}>
+  <div class="label">{label}</div>
+  <div class="text"><slot /></div>
+</div>
+
+<style>
+  .side {
+    border: 1px solid var(--line3);
+    border-radius: 10px;
+    padding: 16px;
+    animation-delay: 0.1s;
+  }
+  .side + .side {
+    animation-delay: 0.3s;
+  }
+  .label {
+    margin-bottom: 6px;
+    font-size: 12px;
+    color: var(--mute);
+  }
+  .text {
+    color: var(--text2);
+  }
+  .side[data-tone] .text {
+    color: var(--head);
+  }
+  .side[data-tone='acc'] {
+    border-color: var(--acc);
+    background: var(--acc-bg);
+  }
+  .side[data-tone='acc'] .label {
+    color: var(--acc);
+  }
+  .side[data-tone='ok'] {
+    border-color: var(--ok);
+    background: var(--ok-bg);
+  }
+  .side[data-tone='ok'] .label {
+    color: var(--ok);
+  }
+</style>

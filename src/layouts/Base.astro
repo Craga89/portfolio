@@ -1,0 +1,131 @@
+---
+// The document every page shares: head (meta, social cards, structured data, theme, fonts,
+// navigation between pages) and the scripts that run on every page.
+import '../styles/fonts.css';
+import '../styles/tokens.css';
+import '../styles/base.css';
+import bodyFont from '../assets/fonts/public-sans-latin-400.woff2?url';
+import headFont from '../assets/fonts/big-shoulders-display-latin-600.woff2?url';
+import monoFont from '../assets/fonts/red-hat-mono-latin-400.woff2?url';
+import { SITE, CHROME, INDEXING } from '../site';
+import { THEME_BOOT, ANALYTICS, NAV_CSS } from '../scripts/inline.mjs';
+import Toast from '../components/page/Toast.astro';
+import Palette from '../components/page/Palette.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  /** The page's path from the site root, e.g. 'cv/'. */
+  path: string;
+  type?: 'profile' | 'article' | 'website';
+  /** Social card image, from the site root or absolute; the site's own by default. */
+  image?: string;
+  imageAlt?: string;
+  ld?: Record<string, unknown>;
+  chrome?: keyof typeof CHROME;
+  /** Preload the mono font too (pages that open with it above the fold). */
+  mono?: boolean;
+}
+
+const {
+  title,
+  description,
+  path,
+  type = 'website',
+  image = SITE + '/og.png',
+  imageAlt = 'Craig Michael Thompson, Head of Engineering. craigthompson.dev',
+  ld,
+  chrome = 'home',
+  mono = false,
+} = Astro.props;
+const url = SITE + '/' + path;
+const imageUrl = new URL(image, SITE).href;
+const [dark, light] = CHROME[chrome];
+// Speculation rules: load these pages ahead of a click (on hover or touch).
+const prerender = {
+  prerender: [
+    {
+      source: 'document',
+      where: { or: ['/', '/cv/', '/blog/*', '/case-studies/*', '/responsibilities/*'].map((p) => ({ href_matches: p })) },
+      eagerness: 'moderate',
+    },
+  ],
+};
+---
+
+<!doctype html>
+<html lang="en-GB" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style is:inline set:html={NAV_CSS} />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {!INDEXING && <meta name="robots" content="noindex, nofollow, noarchive" />}
+    <link rel="canonical" href={url} />
+    <meta name="color-scheme" content="dark light" />
+    <meta name="theme-color" content={dark} media="(prefers-color-scheme: dark)" data-dark={dark} data-light={light} />
+    <meta name="theme-color" content={light} media="(prefers-color-scheme: light)" data-dark={dark} data-light={light} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+    <meta property="og:type" content={type} />
+    <meta property="og:site_name" content="craigthompson.dev" />
+    <meta property="og:locale" content="en_GB" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={url} />
+    <meta property="og:image" content={imageUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={imageAlt} />
+    {
+      type === 'profile' && (
+        <>
+          <meta property="profile:first_name" content="Craig" />
+          <meta property="profile:last_name" content="Thompson" />
+        </>
+      )
+    }
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={imageUrl} />
+    {ld && <script type="application/ld+json" set:html={JSON.stringify(ld)} />}
+
+    {/* The saved (or system) theme and motion setting, before anything paints. */}
+    <script is:inline set:html={THEME_BOOT} />
+
+    <link rel="preload" href={headFont} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={bodyFont} as="font" type="font/woff2" crossorigin />
+    {mono && <link rel="preload" href={monoFont} as="font" type="font/woff2" crossorigin />}
+    <script type="speculationrules" set:html={JSON.stringify(prerender)} />
+    <slot name="head" />
+  </head>
+  <body>
+    <slot />
+    <Toast />
+    <Palette />
+    <script>
+      import '../scripts/boot';
+    </script>
+    <script is:inline set:html={ANALYTICS} />
+  </body>
+</html>
+
+<style is:global>
+  /* Between pages: a cross-fade, and a post's title moves into place (the opt-in is NAV_CSS). */
+  ::view-transition-group(root) {
+    animation-duration: 0.26s;
+  }
+  ::view-transition-group(*.post-title) {
+    animation-duration: 0.38s;
+    animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  ::view-transition-old(*.post-title),
+  ::view-transition-new(*.post-title) {
+    height: 100%;
+    object-fit: none;
+    object-position: left center;
+  }
+</style>

@@ -1,0 +1,25 @@
+---
+// A labelled part of a file: a small caption, then its content.
+interface Props {
+  label?: string;
+  /** acc highlights the caption, for the "after" half of a before-and-after. */
+  tone?: 'acc';
+}
+const { label, tone } = Astro.props;
+---
+
+<div class="block">
+  {label && <div class="label" data-tone={tone}>{label}</div>}
+  <slot />
+</div>
+
+<style>
+  .label {
+    margin-bottom: 12px;
+    font-size: 13px;
+    color: var(--mute);
+  }
+  .label[data-tone='acc'] {
+    color: var(--acc);
+  }
+</style>

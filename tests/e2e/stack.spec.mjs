@@ -7,14 +7,17 @@ test('stack areas fold to one line each, open on tap, and a search shows matches
   const stack = page.locator('#stack');
   const height = await stack.evaluate((el) => el.getBoundingClientRect().height);
   expect(height).toBeLessThan(1000);
-  await expect(stack.locator('.c-sq-hit').filter({ visible: true })).toHaveCount(0);
+  const tools = stack.locator('details.row li');
+  await expect(tools.filter({ visible: true })).toHaveCount(0);
 
-  const toggle = stack.locator('.c-sq-tog').first();
-  await toggle.scrollIntoViewIfNeeded();
-  await (isMobile ? toggle.tap() : toggle.click());
-  await expect(toggle).toHaveAttribute('aria-expanded', 'true');
-  await expect(stack.locator('.c-sq-row .c-sq-hit').first()).toBeVisible();
+  const area = stack.locator('details.row').first();
+  const summary = area.locator('summary');
+  await summary.scrollIntoViewIfNeeded();
+  await (isMobile ? summary.tap() : summary.click());
+  await expect(area).toHaveJSProperty('open', true);
+  await expect(area.locator('li').first()).toBeVisible();
 
-  await page.locator('.c-sq-in').fill('aws');
-  await expect.poll(() => stack.locator('.c-sq-hit').filter({ visible: true }).count()).toBeGreaterThan(3);
+  await stack.locator('[data-stack-q]').fill('aws');
+  await expect.poll(() => tools.filter({ visible: true }).count()).toBeGreaterThan(3);
+  await expect(stack.locator('mark').first()).toBeVisible();
 });

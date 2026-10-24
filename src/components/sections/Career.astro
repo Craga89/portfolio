@@ -1,0 +1,194 @@
+---
+// career.log: the next role, then each role newest first (src/content/career/), on a timeline.
+import { getCollection, render } from 'astro:content';
+import Section from '../home/Section.astro';
+import { components } from '../mdx';
+
+const roles = (await getCollection('career')).sort((a, b) => a.data.order - b.data.order);
+const items = await Promise.all(roles.map(async (r) => ({ ...r.data, Content: (await render(r)).Content })));
+---
+
+<Section id="career" cmd="cat career.log" note="experience" file="career.log" gap={32}>
+  <div class="timeline">
+    <div class="line" aria-hidden="true"></div>
+    {
+      items.map((r) => {
+        const [before, after] = r.roleLink ? r.role.split(r.roleLink.text) : [r.role, undefined];
+        return (
+          <article id={r.anchor} class="job" data-kind={r.kind} aria-label={r.kind === 'next' ? r.role : undefined}>
+            <span class="dot" aria-hidden="true" />
+            <span class="period">{r.period}</span>
+            <h3 class="role">
+              {before}
+              {r.roleLink && <a href={r.roleLink.href}>{r.roleLink.text}</a>}
+              {after}
+              {r.company && ` · ${r.company}`}
+            </h3>
+            {r.chips && (
+              <ul class="chips">
+                {r.chips.map((c) => (
+                  <li class="c-chip">{c}</li>
+                ))}
+              </ul>
+            )}
+            <div class="body">
+              <r.Content components={components} />
+            </div>
+          </article>
+        );
+      })
+    }
+  </div>
+</Section>
+
+<style>
+  .timeline {
+    position: relative;
+    padding-inline-start: 32px;
+  }
+  .line {
+    position: absolute;
+    inset-inline-start: 6px;
+    top: 8px;
+    bottom: 8px;
+    width: 2px;
+    background: var(--line3);
+    transform-origin: top;
+    animation: grow 1.6s ease both;
+  }
+  @supports (animation-timeline: view()) {
+    .line {
+      animation-name: grow;
+      animation-timing-function: linear;
+      animation-fill-mode: both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 55%;
+    }
+  }
+  @keyframes grow {
+    from {
+      transform: scaleY(0);
+    }
+  }
+  .job {
+    position: relative;
+    padding-bottom: 44px;
+  }
+  .job:last-child {
+    padding-bottom: 0;
+  }
+  .job[data-kind='next'] {
+    padding-bottom: 36px;
+  }
+  /* The dot on the line: dashed for the next role, filled and ringing for the current one. */
+  .dot {
+    position: absolute;
+    inset-inline-start: -32px;
+    top: 7px;
+    box-sizing: border-box;
+    width: 14px;
+    height: 14px;
+    border: 2px solid var(--acc);
+    border-radius: 50%;
+    background: var(--bg);
+  }
+  [data-kind='next'] .dot {
+    top: 6px;
+    border: 2px dashed var(--ok);
+  }
+  [data-kind='current'] .dot {
+    border: 0;
+    background: var(--acc);
+    box-shadow: 0 0 0 4px var(--bg);
+    animation: ring 2.4s ease-out infinite;
+  }
+  [data-kind='side'] .dot {
+    border-color: var(--ok);
+  }
+  @keyframes ring {
+    0% {
+      box-shadow:
+        0 0 0 4px var(--bg),
+        0 0 0 4px color-mix(in srgb, var(--acc) 55%, transparent);
+    }
+    100% {
+      box-shadow:
+        0 0 0 4px var(--bg),
+        0 0 0 14px transparent;
+    }
+  }
+  .period {
+    font-size: 14px;
+    color: var(--mute);
+  }
+  .role {
+    margin: 6px 0 10px;
+    font-size: clamp(28px, 3.2vw, 40px);
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: 0.005em;
+    color: var(--head);
+    transition: color 0.2s;
+  }
+  [data-kind='next'] .role {
+    margin-top: 4px;
+    font-size: clamp(22px, 2.2vw, 28px);
+    line-height: 1.05;
+  }
+  .job:hover .role {
+    color: var(--acc);
+  }
+  .role a {
+    color: inherit;
+    text-decoration: underline dashed var(--acc);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 5px;
+  }
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 0 0 10px;
+    padding: 0;
+    list-style: none;
+  }
+  .c-chip {
+    display: inline-block;
+    border: 1px dashed var(--ok);
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-family: var(--f-mono);
+    font-size: 14px;
+    color: var(--head);
+    transition:
+      background 0.2s ease,
+      color 0.2s ease;
+  }
+  .c-chip:hover {
+    background: var(--acc);
+    color: var(--bg);
+  }
+  .body {
+    max-width: 80ch;
+    color: var(--text2);
+  }
+  .body > :global(p) {
+    margin: 0;
+  }
+  .body > :global(p + ol) {
+    margin-top: 18px;
+  }
+  .body > :global(ul) {
+    margin: 0;
+    padding-inline-start: 20px;
+  }
+  [data-kind='next'] .body {
+    font-size: 14px;
+    color: var(--mute);
+  }
+  @media (forced-colors: active) {
+    .c-chip {
+      border: 1px solid ButtonText;
+    }
+  }
+</style>

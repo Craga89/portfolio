@@ -1,0 +1,339 @@
+/* Page-wide styles: the document, links, focus, motion, and the few utilities used everywhere.
+   Everything else is styled by its own component. */
+
+html {
+  scroll-behavior: smooth;
+  /* Keep focused and linked-to elements clear of the sticky header and the chat bar. */
+  scroll-padding-top: calc(var(--hdr-h) + 12px);
+  scroll-padding-bottom: 72px;
+  scrollbar-color: var(--line3) var(--bg);
+  background: var(--bg);
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--f-body);
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+:where(h1, h2, h3, h4) {
+  font-family: var(--f-head);
+  text-wrap: balance;
+}
+
+:where(p, li, blockquote) {
+  text-wrap: pretty;
+}
+
+:where(p, blockquote) {
+  hanging-punctuation: first allow-end;
+}
+
+:where(code, kbd, samp, pre, input) {
+  font-family: var(--f-mono);
+}
+
+a {
+  color: var(--acc);
+}
+
+a:hover {
+  color: var(--acc-h);
+}
+
+main a:not([class]) {
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+  transition:
+    color 0.2s ease,
+    text-underline-offset 0.2s ease;
+}
+
+main a:not([class]):hover {
+  text-underline-offset: 6px;
+}
+
+/* A visible focus ring on anything focusable that has no ring of its own. */
+:where(a, button, summary, input, textarea, select, [tabindex]):focus-visible {
+  outline: 2px solid var(--acc);
+  outline-offset: 2px;
+}
+
+[id] {
+  scroll-margin-top: calc(var(--hdr-h) + 24px);
+}
+
+[tabindex='-1']:focus {
+  outline: none;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--acc) 38%, transparent);
+  color: var(--head);
+}
+
+* {
+  scrollbar-color: var(--line3) transparent;
+}
+
+kbd {
+  display: inline-block;
+  min-width: 1.5em;
+  box-sizing: border-box;
+  padding: 0 4px;
+  border: 1px solid var(--line3);
+  border-bottom-width: 2px;
+  border-radius: 4px;
+  font-size: 0.85em;
+  line-height: 1.5;
+  text-align: center;
+  color: var(--text3);
+  background: var(--panel2);
+}
+
+/* Visually hidden, still read by screen readers. */
+.c-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* An inline button in prose is an atomic inline, so punctuation after it stays on its line. */
+.c-nb {
+  white-space: nowrap;
+}
+
+/* Left-to-right content (charts, code, commands, addresses) in right-to-left pages. */
+.c-ltr {
+  direction: ltr;
+}
+
+/* Where an in-page link lands flashes briefly. */
+.c-flash {
+  animation: c-flash 1.4s ease-out both;
+  border-radius: 4px;
+}
+
+@keyframes c-flash {
+  0%,
+  15% {
+    background-color: color-mix(in srgb, var(--acc) 26%, transparent);
+    box-shadow: 0 0 0 8px color-mix(in srgb, var(--acc) 26%, transparent);
+  }
+  100% {
+    background-color: transparent;
+    box-shadow: 0 0 0 8px transparent;
+  }
+}
+
+/* Shared entrance and loop animations. */
+@keyframes c-pop {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+@keyframes c-pulse {
+  50% {
+    opacity: 0.3;
+  }
+}
+
+@keyframes c-up {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+}
+
+.c-pop {
+  animation: c-pop 0.5s ease both;
+}
+
+/* A step that lights up in turn. */
+.c-lit {
+  animation: c-lit 0.5s ease both;
+}
+
+@keyframes c-lit {
+  from {
+    background: transparent;
+    border-color: var(--line2);
+    color: var(--dim);
+  }
+}
+
+/* The old way of doing something, struck through as it comes into view. */
+.c-strike {
+  color: var(--mute2);
+  background-image: linear-gradient(var(--bad), var(--bad));
+  background-repeat: no-repeat;
+  background-position: 0 55%;
+  background-size: 100% 2px;
+  animation: c-strike 0.6s ease both;
+}
+
+@keyframes c-strike {
+  from {
+    background-size: 0% 2px;
+    color: var(--text);
+  }
+}
+
+/* A line or bar that draws itself across as it scrolls into view. */
+.c-fill {
+  transform-origin: left;
+}
+
+/* Scroll-driven animations are written as longhands: the CSS minifier would otherwise fold the
+   timeline into the animation shorthand, which browsers don't accept. */
+@supports (animation-timeline: view()) {
+  .c-fill {
+    animation-name: c-bar;
+    animation-timing-function: linear;
+    animation-fill-mode: both;
+    animation-timeline: view();
+    animation-range: entry 10% cover 40%;
+  }
+}
+
+@keyframes c-bar {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+:root[dir='rtl'] .c-fill {
+  transform-origin: right;
+}
+
+/* Motion off: the visitor's system setting, or "pause animations" on the site (WCAG 2.2.2). */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+:root[data-motion='off'] *,
+:root[data-motion='off'] *::before,
+:root[data-motion='off'] *::after {
+  animation: none !important;
+  transition: none !important;
+}
+
+/* Windows High Contrast and other forced-colour modes. */
+@media (forced-colors: active) {
+  :where(a, button, summary, input, textarea, select, [tabindex]):focus-visible {
+    outline: 2px solid Highlight !important;
+  }
+}
+
+@media print {
+  html,
+  body {
+    background: #fff !important;
+  }
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* A list item's position, for staggered entrances: animation-delay: calc(var(--i) * 0.1s).
+   Registered so it's worked out on the item and inherited by its children. Browsers without
+   sibling-index() show everything at once. */
+@property --i {
+  syntax: '<integer>';
+  inherits: true;
+  initial-value: 0;
+}
+
+/* Text for one theme only, such as a toggle's "light theme" / "dark theme". Hidden text isn't read
+   out, so the accessible name follows the theme without script. */
+:root[data-theme='dark'] .when-light,
+:root[data-theme='light'] .when-dark {
+  display: none !important;
+}
+
+/* A section's "$ cat file # note" line: mono, on a dotted rule, wiped in as it scrolls into view. */
+.c-cmd {
+  width: fit-content;
+  max-width: 100%;
+  padding-bottom: 12px;
+  font-family: var(--f-mono);
+  background: radial-gradient(circle, var(--line3) 2px, transparent 2.5px) left bottom / 16px 6px repeat-x;
+}
+
+@supports (animation-timeline: view()) {
+  .c-cmd {
+    animation-name: c-wipe;
+    animation-timing-function: steps(22, end);
+    animation-fill-mode: both;
+    animation-timeline: view();
+    animation-range: entry 20% entry 90%;
+  }
+}
+
+@keyframes c-wipe {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+:root[dir='rtl'] .c-cmd {
+  direction: ltr;
+  text-align: right;
+  unicode-bidi: isolate;
+}
+
+@media (forced-colors: active) {
+  .c-cmd {
+    background: none;
+  }
+}
+
+@media print {
+  .c-cmd {
+    background: none;
+  }
+}
+
+kbd {
+  box-sizing: border-box;
+  display: inline-block;
+  min-width: 1.5em;
+  padding: 0 4px;
+  border: 1px solid var(--line3);
+  border-bottom-width: 2px;
+  border-radius: 4px;
+  background: var(--panel2);
+  font-size: 0.85em;
+  line-height: 1.5;
+  text-align: center;
+  color: var(--text3);
+}
+
+/* Likewise for the motion switch: "pause animations" / "play animations". */
+:root[data-motion='off'] .when-moving,
+:root:not([data-motion='off']) .when-still {
+  display: none !important;
+}

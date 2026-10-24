@@ -5,7 +5,7 @@
 import { AxeBuilder } from '@axe-core/playwright';
 import { test as base, expect } from '../fixtures.mjs';
 
-export { expect, renderAll, settle, translated } from '../fixtures.mjs';
+export { expect, addStyle, settle, translated } from '../fixtures.mjs';
 
 const TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22a', 'wcag22aa'];
 

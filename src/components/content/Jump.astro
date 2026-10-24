@@ -1,0 +1,41 @@
+---
+// A highlighted phrase in prose that opens a file on the home page (README.md's links into the
+// responsibilities). Without JavaScript, it's a link to the file's own page.
+import { findFile } from '../../lib/files';
+
+interface Props {
+  /** resp/<id> or case/<id> */
+  to: string;
+  /** Punctuation that has to stay on the same line. */
+  trail?: string;
+}
+const { to, trail } = Astro.props;
+const f = await findFile(to);
+---
+
+{
+  trail ? (
+    <span class="c-nb"><a class="jump" href={'/' + f.page} data-open={to}><slot /></a>{trail}</span>
+  ) : (
+    <a class="jump" href={'/' + f.page} data-open={to}><slot /></a>
+  )
+}
+
+<style>
+  .jump {
+    cursor: pointer;
+    color: var(--head);
+    font-weight: 700;
+    text-decoration: none;
+    border-bottom: 1px dashed var(--acc);
+    transition: color 0.2s ease;
+  }
+  .jump:hover {
+    color: var(--acc);
+  }
+  .jump:focus-visible {
+    outline: 2px solid var(--acc);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+</style>

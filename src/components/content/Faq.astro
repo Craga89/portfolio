@@ -1,0 +1,51 @@
+---
+// One question in faq.md, as a disclosure. Its id lets search-and-jump open it.
+import { faqId } from '../../lib/faq';
+
+interface Props {
+  q: string;
+}
+---
+
+<details class="c-faq" id={faqId(Astro.props.q)}><summary>{Astro.props.q}</summary><p><slot /></p></details>
+
+<style>
+  .c-faq {
+    border-bottom: 1px solid var(--line2);
+    break-inside: avoid;
+  }
+  summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    min-height: 52px;
+    padding: 10px 0;
+    list-style: none;
+    cursor: pointer;
+    color: var(--head);
+    font-weight: 700;
+    text-wrap: balance;
+  }
+  summary::marker,
+  summary::-webkit-details-marker {
+    display: none;
+  }
+  summary::after {
+    content: '+' / '';
+    color: var(--acc);
+    font-size: 20px;
+    transition: transform 0.25s ease;
+  }
+  summary:hover {
+    color: var(--acc);
+  }
+  .c-faq[open] summary::after {
+    transform: rotate(45deg);
+  }
+  p {
+    margin: 0 0 16px;
+    max-width: 70ch;
+    color: var(--text2);
+  }
+</style>

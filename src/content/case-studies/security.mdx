@@ -1,0 +1,24 @@
+---
+id: sec
+order: 8
+file: security.md
+kicker: "security & privacy · 2021 → 2026"
+title: "Closing doors, not adding locks"
+---
+When a product handles confidential data, security and privacy are part of the product. We focused on removing whole classes of risk rather than layering controls on top.
+
+<Compare label="Security posture before and after">
+  <Row area="server access" before="SSH & bastions">SSM Session Manager; port 22 closed everywhere</Row>
+  <Row area="admin access" before="IAM admin users">SSO only, via IAM Identity Center and Control Tower</Row>
+  <Row area="networks" before="VPC peering">PrivateLink and VPC endpoints</Row>
+  <Row area="public surface" before="internet-facing load balancer">One CDN entry point, with WAF in block mode</Row>
+  <Row area="dev secrets" before="plaintext .env files">Injected at runtime from a password manager</Row>
+  <Row area="dependencies" before="known CVEs lingering">Vulnerable packages swapped out; pentest findings fixed and tracked</Row>
+  <Row area="incidents" before="ad hoc">Blameless post-mortems, with runbooks and tooling as the fix</Row>
+</Compare>
+
+<InPractice>
+- Far fewer standing keys and passwords for anyone to leak.
+- No servers reachable from the internet except through the CDN.
+- External penetration-test findings were fixed in code and tracked to closure.
+</InPractice>

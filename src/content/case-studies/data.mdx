@@ -1,0 +1,43 @@
+---
+id: data
+order: 10
+file: data.md
+kicker: "data & performance · 2021 → 2026"
+title: "Making the flagship report fast at scale"
+---
+Reporting is often the first place a SaaS platform slows down: large aggregations sliced by many dimensions at once. I led the redesign of a core reporting data model and its queries on MongoDB, and we proved the new version matched the old one in production before switching over.
+
+<Chain faded label="before: work done at read time, on every request">
+  <Step>every response</Step>
+  <Step>unwind all facets</Step>
+  <Step>group everything</Step>
+  <Step>confidentiality in the query</Step>
+</Chain>
+
+<Chain tone="acc" label="after: work moved to write time, reads stay lean">
+  <Step tone="acc">facets denormalised on write</Step>
+  <Step tone="ok">purpose-built collection</Step>
+  <Step tone="ok">high-cardinality-first index</Step>
+  <Step tone="ok">analytics-node read</Step>
+  <Step tone="ok">confidentiality in code, cacheable</Step>
+</Chain>
+
+<Stats>
+  <Stat value="10×">higher complexity ceiling for core reports</Stat>
+  <Stat value="1–3 s">search stalls removed from people lists under load</Stat>
+  <Stat value="~8,000">records no longer loaded to open one dashboard</Stat>
+  <Stat value="V1 ⇄ V2">diff mode proved parity in production</Stat>
+</Stats>
+
+<Evolution label="How it evolved: read-time work → write-time design" name="data evolution">
+  <Era>streamed bulk operations</Era>
+  <Era>reporting rework</Era>
+  <Era>purpose-built collection</Era>
+  <Era>Atlas Search</Era>
+</Evolution>
+
+<InPractice>
+- Large customers can slice results by far more demographics before hitting limits.
+- Bulk operations on very large tenants stream records instead of loading them all into memory.
+- Every environment, and every laptop, can restore a realistic "gold" dataset in one step.
+</InPractice>

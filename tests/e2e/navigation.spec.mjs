@@ -13,7 +13,7 @@ async function followFirstPost(page) {
     ),
   );
   await page.goto('blog/');
-  await page.locator('.sp-bl a').first().click();
+  await page.locator('main ol a').first().click();
   await page.waitForURL(/\/blog\/[\w-]+\/$/);
   await expect.poll(() => page.evaluate(() => sessionStorage.getItem('vt'))).not.toBeNull();
   return page.evaluate(() => sessionStorage.getItem('vt'));
@@ -48,7 +48,7 @@ test.describe('between pages', { tag: '@desktop' }, () => {
     await page.mouse.wheel(0, 1200);
     const progress = () =>
       page.evaluate(
-        () => new DOMMatrix(getComputedStyle(/** @type {Element} */ (document.querySelector('.sp-prog'))).transform).a,
+        () => new DOMMatrix(getComputedStyle(/** @type {Element} */ (document.querySelector('.prog'))).transform).a,
       );
     await expect.poll(progress).toBeGreaterThan(0.05);
     expect(await progress()).toBeLessThan(1);
@@ -64,7 +64,7 @@ test.describe('between pages', { tag: '@desktop' }, () => {
 
   test('the language menu is a styled list where the browser supports it', async ({ page }) => {
     await page.goto('/');
-    const select = page.locator('.v2-side .v2-lang-s');
+    const select = page.locator('aside select[data-tr-menu]');
     expect(await select.evaluate((x) => getComputedStyle(x).appearance)).toBe('base-select');
     await select.click();
     await expect.poll(() => select.evaluate((x) => x.matches(':open'))).toBe(true);
@@ -91,16 +91,16 @@ for (const path of ['case-studies/monorepo/', 'blog/', 'cv/']) {
   test(`search and jump opens with Ctrl+K and from its button on ${path}`, async ({ page }) => {
     await page.goto(path);
     const palette = page.locator('#c-pal');
-    await expect(palette).toHaveCount(0);
+    await expect(palette).toBeHidden();
     await page.keyboard.press('Control+k');
     await expect(palette).toBeVisible();
-    await page.locator('.c-pal-field').fill('hiring');
-    await expect(page.locator('.c-pal-o[aria-selected="true"]')).toContainText('hiring.md');
+    await page.locator('#c-pal-field').fill('hiring');
+    await expect(page.locator('#c-pal-list [aria-selected="true"]')).toContainText('hiring.md');
     await page.keyboard.press('Escape');
     await expect(palette).toBeHidden();
-    await page.locator('#sp-search').click();
+    await page.locator('[data-palette]').filter({ visible: true }).first().click();
     await expect(palette).toBeVisible();
-    await page.locator('.c-pal-field').fill('hiring');
+    await page.locator('#c-pal-field').fill('hiring');
     await page.keyboard.press('Enter');
     await page.waitForURL(/\/responsibilities\/hiring\/$/);
   });

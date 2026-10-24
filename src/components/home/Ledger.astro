@@ -1,0 +1,18 @@
+---
+// A dated list, newest first, each entry a <LedgerItem>: the blog's posts and the upstream pull
+// requests.
+interface Props {
+  label: string;
+}
+---
+
+<ol class="ledger" aria-label={Astro.props.label}><slot /></ol>
+
+<style>
+  .ledger {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-top: 1px dashed var(--line2);
+  }
+</style>

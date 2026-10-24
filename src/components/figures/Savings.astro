@@ -1,0 +1,107 @@
+---
+// cost.md: documented monthly savings as bars, scaled to the largest. Drawn with SVG so the widths
+// need no inline styles.
+interface Saving {
+  text: string;
+  /** Dollars a month. */
+  amount: number;
+  /** Counted per account, so shown fainter. */
+  dim?: boolean;
+}
+interface Props {
+  label: string;
+  /** The headline total, in bold, then what it covers. */
+  total: string;
+  totalNote: string;
+  items: Saving[];
+}
+const { label, total, totalNote, items } = Astro.props;
+const max = Math.max(...items.map((i) => i.amount));
+---
+
+<div>
+  <div class="head"><span class="label">{label}</span><span class="total"><strong>{total}</strong> {totalNote}</span></div>
+  <div role="table" aria-label={label} class="rows">
+    {
+      items.map((i) => (
+        <div role="row" class="row">
+          <span role="cell" class="text">{i.text}</span>
+          <span role="cell" class="bar" aria-hidden="true">
+            <svg preserveAspectRatio="none" viewBox="0 0 100 12">
+              <rect width={(100 * i.amount) / max} height="12" data-dim={i.dim ? '' : undefined} />
+            </svg>
+          </span>
+          <span role="cell" class="amount">${i.amount}/mo</span>
+        </div>
+      ))
+    }
+  </div>
+</div>
+
+<style>
+  .head {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 8px 24px;
+    margin-bottom: 14px;
+  }
+  .label {
+    font-size: 13px;
+    color: var(--mute);
+  }
+  .total {
+    font-size: 15px;
+    color: var(--head);
+  }
+  .total strong {
+    font-size: 22px;
+    color: var(--acc);
+  }
+  .rows {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .row {
+    --i: calc(sibling-index() - 1);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px 14px;
+  }
+  .text {
+    flex: 1 1 240px;
+    font-size: 14px;
+    color: var(--text);
+  }
+  .bar {
+    flex: 2 1 200px;
+    height: 12px;
+  }
+  svg {
+    display: block;
+    width: 100%;
+    height: 12px;
+  }
+  :root[dir='rtl'] svg {
+    scale: -1 1;
+  }
+  rect {
+    fill: var(--acc);
+    transform-box: fill-box;
+    transform-origin: left;
+    animation: c-bar 0.9s cubic-bezier(0.3, 0.7, 0.2, 1) both;
+    animation-delay: calc(var(--i) * 0.1s);
+  }
+  rect[data-dim] {
+    fill: var(--acc-dim);
+  }
+  .amount {
+    flex: 0 0 9ch;
+    text-align: end;
+    font-weight: 700;
+    color: var(--head);
+  }
+</style>

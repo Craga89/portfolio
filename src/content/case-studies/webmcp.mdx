@@ -1,0 +1,37 @@
+---
+id: mcp
+order: 13
+file: webmcp.md
+kicker: "webmcp + mcp · tools for AI agents · 2026"
+title: "A site AI agents can use, not just read"
+---
+AI assistants are starting to work inside the browser, on the page a person has open. Rather than leave them to read the screen and guess, I've given this site its own tools through WebMCP, a draft web standard. An agent calls a tool and gets structured answers, drawn from the same content visitors read. The same tools also run as an MCP server, so any MCP client can use them without the site open.
+
+<McpStatus />
+
+<Flow label="How an agent uses the tools">
+  <FlowStep term="AI agent">in the browser, or any MCP client</FlowStep>
+  <FlowStep term="calls a tool">through WebMCP or MCP</FlowStep>
+  <FlowStep term="reads the site's own data">cv.json, the ask.sh index, CI results</FlowStep>
+  <FlowStep term="gets a structured answer" final>or opens it on screen</FlowStep>
+</Flow>
+
+<Tools label="The tools">
+  <Tool names="get_profile">headline, summary, contact, CV links and skills</Tool>
+  <Tool names="get_career">every role, with highlights, and the degree</Tool>
+  <Tool names="list_files read_file">case studies and responsibilities in full, and can open one on the page</Tool>
+  <Tool names="search_site">the best-matching passages, in my own words</Tool>
+  <Tool names="ask">an ask.sh answer, with the same limits as the box on the page</Tool>
+  <Tool names="get_open_source">merged pull requests by quarter, and qTip2</Tool>
+  <Tool names="get_site_report">the latest Lighthouse, WCAG and ask.sh results</Tool>
+  <Tool names="show_section">scrolls to a section and highlights it (on the page only)</Tool>
+</Tools>
+
+<InPractice>
+- Each tool is defined once, in one shared module, and runs in both places: on the page through WebMCP and on the Worker through MCP. The site's search lives there too, so ask.sh, the page and the server can't drift apart.
+- The tools read the same files the page loads, so an agent gets the same facts a visitor reads.
+- The MCP server is public, read-only and rate-limited. It keeps no state between requests and serves both the current protocol (2026-07-28) and older clients.
+- Browsers without WebMCP skip it. In Chrome it runs as an origin trial.
+- CI tests both: the page's tools against a stand-in for the browser API, and the server against both protocol versions and the official MCP client. The ask tool is stubbed in tests, so they never reach the live service.
+- For agents that read rather than act, the same content is in llms.txt and cv.json.
+</InPractice>

@@ -1,0 +1,19 @@
+---
+// Two states side by side, each a <Side>: before and after, then and now.
+import Block from './Block.astro';
+
+interface Props {
+  label?: string;
+}
+---
+
+<Block label={Astro.props.label}><div class="versus"><slot /></div></Block>
+
+<style>
+  .versus {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+    gap: 12px;
+    align-items: stretch;
+  }
+</style>

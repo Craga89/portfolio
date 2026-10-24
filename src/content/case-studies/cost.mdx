@@ -1,0 +1,39 @@
+---
+id: cost
+order: 11
+file: cost.md
+kicker: "cloud cost · 2022 → 2026"
+title: "Measure first, then cut"
+---
+Every saving started with data: flow logs, utilisation history or a line in the bill. Each change landed with the numbers that justified it in the pull request.
+
+<Method>
+  <Step>measure</Step>
+  <Step>attribute</Step>
+  <Step>change</Step>
+  <Step>verify</Step>
+</Method>
+
+<Savings
+  label="Documented monthly AWS savings"
+  total="≈ $1.3k / month"
+  totalNote="from the first three alone"
+  items={[
+    { text: 'Container Insights: enhanced → standard', amount: 620 },
+    { text: 'Duplicate CloudTrail trails removed', amount: 450 },
+    { text: 'BI network: 3 AZs and NATs → 1', amount: 270 },
+    { text: 'VPC flow logs off (per account)', amount: 250, dim: true },
+  ]}
+/>
+
+<Tiles label="Also cut, from measured utilisation">
+- Traced ~1.2 TB/day of CI NAT traffic; replaced managed NAT with endpoints, image caching and fck-nat
+- Halved CPU and memory on services idling at 1–3% CPU
+- Right-sized Redis after 15 months under 4% CPU
+- Non-production environments scale down every night
+</Tiles>
+
+<InPractice>
+- Spend tracks real usage, and every cut has the evidence behind it on record.
+- The NAT investigation became a reusable audit any engineer can rerun.
+</InPractice>

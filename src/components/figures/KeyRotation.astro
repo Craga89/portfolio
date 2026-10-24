@@ -1,0 +1,66 @@
+---
+// auth.md: two signing keys whose lifetimes overlap, so tokens signed by either still verify.
+---
+
+<div class="rotation" aria-hidden="true">
+  <div class="row"><span class="name">key v1</span><span class="track"><span class="key old"></span></span></div>
+  <div class="row"><span class="name">key v2</span><span class="track"><span class="key new"></span></span></div>
+  <div class="row"><span class="name"></span><span class="track"><span class="c-pop overlap">overlap</span></span></div>
+</div>
+
+<style>
+  .rotation {
+    /* Where on the timeline v1 retires and v2 takes over. */
+    --v1-end: 65%;
+    --v2-start: 40%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-size: 12px;
+  }
+  .row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .name {
+    flex: 0 0 6ch;
+    color: var(--mute);
+  }
+  .track {
+    position: relative;
+    flex: 1;
+    height: 10px;
+  }
+  .row:last-child .track {
+    height: 16px;
+  }
+  .key {
+    position: absolute;
+    height: 10px;
+    border-radius: 4px;
+    transform-origin: left;
+    animation: c-bar 0.9s cubic-bezier(0.3, 0.7, 0.2, 1) both;
+  }
+  .old {
+    inset-inline: 0 calc(100% - var(--v1-end));
+    background: var(--bar0);
+  }
+  .new {
+    inset-inline: var(--v2-start) 0;
+    background: var(--acc);
+    animation-delay: 0.4s;
+  }
+  .overlap {
+    position: absolute;
+    inset-inline: var(--v2-start) calc(100% - var(--v1-end));
+    border-top: 1px dashed var(--ok);
+    padding-top: 2px;
+    text-align: center;
+    color: var(--ok-text);
+    animation-delay: 0.9s;
+  }
+  :root[dir='rtl'] .key {
+    transform-origin: right;
+  }
+</style>

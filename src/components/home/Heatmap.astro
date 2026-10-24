@@ -1,0 +1,267 @@
+---
+// Merged pull requests to other projects, one square per quarter, darker for more. Hover a square
+// for that quarter's projects; the table under it has the same by year.
+import { level, type Quarter } from '../../lib/oss';
+
+interface Props {
+  timeline: Quarter[];
+}
+const { timeline } = Astro.props;
+const y0 = Math.min(...timeline.map((t) => t.y));
+const y1 = Math.max(new Date().getFullYear(), ...timeline.map((t) => t.y));
+const years = Array.from({ length: y1 - y0 + 1 }, (_, i) => y0 + i);
+const by = new Map(timeline.map((t) => [`${t.y}Q${t.q}`, t]));
+const tip = (y: number, q: number) => {
+  const t = by.get(`${y}Q${q}`);
+  if (!t?.n) return `${y} Q${q} · none`;
+  const more = t.repos.length > 4 ? ` and ${t.repos.length - 4} more` : '';
+  return `${y} Q${q} · ${t.n} merged${t.repos.length ? ': ' + t.repos.slice(0, 4).join(', ') + more : ''}`;
+};
+const yearly = years.map((y) => {
+  const ts = timeline.filter((t) => t.y === y);
+  return { y, n: ts.reduce((a, t) => a + t.n, 0), repos: [...new Set(ts.flatMap((t) => t.repos))].join(', ') };
+});
+const total = timeline.reduce((a, t) => a + t.n, 0);
+const top = [...timeline].sort((a, b) => b.n - a.n)[0];
+const busiest = [...yearly].sort((a, b) => b.n - a.n)[0];
+const summary = `${total} merged pull requests to other projects from ${y0} to ${y1}, busiest in ${busiest.y} (${busiest.n}), most in one quarter ${top.n} (${top.y} Q${top.q}). The table below lists them by year.`;
+// Tooltips open towards the middle near the edges, and below for the top two rows.
+const edge = (i: number) => (i < 2 ? 'l' : i > years.length - 4 ? 'r' : undefined);
+---
+
+<figure class="hm">
+  <figcaption class="cap">Merged pull requests to other projects, by quarter</figcaption>
+  {/* Laid out in columns: the quarter labels, then each year top to bottom, its label last. */}
+  <div class="grid" role="img" aria-label={summary}>
+    {[1, 2, 3, 4].map((q) => <span class="rl">Q{q}</span>)}
+    <span class="rl" />
+    {
+      years.map((y, i) => (
+        <>
+          {[1, 2, 3, 4].map((q) => (
+            <span class="c" data-l={level(by.get(`${y}Q${q}`)?.n ?? 0)} data-edge={edge(i)} data-below={q < 3 ? '' : undefined}>
+              <span class="t">{tip(y, q)}</span>
+            </span>
+          ))}
+          <span class="yl" data-odd={y % 2 ? '' : undefined}>
+            '{String(y).slice(2)}
+          </span>
+        </>
+      ))
+    }
+  </div>
+  <div class="leg" aria-hidden="true">
+    <span>fewer</span>{[0, 1, 2, 3, 4].map((l) => <i data-l={l} />)}<span>more</span>
+    <span class="note">{total} merged · busiest year {busiest.y}</span>
+  </div>
+  <details class="tb">
+    <summary>as a table</summary>
+    <table>
+      <thead><tr><th scope="col">year</th><th scope="col">merged</th><th scope="col">projects</th></tr></thead>
+      <tbody>
+        {
+          yearly
+            .filter((r) => r.n)
+            .map((r) => (
+              <tr>
+                <td>{r.y}</td>
+                <td>{r.n}</td>
+                <td>{r.repos}</td>
+              </tr>
+            ))
+        }
+      </tbody>
+    </table>
+  </details>
+</figure>
+
+<style>
+  .hm {
+    margin: 0 0 24px;
+    padding: 16px 18px 14px;
+    border: 1px solid var(--line2);
+    border-radius: 12px;
+    background: var(--panel);
+  }
+  .cap {
+    margin: 0 0 12px;
+    font-size: 13px;
+    color: var(--mute);
+  }
+  .grid {
+    display: grid;
+    grid-auto-flow: column;
+    grid-template-rows: repeat(5, auto);
+    grid-template-columns: 2.2em;
+    grid-auto-columns: minmax(0, 1fr);
+    align-items: center;
+    gap: 4px;
+    max-width: 640px;
+    direction: ltr;
+  }
+  .c {
+    position: relative;
+    aspect-ratio: 1;
+    border-radius: 4px;
+    background: var(--hm0);
+    box-shadow: inset 0 0 0 1px var(--line2);
+  }
+  .c:hover {
+    outline: 2px solid var(--head);
+    outline-offset: 1px;
+  }
+  .hm [data-l='1'] {
+    background: var(--hm1);
+    box-shadow: none;
+  }
+  .hm [data-l='2'] {
+    background: var(--hm2);
+    box-shadow: none;
+  }
+  .hm [data-l='3'] {
+    background: var(--hm3);
+    box-shadow: none;
+  }
+  .hm [data-l='4'] {
+    background: var(--hm4);
+    box-shadow: none;
+  }
+  .rl,
+  .yl {
+    font-family: var(--f-mono);
+    font-size: 11px;
+    line-height: 1;
+    color: var(--dim);
+  }
+  .yl {
+    padding-top: 4px;
+    text-align: center;
+  }
+  .t {
+    position: absolute;
+    z-index: 3;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    display: none;
+    width: max-content;
+    max-width: 240px;
+    padding: 7px 10px;
+    border: 1px solid var(--line3);
+    border-radius: 6px;
+    background: var(--panel2);
+    box-shadow: 0 10px 24px -12px rgb(0 0 0 / 0.6);
+    font-size: 12.5px;
+    line-height: 1.4;
+    color: var(--text2);
+    pointer-events: none;
+    transform: translateX(-50%);
+  }
+  .c:hover .t {
+    display: block;
+  }
+  .c[data-edge='r'] .t {
+    left: auto;
+    right: -4px;
+    transform: none;
+  }
+  .c[data-edge='l'] .t {
+    left: -4px;
+    transform: none;
+  }
+  .c[data-below] .t {
+    top: calc(100% + 8px);
+    bottom: auto;
+  }
+  .leg {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px 5px;
+    max-width: 640px;
+    margin-top: 12px;
+    font-size: 12px;
+    color: var(--dim);
+  }
+  .leg i {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+    background: var(--hm0);
+    box-shadow: inset 0 0 0 1px var(--line2);
+  }
+  .note {
+    margin-inline-start: auto;
+    color: var(--mute);
+  }
+  .tb {
+    margin-top: 10px;
+    font-size: 13px;
+  }
+  .tb > summary {
+    display: inline-flex;
+    align-items: center;
+    min-height: 28px;
+    cursor: pointer;
+    color: var(--acc);
+  }
+  table {
+    width: 100%;
+    margin-top: 6px;
+    border-collapse: collapse;
+  }
+  th,
+  td {
+    padding: 5px 8px;
+    border-top: 1px solid var(--line);
+    text-align: start;
+    vertical-align: top;
+    color: var(--text3);
+  }
+  th {
+    font-weight: 500;
+    color: var(--mute);
+  }
+  td:nth-child(2) {
+    font-variant-numeric: tabular-nums;
+    color: var(--head);
+  }
+  @media (max-width: 560px) {
+    .grid {
+      position: relative;
+      gap: 3px;
+    }
+    .c {
+      position: static;
+    }
+    .c .t,
+    .c[data-edge] .t,
+    .c[data-below] .t {
+      left: 0;
+      right: 0;
+      top: auto;
+      bottom: calc(100% + 8px);
+      width: auto;
+      max-width: none;
+      transform: none;
+    }
+    .yl[data-odd] {
+      visibility: hidden;
+    }
+  }
+  @media print {
+    .t,
+    .tb {
+      display: none;
+    }
+    .hm {
+      break-inside: avoid;
+    }
+  }
+  @media (forced-colors: active) {
+    .c,
+    .leg i {
+      forced-color-adjust: none;
+      box-shadow: inset 0 0 0 1px CanvasText;
+    }
+  }
+</style>

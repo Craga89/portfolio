@@ -22,7 +22,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add src/fonts
+          git add src/assets/fonts
           git diff --cached --quiet && exit 0
           git commit -m "Self-host the site fonts (fetched from Google Fonts)"
           git push

@@ -1,0 +1,42 @@
+---
+id: acq
+order: 9
+file: acquisition.md
+group: business
+kicker: startup to acquisition · due diligence
+title: From startup to acquisition
+lede: "I've seen a B2B SaaS company through from startup to acquisition, leading engineering along the way: leading the team that built and evolved the platform the business ran on, making it ready for enterprise customers, and then representing engineering right through due diligence until the deal was done."
+points:
+  - "Technical leadership across a company's whole journey, from its early days to exit."
+  - First-hand experience of what an acquirer asks of engineering, and of having the answers ready.
+  - Engineering represented at every stage of the deal, through to completion.
+stat:
+  value: Startup → exit
+  label: B2B SaaS, through to acquisition
+flow:
+  label: the journey
+  steps:
+    - startup
+    - foundations
+    - scale
+    - enterprise-ready
+    - due diligence
+    - acquired
+---
+<Journey label="The journey">
+  <Milestone title="startup">early-stage B2B SaaS</Milestone>
+  <Milestone title="foundations">one monorepo, CI/CD from scratch</Milestone>
+  <Milestone title="scale">continuous deployment, modern AWS</Milestone>
+  <Milestone title="enterprise-ready">ISO 27001, GDPR, SSO, pen tests</Milestone>
+  <Milestone title="due diligence" tone="acc">engineering represented throughout</Milestone>
+  <Milestone title="acquired" tone="ok">deal completed</Milestone>
+</Journey>
+
+<FileLinks label="What technical due diligence examines, and the work behind each answer">
+  <FileLink file="aws.md">Architecture & scalability</FileLink>
+  <FileLink file="security.md">Security</FileLink>
+  <FileLink file="compliance.md">Compliance</FileLink>
+  <FileLink file="refactor.md">Code quality & maintainability</FileLink>
+  <FileLink file="ci-cd.md">Delivery & release process</FileLink>
+  <FileLink file="leadership.md">Team & leadership</FileLink>
+</FileLinks>

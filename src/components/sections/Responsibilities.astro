@@ -1,0 +1,238 @@
+---
+// responsibilities/: a tour that plays through each file (scripts/deck.ts), one tab per file.
+// Without script the first file shows, and each tab links to its file's own page.
+import Section from '../home/Section.astro';
+import ResponsibilityCard from '../files/ResponsibilityCard.astro';
+import { responsibilities, slugOf } from '../../lib/files';
+
+const all = await responsibilities();
+const first = all[0].data;
+---
+
+<Section id="responsibilities" cmd="ls ./responsibilities" note="roles & responsibilities" file="responsibilities/" gap={8}>
+  <p class="intro">
+    The responsibilities I've held beyond the code, and the impact they had: leading and growing the team, hiring, working with product and customers, incidents, budgets, ways of working and the move to AI-first engineering, seeing a startup through to acquisition, compliance and internal IT. It plays through each file on its own and holds while you hover or read. Jump to any file, or open its full detail.
+  </p>
+  <div class="deck" id="r-deck" tabindex="0" role="region" aria-roledescription="carousel" aria-label="Responsibilities tour" data-deck>
+    <div class="prog" role="tablist" aria-label="Responsibilities">
+      {
+        all.map((r, i) => (
+          <button type="button" role="tab" class="seg" aria-selected={i === 0 ? 'true' : 'false'} aria-controls={`rp-${r.data.id}`} aria-label={r.data.file} title={r.data.file} data-page={`/responsibilities/${slugOf(r.data.file)}/`}>
+            <span class="bar">
+              <i />
+            </span>
+            <span class="seg-l">{r.data.file.replace(/\.md$/, '')}</span>
+          </button>
+        ))
+      }
+    </div>
+    <div class="slides" aria-live="polite">
+      {all.map((entry, i) => <ResponsibilityCard entry={entry} index={i} total={all.length} panel={{ hidden: i > 0 }} />)}
+    </div>
+    <div class="ctl">
+      <button type="button" data-deck-prev><span aria-hidden="true">←</span> prev<span class="c-sr"> file</span></button>
+      <span class="mid">
+        <button type="button" data-deck-play data-on="false" hidden><span class="when-on">❚❚ pause</span><span class="when-off">▶ play</span></button>
+        <span class="next-l" data-deck-next-label>next: {all[1].data.file}</span>
+      </span>
+      <button type="button" data-deck-next>next<span class="c-sr"> file</span> <span aria-hidden="true">→</span></button>
+    </div>
+  </div>
+  <p class="c-perma"><a href={`/responsibilities/${slugOf(first.file)}/`} data-deck-perma>{first.file} on its own page <span aria-hidden="true">↗</span></a></p>
+</Section>
+
+<style>
+  .intro {
+    max-width: 72ch;
+    margin: 0 0 24px;
+    font-size: 14px;
+    color: var(--mute);
+  }
+  .deck {
+    --dwell: 10s;
+    overflow: hidden;
+    border: 1px solid var(--line2);
+    border-radius: 14px;
+    background: var(--panel);
+  }
+  .deck:focus-visible {
+    outline: 2px solid var(--acc);
+    outline-offset: -2px;
+  }
+  .prog {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: 6px;
+    padding: 14px 20px 0;
+  }
+  .seg {
+    all: unset;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+    padding: 8px 0 4px;
+    cursor: pointer;
+    font-family: var(--f-mono);
+  }
+  .seg:focus-visible {
+    outline: 2px solid var(--acc);
+    outline-offset: 2px;
+    border-radius: 3px;
+  }
+  .bar {
+    display: block;
+    height: 4px;
+    overflow: hidden;
+    border-radius: 2px;
+    background: var(--line3);
+  }
+  /* Progress: files already seen are full, and the current one fills over --dwell while the tour
+     plays (scripts/deck.ts moves on when the fill ends), pausing with it. */
+  .bar i {
+    display: block;
+    height: 100%;
+    background: var(--acc);
+    transform: scaleX(0);
+    transform-origin: left;
+  }
+  .seg[data-seen] .bar i,
+  .seg[aria-selected='true'] .bar i {
+    transform: none;
+  }
+  .deck[data-playing] .seg[aria-selected='true'] .bar i {
+    animation: fill var(--dwell, 10s) linear both;
+  }
+  .deck[data-paused] .seg[aria-selected='true'] .bar i {
+    animation-play-state: paused;
+  }
+  :root[dir='rtl'] .bar i {
+    transform-origin: right;
+  }
+  @keyframes fill {
+    from {
+      transform: scaleX(0);
+    }
+  }
+  .seg-l {
+    overflow: hidden;
+    font-size: 11px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    color: var(--dim);
+    transition: color 0.2s ease;
+  }
+  .seg:hover .seg-l {
+    color: var(--text3);
+  }
+  .seg[aria-selected='true'] .seg-l {
+    color: var(--head);
+    font-weight: 700;
+  }
+  .slides {
+    view-transition-name: c-rs;
+    touch-action: pan-y pinch-zoom;
+  }
+  :root[data-vt-theme] .slides {
+    view-transition-name: none;
+  }
+  .ctl {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 20px;
+    border-top: 1px solid var(--line2);
+    background: var(--panel2);
+    font-size: 13px;
+  }
+  .ctl button {
+    all: unset;
+    box-sizing: border-box;
+    display: inline-flex;
+    align-items: center;
+    min-height: 40px;
+    padding: 0 14px;
+    border: 1px solid var(--line3);
+    border-radius: 6px;
+    cursor: pointer;
+    color: var(--text3);
+    transition:
+      border-color 0.2s ease,
+      color 0.2s ease;
+  }
+  .ctl button:hover {
+    border-color: var(--acc);
+    color: var(--head);
+  }
+  .ctl button:focus-visible {
+    outline: 2px solid var(--acc);
+    outline-offset: 2px;
+  }
+  .mid {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+  }
+  .ctl button[hidden] {
+    display: none;
+  }
+  /* Its label says what it will do: pause while playing, play while stopped. */
+  [data-deck-play][data-on='true'] .when-off,
+  [data-deck-play][data-on='false'] .when-on {
+    display: none;
+  }
+  .next-l {
+    color: var(--dim);
+    text-align: center;
+  }
+  .c-perma {
+    margin: 12px 0 0;
+    font-size: 13px;
+    text-align: end;
+  }
+  .c-perma a {
+    font-family: var(--f-mono);
+  }
+  @media (max-width: 820px) {
+    .seg-l {
+      display: none;
+    }
+    .prog {
+      gap: 4px;
+      padding: 12px 14px 0;
+    }
+    .ctl {
+      padding: 10px 12px;
+    }
+  }
+  @media print {
+    .deck {
+      overflow: visible;
+      border: 0;
+    }
+    .prog,
+    .ctl,
+    .c-perma {
+      display: none;
+    }
+  }
+  @media (forced-colors: active) {
+    .deck {
+      border: 1px solid CanvasText;
+    }
+    .bar {
+      border: 1px solid CanvasText;
+    }
+    .bar i {
+      forced-color-adjust: none;
+      background: Highlight;
+    }
+    .seg[aria-selected='true'] .seg-l {
+      text-decoration: underline;
+    }
+  }
+</style>

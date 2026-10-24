@@ -1,0 +1,34 @@
+---
+id: site
+order: 14
+file: this-site.md
+kicker: "this site · craigthompson.dev · [github.com/Craga89/portfolio](https://github.com/Craga89/portfolio)"
+title: "This site, run like a production system"
+---
+It's a small site, but it's built and run the way I'd run a product. Everything lives in one public repository, every change goes through automated quality gates, and the AI feature has tests of its own. The results below come live from the latest CI runs.
+
+<LiveResults />
+
+<Routes label="How a visit works">
+  <Route name="the page" hops={[{ name: 'Browser' }, { name: 'GitHub Pages', note: 'static, prerendered, works offline' }]} />
+  <Route name="ask.sh" hops={[{ name: 'Browser' }, { name: 'Cloudflare Worker', note: 'rate-limited per visitor, and capped within the free daily AI allowance' }, { name: 'Workers AI', note: 'three models, each a fallback for the one before; answers only from this site' }]} />
+  <Route name="counts" hops={[{ name: 'Browser' }, { name: 'Cloudflare Worker' }, { name: 'D1', note: 'anonymous question log and visit counts' }]} />
+  <Route name="agents" hops={[{ name: 'AI agent', note: 'in the browser' }, { name: 'WebMCP or MCP', note: 'the same tools, on the page or on the Worker: profile, career, files, search and ask.sh' }]} />
+  <Route name="translation" hops={[{ name: 'Browser', note: 'its built-in Translator API, when the visitor wants another language' }, { name: 'on the device', note: '38 languages, right-to-left included; nothing is sent anywhere' }]} />
+</Routes>
+
+<Gates label="What every change goes through">
+  <Gate name="quality">lint, format and type checks, and unit tests with a coverage threshold</Gate>
+  <Gate name="build">prerender the page, self-host fonts, resize images, print cv.pdf, write the contact card and the ask.sh index</Gate>
+  <Gate name="test">end-to-end tests on a desktop and a phone, the WCAG 2.2 AA suite and a screenshot comparison against approved baselines</Gate>
+  <Gate name="deploy">GitHub Pages, only when every gate passes, stamped with the commit; then Lighthouse thresholds</Gate>
+  <Gate name="worker">deploy, a smoke test, then the ask.sh answer tests</Gate>
+  <Gate name="weekly">every check again, plus a dead-link check, visit and question stats, and the open-source counts</Gate>
+</Gates>
+
+<InPractice>
+- The same gates I'd put on a product: a change that hurts accessibility, performance or the visuals fails its check.
+- The AI feature is tested like any other code, for the right facts, invented ones and prompt injection.
+- Anonymous counts instead of tracking: no cookies, no IP addresses, nothing that identifies a visitor.
+- It runs on the free tiers of GitHub Pages and Cloudflare.
+</InPractice>

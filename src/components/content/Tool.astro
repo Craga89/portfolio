@@ -1,0 +1,29 @@
+---
+interface Props {
+  /** One or more tool names, separated by spaces. */
+  names: string;
+}
+const names = Astro.props.names.split(/\s+/).filter(Boolean);
+---
+
+<li class="tool">{names.map((n, i) => <>{i > 0 && ' · '}<code>{n}</code></>)}<span><slot /></span></li>
+
+<style>
+  .tool {
+    min-width: 0;
+    border: 1px solid var(--line2);
+    border-radius: 8px;
+    padding: 10px 12px;
+  }
+  code {
+    font-size: 13px;
+    color: var(--head);
+    overflow-wrap: anywhere;
+  }
+  span {
+    display: block;
+    margin-top: 3px;
+    font-size: 13px;
+    color: var(--text3);
+  }
+</style>

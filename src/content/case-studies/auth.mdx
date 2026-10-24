@@ -1,0 +1,40 @@
+---
+id: auth
+order: 9
+file: auth.md
+kicker: "authentication & identity · 2024 → 2026"
+title: "Sign-in that enterprises trust and users don't notice"
+---
+I led the replacement of a legacy, multi-tenant sign-in system with a new auth framework, rolled out organisation by organisation behind a per-tenant switch. Before that, we hardened the old one: expiring tokens, central signing and key rotation.
+
+<Pipeline label="Every sign-in, end to end" name="Sign-in flow">
+  <Stage title="sign-in request" note="from a tenant domain" />
+  <Stage title="resolve organisation" note="from the host name" />
+  <Stage title="choose a method"><Tags items={['SAML SSO', 'magic link', 'password']} /></Stage>
+  <Stage title="2FA" note="enforced per org" />
+  <Stage title="rate-limit check" note="per identity" />
+  <Stage final title="session + signed token" note="EdDSA · published keys" />
+</Pipeline>
+
+<Explainers>
+  <Explainer title="rate limiting by identity, not just IP" text="Separate buckets per user, email, token and IP, per organisation, so one noisy office network can't lock out everyone behind it.">
+    <Buckets items={[{ label: 'user', fill: 62 }, { label: 'email', fill: 38 }, { label: 'token', fill: 20 }, { label: 'IP', fill: 80 }]} />
+  </Explainer>
+  <Explainer title="zero-downtime key rotation" text="Verifiers accept old and new keys during an overlap window, so signing keys rotate without logging anyone out.">
+    <KeyRotation />
+  </Explainer>
+</Explainers>
+
+<Evolution label="How it evolved: legacy service → enterprise-grade sign-in" name="identity evolution">
+  <Era>legacy auth service</Era>
+  <Era>shared auth library</Era>
+  <Era>expiring, rotated tokens</Era>
+  <Era>new auth framework</Era>
+</Evolution>
+
+<InPractice>
+- Enterprise customers sign in through their own identity provider and can require 2FA for everyone.
+- Sign-in links in emails still work after Slack or Outlook previews them.
+- Tokens expire and keys rotate on a schedule, with no forced logouts.
+- Services can verify tokens themselves against published keys, ready for service-to-service auth.
+</InPractice>

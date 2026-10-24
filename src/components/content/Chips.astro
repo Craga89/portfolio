@@ -1,0 +1,21 @@
+---
+// A list of names (tools, skills), each a <Chip>.
+import Block from './Block.astro';
+
+interface Props {
+  label?: string;
+}
+---
+
+<Block label={Astro.props.label}><ul class="chips"><slot /></ul></Block>
+
+<style>
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+</style>

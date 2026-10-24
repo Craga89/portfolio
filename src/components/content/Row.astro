@@ -1,0 +1,36 @@
+---
+interface Props {
+  area: string;
+  before: string;
+}
+const { area, before } = Astro.props;
+---
+
+<div role="row" class="row c-pop"><span role="cell" class="area">{area}</span><span role="cell" class="before"><span class="c-strike">{before}</span></span><span role="cell" class="after"><slot /></span></div>
+
+<style>
+  .row {
+    padding: 12px 16px;
+    border-top: 1px solid var(--line);
+    animation-delay: 0.1s;
+  }
+  .row:nth-child(3) { animation-delay: 0.18s; }
+  .row:nth-child(4) { animation-delay: 0.26s; }
+  .row:nth-child(5) { animation-delay: 0.34s; }
+  .row:nth-child(6) { animation-delay: 0.42s; }
+  .row:nth-child(7) { animation-delay: 0.5s; }
+  .row:nth-child(n + 8) { animation-delay: 0.58s; }
+  .row .c-strike { animation-delay: 0.4s; }
+  .row:nth-child(3) .c-strike { animation-delay: 0.58s; }
+  .row:nth-child(4) .c-strike { animation-delay: 0.66s; }
+  .row:nth-child(5) .c-strike { animation-delay: 0.74s; }
+  .row:nth-child(6) .c-strike { animation-delay: 0.82s; }
+  .row:nth-child(n + 7) .c-strike { animation-delay: 0.9s; }
+  .area {
+    color: var(--mute);
+    font-size: 14px;
+  }
+  .after {
+    color: var(--head);
+  }
+</style>

@@ -1,0 +1,43 @@
+---
+// A before-and-after table, one <Row> per area.
+interface Props {
+  label: string;
+}
+const { label } = Astro.props;
+---
+
+<div role="table" aria-label={label} class="compare">
+  <div role="row" class="row head">
+    <span role="columnheader" class="area">area</span><span role="columnheader" class="before">before</span><span role="columnheader" class="after">after</span>
+  </div>
+  <slot />
+</div>
+
+<style>
+  .compare {
+    border: 1px solid var(--line2);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .head {
+    background: var(--panel2);
+    font-size: 12px;
+    color: var(--mute);
+    padding: 10px 16px;
+  }
+  /* Shared with Row.astro, which renders inside this table. */
+  .compare :global(.row) {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 16px;
+  }
+  .compare :global(.area) {
+    flex: 0 0 130px;
+  }
+  .compare :global(.before) {
+    flex: 1 1 160px;
+  }
+  .compare :global(.after) {
+    flex: 2 1 260px;
+  }
+</style>

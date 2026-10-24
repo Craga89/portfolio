@@ -1,0 +1,39 @@
+---
+id: aws
+order: 7
+file: aws.md
+kicker: "aws architecture · 2021 → 2026"
+title: "Nothing public but the CDN"
+---
+I led the platform's move from containers on EC2 hosts behind a public load balancer to Fargate tasks that talk over <Term id="svcconnect" trail=",">ECS Service Connect</Term> with all customer traffic entering through CloudFront and WAF. Each step shipped without a big-bang cutover.
+
+<Stacks>
+  <ArchStack label="before · ~2020" access="Operator access: SSH bastion">
+    <Layer>Internet</Layer>
+    <Layer note="internet-facing">Public load balancer</Layer>
+    <Layer note="hosts to patch">ECS on EC2 hosts</Layer>
+    <Layer>Database via VPC peering</Layer>
+  </ArchStack>
+  <ArchStack after label="after · 2026" access="Operator access: SSO + SSM, no SSH">
+    <Layer>Internet</Layer>
+    <Layer tone="acc" note="the only public entry">CloudFront + WAF</Layer>
+    <Layer tone="ok" note="private">Internal load balancer</Layer>
+    <Layer tone="ok" note="no hosts">Fargate · Service Connect</Layer>
+    <Layer tone="ok">Database via PrivateLink</Layer>
+  </ArchStack>
+</Stacks>
+
+<Evolution label="How it evolved: hosts to patch → no hosts at all" name="compute evolution">
+  <Era>ECS on EC2 hosts</Era>
+  <Era>capacity autoscaling</Era>
+  <Era>awsvpc networking</Era>
+  <Era>Fargate rollout</Era>
+  <Era>Fargate + Service Connect</Era>
+</Evolution>
+
+<InPractice>
+- No servers to patch: every service runs on Fargate.
+- The attack surface is one CDN. WAF moved to blocking only after a 14-day shadow run showed no legitimate traffic would be stopped.
+- Each service receives only the events it handles, using subscription filters generated from its code at build time.
+- Dev environments share one networking stack and one database cluster, so a new environment is cheap to stand up.
+</InPractice>

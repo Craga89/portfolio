@@ -1,0 +1,26 @@
+---
+id: refactor
+order: 2
+file: refactor.md
+kicker: "refactors & tooling migrations"
+title: "Keep the toolchain modern, one reviewed change at a time"
+---
+Tooling ages fast. Rather than letting it drift, I've led a steady run of repo-wide migrations: linting, packages, bundling, types, runtime and the compiler itself. Each one was scripted with a <Term id="codemod">codemod</Term> and landed as a single reviewed change, so there was never a long-lived branch or a half-migrated codebase.
+
+<Migrations label="Repo-wide migrations I've led" total="9,700+ files moved across them">
+  <Migration area="linting" from="TSLint" to="ESLint">455 files</Migration>
+  <Migration area="ci" from="Semaphore" to="self-hosted Buildkite">CI as code</Migration>
+  <Migration area="packages" from="yarn" to="pnpm workspaces">619 files</Migration>
+  <Migration area="bundling" from="Webpack" to="Vite">3 front ends</Migration>
+  <Migration area="types" from="type aliases" to="interfaces">804-file codemod</Migration>
+  <Migration area="lint + format" from="ESLint + Prettier" to="oxlint + oxfmt">4,366 files</Migration>
+  <Migration area="runtime" from="compiled JS" to="TypeScript run natively by Node">3,502 files</Migration>
+  <Migration area="compiler" from="TypeScript 5.8" to="TypeScript 7">~10× faster typechecks</Migration>
+  <Migration area="e2e testing" from="Cypress" to="Playwright">faster, more stable CI</Migration>
+</Migrations>
+
+<InPractice>
+- Upgrades land across the repo in one change, so the codebase doesn't drift into "old" and "new".
+- Back-end services start straight from TypeScript source, with no build step in between.
+- Faster tools where it counts: one quick linter and formatter, and typechecks around 10× faster on TypeScript 7.
+</InPractice>

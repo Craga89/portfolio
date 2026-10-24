@@ -1,0 +1,110 @@
+---
+// A home page section: its "$ cat file # note" heading, with a # that copies a link to it
+// (scripts/anchors.ts), then the content.
+interface Props {
+  id: string;
+  /** The command after "$ ", e.g. "cat career.log". */
+  cmd: string;
+  note: string;
+  /** The file named in the link's label. */
+  file: string;
+  /** Space under the heading, in px. */
+  gap?: 8 | 12 | 24 | 28 | 32;
+  class?: string;
+}
+const { id, cmd, note, file, gap = 24, class: cls } = Astro.props;
+---
+
+<section id={id} class:list={['section', cls]}>
+  <div class="hrow" data-gap={gap}>
+    <h2 class="c-cmd"><span translate="no">$ {cmd}</span> <span class="note"># {note}</span></h2>
+    <a class="c-anchor" href={`#${id}`} data-file={file} aria-label={`Copy link to ${file}`} title="Copy link to this section">#</a>
+  </div>
+  <slot />
+</section>
+
+<style>
+  .section {
+    margin-top: clamp(72px, 10vw, 128px);
+  }
+  @supports (animation-timeline: view()) {
+    .section {
+      animation-name: c-up;
+      animation-timing-function: linear;
+      animation-fill-mode: both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 30%;
+    }
+  }
+  .hrow {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 4px 10px;
+    margin-bottom: 24px;
+  }
+  .hrow[data-gap='8'] {
+    margin-bottom: 8px;
+  }
+  .hrow[data-gap='12'] {
+    margin-bottom: 12px;
+  }
+  .hrow[data-gap='28'] {
+    margin-bottom: 28px;
+  }
+  .hrow[data-gap='32'] {
+    margin-bottom: 32px;
+  }
+  h2 {
+    margin: 0;
+    font-size: clamp(16px, 2vw, 20px);
+    font-weight: 500;
+    color: var(--ok);
+  }
+  .note {
+    color: var(--dim);
+  }
+  .c-anchor {
+    display: inline-grid;
+    place-items: center;
+    min-width: 28px;
+    min-height: 28px;
+    border-radius: 5px;
+    font-family: var(--f-mono);
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--line3);
+    text-decoration: none;
+    transition:
+      color 0.2s ease,
+      background-color 0.2s ease;
+  }
+  .hrow:hover .c-anchor,
+  .c-anchor:focus-visible {
+    color: var(--acc);
+  }
+  .c-anchor:hover {
+    background: var(--panel2);
+  }
+  .c-anchor[data-done] {
+    color: var(--ok);
+  }
+  @media (prefers-contrast: more) {
+    .c-anchor {
+      color: var(--mute);
+    }
+  }
+  @media print {
+    .section {
+      margin-top: 20pt;
+    }
+    .c-anchor {
+      display: none;
+    }
+    h2 {
+      margin-bottom: 8pt;
+      font-size: 12pt;
+      break-after: avoid;
+    }
+  }
+</style>

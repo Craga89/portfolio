@@ -1,0 +1,47 @@
+---
+// A role on the CV: title, where and when, then its bullet points (the slot).
+interface Props {
+  title: string;
+  where: string;
+  when: string;
+}
+const { title, where, when } = Astro.props;
+---
+
+<div class="job">
+  <h3>{title}</h3>
+  <div class="meta"><span>{where}</span><span>{when}</span></div>
+  <slot />
+</div>
+
+<style>
+  .job {
+    margin: 0 0 18px;
+  }
+  h3 {
+    margin: 0;
+    font-family: inherit;
+    font-size: 16px;
+  }
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 2px 16px;
+    margin: 2px 0 6px;
+    font-size: 14px;
+    color: var(--cv-mute);
+  }
+  @media print {
+    .job {
+      break-inside: auto;
+    }
+    h3,
+    .meta {
+      break-after: avoid;
+    }
+    .job :global(li) {
+      break-inside: avoid;
+    }
+  }
+</style>

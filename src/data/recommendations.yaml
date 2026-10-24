@@ -1,0 +1,13 @@
+# From LinkedIn, quoted as written.
+joe-forster:
+  order: 1
+  name: Joe Forster
+  role: Senior AI Programmer at Ubisoft Reflections
+  when: October 2012 · worked with Craig on the same team
+  quote: Craig is a very able developer, who is capable of putting together high-quality front-end solutions at lightning speed. Always friendly and willing to lend his expertise JavaScript, jQuery, CSS and related web technologies, he is indispensable part of the Auto Club Revolution web team.
+peter-davies:
+  order: 2
+  name: Peter Davies
+  role: Software Engineering Leader | Product Business | Technology
+  when: October 2012 · worked with Craig at different companies
+  quote: At the time of writing I am working with Craig on an ongoing very large and complex web-development project. Craig is the go-to person for all of the frontend jQuery and CSS related issues. He is also increasingly getting involved with the backend-development. An all-round excellent web-developer.

@@ -1,0 +1,174 @@
+---
+// Search and jump (Ctrl/⌘ K, or /), on every page. The list and its behaviour load on first open
+// (scripts/palette.ts, from /palette.json).
+import Icon from '../Icon.astro';
+---
+
+<dialog id="c-pal" class="pal" aria-labelledby="c-pal-t">
+  <h2 id="c-pal-t" class="c-sr">Search and jump</h2>
+  <div class="in">
+    <Icon name="search" size={18} />
+    <input id="c-pal-field" class="field" type="text" role="combobox" aria-expanded="true" aria-controls="c-pal-list" aria-autocomplete="list" aria-label="Search sections, files and actions" autocomplete="off" spellcheck="false" placeholder="Jump to a section or file, or ask a question…" />
+  </div>
+  <ul id="c-pal-list" class="list" role="listbox" aria-label="Results"></ul>
+  <div class="foot" aria-hidden="true"><span><kbd>↑</kbd><kbd>↓</kbd> move</span><span><kbd>↵</kbd> open</span><span><kbd>esc</kbd> close</span></div>
+  <p class="c-sr" role="status" data-pal-count></p>
+</dialog>
+
+<style>
+  .pal {
+    box-sizing: border-box;
+    width: min(580px, calc(100vw - 24px));
+    max-height: min(560px, calc(100dvh - 48px));
+    margin: min(14vh, 120px) auto auto;
+    padding: 0;
+    overflow: hidden;
+    border: 1px solid var(--line3);
+    border-radius: 12px;
+    background: var(--panel);
+    box-shadow: 0 24px 60px -20px rgb(0 0 0 / 0.6);
+    font-family: var(--f-body);
+    color: var(--text);
+  }
+  .pal[open] {
+    display: flex;
+    flex-direction: column;
+  }
+  .pal::backdrop {
+    background: rgb(8 14 11 / 0.55);
+    backdrop-filter: blur(3px);
+  }
+  :global(:root[data-theme='light']) .pal::backdrop {
+    background: rgb(15 29 22 / 0.28);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .pal[open] {
+      animation: pal-in 0.16s ease both;
+    }
+    @keyframes pal-in {
+      from {
+        opacity: 0;
+        transform: translateY(-8px) scale(0.985);
+      }
+    }
+  }
+  .in {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 14px;
+    border-bottom: 1px solid var(--line2);
+    color: var(--mute);
+  }
+  .in:focus-within {
+    box-shadow: inset 0 -2px 0 var(--acc);
+  }
+  .field {
+    all: unset;
+    box-sizing: border-box;
+    flex: 1;
+    min-width: 0;
+    min-height: 48px;
+    font-family: var(--f-mono);
+    font-size: 16px;
+    color: var(--head);
+    caret-color: var(--acc);
+  }
+  .field::placeholder {
+    color: var(--dim);
+  }
+  .list {
+    flex: 1;
+    min-height: 0;
+    margin: 0;
+    padding: 6px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    list-style: none;
+  }
+  /* The options, built by scripts/palette.ts. */
+  .list :global(.o) {
+    display: grid;
+    grid-template-columns: 22px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 10px;
+    min-height: 42px;
+    padding: 0 10px;
+    border-radius: 7px;
+    cursor: pointer;
+    font-size: 14.5px;
+    color: var(--text2);
+  }
+  .list :global(.o:hover) {
+    background: var(--panel2);
+  }
+  .list :global(.o[aria-selected='true']) {
+    background: var(--acc-bg);
+    box-shadow: inset 2px 0 0 var(--acc);
+    color: var(--head);
+  }
+  .list :global(.i) {
+    font-family: var(--f-mono);
+    font-size: 13px;
+    text-align: center;
+    color: var(--dim);
+  }
+  .list :global(.o[aria-selected='true'] .i) {
+    color: var(--acc);
+  }
+  .list :global(.l) {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  .list :global(.l mark) {
+    background: none;
+    font-weight: 700;
+    color: var(--acc);
+  }
+  .list :global(.k) {
+    font-family: var(--f-mono);
+    font-size: 11.5px;
+    color: var(--dim);
+  }
+  .foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 16px;
+    padding: 10px 14px;
+    border-top: 1px solid var(--line2);
+    background: var(--panel2);
+    font-size: 12px;
+    color: var(--mute);
+  }
+  .foot span {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+  @media print {
+    .pal {
+      display: none;
+    }
+  }
+  @media (forced-colors: active) {
+    .pal {
+      border: 1px solid CanvasText;
+    }
+    .list :global(.o[aria-selected='true']) {
+      forced-color-adjust: none;
+      background: Highlight;
+      color: HighlightText;
+    }
+    .list :global(.o[aria-selected='true'] *) {
+      color: HighlightText;
+    }
+    .list :global(.l mark) {
+      forced-color-adjust: none;
+      background: Mark;
+      color: MarkText;
+    }
+  }
+</style>

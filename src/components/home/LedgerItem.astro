@@ -1,0 +1,159 @@
+---
+// One entry: the date, a title with a mono line under it, and on the right either a short note or
+// a button. With `href` the title is the link; with `button` the title is plain text.
+interface Props {
+  date: Date;
+  title: string;
+  sub: string;
+  href?: string;
+  /** A view-transition name, so the title moves into place on the page it opens. */
+  vt?: string;
+  meta?: string;
+  button?: { href: string; text: string; label: string };
+  hidden?: boolean;
+}
+const { date, title, sub, href, vt, meta, button, hidden } = Astro.props;
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const when = `${MONTHS[date.getUTCMonth()]} ${date.getUTCFullYear()}`;
+const iso = date.toISOString().slice(0, 10);
+---
+
+<li class="item" hidden={hidden}>
+  <time class="d" datetime={iso}>{when}</time>
+  {
+    href ? (
+      <a class="a" href={href}>
+        <span class="t" data-vt={vt}>
+          {title}
+        </span>
+        <span class="f" translate="no">
+          <bdi>{sub}</bdi>
+        </span>
+      </a>
+    ) : (
+      <span class="a">
+        <span class="t">{title}</span>
+        <span class="f" translate="no">
+          <bdi>{sub}</bdi>
+        </span>
+      </span>
+    )
+  }
+  {meta && <span class="m">{meta}</span>}
+  {
+    button && (
+      <a class="b" href={button.href} aria-label={button.label}>
+        {button.text} <span aria-hidden="true">↗</span>
+      </a>
+    )
+  }
+</li>
+
+<style>
+  .item {
+    display: grid;
+    grid-template-columns: 7.5em minmax(0, 1fr) auto;
+    align-items: baseline;
+    gap: 4px 18px;
+    padding: 12px 0;
+    border-bottom: 1px dashed var(--line2);
+  }
+  .item[hidden] {
+    display: none;
+  }
+  .d {
+    font-family: var(--f-mono);
+    font-size: 13px;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    color: var(--dim);
+  }
+  .a {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+    color: var(--head);
+    text-decoration: none;
+  }
+  .t {
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.4;
+    text-wrap: pretty;
+  }
+  /* Where supported, the title morphs into the post's heading as the page opens. */
+  .t[data-vt] {
+    view-transition-name: attr(data-vt type(<custom-ident>), none);
+    view-transition-class: post-title;
+  }
+  a.a:hover {
+    color: var(--head);
+  }
+  a.a:hover .t {
+    text-decoration: underline;
+    text-decoration-color: var(--acc);
+    text-underline-offset: 3px;
+  }
+  a.a:focus-visible {
+    outline: 2px solid var(--acc);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+  .f {
+    overflow: hidden;
+    font-family: var(--f-mono);
+    font-size: 12px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    color: var(--acc);
+  }
+  .m {
+    font-size: 12.5px;
+    white-space: nowrap;
+    text-align: end;
+    color: var(--mute);
+  }
+  .b {
+    box-sizing: border-box;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    justify-self: end;
+    min-width: 8.5em;
+    min-height: 36px;
+    padding: 0 12px;
+    border: 1px solid var(--line3);
+    border-radius: 8px;
+    font-family: var(--f-mono);
+    font-size: 12.5px;
+    white-space: nowrap;
+    color: var(--text3);
+    text-decoration: none;
+  }
+  .b:hover {
+    border-color: var(--acc);
+    color: var(--head);
+  }
+  @media (max-width: 640px) {
+    .item {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 2px;
+    }
+    .d {
+      order: -1;
+    }
+    .m {
+      white-space: normal;
+      text-align: start;
+    }
+    .b {
+      justify-self: start;
+    }
+  }
+  @media print {
+    .item {
+      break-inside: avoid;
+    }
+  }
+</style>

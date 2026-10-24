@@ -1,0 +1,77 @@
+---
+// webmcp.md: whether this browser has WebMCP (updated by scripts/webmcp.ts once the tools are
+// registered), and the MCP server's address with a copy button (scripts/copy.ts).
+import { ASK_ENDPOINT } from '../../site';
+
+const mcpUrl = ASK_ENDPOINT.replace(/\/ask$/, '/mcp');
+---
+
+<p class="status" data-webmcp-status data-on="false"><span class="dot" aria-hidden="true"></span><span data-webmcp-line>In this browser: no WebMCP, so the page skips it.</span></p>
+{
+  mcpUrl && (
+    <p class="url">
+      <span class="k">MCP server</span>
+      <code>{mcpUrl}</code>
+      <button type="button" class="copy" data-copy={mcpUrl} data-copy-note="MCP server address copied">
+        copy
+      </button>
+    </p>
+  )
+}
+
+<style>
+  .status {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin: 14px 0 0;
+    font-size: 13px;
+    color: var(--mute);
+  }
+  .dot {
+    flex: none;
+    align-self: flex-start;
+    width: 8px;
+    height: 8px;
+    margin-top: 0.45em;
+    border-radius: 50%;
+    box-shadow: inset 0 0 0 1.5px var(--dim);
+  }
+  .status[data-on='true'] {
+    color: var(--text2);
+  }
+  .status[data-on='true'] .dot {
+    background: var(--ok);
+    box-shadow: none;
+  }
+  .url {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 10px;
+    margin: 10px 0 0;
+    font-size: 13px;
+  }
+  .k {
+    color: var(--mute);
+  }
+  code {
+    min-width: 0;
+    color: var(--head);
+    overflow-wrap: anywhere;
+  }
+  .copy {
+    min-height: 28px;
+    padding: 0 10px;
+    border: 1px solid var(--line3);
+    border-radius: 6px;
+    background: transparent;
+    color: var(--acc);
+    font: inherit;
+    font-size: 13px;
+    cursor: pointer;
+  }
+  .copy:hover {
+    border-color: var(--acc);
+  }
+</style>

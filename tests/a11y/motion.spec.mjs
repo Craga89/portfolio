@@ -31,7 +31,7 @@ test.describe('motion', { tag: '@desktop' }, () => {
     await page.goto('/');
     const before = await page.evaluate(loops);
     test.skip(!before.length, 'nothing loops');
-    await page.locator('.v2-side .v2-motion').click();
+    await page.locator('aside [data-motion-toggle]').click();
     await expect.poll(() => page.evaluate(loops)).toEqual([]);
   });
 

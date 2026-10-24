@@ -1,0 +1,54 @@
+---
+interface Props {
+  /** The stage, in bold; the slot describes it. */
+  term: string;
+  /** The last stage, where the flow ends up. */
+  final?: boolean;
+}
+const { term, final } = Astro.props;
+---
+
+<li class="flow-step"><span class="stage" data-final={final ? '' : undefined}><b>{term}</b> <slot /></span>{!final && <span class="arrow" aria-hidden="true">→</span>}</li>
+
+<style>
+  .flow-step {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+  }
+  .stage {
+    min-width: 0;
+    border: 1px solid var(--line3);
+    border-radius: 6px;
+    padding: 6px 10px;
+    color: var(--text3);
+  }
+  .stage[data-final] {
+    border-color: var(--ok);
+  }
+  b {
+    color: var(--head);
+    font-weight: 600;
+  }
+  .arrow {
+    color: var(--acc);
+  }
+  :root[dir='rtl'] .arrow {
+    display: inline-block;
+    scale: -1 1;
+  }
+  @media (max-width: 560px) {
+    .flow-step {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 4px;
+    }
+    .arrow {
+      align-self: flex-start;
+      margin-inline-start: 14px;
+      line-height: 1;
+      transform: rotate(90deg);
+    }
+  }
+</style>

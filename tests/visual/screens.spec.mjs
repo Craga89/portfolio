@@ -2,10 +2,11 @@
 // catch unintended visual changes. A commit with "[visual]" in its message accepts the new look.
 //   npx playwright test --project=visual                      compare
 //   npx playwright test --project=visual --update-snapshots   accept the current look
-import { test, expect } from '../fixtures.mjs';
+import { test, expect, addStyle } from '../fixtures.mjs';
 
 // Things that change on their own (the clock, the build stamp) or float over content (the chat bar).
-const STEADY = '.v2-time,.v2-ver,.c-chat{visibility:hidden!important} html{scroll-behavior:auto!important}';
+const STEADY =
+  '[data-clock],[data-built],[data-chat]{visibility:hidden!important} html{scroll-behavior:auto!important}';
 
 /**
  * @typedef {{ name: string, width: number, height: number, scheme: 'dark' | 'light', mobile?: boolean, path?: string, el?: string, full?: boolean }} View
@@ -45,11 +46,8 @@ for (const v of VIEWS) {
 
     test(v.name, async ({ page }) => {
       await page.goto(v.path || '/');
-      await page.addStyleTag({ content: STEADY });
-      await page.evaluate(() => {
-        document.documentElement.classList.add('cv-all');
-        return document.fonts.ready;
-      });
+      await addStyle(page, STEADY);
+      await page.evaluate(() => document.fonts.ready);
       if (v.el) {
         await page.locator(v.el).scrollIntoViewIfNeeded();
         await expect(page.locator(v.el)).toHaveScreenshot(v.name + '.png');

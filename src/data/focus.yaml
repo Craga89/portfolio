@@ -1,0 +1,22 @@
+# Focus links (/?focus=…): a suggested reading order under the intro, for sending a tailored link.
+# `case` and `resp` are the tabs opened; `read` lists files in order (case/<id> or resp/<id>).
+leadership:
+  label: engineering leadership
+  case: cost
+  resp: lead
+  read: [resp/lead, resp/hire, resp/acq, resp/bud, resp/inc, case/cost]
+platform:
+  label: platform engineering
+  case: mono
+  resp: inc
+  read: [case/mono, case/ci, case/aws, case/sec, case/data, resp/inc]
+ai:
+  label: AI-first engineering
+  case: ai
+  resp: aiproc
+  read: [resp/aiproc, case/ai, case/site, case/mcp, case/test]
+frontend:
+  label: front end and accessibility
+  case: a11y
+  resp: lead
+  read: [case/a11y, case/i18n, case/refactor, case/test, case/mono]

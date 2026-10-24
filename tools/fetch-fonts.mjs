@@ -1,11 +1,11 @@
-// Downloads the Google Fonts the site uses as woff2 files into src/fonts/, keeping the
-// latin and latin-ext subsets, and writes src/fonts/fonts.css with matching @font-face rules.
+// Downloads the Google Fonts the site uses as woff2 files into src/assets/fonts/, keeping the
+// latin and latin-ext subsets. src/styles/fonts.css has the @font-face rules for them.
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
-const OUT = join(ROOT, 'src', 'fonts');
+const OUT = join(ROOT, 'src', 'assets', 'fonts');
 const CSS =
   'https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800;900&family=Public+Sans:wght@400;500;700&family=Red+Hat+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap';
 const UA =
@@ -24,7 +24,6 @@ const must = (/** @type {string} */ s, /** @type {RegExp} */ re) => {
   return m[1];
 };
 const files = new Map();
-let out = '';
 for (const [, subset, body] of blocks) {
   const fam = must(body, /font-family:\s*'([^']+)'/);
   const weight = must(body, /font-weight:\s*([\d ]+)/).trim();
@@ -37,7 +36,5 @@ for (const [, subset, body] of blocks) {
     files.set(url, name);
     console.log(name, buf.length);
   }
-  out += `@font-face{font-family:'${fam}';font-style:normal;font-weight:${weight};font-display:swap;src:url(FONTDIR/${name}) format('woff2');unicode-range:${must(body, /unicode-range:\s*([^;]+)/).trim()}}\n`;
 }
-writeFileSync(join(OUT, 'fonts.css'), out);
 console.log('wrote', files.size, 'files');
