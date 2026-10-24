@@ -15,16 +15,37 @@ export interface OgCard {
   home?: boolean;
 }
 
-const longDate = (d: Date) => d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
+const longDate = (d: Date) =>
+  d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
 
 export async function ogCards(): Promise<OgCard[]> {
   const blog = await posts();
   const years = blog.map((p) => p.data.date.getUTCFullYear());
   return [
     { path: '', cmd: 'cat README.md', kicker: '# intro', title: 'Craig Michael Thompson', home: true },
-    ...(await caseStudies()).map(({ data }) => ({ path: `case-studies/${slugOf(data.file)}/`, cmd: `cat case-studies/${data.file}`, kicker: '// ' + data.kicker, title: data.title })),
-    ...(await responsibilities()).map(({ data }) => ({ path: `responsibilities/${slugOf(data.file)}/`, cmd: `cat responsibilities/${data.file}`, kicker: '// ' + data.kicker, title: data.title })),
-    { path: 'blog/', cmd: 'ls -t blog/', kicker: `${blog.length} posts · ${Math.min(...years)}–${Math.max(...years)}`, title: 'Blog' },
-    ...blog.map((p) => ({ path: `blog/${p.slug}/`, cmd: `cat blog/${p.slug}.md`, kicker: [longDate(p.data.date), ...p.data.tags.slice(0, 3)].join(' · '), title: p.data.title })),
+    ...(await caseStudies()).map(({ data }) => ({
+      path: `case-studies/${slugOf(data.file)}/`,
+      cmd: `cat case-studies/${data.file}`,
+      kicker: '// ' + data.kicker,
+      title: data.title,
+    })),
+    ...(await responsibilities()).map(({ data }) => ({
+      path: `responsibilities/${slugOf(data.file)}/`,
+      cmd: `cat responsibilities/${data.file}`,
+      kicker: '// ' + data.kicker,
+      title: data.title,
+    })),
+    {
+      path: 'blog/',
+      cmd: 'ls -t blog/',
+      kicker: `${blog.length} posts · ${Math.min(...years)}–${Math.max(...years)}`,
+      title: 'Blog',
+    },
+    ...blog.map((p) => ({
+      path: `blog/${p.slug}/`,
+      cmd: `cat blog/${p.slug}.md`,
+      kicker: [longDate(p.data.date), ...p.data.tags.slice(0, 3)].join(' · '),
+      title: p.data.title,
+    })),
   ];
 }

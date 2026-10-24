@@ -11,7 +11,6 @@ import { INLINE_SCRIPTS } from './src/scripts/inline.mjs';
 /** @param {string} s @returns {`sha256-${string}`} */
 const sha256 = (s) => `sha256-${createHash('sha256').update(s).digest('base64')}`;
 
-
 export default defineConfig({
   site: 'https://craigthompson.dev',
   outDir: './site',
@@ -20,13 +19,27 @@ export default defineConfig({
   // Every page gets a Content-Security-Policy with hashes for its own scripts and styles.
   security: {
     csp: {
-      directives: ["default-src 'self'", "img-src 'self' data:", "connect-src 'self' https://*.workers.dev https://cloudflareinsights.com", "object-src 'none'", "base-uri 'self'"],
-      scriptDirective: { resources: ["'self'", 'https://static.cloudflareinsights.com'], hashes: INLINE_SCRIPTS.map(sha256) },
+      directives: [
+        "default-src 'self'",
+        "img-src 'self' data:",
+        "media-src 'self' blob: data:",
+        "connect-src 'self' https://*.workers.dev https://cloudflareinsights.com",
+        "object-src 'none'",
+        "base-uri 'self'",
+      ],
+      scriptDirective: {
+        resources: ["'self'", 'https://static.cloudflareinsights.com'],
+        hashes: INLINE_SCRIPTS.map(sha256),
+      },
     },
   },
   markdown: { syntaxHighlight: false, processor: satteri({ hastPlugins: [codeBlocks] }) },
   compressHTML: true,
-  integrations: [mdx(), sitemap({ filter: (page) => !page.endsWith('/404/') && !page.includes('/og-card/') }), postBuild()],
+  integrations: [
+    mdx(),
+    sitemap({ filter: (page) => !page.endsWith('/404/') && !page.includes('/og-card/') }),
+    postBuild(),
+  ],
   vite: {
     build: { assetsInlineLimit: 0 },
     // Astro's prerenderer needs cookie 2, but another dev dependency puts cookie 0.7 at the top of

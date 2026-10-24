@@ -37,12 +37,14 @@ function audioEl() {
   return audio;
 }
 
+/** Detaches the shared audio element's listeners from the last thing it played. */
+let playing: AbortController | null = null;
+
 export function stopSpeaking() {
   token++;
-  if (audio) {
-    audio.onended = audio.onerror = null;
-    audio.pause();
-  }
+  playing?.abort();
+  playing = null;
+  audio?.pause();
   speechSynthesis?.cancel();
   current = null;
 }
@@ -81,7 +83,10 @@ export function speak(i: number, text: string, lang: string, update: () => void)
       const synth = window.speechSynthesis;
       if (!synth || typeof SpeechSynthesisUtterance === 'undefined') throw new Error('no speech');
       const u = new SpeechSynthesisUtterance(lang ? text : spoken(text));
-      const score = (v: SpeechSynthesisVoice) => (/^en-GB/i.test(v.lang) ? 4 : 0) + (/natural|neural|premium|enhanced|online/i.test(v.name) ? 6 : 0) + (/google|microsoft|siri/i.test(v.name) ? 2 : 0);
+      const score = (v: SpeechSynthesisVoice) =>
+        (/^en-GB/i.test(v.lang) ? 4 : 0) +
+        (/natural|neural|premium|enhanced|online/i.test(v.name) ? 6 : 0) +
+        (/google|microsoft|siri/i.test(v.name) ? 2 : 0);
       const want = lang ? new RegExp(`^${lang.split('-')[0]}([-_]|$)`, 'i') : /^en([-_]|$)/i;
       const v = synth
         .getVoices()
@@ -93,8 +98,9 @@ export function speak(i: number, text: string, lang: string, update: () => void)
       } else u.lang = lang || 'en-GB';
       u.rate = 1.1;
       let started = false;
-      u.onstart = () => (started = true);
-      u.onend = u.onerror = done;
+      u.addEventListener('start', () => (started = true));
+      u.addEventListener('end', done);
+      u.addEventListener('error', done);
       synth.speak(u);
       // Some browsers have no voices and never start: give up quietly.
       setTimeout(() => {
@@ -116,11 +122,17 @@ export function speak(i: number, text: string, lang: string, update: () => void)
     a.defaultPlaybackRate = RATE;
     a.src = src;
     a.playbackRate = RATE;
-    a.onended = done;
-    a.onerror = () => {
-      a.onerror = null;
-      browser();
-    };
+    playing?.abort();
+    const ctl = (playing = new AbortController());
+    a.addEventListener('ended', done, { signal: ctl.signal });
+    a.addEventListener(
+      'error',
+      () => {
+        ctl.abort();
+        browser();
+      },
+      { signal: ctl.signal },
+    );
     a.play().catch(browser);
   };
   // The site's own voice is English, so other languages use the browser's.
@@ -128,12 +140,16 @@ export function speak(i: number, text: string, lang: string, update: () => void)
   const hit = cache.get(text);
   if (hit) return play(hit);
   // Over today's free AI allowance (503), or anything else failing: the browser's voice.
-  fetch(ASK_ENDPOINT.replace(/\/ask$/, '/speak'), { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ text }) })
+  fetch(ASK_ENDPOINT.replace(/\/ask$/, '/speak'), {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ text }),
+  })
     .then((r) => (r.ok ? r.blob() : Promise.reject(new Error(`speak ${r.status}`))))
     .then((b) => {
       const u = URL.createObjectURL(b);
       cache.set(text, u);
-      play(u);
+      return play(u);
     })
     .catch(browser);
 }

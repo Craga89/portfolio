@@ -7,7 +7,18 @@ const palette = () => import('./palette').then((m) => m.toggle());
 const keysDialog = () => $<HTMLDialogElement>('#c-keys');
 const singleKeys = () => store.get('keys') !== 'off';
 
-const KONAMI = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+const KONAMI = [
+  'ArrowUp',
+  'ArrowUp',
+  'ArrowDown',
+  'ArrowDown',
+  'ArrowLeft',
+  'ArrowRight',
+  'ArrowLeft',
+  'ArrowRight',
+  'b',
+  'a',
+];
 let k = 0;
 
 document.addEventListener('keydown', (e) => {
@@ -46,7 +57,8 @@ document.addEventListener('click', (e) => {
 });
 
 // The shortcut key names this platform uses.
-if (/mac|iphone|ipad/i.test(navigator.platform)) for (const n of $$('[data-mod-key]')) n.textContent = n.textContent!.replace('Ctrl', '⌘').replace('⌘ K', '⌘K');
+if (/mac|iphone|ipad/i.test(navigator.platform))
+  for (const n of $$('[data-mod-key]')) n.textContent = n.textContent!.replace('Ctrl', '⌘').replace('⌘ K', '⌘K');
 
 // The keyboard shortcuts dialog: the single-key switch, and a click on the backdrop closes it.
 const d = keysDialog();

@@ -193,9 +193,13 @@ kbd {
   transform-origin: left;
 }
 
+/* Scroll-driven animations are written as longhands: the CSS minifier would otherwise fold the
+   timeline into the animation shorthand, which browsers don't accept. */
 @supports (animation-timeline: view()) {
   .c-fill {
-    animation: c-bar linear both;
+    animation-name: c-bar;
+    animation-timing-function: linear;
+    animation-fill-mode: both;
     animation-timeline: view();
     animation-range: entry 10% cover 40%;
   }
@@ -278,7 +282,9 @@ kbd {
 
 @supports (animation-timeline: view()) {
   .c-cmd {
-    animation: c-wipe steps(22, end) both;
+    animation-name: c-wipe;
+    animation-timing-function: steps(22, end);
+    animation-fill-mode: both;
     animation-timeline: view();
     animation-range: entry 20% entry 90%;
   }

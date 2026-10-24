@@ -43,16 +43,19 @@ addEventListener('hashchange', landed);
 if (location.hash) requestAnimationFrame(landed);
 
 // A section heading's #: copy its address too.
-document.addEventListener('click', (e) => {
+document.addEventListener('click', async (e) => {
   const a = (e.target as Element).closest<HTMLAnchorElement>('a.c-anchor');
   if (!a || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
   const id = a.hash.slice(1);
-  copyText(location.origin + location.pathname + '#' + id)
-    .then(() => {
-      flagDone(a, 1800);
-      note(`Link to ${a.dataset.file ?? id} copied`);
-    })
-    .catch(() => {});
+  if (
+    await copyText(location.origin + location.pathname + '#' + id).then(
+      () => true,
+      () => false,
+    )
+  ) {
+    flagDone(a, 1800);
+    note(`Link to ${a.dataset.file ?? id} copied`);
+  }
 });
 
 // The mobile menu (a <details>, so it works without script): close it after a jump, on Escape
@@ -80,7 +83,8 @@ if (menu) {
 // The header's height, for scroll padding and sticky offsets (--hdr-h).
 const hdr = $('#c-hdr');
 if (hdr) {
-  const set = () => document.documentElement.style.setProperty('--hdr-h', `${Math.ceil(hdr.getBoundingClientRect().height)}px`);
+  const set = () =>
+    document.documentElement.style.setProperty('--hdr-h', `${Math.ceil(hdr.getBoundingClientRect().height)}px`);
   set();
   new ResizeObserver(set).observe(hdr);
 }

@@ -1,6 +1,13 @@
 {
   "extends": "astro/tsconfigs/strict",
   "compilerOptions": { "allowJs": true, "checkJs": true },
-  "include": [".astro/types.d.ts", "src/**/*", "shared/*.js", "shared/globals.d.ts", "astro.config.mjs", "integrations/**/*"],
-  "exclude": ["site", "src/palette.js", "src/ThemeTyne.dc.html"]
+  "include": [
+    ".astro/types.d.ts",
+    "src/**/*",
+    "shared/*.js",
+    "shared/globals.d.ts",
+    "astro.config.mjs",
+    "integrations/**/*"
+  ],
+  "exclude": ["site"]
 }

@@ -58,7 +58,9 @@ const items = await Promise.all(roles.map(async (r) => ({ ...r.data, Content: (a
   }
   @supports (animation-timeline: view()) {
     .line {
-      animation: grow linear both;
+      animation-name: grow;
+      animation-timing-function: linear;
+      animation-fill-mode: both;
       animation-timeline: view();
       animation-range: entry 0% cover 55%;
     }

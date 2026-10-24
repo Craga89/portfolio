@@ -6,7 +6,7 @@
 //   node tools/blog-fetch.mjs <archived.json> <out dir>
 //
 // Writes <out>/posts.json (one entry per post: address, snapshot, saved file, images) and
-// <out>/html/<slug>.html, <out>/img/<file>. tools/blog-import.mjs turns these into src/blog/.
+// <out>/html/<slug>.html, <out>/img/<file>. tools/blog-import.mjs turns these into src/content/blog/.
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { join, extname } from 'node:path';
 import { createHash } from 'node:crypto';

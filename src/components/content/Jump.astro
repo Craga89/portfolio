@@ -15,14 +15,14 @@ const f = await findFile(to);
 
 {
   trail ? (
-    <span class="c-nb"><a class="v2-x" href={'/' + f.page} data-open={to}><slot /></a>{trail}</span>
+    <span class="c-nb"><a class="jump" href={'/' + f.page} data-open={to}><slot /></a>{trail}</span>
   ) : (
-    <a class="v2-x" href={'/' + f.page} data-open={to}><slot /></a>
+    <a class="jump" href={'/' + f.page} data-open={to}><slot /></a>
   )
 }
 
 <style>
-  .v2-x {
+  .jump {
     cursor: pointer;
     color: var(--head);
     font-weight: 700;
@@ -30,10 +30,10 @@ const f = await findFile(to);
     border-bottom: 1px dashed var(--acc);
     transition: color 0.2s ease;
   }
-  .v2-x:hover {
+  .jump:hover {
     color: var(--acc);
   }
-  .v2-x:focus-visible {
+  .jump:focus-visible {
     outline: 2px solid var(--acc);
     outline-offset: 2px;
     border-radius: 2px;

@@ -72,7 +72,9 @@ const allPrs = `https://github.com/search?q=author%3A${GITHUB.split('/').pop()}+
   }
   @supports (animation-timeline: view()) {
     .c-card {
-      animation: c-rise linear both;
+      animation-name: c-rise;
+      animation-timing-function: linear;
+      animation-fill-mode: both;
       animation-timeline: view();
       animation-range: entry 0% entry 40%;
     }

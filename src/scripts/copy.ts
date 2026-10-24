@@ -22,23 +22,23 @@ export function flagDone(elm: HTMLElement, ms = 2000) {
   elm.dataset.doneT = String(setTimeout(() => delete elm.dataset.done, ms));
 }
 
-document.addEventListener('click', (e) => {
+document.addEventListener('click', async (e) => {
   const b = (e.target as Element).closest<HTMLElement>('[data-copy]');
   if (!b) return;
   const value = b.dataset.copy ?? '';
-  copyText(value)
-    .then(() => {
-      flagDone(b);
-      const label = b.querySelector<HTMLElement>('[data-copy-label]');
-      if (label) {
-        const was = label.textContent;
-        label.textContent = 'copied';
-        setTimeout(() => (label.textContent = was), 2000);
-      }
-      note(b.dataset.copyNote ?? 'Copied');
-    })
-    .catch(() => {
-      // No clipboard: an email address still works as a link.
-      if (value.includes('@')) location.href = 'mailto:' + value;
-    });
+  try {
+    await copyText(value);
+  } catch {
+    // No clipboard: an email address still works as a link.
+    if (value.includes('@')) location.href = 'mailto:' + value;
+    return;
+  }
+  flagDone(b);
+  const label = b.querySelector<HTMLElement>('[data-copy-label]');
+  if (label) {
+    const was = label.textContent;
+    label.textContent = 'copied';
+    setTimeout(() => (label.textContent = was), 2000);
+  }
+  note(b.dataset.copyNote ?? 'Copied');
 });

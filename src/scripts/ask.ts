@@ -62,7 +62,10 @@ export function askIndex(): Promise<Index> {
         'contact.vcf': { href: '/craig-thompson.vcf' },
       };
       for (const p of d.passages) {
-        const target = { href: p.href, open: (p.kind === 'resp' || p.kind === 'case') && p.key ? `${p.kind}/${p.key}` : undefined };
+        const target = {
+          href: p.href,
+          open: (p.kind === 'resp' || p.kind === 'case') && p.key ? `${p.kind}/${p.key}` : undefined,
+        };
         const f = String(p.title).split(':')[0].trim().toLowerCase();
         if (target.open && /^[\w/-]+\.\w+$/.test(f)) map[f] = target;
         // In case an answer cites a passage id (faq-1.md, resp-bud) instead of its file.
@@ -71,7 +74,10 @@ export function askIndex(): Promise<Index> {
       const keys = Object.keys(map)
         .sort((a, b) => b.length - a.length)
         .map((k) => k.replace(/[.*+?^${}()|[\]\\/]/g, '\\$&'));
-      links = { map, re: new RegExp(`(?<![\\w./-])(?:${keys.join('|')})(?![\\w/-])|[\\w.+-]+@[\\w-]+\\.[\\w.]+[a-z]`, 'gi') };
+      links = {
+        map,
+        re: new RegExp(`(?<![\\w./-])(?:${keys.join('|')})(?![\\w/-])|[\\w.+-]+@[\\w-]+\\.[\\w.]+[a-z]`, 'gi'),
+      };
       return d;
     });
   indexP.catch(() => (indexP = null));
@@ -104,17 +110,31 @@ const lines = (e: Entry) =>
     .filter(Boolean)
     .map((t) => {
       const li = /^[-•*]\s+/.test(t);
-      return el('p', { class: li ? 'c-ask-li' : undefined, lang: e.lang, translate: e.lang ? 'no' : undefined }, linked(li ? t.replace(/^[-•*]\s+/, '') : t));
+      return el(
+        'p',
+        { class: li ? 'c-ask-li' : undefined, lang: e.lang, translate: e.lang ? 'no' : undefined },
+        linked(li ? t.replace(/^[-•*]\s+/, '') : t),
+      );
     });
 
 function extras(e: Entry, i: number, short: boolean): Node[] {
   const out: Node[] = [];
   const meta = short
-    ? (e.mode === 'ai' ? 'AI answer from this site · can be wrong' : e.mode === 'search' ? (e.note ? 'AI unavailable · closest match' : 'Closest match from the site') : '') + (e.lang && e.answerEn ? ' · machine-translated' : '')
-    : (e.mode === 'ai' ? 'Answered by an AI model using only this site. It can get things wrong, so check the linked sections.' : e.mode === 'search' ? e.note || 'Closest match from the site.' : '') +
-      (e.lang && e.answerEn ? ' Machine-translated from English by your browser.' : '');
+    ? (e.mode === 'ai'
+        ? 'AI answer from this site · can be wrong'
+        : e.mode === 'search'
+          ? e.note
+            ? 'AI unavailable · closest match'
+            : 'Closest match from the site'
+          : '') + (e.lang && e.answerEn ? ' · machine-translated' : '')
+    : (e.mode === 'ai'
+        ? 'Answered by an AI model using only this site. It can get things wrong, so check the linked sections.'
+        : e.mode === 'search'
+          ? e.note || 'Closest match from the site.'
+          : '') + (e.lang && e.answerEn ? ' Machine-translated from English by your browser.' : '');
   const m = el('div', { class: short ? 'c-chat-meta' : 'c-ask-meta', text: meta });
-  if (!e.shell && (e.mode === 'ai' || e.mode === 'search')) m.append(el('button', { type: 'button', class: 'c-ask-share', 'data-ask-share': String(i), text: 'copy link' }));
+  if (!e.shell && (e.mode === 'ai' || e.mode === 'search'))
+    m.append(el('button', { type: 'button', class: 'c-ask-share', 'data-ask-share': String(i), text: 'copy link' }));
   if (!e.shell && e.answer && e.mode !== 'error') {
     const on = speaking() === i;
     m.append(
@@ -140,7 +160,8 @@ function sayIcon() {
   s.setAttribute('stroke-linecap', 'round');
   s.setAttribute('stroke-linejoin', 'round');
   s.setAttribute('aria-hidden', 'true');
-  s.innerHTML = '<path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/>';
+  s.innerHTML =
+    '<path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/>';
   return s;
 }
 
@@ -157,11 +178,28 @@ function renderAsk() {
   $('[data-ask-hint]', ASK_LOG)!.hidden = log.length > 0;
   $$('.c-ask-turn', ASK_LOG).forEach((n) => n.remove());
   log.forEach((e, i) => {
-    const turn = el('div', { class: 'c-ask-turn' }, [el('div', { class: 'c-ask-q', translate: 'no' }, [el('span', { class: 'c-ask-p', text: '$' }), ' ' + (e.shell ? e.q : `./ask.sh "${e.q}"`)])]);
-    if (e.pending) turn.append(el('div', { class: 'c-ask-a c-ask-wait' }, ['thinking', el('span', { class: 'c-cursor', 'aria-hidden': 'true' })]));
+    const turn = el('div', { class: 'c-ask-turn' }, [
+      el('div', { class: 'c-ask-q', translate: 'no' }, [
+        el('span', { class: 'c-ask-p', text: '$' }),
+        ' ' + (e.shell ? e.q : `./ask.sh "${e.q}"`),
+      ]),
+    ]);
+    if (e.pending)
+      turn.append(
+        el('div', { class: 'c-ask-a c-ask-wait' }, [
+          'thinking',
+          el('span', { class: 'c-cursor', 'aria-hidden': 'true' }),
+        ]),
+      );
     else {
       const a = el('div', { class: 'c-ask-a', dir: 'auto', 'data-i': String(i) }, lines(e));
-      if (e.sources?.length) a.append(el('div', { class: 'c-ask-src' }, [el('span', { text: '# sources' }), ...e.sources.map((s) => sourceLink(s, false))]));
+      if (e.sources?.length)
+        a.append(
+          el('div', { class: 'c-ask-src' }, [
+            el('span', { text: '# sources' }),
+            ...e.sources.map((s) => sourceLink(s, false)),
+          ]),
+        );
       a.append(...extras(e, i, false));
       turn.append(a);
     }
@@ -174,11 +212,27 @@ function renderChat() {
   $$('.c-chat-turn', CHAT_LOG).forEach((n) => n.remove());
   $('[data-chat-sugg]', CHAT_LOG)!.hidden = log.length > 0;
   for (const [i, e] of log.entries()) {
-    CHAT_LOG.append(el('div', { class: 'c-chat-msg c-chat-me c-chat-turn', dir: 'auto', translate: 'no' }, [el('p', { text: e.q })]));
-    if (e.pending) CHAT_LOG.append(el('div', { class: 'c-chat-msg c-chat-them c-chat-typing c-chat-turn', role: 'status', 'aria-label': 'Thinking' }, [el('i'), el('i'), el('i')]));
+    CHAT_LOG.append(
+      el('div', { class: 'c-chat-msg c-chat-me c-chat-turn', dir: 'auto', translate: 'no' }, [el('p', { text: e.q })]),
+    );
+    if (e.pending)
+      CHAT_LOG.append(
+        el(
+          'div',
+          { class: 'c-chat-msg c-chat-them c-chat-typing c-chat-turn', role: 'status', 'aria-label': 'Thinking' },
+          [el('i'), el('i'), el('i')],
+        ),
+      );
     else {
       const m = el('div', { class: 'c-chat-msg c-chat-them c-chat-turn', dir: 'auto' }, lines(e));
-      if (e.sources?.length) m.append(el('div', { class: 'c-chat-src' }, e.sources.map((s) => sourceLink(s, true))));
+      if (e.sources?.length)
+        m.append(
+          el(
+            'div',
+            { class: 'c-chat-src' },
+            e.sources.map((s) => sourceLink(s, true)),
+          ),
+        );
       m.append(...extras(e, i, true));
       CHAT_LOG.append(m);
     }
@@ -188,9 +242,15 @@ function renderChat() {
 function render() {
   renderAsk();
   renderChat();
-  for (const b of $$<HTMLButtonElement>('[data-ask-q], [data-ask-form] [type="submit"], [data-chat-form] [type="submit"]')) b.disabled = busy;
+  for (const b of $$<HTMLButtonElement>(
+    '[data-ask-q], [data-ask-form] [type="submit"], [data-chat-form] [type="submit"]',
+  ))
+    b.disabled = busy;
   const sub = $('[data-chat-sub]');
   if (sub) sub.textContent = busy ? 'thinking…' : 'Ask about my experience';
+  // On a translated page, the new answers are translated too.
+  if (window.CRAGA_LANG && window.CRAGA_LANG !== 'en')
+    void i18n()?.then((m) => [ASK_LOG, CHAT_LOG].forEach((l) => l && m.refresh(l)));
   setTimeout(() => {
     for (const l of [ASK_LOG, CHAT_LOG]) if (l) l.scrollTop = l.scrollHeight;
   }, 30);
@@ -198,7 +258,8 @@ function render() {
 
 // ---------- asking ----------
 
-const within = <T>(p: Promise<T>, ms: number) => Promise.race([p, new Promise<null>((r) => setTimeout(() => r(null), ms))]);
+const within = <T>(p: Promise<T>, ms: number) =>
+  Promise.race([p, new Promise<null>((r) => setTimeout(() => r(null), ms))]);
 const i18n = () => (window.CRAGA_I18N ? window.CRAGA_I18N.load() : null);
 
 let spokenQ: string | null = null;
@@ -224,7 +285,12 @@ export async function ask(raw: string) {
   // A question in another language: ask.sh works in English, so it's translated on the device,
   // and the answer translated back (unless the whole page is already in that language).
   const I: ReturnType<typeof i18n> = isCmd ? null : i18n();
-  const toEn = I ? within(I.then((m) => m.toEnglish(q)).catch(() => null), 8000) : Promise.resolve(null);
+  const toEn = I
+    ? within(
+        I.then((m) => m.toEnglish(q)).catch(() => null),
+        8000,
+      )
+    : Promise.resolve(null);
   let index: Index;
   let tq: { text: string; lang?: string } | null | undefined;
   try {
@@ -263,7 +329,12 @@ export async function ask(raw: string) {
   const ctl = new AbortController();
   const timer = setTimeout(() => ctl.abort(), 20000);
   try {
-    const r = await fetch(ASK_ENDPOINT, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ q: qe }), signal: ctl.signal });
+    const r = await fetch(ASK_ENDPOINT, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ q: qe }),
+      signal: ctl.signal,
+    });
     const d = (await r.json().catch(() => ({}))) as { answer?: string; sources?: string[]; error?: string };
     if (!r.ok) throw new Error(d.error === 'budget' ? 'budget' : `ask ${r.status}`);
     if (!d.answer) throw new Error('empty');
@@ -290,7 +361,11 @@ function say(i: number) {
   const lang = e.lang || pageLang;
   if (lang && !e.lang) {
     const box = $(`.c-ask-a[data-i="${i}"]`);
-    const shown = box ? $$(':scope > p', box).map((p) => p.textContent).join(' ') : '';
+    const shown = box
+      ? $$(':scope > p', box)
+          .map((p) => p.textContent)
+          .join(' ')
+      : '';
     if (shown.trim()) text = shown;
   }
   speak(i, text.replace(/\s+/g, ' ').trim(), lang, render);
@@ -328,13 +403,14 @@ document.addEventListener('click', (e) => {
   if (share) {
     const entry = log[Number(share.dataset.askShare)];
     if (!entry) return;
-    copyText(`${location.origin}${location.pathname}?ask=${encodeURIComponent(entry.q)}`)
-      .then(() => {
+    void copyText(`${location.origin}${location.pathname}?ask=${encodeURIComponent(entry.q)}`).then(
+      () => {
         share.textContent = 'link copied';
         note('Link to this answer copied');
-        setTimeout(() => (share.textContent = 'copy link'), 2500);
-      })
-      .catch(() => {});
+        return setTimeout(() => (share.textContent = 'copy link'), 2500);
+      },
+      () => {},
+    );
     return;
   }
   const sayB = t.closest<HTMLElement>('[data-ask-say]');
@@ -381,4 +457,3 @@ if (chat) {
     if ((e.target as Element).closest('a') && innerWidth <= 900) setTimeout(() => setOpen(false), 0);
   });
 }
-

@@ -18,16 +18,25 @@ let items: PaletteItem[] = [];
 let shown: PaletteItem[] = [];
 let index = 0;
 
-const loaded = fetch('/palette.json')
-  .then((r) => (r.ok ? r.json() : []))
-  .then((d: PaletteItem[]) => {
+const loaded = (async () => {
+  try {
+    const r = await fetch('/palette.json');
+    const d: PaletteItem[] = r.ok ? await r.json() : [];
     items = d.filter((o) => o.action !== 'share' || typeof navigator.share === 'function');
-  })
-  .catch(() => {});
+  } catch {
+    // Offline before it was cached: the palette still offers ask.sh.
+  }
+})();
 
 /** The theme and motion items say what they'll do now. */
 const label = (o: PaletteItem) =>
-  o.action === 'theme' ? `Switch to ${theme() === 'light' ? 'dark' : 'light'} theme` : o.action === 'motion' ? (motionOff() ? 'Play animations' : 'Pause animations') : o.label;
+  o.action === 'theme'
+    ? `Switch to ${theme() === 'light' ? 'dark' : 'light'} theme`
+    : o.action === 'motion'
+      ? motionOff()
+        ? 'Play animations'
+        : 'Pause animations'
+      : o.label;
 
 function search(q: string): PaletteItem[] {
   const ql = q.trim().toLowerCase();
@@ -37,13 +46,22 @@ function search(q: string): PaletteItem[] {
     .map((o, i) => {
       const l = label(o).toLowerCase();
       if (!words.every((w) => `${l} ${o.kind} ${o.kw ?? ''}`.toLowerCase().includes(w))) return null;
-      const score = l.startsWith(ql) ? 4 : l.split(/[\s/.(]+/).some((w) => w.startsWith(ql)) ? 3 : l.includes(ql) ? 2 : 1;
+      const score = l.startsWith(ql)
+        ? 4
+        : l.split(/[\s/.(]+/).some((w) => w.startsWith(ql))
+          ? 3
+          : l.includes(ql)
+            ? 2
+            : 1;
       return { o, i, score };
     })
     .filter((x) => x !== null)
     .sort((a, b) => b.score - a.score || a.i - b.i)
     .map((x) => x.o);
-  return [...found, { icon: '$', label: `Ask ask.sh: “${q.trim()}”`, kind: 'ask', path: `/?ask=${encodeURIComponent(q.trim())}#ask` }];
+  return [
+    ...found,
+    { icon: '$', label: `Ask ask.sh: “${q.trim()}”`, kind: 'ask', path: `/?ask=${encodeURIComponent(q.trim())}#ask` },
+  ];
 }
 
 function marked(text: string, q: string): (Node | string)[] {
@@ -58,15 +76,20 @@ function render() {
   index = Math.min(index, Math.max(0, shown.length - 1));
   list.replaceChildren(
     ...shown.map((o, i) =>
-      el('li', { id: `c-pal-o${i}`, role: 'option', class: 'o', 'aria-selected': String(i === index), onclick: () => run(o) }, [
-        el('span', { class: 'i', 'aria-hidden': 'true', text: o.icon }),
-        el('span', { class: 'l' }, marked(label(o), field.value)),
-        el('span', { class: 'k', text: o.kind }),
-      ]),
+      el(
+        'li',
+        { id: `c-pal-o${i}`, role: 'option', class: 'o', 'aria-selected': String(i === index), onclick: () => run(o) },
+        [
+          el('span', { class: 'i', 'aria-hidden': 'true', text: o.icon }),
+          el('span', { class: 'l' }, marked(label(o), field.value)),
+          el('span', { class: 'k', text: o.kind }),
+        ],
+      ),
     ),
   );
   field.setAttribute('aria-activedescendant', shown.length ? `c-pal-o${index}` : '');
-  if (count) count.textContent = field.value.trim() ? `${shown.length} ${shown.length === 1 ? 'result' : 'results'}` : '';
+  if (count)
+    count.textContent = field.value.trim() ? `${shown.length} ${shown.length === 1 ? 'result' : 'results'}` : '';
 }
 
 function run(o: PaletteItem | undefined) {
@@ -88,7 +111,8 @@ function run(o: PaletteItem | undefined) {
       navigator.share({ title: document.title, url: location.origin + location.pathname }).catch(() => {});
       return;
   }
-  if (o.path) navigate(o.path);
+  const to = o.page && location.pathname !== '/' ? o.page : o.path;
+  if (to) navigate(to);
 }
 
 field.addEventListener('input', () => {

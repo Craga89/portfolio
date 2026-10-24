@@ -1,10 +1,14 @@
 // Small DOM helpers shared by the page scripts.
 
-export const $ = <T extends Element = HTMLElement>(sel: string, root: ParentNode = document) => root.querySelector<T>(sel);
-export const $$ = <T extends Element = HTMLElement>(sel: string, root: ParentNode = document) => [...root.querySelectorAll<T>(sel)];
+export const $ = <T extends Element = HTMLElement>(sel: string, root: ParentNode = document) =>
+  root.querySelector<T>(sel);
+export const $$ = <T extends Element = HTMLElement>(sel: string, root: ParentNode = document) => [
+  ...root.querySelectorAll<T>(sel),
+];
 
 /** Whether motion is wanted: neither the system setting nor the site's "pause animations". */
-export const motionOk = () => document.documentElement.dataset.motion !== 'off' && !matchMedia('(prefers-reduced-motion: reduce)').matches;
+export const motionOk = () =>
+  document.documentElement.dataset.motion !== 'off' && !matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /** localStorage that never throws (private windows, blocked storage). */
 export const store = {

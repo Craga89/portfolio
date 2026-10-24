@@ -514,8 +514,6 @@ const state = {
   done: 0,
   total: 0,
   running: false,
-  /** @type {CragaApp | null} */
-  app: null,
   active: false,
   /** @type {HTMLElement | null} */
   ui: null,
@@ -525,6 +523,8 @@ const state = {
   offerEl: null,
   /** @type {Stashed[]} */
   stashes: [],
+  /** Attribute values this put in, so they aren't taken for new English text. @type {Set<string>} */
+  attrOut: new Set(),
   /** Text nodes whose arrows were swapped, with their original text. @type {[Text, string][]} */
   texts: [],
   /** @type {WeakSet<Text>} */
@@ -636,8 +636,7 @@ function flushSoon() {
 }
 function flush() {
   if (!state.active) return;
-  if (state.app) state.app.schedule();
-  else apply(document.body, true);
+  apply(document.body, true);
   translateTitle();
   saveCache();
 }
@@ -660,6 +659,14 @@ function translateTitle() {
 // Translate everything under root from the cache; anything not there yet is queued and marked
 // as English for now (so screen readers pronounce it right).
 const translatedUnits = new WeakSet();
+/**
+ * Translate what the page added after it was translated (ask.sh's answers, say).
+ * @param {Element} root
+ */
+export function refresh(root) {
+  if (state.active) apply(root, true);
+}
+
 /**
  * @param {Element} root
  * @param {boolean} live true for a static page (changes are stashed for "Show original"); false for a render
@@ -691,12 +698,14 @@ export function apply(root, live) {
     if (el.closest('[translate="no"],script,style,noscript,template,svg,code,pre')) return;
     for (const a of ATTRS) {
       const v = el.getAttribute(a);
-      if (!v || !LETTER.test(v)) continue;
+      // Already translated: translating the translation would never settle.
+      if (!v || !LETTER.test(v) || state.attrOut.has(v)) continue;
       const key = '@' + v;
       const t = state.cache.get(key);
       if (t) {
         if (live) stashAttr(el, a, v);
         el.setAttribute(a, t);
+        state.attrOut.add(t);
       } else queueAttr(key, v);
     }
   });
@@ -839,6 +848,7 @@ export async function start(code, opts = {}) {
     cache: loadCache(lang),
     metas: new Map(),
     attrSrc: new Map(),
+    attrOut: new Set(),
     queue: [],
     queued: new Set(),
     done: 0,
@@ -856,33 +866,7 @@ export async function start(code, opts = {}) {
   } catch {
     state.strings = null; // the banner stays in English
   }
-  const app = window.CRAGA_APP;
-  if (app && typeof app.schedule === 'function') {
-    state.app = app;
-    // Queue what's on screen first, from the English page, then translate every render.
-    app.transform = null;
-    app.render();
-    const near = unitsIn(app.root)
-      .map((u) => {
-        const r = u.getBoundingClientRect();
-        return { u, d: r.bottom < 0 ? -r.bottom + 2000 : Math.max(0, r.top - innerHeight) };
-      })
-      .sort((a, b) => a.d - b.d);
-    for (const { u } of near) {
-      const meta = encode(u);
-      if (meta.translatable) {
-        state.metas.set(meta.key, meta);
-        enqueue(meta.key);
-      }
-    }
-    app.transform = (holder) => {
-      apply(holder, false);
-    };
-    app.render();
-  } else {
-    state.app = null;
-    apply(document.body, true);
-  }
+  apply(document.body, true);
   translateTitle();
   announce();
   progress();
@@ -901,10 +885,7 @@ export async function stop(opts = {}) {
     console.warn(e);
   }
   state.translator = null;
-  if (state.app) {
-    state.app.transform = null;
-    state.app.render();
-  } else if (was) restoreStatic();
+  if (was) restoreStatic();
   if (state.title != null) document.title = state.title;
   state.title = null;
   if (!opts.keep) {
@@ -971,43 +952,10 @@ export async function fromEnglish(text, lang) {
 
 // ---------- the offer and the banner ----------
 
-// Outside the page's own themed area, so it carries the site's colours for both themes.
-const CSS = `
-.tr-offer,.tr-bar{--tr-bg:#1C3127;--tr-bg2:#223A2E;--tr-fg:#F6F8F4;--tr-fg2:#D9E4DD;--tr-mute:#A7BFB2;--tr-line:#47685A;--tr-line2:#335041;--tr-acc:#8EC3E6;--tr-acc-fg:#16271F;font-family:'Public Sans','Inter',system-ui,-apple-system,'Segoe UI',sans-serif}
-html.t-light .tr-offer,html.t-light .tr-bar{--tr-bg:#FFFFFF;--tr-bg2:#E1E8E3;--tr-fg:#0F1D16;--tr-fg2:#26342D;--tr-mute:#4C5D53;--tr-line:#A8B8AD;--tr-line2:#C5D1C9;--tr-acc:#1D6590;--tr-acc-fg:#FFFFFF}
-@media (prefers-color-scheme:light){html:not(.t-dark) .tr-offer,html:not(.t-dark) .tr-bar{--tr-bg:#FFFFFF;--tr-bg2:#E1E8E3;--tr-fg:#0F1D16;--tr-fg2:#26342D;--tr-mute:#4C5D53;--tr-line:#A8B8AD;--tr-line2:#C5D1C9;--tr-acc:#1D6590;--tr-acc-fg:#FFFFFF}}
-.tr-offer{position:fixed;z-index:45;inset-inline-start:16px;bottom:16px;max-width:min(360px,calc(100vw - 32px));box-sizing:border-box;padding:14px 16px;border:1px solid var(--tr-acc);border-radius:12px;background:var(--tr-bg);color:var(--tr-fg);box-shadow:0 16px 40px -16px rgba(0,0,0,.45);font-size:15px;line-height:1.4;animation:tr-in .25s ease both}
-.tr-offer p{margin:0 0 10px;font-weight:600}
-.tr-offer small{display:block;margin:-6px 0 12px;color:var(--tr-mute);font-size:12.5px;font-weight:400}
-.tr-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
-.tr-btn{min-height:40px;padding:0 14px;border-radius:8px;border:1px solid var(--tr-line);background:transparent;color:inherit;font:inherit;font-size:14px;cursor:pointer}
-.tr-btn.tr-go{background:var(--tr-acc);border-color:var(--tr-acc);color:var(--tr-acc-fg);font-weight:700}
-.tr-btn:focus-visible,.tr-sel:focus-visible{outline:2px solid var(--tr-acc);outline-offset:2px}
-.tr-bar{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;padding:8px 16px;background:var(--tr-bg2);border-bottom:1px solid var(--tr-line2);color:var(--tr-fg2);font-size:13.5px;line-height:1.4}
-.tr-bar .tr-msg{flex:1 1 260px}
-.tr-bar .tr-btn{min-height:32px;padding:0 10px;font-size:13px}
-.tr-sel{min-height:32px;padding:0 8px;border-radius:8px;border:1px solid var(--tr-line);background:transparent;color:inherit;font:inherit;font-size:13px}
-.tr-sel option{color:#1B2A22;background:#fff}
-@supports (appearance: base-select){.tr-sel,.tr-sel::picker(select){appearance:base-select}.tr-sel{display:inline-flex;align-items:center;gap:6px}.tr-sel::picker(select){box-sizing:border-box;max-block-size:min(60vh,26em);overflow:auto;margin-block:6px;padding:4px;border:1px solid var(--tr-line);border-radius:10px;background:var(--tr-bg);color:var(--tr-fg);box-shadow:0 18px 44px -18px rgba(0,0,0,.55)}.tr-sel option{min-block-size:32px;padding:4px 10px;border-radius:6px;background:transparent;color:var(--tr-fg2);font-size:13px}.tr-sel option:hover,.tr-sel option:focus-visible{background:var(--tr-bg2);color:var(--tr-fg);outline:none}.tr-sel option:checked{font-weight:600;color:var(--tr-fg)}.tr-sel option::checkmark{color:var(--tr-acc)}}
-.tr-info{display:inline-grid;place-items:center;inline-size:20px;block-size:20px;margin-inline-start:8px;padding:0;border:1px solid var(--tr-line);border-radius:50%;background:transparent;color:inherit;font:italic 700 12px/1 Georgia,serif;cursor:pointer;vertical-align:-4px;position:relative;anchor-name:--tr-info}
-.tr-info::after{content:'';position:absolute;inset:-12px}
-.tr-info:focus-visible{outline:2px solid var(--tr-acc);outline-offset:2px}
-.tr-about{max-inline-size:min(380px,calc(100vw - 32px));box-sizing:border-box;margin:auto;padding:12px 14px;border:1px solid var(--tr-acc);border-radius:10px;background:var(--tr-bg);color:var(--tr-fg);box-shadow:0 16px 40px -16px rgba(0,0,0,.45);font-size:13.5px;line-height:1.5}
-@supports (anchor-name:--a){.tr-about{position-anchor:--tr-info;inset:auto;top:anchor(bottom);inset-inline-start:anchor(start);margin:8px 0 0;position-try-fallbacks:flip-inline}}
-.tr-meter{flex:0 0 120px;height:6px;border-radius:3px;background:var(--tr-line2);overflow:hidden}
-.tr-meter i{display:block;height:100%;width:var(--p,0%);background:var(--tr-acc);transition:width .2s ease}
-@keyframes tr-in{from{opacity:0;transform:translateY(8px)}}
-@media (max-width:600px){.tr-offer{inset-inline:8px;bottom:64px;max-width:none}}
-@media (prefers-reduced-motion:reduce){.tr-offer{animation:none}.tr-meter i{transition:none}}
-@media print{.tr-offer,.tr-bar{display:none!important}}
-`;
-function css() {
-  if (document.getElementById('tr-css')) return;
-  const s = document.createElement('style');
-  s.id = 'tr-css';
-  s.textContent = CSS;
-  document.head.appendChild(s);
-}
+// Their styles are in src/styles/translate.css, which loads with this module.
+
+/** Set a progress meter's fill. @param {HTMLElement} m @param {number} pct */
+const meterAt = (m, pct) => (m.style.setProperty('--p', pct + '%'), m);
 /**
  * A small element builder: attributes, `text`, and on* listeners.
  * @param {string} tag
@@ -1044,7 +992,6 @@ function languageSelect(current) {
 /** @param {string} lang */
 export function offer(lang) {
   if (!OFFER[lang] || state.offerEl) return;
-  css();
   const [q, yes, no, note] = OFFER[lang];
   window.CRAGA_I18N_OFFER = 'shown';
   const id = 'tr-q';
@@ -1107,7 +1054,6 @@ function removeOffer() {
  * @param {number} [p] progress, 0 to 1
  */
 function ui(kind, lang, p) {
-  css();
   if (!state.ui) {
     state.ui = el('div', { class: 'tr-bar', role: 'region', 'aria-label': 'Translation', translate: 'no' });
     document.body.insertBefore(state.ui, document.body.firstChild);
@@ -1120,7 +1066,7 @@ function ui(kind, lang, p) {
     meter = /** @type {HTMLElement | null} */ (bar.querySelector('.tr-meter'));
   if (busy && bar.dataset.kind === 'busy' && msg && meter) {
     msg.textContent = langName(lang) + ' · ' + pct + '%';
-    meter.style.setProperty('--p', pct + '%');
+    meterAt(meter, pct);
     return;
   }
   bar.dataset.kind = busy ? 'busy' : kind;
@@ -1130,7 +1076,7 @@ function ui(kind, lang, p) {
   if (busy) {
     bar.append(
       el('span', { class: 'tr-msg', lang, text: langName(lang) + ' · ' + pct + '%' }),
-      el('span', { class: 'tr-meter', 'aria-hidden': 'true', style: '--p:' + pct + '%' }, [el('i')]),
+      meterAt(el('span', { class: 'tr-meter', 'aria-hidden': 'true' }, [el('i')]), pct),
     );
   } else if (kind === 'failed') {
     bar.append(

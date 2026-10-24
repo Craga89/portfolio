@@ -50,7 +50,7 @@ const built = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 's
       <button type="button" class="motion" data-motion-toggle><span class="when-moving"><Icon name="pause" size={14} />pause animations</span><span class="when-still"><Icon name="play" size={14} />play animations</span></button>
       {/* The language menu, where the browser can translate on the device (scripts/i18n.ts). */}
       <label class="lang" data-lang hidden><Icon name="globe" size={14} /><span class="c-sr">Language</span><select class="lang-s" translate="no" data-tr-menu></select><span class="lang-mt" title="Translated by your browser on your device, not by a person." data-lang-mt hidden>machine translation</span></label>
-      <a class="ver" href={`${SOURCE}/commit/__BUILD_SHA__`} title={`Built from commit __BUILD_SHORT__, ${built}`} data-built="__BUILD_AT__">main@__BUILD_SHORT__ · <span data-built-ago>just now</span></a>
+      <a class="ver" href={`${SOURCE}/commit/__BUILD_SHA__`} title={`Built from commit __BUILD_SHORT__, ${built}`} data-built="__BUILD_AT__"><span translate="no">main@__BUILD_SHORT__</span> · <span data-built-ago>just now</span></a>
       <a class="ver qual" href="/?case=site#case-studies" data-open="case/site" data-live-side>CI checks · this-site.md</a>
     </div>
   </div>

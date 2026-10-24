@@ -86,7 +86,9 @@ const ld = {
   @supports (animation-timeline: scroll()) {
     .prog {
       display: block;
-      animation: prog linear both;
+      animation-name: prog;
+      animation-timing-function: linear;
+      animation-fill-mode: both;
       animation-timeline: scroll(root);
     }
   }

@@ -43,7 +43,7 @@
   },
   "overrides": [
     {
-      "files": ["src/**/*.js", "shared/**/*.js", "tools/dc-runtime.js", "tools/translator-stub.mjs"],
+      "files": ["src/**/*.js", "shared/**/*.js", "tools/translator-stub.mjs"],
       "env": {
         "browser": true
       }
@@ -61,6 +61,12 @@
       "files": ["worker/src/**"],
       "env": {
         "worker": true
+      }
+    },
+    {
+      "files": ["src/**/*.ts", "src/**/*.astro"],
+      "rules": {
+        "import/no-unassigned-import": "off"
       }
     }
   ]

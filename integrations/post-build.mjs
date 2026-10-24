@@ -21,10 +21,13 @@ export function postBuild() {
         const { chromium } = await import('playwright');
         const srv = await serve(out);
         const browser = await chromium.launch();
+        // Only the built site: no analytics, visit counts or live data from a build.
+        const context = await browser.newContext({ reducedMotion: 'reduce' });
+        await context.route(/^(?!https?:\/\/(127\.0\.0\.1|localhost)[:/])/, (route) => route.abort());
         try {
-          await askIndex(browser, srv.url, out, logger);
-          await ogImages(browser, srv.url, out, logger);
-          await cvPdf(browser, srv.url, out);
+          await askIndex(context, srv.url, out, logger);
+          await ogImages(context, srv.url, out, logger);
+          await cvPdf(context, srv.url, out);
         } finally {
           await browser.close();
           srv.close();
@@ -39,10 +42,11 @@ export function postBuild() {
 /**
  * ask.sh's index (site/assets/ask-index.json), and the worker's copies of it and of what its MCP
  * tools serve (worker/knowledge.json, worker/agent-data.json).
- * @param {import('playwright').Browser} browser @param {string} base @param {string} out @param {import('astro').AstroIntegrationLogger} logger
+ * @param {import('playwright').BrowserContext} context @param {string} base @param {string} out @param {import('astro').AstroIntegrationLogger} logger
  */
-async function askIndex(browser, base, out, logger) {
-  const page = await browser.newPage({ viewport: { width: 1440, height: 1000 }, reducedMotion: 'reduce', colorScheme: 'dark' });
+async function askIndex(context, base, out, logger) {
+  const page = await context.newPage();
+  await page.setViewportSize({ width: 1440, height: 1000 });
   /** @type {string[]} */
   const errors = [];
   page.on('pageerror', (e) => errors.push(String(e)));
@@ -50,7 +54,14 @@ async function askIndex(browser, base, out, logger) {
   if (errors.length) throw new Error('page errors on the home page:\n' + errors.join('\n'));
   const passages = await page.evaluate(homePassages);
   const projects = await page.evaluate(() =>
-    [...new Map([...document.querySelectorAll('#oss a[href^="https://github.com/"]')].map((a) => [/** @type {HTMLAnchorElement} */ (a).href.replace(/\/$/, ''), (a.textContent || '').trim()]))].map(([url, name]) => ({ name, url })),
+    [
+      ...new Map(
+        [...document.querySelectorAll('#oss a[href^="https://github.com/"]')].map((a) => [
+          /** @type {HTMLAnchorElement} */ (a).href.replace(/\/$/, ''),
+          (a.textContent || '').trim(),
+        ]),
+      ),
+    ].map(([url, name]) => ({ name, url })),
   );
   const posts = readdirSync(join(out, 'blog'), { withFileTypes: true }).filter((d) => d.isDirectory());
   for (const d of posts) {
@@ -64,16 +75,27 @@ async function askIndex(browser, base, out, logger) {
   mkdirSync(WORKER, { recursive: true });
   writeFileSync(join(WORKER, 'knowledge.json'), JSON.stringify(index, null, 1) + '\n');
   // Keep the last open-source snapshot if this build can't read the oss branch.
-  const prev = existsSync(join(WORKER, 'agent-data.json')) ? JSON.parse(readFileSync(join(WORKER, 'agent-data.json'), 'utf8')) : null;
+  const prev = existsSync(join(WORKER, 'agent-data.json'))
+    ? JSON.parse(readFileSync(join(WORKER, 'agent-data.json'), 'utf8'))
+    : null;
   const cv = JSON.parse(readFileSync(join(ROOT, 'src', 'cv.json'), 'utf8'));
-  writeFileSync(join(WORKER, 'agent-data.json'), JSON.stringify({ cv, projects, oss: ossSnapshot() ?? prev?.oss ?? null }, null, 1) + '\n');
+  writeFileSync(
+    join(WORKER, 'agent-data.json'),
+    JSON.stringify({ cv, projects, oss: ossSnapshot() ?? prev?.oss ?? null }, null, 1) + '\n',
+  );
   logger.info(`ask.sh index: ${passages.length} passages, ${passages.reduce((n, p) => n + p.text.length, 0)} chars`);
 }
 
 /** The open-source snapshot from the oss branch, or null without it. */
 function ossSnapshot() {
   try {
-    return JSON.parse(execFileSync('git', ['show', 'origin/oss:reports/oss.json'], { cwd: ROOT, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }));
+    return JSON.parse(
+      execFileSync('git', ['show', 'origin/oss:reports/oss.json'], {
+        cwd: ROOT,
+        encoding: 'utf8',
+        stdio: ['ignore', 'pipe', 'ignore'],
+      }),
+    );
   } catch {
     return null;
   }
@@ -81,9 +103,9 @@ function ossSnapshot() {
 
 /**
  * Screenshot each card under /og-card/ (see src/lib/og.ts) to its page's og.png, then remove the cards.
- * @param {import('playwright').Browser} browser @param {string} base @param {string} out @param {import('astro').AstroIntegrationLogger} logger
+ * @param {import('playwright').BrowserContext} context @param {string} base @param {string} out @param {import('astro').AstroIntegrationLogger} logger
  */
-async function ogImages(browser, base, out, logger) {
+async function ogImages(context, base, out, logger) {
   const sharp = (await import('sharp')).default;
   const cards = join(out, 'og-card');
   /** @type {string[]} */
@@ -94,13 +116,16 @@ async function ogImages(browser, base, out, logger) {
       else if (d.name === 'index.html') paths.push(rel);
   };
   walk('');
-  const page = await browser.newPage({ viewport: { width: 1200, height: 630 }, deviceScaleFactor: 1 });
+  const page = await context.newPage();
+  await page.setViewportSize({ width: 1200, height: 630 });
   for (const rel of paths) {
     await page.goto(`${base}og-card/${rel}`, { waitUntil: 'load' });
     await page.evaluate(() => document.fonts.ready);
     const target = rel === 'home/' ? '' : rel;
     mkdirSync(join(out, target), { recursive: true });
-    const png = await sharp(await page.screenshot({ type: 'png' })).png({ palette: true, quality: 90, effort: 10 }).toBuffer();
+    const png = await sharp(await page.screenshot({ type: 'png' }))
+      .png({ palette: true, quality: 90, effort: 10 })
+      .toBuffer();
     writeFileSync(join(out, target, 'og.png'), png);
   }
   await page.close();
@@ -108,13 +133,20 @@ async function ogImages(browser, base, out, logger) {
   logger.info(`social images: ${paths.length}`);
 }
 
-/** The plain CV as a PDF, printed with the page's own print styles. @param {import('playwright').Browser} browser @param {string} base @param {string} out */
-async function cvPdf(browser, base, out) {
-  const page = await browser.newPage();
+/** The plain CV as a PDF, printed with the page's own print styles. @param {import('playwright').BrowserContext} context @param {string} base @param {string} out */
+async function cvPdf(context, base, out) {
+  const page = await context.newPage();
   await page.emulateMedia({ media: 'print', colorScheme: 'light' });
   await page.goto(base + 'cv/', { waitUntil: 'networkidle' });
   await page.evaluate(() => document.fonts.ready);
-  await page.pdf({ path: join(out, 'cv.pdf'), format: 'A4', preferCSSPageSize: true, printBackground: true, tagged: true, outline: true });
+  await page.pdf({
+    path: join(out, 'cv.pdf'),
+    format: 'A4',
+    preferCSSPageSize: true,
+    printBackground: true,
+    tagged: true,
+    outline: true,
+  });
   await page.close();
 }
 
@@ -126,9 +158,14 @@ async function cvPdf(browser, base, out) {
 function serviceWorker(out) {
   const home = readFileSync(join(out, 'index.html'), 'utf8');
   // What the home page loads up front: its scripts, styles and fonts.
-  const assets = [...new Set([...home.matchAll(/(?:src|href)="\/(assets\/[^"]+\.(?:js|css|woff2))"/g)].map((m) => m[1]))];
+  const assets = [
+    ...new Set([...home.matchAll(/(?:src|href)="\/(assets\/[^"]+\.(?:js|css|woff2))"/g)].map((m) => m[1])),
+  ];
   const core = ['./', 'cv/', ...assets, 'favicon.svg'];
-  const version = createHash('sha256').update(core.join('|') + home).digest('hex').slice(0, 10);
+  const version = createHash('sha256')
+    .update(core.join('|') + home)
+    .digest('hex')
+    .slice(0, 10);
   writeFileSync(
     join(out, 'sw.js'),
     `// Generated by integrations/post-build.mjs

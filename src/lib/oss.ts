@@ -25,7 +25,10 @@ let cached: OssSnapshot | null | undefined;
 export function ossSnapshot(): OssSnapshot | null {
   if (cached !== undefined) return cached;
   try {
-    const json = execFileSync('git', ['show', 'origin/oss:reports/oss.json'], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] });
+    const json = execFileSync('git', ['show', 'origin/oss:reports/oss.json'], {
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'ignore'],
+    });
     const d = JSON.parse(json) as OssSnapshot;
     cached = Array.isArray(d.timeline) ? d : null;
   } catch {

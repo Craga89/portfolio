@@ -3,11 +3,19 @@ import type { APIRoute } from 'astro';
 import cv from '../cv.json';
 import { ASK_ENDPOINT, GITHUB, LINKEDIN, SITE } from '../site';
 
-type Work = { name: string; position: string; startDate: string; endDate?: string; summary: string; highlights?: string[] };
+type Work = {
+  name: string;
+  position: string;
+  startDate: string;
+  endDate?: string;
+  summary: string;
+  highlights?: string[];
+};
 
 export const GET: APIRoute = () => {
   const b = cv.basics;
-  const job = (w: Work) => `### ${w.position}, ${w.name} (${w.startDate.slice(0, 4)}${w.endDate ? '–' + w.endDate.slice(0, 4) : '–present'})\n\n${w.summary}\n${(w.highlights ?? []).map((h) => '\n- ' + h).join('')}`;
+  const job = (w: Work) =>
+    `### ${w.position}, ${w.name} (${w.startDate.slice(0, 4)}${w.endDate ? '–' + w.endDate.slice(0, 4) : '–present'})\n\n${w.summary}\n${(w.highlights ?? []).map((h) => '\n- ' + h).join('')}`;
   const mcp = ASK_ENDPOINT ? ASK_ENDPOINT.replace(/\/ask$/, '/mcp') : '(not configured)';
   return new Response(`# ${b.name}
 

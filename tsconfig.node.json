@@ -12,6 +12,5 @@
     "playwright.config.mjs",
     "worker/src/*.d.ts",
     "shared/globals.d.ts"
-  ],
-  "exclude": ["tools/dc-runtime.js"]
+  ]
 }

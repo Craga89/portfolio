@@ -10,7 +10,23 @@ export function homePassages() {
       .replace(/\s+/g, ' ')
       .replace(/\s+([,.;:!?)])/g, '$1')
       .trim();
-  const INLINE = new Set(['a', 'b', 'strong', 'em', 'i', 'code', 'mark', 'small', 'abbr', 'sup', 'sub', 'u', 'span', 'kbd', 'time']);
+  const INLINE = new Set([
+    'a',
+    'b',
+    'strong',
+    'em',
+    'i',
+    'code',
+    'mark',
+    'small',
+    'abbr',
+    'sup',
+    'sub',
+    'u',
+    'span',
+    'kbd',
+    'time',
+  ]);
   const SKIP = new Set(['script', 'style', 'svg', 'canvas', 'input', 'template', 'select']);
   /** Text with a space between block-level pieces, so words don't run together. @param {Node | null} n @returns {string} */
   const txt = (n) => {
@@ -26,7 +42,14 @@ export function homePassages() {
   };
   /** @type {Passage[]} */
   const out = [];
-  const add = (/** @type {string} */ id, /** @type {string} */ title, /** @type {string} */ text, /** @type {string} */ href, kind = 'link', key = '') => {
+  const add = (
+    /** @type {string} */ id,
+    /** @type {string} */ title,
+    /** @type {string} */ text,
+    /** @type {string} */ href,
+    kind = 'link',
+    key = '',
+  ) => {
     // Drop the terminal decoration ($ cat file.txt, # comments, → bullets) so passages read as prose.
     text = clean(
       String(text || '')
@@ -42,9 +65,16 @@ export function homePassages() {
   const qa = (/** @type {string} */ sel, /** @type {ParentNode} */ root = document) => [...root.querySelectorAll(sel)];
 
   const intro = q('section[aria-label="Introduction"]');
-  if (intro) add('intro', 'About Craig', [q('h1', intro), q('.st', intro), q('#about', intro)].map(txt).join(' '), '#top');
+  if (intro)
+    add('intro', 'About Craig', [q('h1', intro), q('.st', intro), q('#about', intro)].map(txt).join(' '), '#top');
   const id = q('.side .id');
-  if (id) add('profile', 'Profile', txt(id) + '. Contact: craga89@gmail.com, github.com/Craga89, linkedin.com/in/craigmichaelthompson.', '#top');
+  if (id)
+    add(
+      'profile',
+      'Profile',
+      txt(id) + '. Contact: craga89@gmail.com, github.com/Craga89, linkedin.com/in/craigmichaelthompson.',
+      '#top',
+    );
   qa('#career article.job').forEach((a, i) => {
     const h = q('h3', a);
     add('career-' + (i + 1), h ? txt(h) : a.getAttribute('aria-label') || 'Career', txt(a), '#career');
@@ -59,9 +89,23 @@ export function homePassages() {
       // A responsibility's text starts at its summary: its title and position are in the passage's title.
       const body = /** @type {Element} */ (p.cloneNode(true));
       if (kind === 'resp') body.querySelectorAll('.top, .kicker, h3, summary').forEach((n) => n.remove());
-      add(prefix + key, (p.getAttribute('aria-label') || key) + (h ? ': ' + clean(txt(h)) : ''), txt(body), section, kind, key);
+      add(
+        prefix + key,
+        (p.getAttribute('aria-label') || key) + (h ? ': ' + clean(txt(h)) : ''),
+        txt(body),
+        section,
+        kind,
+        key,
+      );
     }
-  const rows = qa('#stack details.row').map((r) => clean(txt(q('.tg', r))) + ' ' + qa('.chips li', r).map((li) => clean(txt(li))).join(', '));
+  const rows = qa('#stack details.row').map(
+    (r) =>
+      clean(txt(q('.tg', r))) +
+      ' ' +
+      qa('.chips li', r)
+        .map((li) => clean(txt(li)))
+        .join(', '),
+  );
   if (rows.length) add('stack', 'Skills and tools (stack)', rows.join('. '), '#stack');
   for (const [sec, title] of [
     ['oss', 'Open source'],
@@ -86,7 +130,10 @@ export function homePassages() {
   qa('#faq details').forEach((d, i) => {
     const sum = q('summary', d);
     // The question is the title; the text is just the answer, so it isn't read back to the visitor.
-    const answer = [...d.childNodes].filter((n) => n !== sum).map(txt).join(' ');
+    const answer = [...d.childNodes]
+      .filter((n) => n !== sum)
+      .map(txt)
+      .join(' ');
     add('faq-' + (i + 1), 'FAQ: ' + (sum ? clean(txt(sum)) : ''), answer, '#faq');
   });
   return out;
@@ -95,7 +142,7 @@ export function homePassages() {
 /** A blog post, briefly: what it's about and where to read it. @returns {Passage} */
 export function postPassage() {
   const clean = (/** @type {string} */ t) => t.replace(/\s+/g, ' ').trim();
-  const slug = location.pathname.split('/').filter(Boolean).pop() || '';
+  const slug = location.pathname.split('/').findLast(Boolean) || '';
   const title = clean(document.querySelector('.post h1')?.textContent || slug);
   const date = document.querySelector('.post time')?.getAttribute('datetime') || '';
   const tags = [...document.querySelectorAll('.post .tags li')].map((li) => clean(li.textContent || ''));

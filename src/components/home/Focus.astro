@@ -17,7 +17,7 @@ const views = await Promise.all(
   views.map((v) => (
     <div class="focus" role="region" aria-label="Suggested reading" data-focus={v.key} hidden>
       <div class="h">
-        <span class="c">$ ./readme --focus={v.key}</span>
+        <span class="c" translate="no">$ ./readme --focus={v.key}</span>
         <button type="button" class="x" data-focus-clear>
           show everything <span aria-hidden="true">×</span>
         </button>

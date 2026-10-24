@@ -3,7 +3,7 @@ import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import config from '../../../../redirects/old-domains.json' with { type: 'json' };
 import { junk, match } from '../../../../tools/lib/redirects.mjs';
-import { loadPosts } from '../../../../tools/blog.mjs';
+import { loadPosts } from '../../../../tools/lib/posts.mjs';
 
 describe('redirect rules', () => {
   for (const [from, to] of config.tests) {

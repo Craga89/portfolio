@@ -7,6 +7,8 @@ export function inlineMd(src: string, vars: Record<string, string> = {}): string
   html = html.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
   html = html.replace(/\*([^*]+)\*/g, '<em>$1</em>');
   // {name} → the value, marked so scripts/live.ts can refresh it.
-  html = html.replace(/\{(\w+)\}/g, (m, name: string) => (name in vars ? `<span data-oss="${name}">${esc(vars[name])}</span>` : m));
+  html = html.replace(/\{(\w+)\}/g, (m, name: string) =>
+    name in vars ? `<span data-oss="${name}">${esc(vars[name])}</span>` : m,
+  );
   return html;
 }

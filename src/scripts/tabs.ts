@@ -30,7 +30,16 @@ export class Tabs {
       const next = vertical ? 'ArrowDown' : rtl ? 'ArrowLeft' : 'ArrowRight';
       const prev = vertical ? 'ArrowUp' : rtl ? 'ArrowRight' : 'ArrowLeft';
       const i = this.index;
-      const to = e.key === next ? i + 1 : e.key === prev ? i - 1 : e.key === 'Home' ? 0 : e.key === 'End' ? this.tabs.length - 1 : null;
+      const to =
+        e.key === next
+          ? i + 1
+          : e.key === prev
+            ? i - 1
+            : e.key === 'Home'
+              ? 0
+              : e.key === 'End'
+                ? this.tabs.length - 1
+                : null;
       if (to === null) return;
       e.preventDefault();
       transition(() => this.select((to + this.tabs.length) % this.tabs.length));
@@ -39,7 +48,10 @@ export class Tabs {
   }
 
   get index() {
-    return Math.max(0, this.tabs.findIndex((t) => t.getAttribute('aria-selected') === 'true'));
+    return Math.max(
+      0,
+      this.tabs.findIndex((t) => t.getAttribute('aria-selected') === 'true'),
+    );
   }
 
   /** The tab whose panel has this id suffix (a file's short id: mono, lead…). */

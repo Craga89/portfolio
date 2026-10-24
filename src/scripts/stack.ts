@@ -28,7 +28,11 @@ if (box) {
         const show = !q || area || at >= 0;
         h.hidden = !show;
         if (show) n++;
-        h.replaceChildren(...(at < 0 ? [text] : [text.slice(0, at), el('mark', { text: text.slice(at, at + q.length) }), text.slice(at + q.length)]));
+        h.replaceChildren(
+          ...(at < 0
+            ? [text]
+            : [text.slice(0, at), el('mark', { text: text.slice(at, at + q.length) }), text.slice(at + q.length)]),
+        );
       }
       total += n;
       r.row.hidden = n === 0;

@@ -4,7 +4,15 @@ import { $$ } from './dom';
 
 const links = $$<HTMLAnchorElement>('[data-spy]');
 const ids = [...new Set(links.map((a) => a.dataset.spy!))];
-const sections = ids.map((id) => [id, id === 'top' ? document.querySelector('section[aria-label="Introduction"]') : document.getElementById(id)] as const).filter((x): x is [string, Element] => !!x[1]);
+const sections = ids
+  .map(
+    (id) =>
+      [
+        id,
+        id === 'top' ? document.querySelector('section[aria-label="Introduction"]') : document.getElementById(id),
+      ] as const,
+  )
+  .filter((x): x is [string, Element] => !!x[1]);
 
 let lock: string | null = null;
 let raf = 0;
@@ -21,7 +29,8 @@ function pick() {
     for (const [id, el] of sections) if (id !== 'top' && el.getBoundingClientRect().top - line <= 0) cur = id;
     // At the very bottom, the last section counts even if it's short.
     const se = document.scrollingElement!;
-    if (se.scrollHeight > innerHeight + 50 && se.scrollTop + innerHeight >= se.scrollHeight - 4) cur = sections.at(-1)![0];
+    if (se.scrollHeight > innerHeight + 50 && se.scrollTop + innerHeight >= se.scrollHeight - 4)
+      cur = sections.at(-1)![0];
   }
   if (cur === current) return;
   current = cur;

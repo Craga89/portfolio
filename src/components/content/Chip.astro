@@ -22,7 +22,9 @@
   }
   @supports (animation-timeline: view()) {
     .c-chip {
-      animation: c-rise linear both;
+      animation-name: c-rise;
+      animation-timing-function: linear;
+      animation-fill-mode: both;
       animation-timeline: view();
       animation-range: entry 0% entry 100%;
     }

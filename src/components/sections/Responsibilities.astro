@@ -30,12 +30,12 @@ const first = all[0].data;
       {all.map((entry, i) => <ResponsibilityCard entry={entry} index={i} total={all.length} panel={{ hidden: i > 0 }} />)}
     </div>
     <div class="ctl">
-      <button type="button" aria-label="Previous file" data-deck-prev><span aria-hidden="true">←</span> prev</button>
+      <button type="button" data-deck-prev><span aria-hidden="true">←</span> prev<span class="c-sr"> file</span></button>
       <span class="mid">
-        <button type="button" aria-pressed="false" data-deck-play hidden><span class="when-on">❚❚ pause</span><span class="when-off">▶ play</span></button>
+        <button type="button" data-deck-play data-on="false" hidden><span class="when-on">❚❚ pause</span><span class="when-off">▶ play</span></button>
         <span class="next-l" data-deck-next-label>next: {all[1].data.file}</span>
       </span>
-      <button type="button" aria-label="Next file" data-deck-next>next <span aria-hidden="true">→</span></button>
+      <button type="button" data-deck-next>next<span class="c-sr"> file</span> <span aria-hidden="true">→</span></button>
     </div>
   </div>
   <p class="c-perma"><a href={`/responsibilities/${slugOf(first.file)}/`} data-deck-perma>{first.file} on its own page <span aria-hidden="true">↗</span></a></p>
@@ -180,8 +180,9 @@ const first = all[0].data;
   .ctl button[hidden] {
     display: none;
   }
-  [data-deck-play][aria-pressed='true'] .when-on,
-  [data-deck-play][aria-pressed='false'] .when-off {
+  /* Its label says what it will do: pause while playing, play while stopped. */
+  [data-deck-play][data-on='true'] .when-off,
+  [data-deck-play][data-on='false'] .when-on {
     display: none;
   }
   .next-l {

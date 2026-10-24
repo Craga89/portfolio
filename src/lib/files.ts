@@ -36,7 +36,8 @@ const respFile = (e: CollectionEntry<'responsibilities'>): SiteFile => ({
 });
 
 export const caseStudies = async () => (await getCollection('caseStudies')).sort((a, b) => a.data.order - b.data.order);
-export const responsibilities = async () => (await getCollection('responsibilities')).sort((a, b) => a.data.order - b.data.order);
+export const responsibilities = async () =>
+  (await getCollection('responsibilities')).sort((a, b) => a.data.order - b.data.order);
 
 /** Every file, case studies first, each in its tab order. */
 export async function allFiles(): Promise<SiteFile[]> {
@@ -46,7 +47,10 @@ export async function allFiles(): Promise<SiteFile[]> {
 /** A file by its name (compliance.md) or by kind and id (resp/comp). */
 export async function findFile(ref: string): Promise<SiteFile> {
   const files = await allFiles();
-  const found = ref.includes('/') && !ref.endsWith('.md') ? files.find((f) => `${f.kind}/${f.id}` === ref) : files.find((f) => f.file === ref);
+  const found =
+    ref.includes('/') && !ref.endsWith('.md')
+      ? files.find((f) => `${f.kind}/${f.id}` === ref)
+      : files.find((f) => f.file === ref);
   if (!found) throw new Error(`No case study or responsibility "${ref}"`);
   return found;
 }

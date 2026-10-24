@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Turn the recovered blog posts (tools/blog-fetch.mjs, blog-import branch) into Markdown files in
-// src/blog/: <slug>.md with front matter, and their images in src/blog/img/. Run once; after that
+// src/content/blog/: <slug>.md with front matter, and their images in src/content/blog/img/. Run once; after that
 // the Markdown files are the source, and can be edited like any other.
 //
 //   node tools/blog-import.mjs <import dir>
@@ -15,7 +15,7 @@ if (!IN) {
   console.log('usage: node tools/blog-import.mjs <import dir>');
   process.exit(1);
 }
-const OUT = join(ROOT, 'src', 'blog');
+const OUT = join(ROOT, 'src', 'content', 'blog');
 mkdirSync(join(OUT, 'img'), { recursive: true });
 
 // Left out: notices rather than posts (their old addresses redirect to the blog index).
@@ -276,4 +276,4 @@ for (const p of posts) {
 }
 await browser.close();
 console.log(done.sort().join('\n'));
-console.log(`${done.length} posts written to src/blog/`);
+console.log(`${done.length} posts written to src/content/blog/`);

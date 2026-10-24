@@ -9,11 +9,15 @@ if ('Translator' in self) {
   const norm = (t: string) => {
     t = String(t || '').toLowerCase();
     if (/^zh-(tw|hk|mo)|^zh-hant/.test(t)) return 'zh-Hant';
-    const b = ({ nb: 'no', nn: 'no', iw: 'he', in: 'id' } as Record<string, string>)[t.split('-')[0]] ?? t.split('-')[0];
+    const b =
+      ({ nb: 'no', nn: 'no', iw: 'he', in: 'id' } as Record<string, string>)[t.split('-')[0]] ?? t.split('-')[0];
     return L.includes(b) ? b : null;
   };
   let p: Promise<typeof import('../i18n.js')> | null = null;
-  const I = (window.CRAGA_I18N = { langs: L, load: () => (p ??= import('../i18n.js')) });
+  const I = (window.CRAGA_I18N = {
+    langs: L,
+    load: () => (p ??= Promise.all([import('../i18n.js'), import('../styles/translate.css')]).then(([m]) => m)),
+  });
   const saved = store.get('craga-lang');
   const no = store.get('craga-lang-no');
   const want = saved && saved !== 'en' ? norm(saved) : null;
@@ -41,7 +45,14 @@ if ('Translator' in self) {
   };
   const menus = $$<HTMLSelectElement>('[data-tr-menu]');
   for (const s of menus) {
-    for (const c of ['en', ...L]) s.append(Object.assign(document.createElement('option'), { value: c, lang: c, textContent: c === 'en' ? 'English' : name(c) }));
+    for (const c of ['en', ...L])
+      s.append(
+        Object.assign(document.createElement('option'), {
+          value: c,
+          lang: c,
+          textContent: c === 'en' ? 'English' : name(c),
+        }),
+      );
     s.value = want || 'en';
     (s.closest<HTMLElement>('[data-lang]') ?? s).hidden = false;
     s.addEventListener('change', () => I.load().then((m) => m.setLanguage(s.value)));
@@ -51,5 +62,9 @@ if ('Translator' in self) {
     for (const s of menus) s.value = lang;
     for (const mt of $$('[data-lang-mt]')) mt.hidden = lang === 'en';
   });
-  if (want || offer) I.load().then((m) => m.boot({ lang: (want || offer)!, saved: !!want }), (e) => console.warn('translation unavailable:', e));
+  if (want || offer)
+    I.load().then(
+      (m) => m.boot({ lang: (want || offer)!, saved: !!want }),
+      (e) => console.warn('translation unavailable:', e),
+    );
 }

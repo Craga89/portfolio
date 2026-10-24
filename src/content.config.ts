@@ -90,19 +90,48 @@ const focus = defineCollection({
 
 const recommendations = defineCollection({
   loader: file('./src/data/recommendations.yaml'),
-  schema: z.object({ order: z.number().int(), name: z.string(), role: z.string(), when: z.string(), quote: z.string() }),
+  schema: z.object({
+    order: z.number().int(),
+    name: z.string(),
+    role: z.string(),
+    when: z.string(),
+    quote: z.string(),
+  }),
 });
 
 /** Open-source projects. `{stars}`, `{forks}` and `{commits}` in the text are qTip2's live counts. */
 const projects = defineCollection({
   loader: file('./src/data/projects.yaml'),
-  schema: z.object({ order: z.number().int(), path: z.string(), title: z.string(), url: z.url().optional(), text: z.string() }),
+  schema: z.object({
+    order: z.number().int(),
+    path: z.string(),
+    title: z.string(),
+    url: z.url().optional(),
+    text: z.string(),
+  }),
 });
 
 /** Merged pull requests to other projects, shown in the open-source section. */
 const contributions = defineCollection({
   loader: file('./src/data/contributions.yaml'),
-  schema: z.object({ date: z.coerce.date(), repo: z.string().regex(/^[\w.-]+\/[\w.-]+$/), pr: z.number().int(), title: z.string() }),
+  schema: z.object({
+    date: z.coerce.date(),
+    repo: z.string().regex(/^[\w.-]+\/[\w.-]+$/),
+    pr: z.number().int(),
+    title: z.string(),
+  }),
 });
 
-export const collections = { responsibilities, caseStudies, career, blog, sections, glossary, stack, focus, recommendations, projects, contributions };
+export const collections = {
+  responsibilities,
+  caseStudies,
+  career,
+  blog,
+  sections,
+  glossary,
+  stack,
+  focus,
+  recommendations,
+  projects,
+  contributions,
+};

@@ -3,7 +3,13 @@ import { $$ } from './dom';
 
 function now() {
   try {
-    const parts = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/London', hour: '2-digit', minute: '2-digit', hourCycle: 'h23', timeZoneName: 'shortOffset' }).formatToParts(new Date());
+    const parts = new Intl.DateTimeFormat('en-GB', {
+      timeZone: 'Europe/London',
+      hour: '2-digit',
+      minute: '2-digit',
+      hourCycle: 'h23',
+      timeZoneName: 'shortOffset',
+    }).formatToParts(new Date());
     const get = (t: string) => parts.find((x) => x.type === t)?.value ?? '';
     const off = 'UTC' + (get('timeZoneName').replace(/^GMT/, '') || '+0');
     return { h: get('hour'), m: get('minute'), off, sr: `${get('hour')}:${get('minute')} ${off}` };

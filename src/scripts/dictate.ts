@@ -1,19 +1,24 @@
 // Dictating a question, with the browser's own speech recognition.
-type Recognition = {
+type RecognitionEvents = {
+  result: Event & { results: ArrayLike<ArrayLike<{ transcript: string }>> };
+  error: Event & { error: string };
+  end: Event;
+};
+type Recognition = Omit<EventTarget, 'addEventListener'> & {
   lang: string;
   interimResults: boolean;
   continuous: boolean;
   maxAlternatives: number;
-  onresult: ((e: { results: ArrayLike<ArrayLike<{ transcript: string }>> }) => void) | null;
-  onerror: ((e: { error: string }) => void) | null;
-  onend: (() => void) | null;
+  addEventListener<K extends keyof RecognitionEvents>(type: K, listener: (e: RecognitionEvents[K]) => void): void;
   start(): void;
   stop(): void;
   abort(): void;
 };
 type RecognitionCtor = new () => Recognition;
 
-const SR = (window as unknown as { SpeechRecognition?: RecognitionCtor; webkitSpeechRecognition?: RecognitionCtor }).SpeechRecognition ?? (window as unknown as { webkitSpeechRecognition?: RecognitionCtor }).webkitSpeechRecognition;
+const SR =
+  (window as unknown as { SpeechRecognition?: RecognitionCtor; webkitSpeechRecognition?: RecognitionCtor })
+    .SpeechRecognition ?? (window as unknown as { webkitSpeechRecognition?: RecognitionCtor }).webkitSpeechRecognition;
 
 let rec: Recognition | null = null;
 let broken = false;
@@ -37,29 +42,36 @@ export function dictate(field: HTMLInputElement, mic: HTMLButtonElement, onText:
   r.interimResults = true;
   r.continuous = false;
   r.maxAlternatives = 1;
-  r.onresult = (e) => {
+  r.addEventListener('result', (e) => {
     let said = '';
     for (let i = 0; i < e.results.length; i++) said += e.results[i][0].transcript;
     let v = ((base ? base + ' ' : '') + said.trim()).replace(/\s+/g, ' ');
     v = v.charAt(0).toUpperCase() + v.slice(1);
     field.value = v;
     onText(v);
-  };
-  r.onerror = (e) => {
-    const msg = e.error === 'not-allowed' ? 'Microphone access is blocked' : e.error === 'no-speech' ? "Didn't catch that. Try again?" : e.error === 'aborted' ? '' : "Voice input isn't available here";
+  });
+  r.addEventListener('error', (e) => {
+    const msg =
+      e.error === 'not-allowed'
+        ? 'Microphone access is blocked'
+        : e.error === 'no-speech'
+          ? "Didn't catch that. Try again?"
+          : e.error === 'aborted'
+            ? ''
+            : "Voice input isn't available here";
     if (msg) field.placeholder = msg;
     if (['network', 'service-not-allowed', 'language-not-supported'].includes(e.error)) {
       broken = true;
       mic.hidden = true;
     }
-  };
-  r.onend = () => {
+  });
+  r.addEventListener('end', () => {
     rec = null;
     mic.setAttribute('aria-pressed', 'false');
     mic.setAttribute('aria-label', 'Dictate a question');
     if (field.placeholder === 'Listening…') field.placeholder = placeholder;
     if (matchMedia('(pointer: fine)').matches) field.focus();
-  };
+  });
   mic.setAttribute('aria-pressed', 'true');
   mic.setAttribute('aria-label', 'Stop dictating');
   field.placeholder = 'Listening…';

@@ -31,7 +31,7 @@ if (deck) {
     const can = motionOk() && !stopped;
     if (play) {
       play.hidden = !motionOk();
-      play.setAttribute('aria-pressed', String(can));
+      play.dataset.on = String(can);
     }
     deck.toggleAttribute('data-playing', can);
     deck.toggleAttribute('data-paused', !(visible && !hovered && !focused));
@@ -50,12 +50,18 @@ if (deck) {
   };
 
   deck.addEventListener('animationend', (e) => {
+    // Only the dwell bar's fill moves the tour on, and only if it actually took time: with animations
+    // forced to zero length (a test, a user style), it would race through every file.
+    if (e.animationName !== 'fill' || e.elapsedTime < 1) return;
     if ((e.target as Element).closest('.seg[aria-selected="true"]')) t.step(1);
   });
-  new IntersectionObserver((es) => {
-    visible = es.some((e) => e.isIntersecting);
-    sync();
-  }, { threshold: 0.35 }).observe(deck);
+  new IntersectionObserver(
+    (es) => {
+      visible = es.some((e) => e.isIntersecting);
+      sync();
+    },
+    { threshold: 0.35 },
+  ).observe(deck);
   deck.addEventListener('mouseenter', () => ((hovered = true), sync()));
   deck.addEventListener('mouseleave', () => ((hovered = false), sync()));
   deck.addEventListener('focusin', () => ((focused = true), sync()));

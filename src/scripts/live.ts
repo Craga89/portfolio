@@ -7,7 +7,13 @@ import { fmt, stars } from '../lib/oss-format';
 interface Live {
   lighthouse?: { mobile?: Scores; desktop?: Scores; at?: string; run?: string };
   a11y?: { pass: boolean; axeRuns: number; at?: string; run?: string };
-  evals?: { passed: number; total: number; at?: string; run?: string; cases?: { q: string; expect: string; answer?: string; pass: boolean }[] };
+  evals?: {
+    passed: number;
+    total: number;
+    at?: string;
+    run?: string;
+    cases?: { q: string; expect: string; answer?: string; pass: boolean }[];
+  };
   oss?: { prs: number; repos: number; since: number; qtip?: { stars: number; forks: number; commits: number } };
 }
 interface Scores {
@@ -18,7 +24,9 @@ interface Scores {
 
 const day = (iso?: string) => {
   try {
-    return iso ? new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', timeZone: 'Europe/London' }) : '';
+    return iso
+      ? new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', timeZone: 'Europe/London' })
+      : '';
   } catch {
     return '';
   }
@@ -44,9 +52,22 @@ function show(d: Live) {
   if (lh?.mobile && lh.desktop) {
     const a = Math.min(lh.mobile.accessibility, lh.desktop.accessibility);
     const bp = Math.min(lh.mobile.bestPractices, lh.desktop.bestPractices);
-    card('lh', `${lh.mobile.performance} · ${lh.desktop.performance}`, `performance on mobile · desktop; accessibility ${a}, best practices ${bp}`, lh.at, lh.run);
+    card(
+      'lh',
+      `${lh.mobile.performance} · ${lh.desktop.performance}`,
+      `performance on mobile · desktop; accessibility ${a}, best practices ${bp}`,
+      lh.at,
+      lh.run,
+    );
   }
-  if (ax) card('a11y', ax.pass ? 'Passing' : 'Failing', `${ax.axeRuns} axe runs, plus keyboard, focus, reflow, spacing and motion checks`, ax.at, ax.run);
+  if (ax)
+    card(
+      'a11y',
+      ax.pass ? 'Passing' : 'Failing',
+      `${ax.axeRuns} axe runs, plus keyboard, focus, reflow, spacing and motion checks`,
+      ax.at,
+      ax.run,
+    );
   if (ev) {
     card('ev', `${ev.passed} of ${ev.total} correct`, null, ev.at);
     const short = $('[data-live-ev-short]');
@@ -57,7 +78,10 @@ function show(d: Live) {
         ...ev.cases.map((c) =>
           el('li', { class: 'c-test' }, [
             el('div', { class: 'c-test-q' }, [
-              el('span', { class: 'c-test-r', 'data-pass': String(c.pass) }, [el('span', { 'aria-hidden': 'true', text: c.pass ? '✓' : '✗' }), el('span', { class: 'c-sr', text: c.pass ? 'Passed: ' : 'Failed: ' })]),
+              el('span', { class: 'c-test-r', 'data-pass': String(c.pass) }, [
+                el('span', { 'aria-hidden': 'true', text: c.pass ? '✓' : '✗' }),
+                el('span', { class: 'c-sr', text: c.pass ? 'Passed: ' : 'Failed: ' }),
+              ]),
               el('span', { text: c.q }),
             ]),
             el('div', { class: 'c-test-e', text: c.expect }),
@@ -70,10 +94,17 @@ function show(d: Live) {
     }
   }
   const side = $('[data-live-side]');
-  if (side && (ax || lh?.mobile)) side.textContent = [ax ? `WCAG 2.2 AA ${ax.pass ? '✓' : '✗'}` : '', lh?.mobile ? `Lighthouse ${lh.mobile.performance}` : ''].filter(Boolean).join(' · ');
+  if (side && (ax || lh?.mobile))
+    side.textContent = [
+      ax ? `WCAG 2.2 AA ${ax.pass ? '✓' : '✗'}` : '',
+      lh?.mobile ? `Lighthouse ${lh.mobile.performance}` : '',
+    ]
+      .filter(Boolean)
+      .join(' · ');
   if (oss) {
     const v: Record<string, string> = { prs: fmt(oss.prs), repos: fmt(oss.repos), since: String(oss.since) };
-    if (oss.qtip) Object.assign(v, { stars: stars(oss.qtip.stars), forks: fmt(oss.qtip.forks), commits: fmt(oss.qtip.commits) });
+    if (oss.qtip)
+      Object.assign(v, { stars: stars(oss.qtip.stars), forks: fmt(oss.qtip.forks), commits: fmt(oss.qtip.commits) });
     for (const n of $$('[data-oss]')) if (v[n.dataset.oss!]) n.textContent = v[n.dataset.oss!];
   }
 }

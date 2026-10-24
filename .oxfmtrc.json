@@ -5,12 +5,12 @@
   "trailingComma": "all",
   "ignorePatterns": [
     "site/**",
-    "src/blog/**",
-    "src/*.dc.html",
     "tools/vendor/**",
     "worker/knowledge.json",
     "worker/agent-data.json",
     "package-lock.json",
-    "src/fonts/**"
+    "src/assets/fonts/**",
+    "src/content/**",
+    "src/data/**"
   ]
 }

@@ -22,7 +22,17 @@ export function describe(src: string | undefined, fallback: string): string {
 export const author = { '@type': 'Person', '@id': SITE + '/#person', name: NAME, url: SITE + '/' };
 
 /** schema.org Article for a file's page. */
-export function articleLd({ headline, name, description, path }: { headline: string; name: string; description: string; path: string }) {
+export function articleLd({
+  headline,
+  name,
+  description,
+  path,
+}: {
+  headline: string;
+  name: string;
+  description: string;
+  path: string;
+}) {
   const url = `${SITE}/${path}`;
   return {
     '@context': 'https://schema.org',
@@ -65,7 +75,11 @@ export async function homeLd() {
       image: SITE + image.src,
       address: { '@type': 'PostalAddress', addressLocality: 'Newcastle upon Tyne', addressCountry: 'GB' },
       alumniOf: { '@type': 'CollegeOrUniversity', name: 'Newcastle University' },
-      hasCredential: { '@type': 'EducationalOccupationalCredential', credentialCategory: 'degree', name: 'MEng, Electronic & Computer Engineering' },
+      hasCredential: {
+        '@type': 'EducationalOccupationalCredential',
+        credentialCategory: 'degree',
+        name: 'MEng, Electronic & Computer Engineering',
+      },
       sameAs: [GITHUB, LINKEDIN],
       knowsAbout: [
         'AI-first engineering',

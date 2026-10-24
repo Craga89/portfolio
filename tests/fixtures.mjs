@@ -91,20 +91,27 @@ export const test = base.extend({
 export { expect };
 
 /**
- * Show every section in full: offscreen sections normally skip rendering (content-visibility).
+ * Add a stylesheet to the page. A constructed one, since the site's Content-Security-Policy
+ * (rightly) refuses inline <style> elements.
  * @param {import('@playwright/test').Page} page
+ * @param {string} css
  */
-export const renderAll = (page) => page.evaluate(() => document.documentElement.classList.add('cv-all'));
+export const addStyle = (page, css) =>
+  page.evaluate((text) => {
+    const sheet = new CSSStyleSheet();
+    sheet.replaceSync(text);
+    document.adoptedStyleSheets = [...document.adoptedStyleSheets, sheet];
+  }, css);
 
 /**
  * Turn off animations, transitions and smooth scrolling, so states can be checked straight away.
  * @param {import('@playwright/test').Page} page
  */
 export const settle = (page) =>
-  page.addStyleTag({
-    content:
-      'html{scroll-behavior:auto!important}*,*::before,*::after{animation-duration:0s!important;animation-delay:0s!important;transition-duration:0s!important;transition-delay:0s!important}',
-  });
+  addStyle(
+    page,
+    'html{scroll-behavior:auto!important}*,*::before,*::after{animation-duration:0s!important;animation-delay:0s!important;transition-duration:0s!important;transition-delay:0s!important}',
+  );
 
 /**
  * The translation bar says the page is translated.

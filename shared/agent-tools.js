@@ -14,7 +14,7 @@
 //
 // Also the site's keyword search (tokens, synonyms, ranking), used by ask.sh on the page, by the
 // worker to pick context for the model, and by the search_site tool.
-// The page build bundles this file as window.CragaAgent; the worker imports it.
+// The page's WebMCP script (src/scripts/webmcp.ts) and the worker both import it.
 
 /**
  * A passage of the site's own words, as the build extracts them.

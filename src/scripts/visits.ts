@@ -9,13 +9,21 @@ import { WORKER_ORIGIN } from '../site';
     document.addEventListener('prerenderingchange', hit, { once: true });
     return;
   }
-  if (!WORKER_ORIGIN || (navigator as { globalPrivacyControl?: boolean }).globalPrivacyControl || navigator.doNotTrack === '1' || !navigator.sendBeacon) return;
+  if (
+    !WORKER_ORIGIN ||
+    (navigator as { globalPrivacyControl?: boolean }).globalPrivacyControl ||
+    navigator.doNotTrack === '1' ||
+    !navigator.sendBeacon
+  )
+    return;
   const t0 = Date.now();
   const seen = new Set<string>();
   const sections = document.querySelectorAll('main > section[id]');
   if (sections.length) {
     seen.add('top');
-    const io = new IntersectionObserver((es) => es.forEach((e) => e.isIntersecting && seen.add(e.target.id)), { threshold: 0.2 });
+    const io = new IntersectionObserver((es) => es.forEach((e) => e.isIntersecting && seen.add(e.target.id)), {
+      threshold: 0.2,
+    });
     sections.forEach((s) => io.observe(s));
   }
   let sent = false;

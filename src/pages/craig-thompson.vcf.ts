@@ -19,7 +19,9 @@ const fold = (line: string) => {
 };
 
 export const GET: APIRoute = async () => {
-  const photo = (await sharp(PORTRAIT).resize(192, 192).flatten({ background: '#FFFFFF' }).jpeg({ quality: 78 }).toBuffer()).toString('base64');
+  const photo = (
+    await sharp(PORTRAIT).resize(192, 192).flatten({ background: '#FFFFFF' }).jpeg({ quality: 78 }).toBuffer()
+  ).toString('base64');
   const lines = [
     'BEGIN:VCARD',
     'VERSION:3.0',
