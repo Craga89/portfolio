@@ -8,7 +8,7 @@ import bodyFont from '../assets/fonts/public-sans-latin-400.woff2?url';
 import headFont from '../assets/fonts/big-shoulders-display-latin-600.woff2?url';
 import monoFont from '../assets/fonts/red-hat-mono-latin-400.woff2?url';
 import { SITE, CHROME, INDEXING } from '../site';
-import { THEME_BOOT, ANALYTICS } from '../scripts/inline.mjs';
+import { THEME_BOOT, ANALYTICS, NAV_CSS } from '../scripts/inline.mjs';
 import Toast from '../components/page/Toast.astro';
 import Palette from '../components/page/Palette.astro';
 
@@ -58,6 +58,7 @@ const prerender = {
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style is:inline set:html={NAV_CSS} />
     <title>{title}</title>
     <meta name="description" content={description} />
     {!INDEXING && <meta name="robots" content="noindex, nofollow, noarchive" />}
@@ -113,12 +114,7 @@ const prerender = {
 </html>
 
 <style is:global>
-  /* Between pages: a cross-fade, and a post's title moves into place (cross-document view transitions). */
-  @media (prefers-reduced-motion: no-preference) {
-    @view-transition {
-      navigation: auto;
-    }
-  }
+  /* Between pages: a cross-fade, and a post's title moves into place (the opt-in is NAV_CSS). */
   ::view-transition-group(root) {
     animation-duration: 0.26s;
   }

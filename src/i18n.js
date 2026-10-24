@@ -952,7 +952,7 @@ export async function fromEnglish(text, lang) {
 
 // ---------- the offer and the banner ----------
 
-// Their styles are in src/styles/translate.css, which loads with this module.
+// Their styles are in src/styles/translate.css.
 
 /** Set a progress meter's fill. @param {HTMLElement} m @param {number} pct */
 const meterAt = (m, pct) => (m.style.setProperty('--p', pct + '%'), m);

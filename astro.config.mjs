@@ -6,7 +6,7 @@ import { createHash } from 'node:crypto';
 import { satteri } from '@astrojs/markdown-satteri';
 import { postBuild } from './integrations/post-build.mjs';
 import { codeBlocks } from './integrations/markdown.mjs';
-import { INLINE_SCRIPTS } from './src/scripts/inline.mjs';
+import { INLINE_SCRIPTS, NAV_CSS } from './src/scripts/inline.mjs';
 
 /** @param {string} s @returns {`sha256-${string}`} */
 const sha256 = (s) => `sha256-${createHash('sha256').update(s).digest('base64')}`;
@@ -31,6 +31,7 @@ export default defineConfig({
         resources: ["'self'", 'https://static.cloudflareinsights.com'],
         hashes: INLINE_SCRIPTS.map(sha256),
       },
+      styleDirective: { hashes: [sha256(NAV_CSS)] },
     },
   },
   markdown: { syntaxHighlight: false, processor: satteri({ hastPlugins: [codeBlocks] }) },
