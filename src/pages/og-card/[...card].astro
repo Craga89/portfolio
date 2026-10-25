@@ -5,6 +5,7 @@ import { Image } from 'astro:assets';
 import '../../styles/fonts.css';
 import portrait from '../../assets/portrait.webp';
 import { ogCards } from '../../lib/og';
+import { ROLE } from '../../site';
 
 export const getStaticPaths = (async () => (await ogCards()).map((card) => ({ params: { card: card.path.replace(/\/$/, '') || 'home' }, props: { card } }))) satisfies GetStaticPaths;
 
@@ -36,7 +37,7 @@ const size = card.title.length > 56 ? 's' : card.title.length > 34 ? 'm' : 'l';
                   <br />
                   Thompson
                 </h1>
-                <p class="st">Head of Engineering · hands-on, AI-first</p>
+                <p class="st">{ROLE}</p>
               </div>
             </div>
             <div class="ft">

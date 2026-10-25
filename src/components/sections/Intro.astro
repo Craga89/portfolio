@@ -1,6 +1,7 @@
 ---
-// README.md: the portrait, name, tagline and introduction (src/content/sections/intro.mdx). Behind
-// it, the Tyne Bridge; the Konami code lights it up (scripts/bridge.ts).
+// README.md, as a terminal window: whoami (the name and portrait), the role, then the tagline and
+// introduction (src/content/sections/intro.mdx) and a prompt to get in touch. Behind it, the Tyne
+// Bridge; the Konami code lights it up (scripts/bridge.ts).
 import { Picture } from 'astro:assets';
 import { getEntry, render } from 'astro:content';
 import portrait from '../../assets/portrait.webp';
@@ -9,7 +10,7 @@ import ContactLinks from '../home/ContactLinks.astro';
 import Focus from '../home/Focus.astro';
 import Icon from '../Icon.astro';
 import { components } from '../mdx';
-import { EMAIL, NAME, PORTRAIT_ALT, PORTRAIT_ALT_NIGHT } from '../../site';
+import { EMAIL, NAME, PORTRAIT_ALT, PORTRAIT_ALT_NIGHT, ROLE } from '../../site';
 
 const intro = await getEntry('sections', 'intro');
 if (!intro) throw new Error('src/content/sections/intro.mdx is missing');
@@ -44,20 +45,31 @@ const lamps = [
     <path class="deck" d="M0 300 H1200" pathLength="1"></path>
     <g class="lamps">{lamps.map(([x, y]) => <path d={`M${x} ${y}h0`} />)}</g>
   </svg>
-  <p class="c-cmd lead-cmd"><span translate="no">$ cat README.md</span> <span class="note"># intro</span></p>
-  <div class="name">
-    <figure class="ph">
-      {/* Daytime in the light theme, lamplight in the dark one. Only the one showing is fetched (the other is display: none and lazy). */}
-      <Picture class="when-light" src={portrait} alt={PORTRAIT_ALT} formats={['avif', 'webp']} widths={[96, 192, 352]} sizes="(max-width: 370px) 68px, (max-width: 600px) 96px, 176px" loading="lazy" />
-      <Picture class="when-dark" src={portraitNight} alt={PORTRAIT_ALT_NIGHT} formats={['avif', 'webp']} widths={[96, 192, 352]} sizes="(max-width: 370px) 68px, (max-width: 600px) 96px, 176px" loading="lazy" />
-    </figure>
-    <h1>{NAME}</h1>
+  <div class="term">
+    <div class="bar" aria-hidden="true"><i></i><i></i><i></i><span translate="no">craig@newcastle: ~</span></div>
+    <div class="body">
+      <div class="top">
+        <div class="who">
+          <p class="pr" translate="no">$ whoami</p>
+          <h1>{NAME}</h1>
+          <p class="pr" translate="no">$ cat role.txt</p>
+          <p class="role">{ROLE}</p>
+        </div>
+        <figure class="ph">
+          {/* Daytime in the light theme, lamplight in the dark one. Only the one showing is fetched (the other is display: none and lazy). */}
+          <Picture class="when-light" src={portrait} alt={PORTRAIT_ALT} formats={['avif', 'webp']} widths={[96, 192, 352]} sizes="(max-width: 600px) 96px, 200px" loading="lazy" />
+          <Picture class="when-dark" src={portraitNight} alt={PORTRAIT_ALT_NIGHT} formats={['avif', 'webp']} widths={[96, 192, 352]} sizes="(max-width: 600px) 96px, 200px" loading="lazy" />
+          <figcaption aria-hidden="true" translate="no">portrait.webp · Newcastle</figcaption>
+        </figure>
+      </div>
+      <p class="pr" translate="no">$ cat README.md</p>
+      <p class="print-only"><a href={`mailto:${EMAIL}`}>{EMAIL}</a> · <a href="https://craigthompson.dev/">craigthompson.dev</a> · github.com/Craga89 · linkedin.com/in/craigmichaelthompson · Newcastle upon Tyne, UK<br />The short CV is at craigthompson.dev/cv.</p>
+      <div id="about" class="about"><Content components={components} /></div>
+      <Focus />
+      <p class="cta"><span class="pr" aria-hidden="true">$</span><a class="c-btn" href="#contact">./get-in-touch</a><a class="cv" href="/cv.pdf" translate="no">cat cv.pdf</a><span class="cursor" aria-hidden="true"></span></p>
+    </div>
   </div>
-  <p class="print-only"><a href={`mailto:${EMAIL}`}>{EMAIL}</a> · <a href="https://craigthompson.dev/">craigthompson.dev</a> · github.com/Craga89 · linkedin.com/in/craigmichaelthompson · Newcastle upon Tyne, UK<br />The short CV is at craigthompson.dev/cv.</p>
-  <div id="about" class="about"><Content components={components} /></div>
-  <Focus />
   <div class="mcta">
-    <a class="c-btn" href="#contact">./get-in-touch</a>
     <ContactLinks />
     <button type="button" class="motion" data-motion-toggle><span class="when-moving"><Icon name="pause" size={14} />pause animations</span><span class="when-still"><Icon name="play" size={14} />play animations</span></button>
   </div>
@@ -179,64 +191,151 @@ const lamps = [
       opacity: 0.35;
     }
   }
-  .lead-cmd {
-    margin: 0 0 24px;
-    font-size: clamp(16px, 2vw, 20px);
-    font-weight: 500;
-    color: var(--ok);
+  /* The window: a panel with a title bar, just translucent enough for the bridge to show through. */
+  .term {
+    overflow: hidden;
+    border: 1px solid var(--line3);
+    border-radius: 14px;
+    background: color-mix(in srgb, var(--panel) 92%, transparent);
+    box-shadow: 0 30px 60px -32px rgb(0 0 0 / 0.45);
   }
-  .note {
-    color: var(--dim);
-  }
-  .name {
+  .bar {
     display: flex;
     align-items: center;
-    gap: clamp(16px, 3vw, 40px);
-    margin-bottom: 18px;
+    gap: 8px;
+    padding: 12px 18px;
+    border-bottom: 1px solid var(--line2);
+    font-family: var(--f-mono);
+    font-size: 13px;
+    color: var(--mute);
+  }
+  .bar i {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--line3);
+  }
+  .bar span {
+    margin-inline-start: 10px;
+  }
+  .body {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: clamp(22px, 3.2vw, 36px) clamp(20px, 3.6vw, 40px) clamp(24px, 3.6vw, 40px);
+  }
+  .top {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: clamp(20px, 3.5vw, 40px);
+    margin-bottom: 6px;
+  }
+  .who {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-width: 0;
+  }
+  /* A shell prompt line. */
+  .pr {
+    margin: 0;
+    font-family: var(--f-mono);
+    font-size: clamp(15px, 1.5vw, 17px);
+    color: var(--ok);
+  }
+  h1 {
+    margin: 0 0 4px;
+    font-size: clamp(56px, 7.4vw, 96px);
+    font-weight: 900;
+    line-height: 0.88;
+    letter-spacing: 0.005em;
+    color: var(--head);
+    text-wrap: balance;
+  }
+  .role {
+    margin: 0 0 4px;
+    font-size: clamp(18px, 1.9vw, 22px);
+    color: var(--acc);
   }
   .ph {
-    position: relative;
-    flex: none;
-    width: clamp(88px, 13vw, 176px);
-    aspect-ratio: 1 / 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: clamp(140px, 17vw, 200px);
     margin: 0;
-    overflow: hidden;
-    border-radius: 6px;
-    background: #fff;
-    box-shadow:
-      0 0 0 4px var(--line3),
-      0 0 0 5px var(--line2);
   }
   .ph :global(img) {
     display: block;
     width: 100%;
-    height: 100%;
-    object-fit: cover;
+    height: auto;
+    aspect-ratio: 1 / 1;
+    border-radius: 10px;
+    box-shadow: 0 0 0 1px var(--line3);
     transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
   }
   .ph:hover :global(img) {
     transform: scale(1.03);
   }
-  h1 {
-    flex: 0 1 auto;
-    min-width: 0;
-    margin: 0;
-    font-size: clamp(64px, 8vw, 116px);
-    font-weight: 900;
-    line-height: 0.86;
-    letter-spacing: 0.005em;
-    color: var(--head);
+  figcaption {
+    font-family: var(--f-mono);
+    font-size: 13px;
+    color: var(--mute);
   }
   .about {
     display: flex;
     flex-direction: column;
     gap: 14px;
-    max-width: 70ch;
     font-size: 16px;
     color: var(--text2);
   }
   .about :global(p) {
     margin: 0;
+  }
+  .about :global(.tagline) {
+    max-width: none;
+    color: var(--head);
+  }
+  .about :global(.tagline a) {
+    color: var(--acc);
+  }
+  .cta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    margin: 10px 0 0;
+  }
+  .cv {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 18px;
+    border: 1px solid var(--line3);
+    border-radius: 8px;
+    font-family: var(--f-mono);
+    font-size: 15px;
+    color: var(--head);
+    text-decoration: none;
+  }
+  .cv:hover {
+    border-color: var(--acc);
+    color: var(--head);
+  }
+  .cursor {
+    width: 10px;
+    height: 22px;
+    background: var(--acc);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    :root:not([data-motion='off']) .cursor {
+      animation: blink 1.1s steps(1) infinite;
+    }
+  }
+  @keyframes blink {
+    50% {
+      opacity: 0;
+    }
   }
   .print-only {
     display: none;
@@ -254,7 +353,7 @@ const lamps = [
     align-items: center;
     min-height: 44px;
     padding: 0 18px;
-    border-radius: 4px;
+    border-radius: 8px;
     background: var(--acc);
     color: var(--bg);
     font-weight: 700;
@@ -294,34 +393,21 @@ const lamps = [
       display: flex;
     }
   }
-  @media (min-width: 601px) and (max-width: 720px) {
-    h1 {
-      font-size: 8.4vw;
-    }
-  }
   @media (max-width: 600px) {
-    .name {
-      display: block;
+    .term {
+      border-radius: 12px;
     }
-    .name::after {
-      content: '';
-      display: block;
-      clear: both;
+    .top {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 16px;
     }
     .ph {
-      float: inline-start;
+      order: -1;
       width: 96px;
-      margin-block: 4px 8px;
-      margin-inline: 0 14px;
     }
-  }
-  @media (max-width: 370px) {
-    .ph {
-      width: 68px;
-      margin-inline-end: 10px;
-    }
-    h1 {
-      font-size: 15vw;
+    figcaption,
+    .cursor {
+      display: none;
     }
   }
   @media print {
@@ -343,19 +429,27 @@ const lamps = [
       color: inherit;
       text-decoration: none;
     }
+    .term {
+      border: 0;
+      background: none;
+      box-shadow: none;
+    }
+    .bar,
+    .pr,
+    .cta,
+    figcaption {
+      display: none;
+    }
+    .body {
+      padding: 0;
+    }
     h1 {
       margin: 0;
       font-size: 34pt;
       line-height: 0.9;
     }
-    .name {
-      gap: 14pt;
-      margin-bottom: 10pt;
-    }
     .ph {
-      float: none;
       width: 64pt;
-      margin: 0;
     }
   }
 </style>
