@@ -45,10 +45,10 @@
 
   /* Open-source heatmap: one hue, light to dark, checked as an ordinal ramp in both themes. */
   --hm0: transparent;
-  --hm1: #4c6e77;
-  --hm2: #628a9c;
-  --hm3: #77a6c0;
-  --hm4: #8ec3e6;
+  --hm1: #48725b;
+  --hm2: #5a8f72;
+  --hm3: #6eb18c;
+  --hm4: #86d4a9;
 }
 
 :root[dir='rtl'] {
@@ -84,10 +84,10 @@
   --lilac: #6a55a8;
   --hdr: rgb(226 238 232 / 0.92);
   --backdrop: rgb(15 29 22 / 0.28);
-  --hm1: #99bacd;
-  --hm2: #719eb9;
-  --hm3: #4882a5;
-  --hm4: #1d6590;
+  --hm1: #8fc4a6;
+  --hm2: #5ea883;
+  --hm3: #3a8661;
+  --hm4: #176543;
 }
 
 /* "More contrast": stronger lines and secondary text. */

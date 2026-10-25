@@ -145,7 +145,7 @@ In Chrome 149–156 WebMCP is an origin trial. Tokens live in `src/origin-trials
 
 The `webmcp.md` case study explains the tools, shows the MCP server address, and shows whether the visitor's browser has WebMCP; its file page leaves out the parts that need JavaScript.
 
-The open-source section has a heatmap of merged pull requests to other projects by year and quarter. `tools/oss-stats.mjs` writes the per-quarter `timeline` (count and repos); the build renders the latest snapshot (from the `oss` branch) into the page, and `live.json` replaces it when newer. It uses one blue ramp per theme (checked for contrast and colour-blind separation), hover tips per cell, and a "as a table" view for screen readers and print.
+The open-source section has a heatmap of merged pull requests to other projects by year and quarter. `tools/oss-stats.mjs` writes the per-quarter `timeline` (count and repos); the build renders the latest snapshot (from the `oss` branch) into the page, and `live.json` replaces it when newer. It uses one green ramp per theme (checked for contrast and colour-blind separation), hover tips per cell, and a "as a table" view for screen readers and print.
 
 ## Visits and questions (anonymous)
 
