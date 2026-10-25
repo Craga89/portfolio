@@ -57,14 +57,14 @@
 
 :root[data-theme='light'] {
   color-scheme: light;
-  --bg: #edf1ee;
-  --panel: #ffffff;
-  --panel2: #e1e8e3;
-  --line: #d5ded8;
-  --line2: #c5d1c9;
-  --line3: #a8b8ad;
-  --conn: #93a69a;
-  --bar0: #9aac9f;
+  --bg: #e2eee8;
+  --panel: #f8fcfa;
+  --panel2: #d3e4db;
+  --line: #c5d8ce;
+  --line2: #b4cabf;
+  --line3: #96b0a2;
+  --conn: #859d91;
+  --bar0: #93a99d;
   --dim: #54615a;
   --mute2: #536259;
   --mute: #4c5d53;
@@ -82,7 +82,7 @@
   --bad: #b23a2b;
   --blue: #1d6590;
   --lilac: #6a55a8;
-  --hdr: rgb(237 241 238 / 0.92);
+  --hdr: rgb(226 238 232 / 0.92);
   --backdrop: rgb(15 29 22 / 0.28);
   --hm1: #99bacd;
   --hm2: #719eb9;

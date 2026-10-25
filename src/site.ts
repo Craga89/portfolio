@@ -13,7 +13,7 @@ export const ASK_ENDPOINT: string = ask.endpoint || '';
 export const WORKER_ORIGIN = ASK_ENDPOINT ? new URL(ASK_ENDPOINT).origin : '';
 
 /** Browser chrome colours, [dark, light]. */
-export const CHROME = { home: ['#16271F', '#EDF1EE'], cv: ['#111214', '#F4F4F2'] } as const;
+export const CHROME = { home: ['#16271F', '#E2EEE8'], cv: ['#111214', '#F4F4F2'] } as const;
 
 /** Search engines stay out until the content is finished (see astro.config.mjs). */
 export const INDEXING = import.meta.env.ALLOW_INDEXING === 'true';
