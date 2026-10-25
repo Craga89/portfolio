@@ -56,9 +56,9 @@ const lamps = [
           <p class="role">{ROLE}</p>
         </div>
         <figure class="ph">
-          {/* Daytime in the light theme, lamplight in the dark one. Only the one showing is fetched (the other is display: none and lazy). */}
-          <Picture class="when-light" src={portrait} alt={PORTRAIT_ALT} formats={['avif', 'webp']} widths={[96, 192, 352]} sizes="(max-width: 600px) 96px, 200px" loading="lazy" />
-          <Picture class="when-dark" src={portraitNight} alt={PORTRAIT_ALT_NIGHT} formats={['avif', 'webp']} widths={[96, 192, 352]} sizes="(max-width: 600px) 96px, 200px" loading="lazy" />
+          {/* Daytime in the light theme, lamplight in the dark one. Only the one showing is fetched (the other is display: none and lazy). The whole <picture> is hidden, not just its image, so the hidden one doesn't take up a gap in the column. */}
+          <Picture pictureAttributes={{ class: 'when-light' }} src={portrait} alt={PORTRAIT_ALT} formats={['avif', 'webp']} widths={[96, 192, 352]} sizes="(max-width: 600px) 96px, 200px" loading="lazy" />
+          <Picture pictureAttributes={{ class: 'when-dark' }} src={portraitNight} alt={PORTRAIT_ALT_NIGHT} formats={['avif', 'webp']} widths={[96, 192, 352]} sizes="(max-width: 600px) 96px, 200px" loading="lazy" />
           <figcaption aria-hidden="true" translate="no">portrait.webp · Newcastle</figcaption>
         </figure>
       </div>
