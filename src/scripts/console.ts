@@ -10,13 +10,13 @@ const pad =
 const S = {
   art:
     bg +
-    'color:#8EC3E6;padding:14px 14px 6px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11px;line-height:1.05;',
+    'color:#86D4A9;padding:14px 14px 6px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11px;line-height:1.05;',
   cmd: pad + 'color:#B7D47A;',
   dim: pad + 'color:#99B0A5;',
   head: pad + 'color:#F6F8F4;font-weight:700;font-size:13px;',
   text: pad + 'color:#D9E4DD;',
   key: pad + 'color:#99B0A5;',
-  link: pad + 'color:#8EC3E6;',
+  link: pad + 'color:#86D4A9;',
   end: bg + 'padding:0 14px 12px;color:#99B0A5;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;',
 };
 const parts: [keyof typeof S, string][] = [

@@ -8,7 +8,7 @@
   --tr-mute: #a7bfb2;
   --tr-line: #47685a;
   --tr-line2: #335041;
-  --tr-acc: #8ec3e6;
+  --tr-acc: #86d4a9;
   --tr-acc-fg: #16271f;
   font-family: 'Public Sans', 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
 }
@@ -21,7 +21,7 @@ html[data-theme='light'] .tr-bar {
   --tr-mute: #4c5d53;
   --tr-line: #96b0a2;
   --tr-line2: #b4cabf;
-  --tr-acc: #1d6590;
+  --tr-acc: #176543;
   --tr-acc-fg: #ffffff;
 }
 @media (prefers-color-scheme: light) {
@@ -34,7 +34,7 @@ html[data-theme='light'] .tr-bar {
     --tr-mute: #4c5d53;
     --tr-line: #96b0a2;
     --tr-line2: #b4cabf;
-    --tr-acc: #1d6590;
+    --tr-acc: #176543;
     --tr-acc-fg: #ffffff;
   }
 }

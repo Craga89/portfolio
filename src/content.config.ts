@@ -5,7 +5,11 @@ import { z } from 'astro/zod';
 
 /** A responsibility: everything the tour and its own page show. */
 const responsibilities = defineCollection({
-  loader: glob({ pattern: '*.yaml', base: './src/content/responsibilities', generateId: ({ data }) => String(data.id) }),
+  loader: glob({
+    pattern: '*.yaml',
+    base: './src/content/responsibilities',
+    generateId: ({ data }) => String(data.id),
+  }),
   schema: z.object({
     id: z.string(),
     order: z.number().int(),
