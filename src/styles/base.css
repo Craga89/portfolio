@@ -265,8 +265,9 @@ kbd {
 }
 
 /* Text for one theme only, such as a toggle's "light theme" / "dark theme". Hidden text isn't read
-   out, so the accessible name follows the theme without script. */
+   out, so the accessible name follows the theme without script. Without script the page is dark. */
 :root[data-theme='dark'] .when-light,
+:root:not([data-theme]) .when-light,
 :root[data-theme='light'] .when-dark {
   display: none !important;
 }

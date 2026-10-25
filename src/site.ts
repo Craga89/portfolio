@@ -19,6 +19,8 @@ export const CHROME = { home: ['#16271F', '#E2EEE8'], cv: ['#111214', '#F4F4F2']
 export const INDEXING = import.meta.env.ALLOW_INDEXING === 'true';
 
 export const PORTRAIT_ALT = 'Illustrated portrait of Craig Michael Thompson smiling at his laptop';
+export const PORTRAIT_ALT_NIGHT =
+  'Illustrated portrait of Craig Michael Thompson smiling at his laptop at night, by the light of a desk lamp';
 
 export const HOME_TITLE = 'Craig Michael Thompson · Head of Engineering, hands-on & AI-first';
 export const HOME_DESC =

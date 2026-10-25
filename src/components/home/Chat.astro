@@ -3,16 +3,18 @@
 // on the page (scripts/ask.ts). It shares its conversation with the ask.sh section.
 import { getImage } from 'astro:assets';
 import portrait from '../../assets/portrait.webp';
+import portraitNight from '../../assets/portrait-night.webp';
 import Icon from '../Icon.astro';
 import '../../styles/answers.css';
 import { SUGGESTIONS } from '../../lib/ask';
 
 const avatar = await getImage({ src: portrait, width: 56, height: 56, format: 'webp' });
+const avatarNight = await getImage({ src: portraitNight, width: 56, height: 56, format: 'webp' });
 ---
 
 <div class="chat" data-chat data-open="false" data-hide="false">
   <button type="button" class="bar" aria-expanded="false" aria-controls="c-chat-panel" title="Ask about my experience" data-chat-toggle>
-    <span class="av"><img src={avatar.src} alt="" width="28" height="28" loading="lazy" decoding="async" /><i aria-hidden="true"></i></span>
+    <span class="av"><img class="when-light" src={avatar.src} alt="" width="28" height="28" loading="lazy" decoding="async" /><img class="when-dark" src={avatarNight.src} alt="" width="28" height="28" loading="lazy" decoding="async" /><i aria-hidden="true"></i></span>
     <span class="t"><b>ask.sh</b><span data-chat-sub>Ask about my experience</span></span>
     <Icon name="chevron" size={16} stroke={2.2} class="chev" />
   </button>

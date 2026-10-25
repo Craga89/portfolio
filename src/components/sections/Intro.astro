@@ -4,11 +4,12 @@
 import { Picture } from 'astro:assets';
 import { getEntry, render } from 'astro:content';
 import portrait from '../../assets/portrait.webp';
+import portraitNight from '../../assets/portrait-night.webp';
 import ContactLinks from '../home/ContactLinks.astro';
 import Focus from '../home/Focus.astro';
 import Icon from '../Icon.astro';
 import { components } from '../mdx';
-import { EMAIL, NAME, PORTRAIT_ALT } from '../../site';
+import { EMAIL, NAME, PORTRAIT_ALT, PORTRAIT_ALT_NIGHT } from '../../site';
 
 const intro = await getEntry('sections', 'intro');
 if (!intro) throw new Error('src/content/sections/intro.mdx is missing');
@@ -46,7 +47,9 @@ const lamps = [
   <p class="c-cmd lead-cmd"><span translate="no">$ cat README.md</span> <span class="note"># intro</span></p>
   <div class="name">
     <figure class="ph">
-      <Picture src={portrait} alt={PORTRAIT_ALT} formats={['avif', 'webp']} widths={[96, 192, 352]} sizes="(max-width: 370px) 68px, (max-width: 600px) 96px, 176px" fetchpriority="high" loading="eager" />
+      {/* Daytime in the light theme, lamplight in the dark one. Only the one showing is fetched (the other is display: none and lazy). */}
+      <Picture class="when-light" src={portrait} alt={PORTRAIT_ALT} formats={['avif', 'webp']} widths={[96, 192, 352]} sizes="(max-width: 370px) 68px, (max-width: 600px) 96px, 176px" loading="lazy" />
+      <Picture class="when-dark" src={portraitNight} alt={PORTRAIT_ALT_NIGHT} formats={['avif', 'webp']} widths={[96, 192, 352]} sizes="(max-width: 370px) 68px, (max-width: 600px) 96px, 176px" loading="lazy" />
     </figure>
     <h1>{NAME}</h1>
   </div>
