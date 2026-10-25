@@ -15,6 +15,7 @@ const counts = snap ?? FALLBACK;
 const vars = { stars: stars(counts.qtip.stars), forks: fmt(counts.qtip.forks), commits: fmt(counts.qtip.commits) };
 const projects = await getCollection('projects').then((all) => all.sort((a, b) => a.data.order - b.data.order));
 const prs = (await getCollection('contributions')).sort((a, b) => +b.data.date - +a.data.date);
+const usedBy = (await getCollection('usedBy')).sort((a, b) => a.data.order - b.data.order).map((u) => u.data.name);
 const allPrs = `https://github.com/search?q=author%3A${GITHUB.split('/').pop()}+type%3Apr+is%3Amerged+-user%3A${GITHUB.split('/').pop()}&type=pullrequests`;
 ---
 
@@ -49,6 +50,7 @@ const allPrs = `https://github.com/search?q=author%3A${GITHUB.split('/').pop()}+
     </Ledger>
     <p class="all"><a href={allPrs}>See them all on GitHub →</a></p>
   </div>
+  <p class="used"><span class="k" translate="no"># used by</span> My jQuery plugins were used on sites by {usedBy.slice(0, -1).join(', ')} and {usedBy.at(-1)}.</p>
 </Section>
 
 <style>
@@ -120,6 +122,19 @@ const allPrs = `https://github.com/search?q=author%3A${GITHUB.split('/').pop()}+
   .all {
     margin: 14px 0 0;
     font-size: 14px;
+  }
+  /* Kept for the record, so kept quiet. */
+  .used {
+    max-width: 72ch;
+    margin: 28px 0 0;
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--mute);
+  }
+  .used .k {
+    margin-inline-end: 6px;
+    font-family: var(--f-mono);
+    color: var(--dim);
   }
   @media print {
     .c-card {

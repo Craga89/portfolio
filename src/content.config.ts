@@ -122,6 +122,12 @@ const contributions = defineCollection({
   }),
 });
 
+/** Organisations whose sites used the jQuery plugins, back in the day. */
+const usedBy = defineCollection({
+  loader: file('./src/data/used-by.yaml'),
+  schema: z.object({ order: z.number().int(), name: z.string() }),
+});
+
 export const collections = {
   responsibilities,
   caseStudies,
@@ -134,4 +140,5 @@ export const collections = {
   recommendations,
   projects,
   contributions,
+  usedBy,
 };

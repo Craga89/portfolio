@@ -1,0 +1,12 @@
+# Organisations whose sites used my jQuery plugins (qTip, qTip2, Simpletip), from the old
+# craigsworks.com. Shown as one quiet line at the end of the open-source section.
+mozilla: { order: 1, name: Mozilla }
+salesforce: { order: 2, name: Salesforce }
+lloyds: { order: 3, name: Lloyds TSB }
+asos: { order: 4, name: ASOS }
+syngenta: { order: 5, name: Syngenta }
+urban: { order: 6, name: Urban Dictionary }
+northumbria: { order: 7, name: Northumbria University }
+skrill: { order: 8, name: Skrill }
+models: { order: 9, name: models.com }
+thinktag: { order: 10, name: ThinkTag }
