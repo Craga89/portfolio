@@ -117,6 +117,9 @@ export function homePassages() {
     c?.querySelector('section[aria-labelledby="c-awards"]')?.remove();
     if (c) add(sec, title, txt(c), '#' + sec);
   }
+  // Who used the old jQuery plugins: at the end of the open-source section, past its passage's length.
+  const used = q('#oss .used');
+  if (used) add('oss-used-by', 'Open source: who used the jQuery plugins', txt(used), '#oss');
   const aw = q('section[aria-labelledby="c-awards"]');
   if (aw)
     add(
