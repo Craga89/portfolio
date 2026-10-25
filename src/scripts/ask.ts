@@ -47,6 +47,7 @@ export function askIndex(): Promise<Index> {
       const d = prepareIndex(raw) as unknown as Index;
       const map: Record<string, { href: string; open?: string }> = {
         'readme.md': { href: '/#top' },
+        whoami: { href: '/#top' },
         'career.log': { href: '/#career' },
         'responsibilities/': { href: '/#responsibilities' },
         'case-studies/': { href: '/#case-studies' },

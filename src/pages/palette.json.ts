@@ -10,7 +10,7 @@ import { EMAIL, GITHUB, LINKEDIN } from '../site';
 import type { PaletteItem } from '../lib/palette';
 
 const SECTION_WORDS: Record<string, string> = {
-  top: 'intro about summary home',
+  top: 'intro about summary home readme',
   career: 'experience jobs history work employers',
   responsibilities: 'roles leadership',
   'case-studies': 'projects work',

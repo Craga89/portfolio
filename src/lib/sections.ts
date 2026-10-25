@@ -7,7 +7,7 @@ export interface Section {
 }
 
 export const SECTIONS: Section[] = [
-  { id: 'top', file: 'README.md' },
+  { id: 'top', file: 'whoami' },
   { id: 'career', file: 'career.log' },
   { id: 'responsibilities', file: 'responsibilities/', dir: true },
   { id: 'case-studies', file: 'case-studies/', dir: true },
