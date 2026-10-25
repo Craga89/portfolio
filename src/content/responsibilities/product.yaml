@@ -1,4 +1,4 @@
----
+# product.md: a responsibility, as shown in the home page tour and on its own page.
 id: prod
 order: 6
 file: product.md
@@ -20,17 +20,3 @@ flow:
     - why it matters, in plain terms
     - "CEO & CTO updates"
     - board material
----
-<Chain label="From technical direction to the board">
-  <Step>roadmap & technical direction</Step>
-  <Step tone="acc">why it matters, in plain terms</Step>
-  <Step tone="acc">CEO & CTO updates</Step>
-  <Step tone="ok">board material</Step>
-</Chain>
-
-<Cards>
-  <Card title="Roadmap">Regular roadmap meetings with the Product Manager and Product Owner, so delivery stayed on track and realistic.</Card>
-  <Card title="Build vs buy">Input into several build-versus-buy decisions over the years.</Card>
-  <Card title="Packaging">Input into how functionality was packaged across the SaaS platform.</Card>
-  <Card title="Reporting upward">Reported to the CEO and the CTO at different times, with board material written for non-technical readers.</Card>
-</Cards>

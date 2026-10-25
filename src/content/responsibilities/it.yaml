@@ -1,4 +1,4 @@
----
+# it.md: a responsibility, as shown in the home page tour and on its own page.
 id: it
 order: 12
 file: it.md
@@ -20,24 +20,3 @@ flow:
     - service desk
     - assigned across the team
     - resolved
----
-<Chain label="A new Mac, ready to work">
-  <Step>directory account in Google Workspace</Step>
-  <Step tone="acc">Mac enrolled in MDM</Step>
-  <Step tone="acc">central policies enforced</Step>
-  <Step tone="ok">compliant from day one</Step>
-</Chain>
-
-<Chain label="An IT request, end to end">
-  <Step>employee raises a request</Step>
-  <Step tone="acc">service desk</Step>
-  <Step>assigned across the team</Step>
-  <Step tone="ok">resolved</Step>
-</Chain>
-
-<Cards>
-  <Card title="Hardware & estate">Oversaw the hardware and wider IT estate.</Card>
-  <Card title="Directory">Looked after user accounts and the workspace directory in Google Workspace.</Card>
-  <Card title="Device management">Ran the MDM solution that provisions the Mac estate and enforces centralised InfoSec and compliance policies.</Card>
-  <Card title="Service desk">Set up and maintained an IT service desk, so requests were tracked and assigned to the right person.</Card>
-</Cards>

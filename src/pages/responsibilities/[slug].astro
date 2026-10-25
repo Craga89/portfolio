@@ -30,11 +30,10 @@ const files = all.map((e) => ({ file: e.data.file, href: `/responsibilities/${sl
   image={`/${path}og.png`}
   imageAlt={`${title}. responsibilities/${file}, Craig Michael Thompson`}
   ld={articleLd({ headline: title, name: file, description, path })}
-  tips
   mono
 >
   <Crumb folder="responsibilities/" file={file} home={home} />
   <h1 class="c-sr">{title}</h1>
   <ResponsibilityCard entry={entry} index={current} total={all.length} level={2} standalone />
-  <FileFooter folder="responsibilities/" files={files} current={current} source={entry.body ?? ''} home={home} />
+  <FileFooter folder="responsibilities/" files={files} current={current} home={home} />
 </FilePage>

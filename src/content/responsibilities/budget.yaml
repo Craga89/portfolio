@@ -1,0 +1,23 @@
+# budget.md: a responsibility, as shown in the home page tour and on its own page.
+id: bud
+order: 8
+file: budget.md
+group: business
+kicker: "budget & suppliers · aws spend, vendors, licences"
+title: Every pound accounted for
+lede: "I've owned the substantial monthly AWS budget for a SaaS platform across production, staging and several development environments, keeping it cost-effective, with cost anomaly detection across every area so there were no surprise bills. I've managed all the technical suppliers behind the platform, and the wider IT suppliers as IT lead, negotiating renewals and contracts for cost efficiency. I've also chosen and consolidated software tools and licences across the business."
+points:
+  - Unexpected spend surfaced early rather than in the monthly bill.
+  - Supplier contracts were renegotiated at renewal for cost efficiency.
+  - Fewer overlapping tools and licences to pay for.
+stat:
+  value: Owned
+  label: a substantial monthly AWS budget
+flow:
+  label: how spend was kept in check
+  steps:
+    - budget owned
+    - anomaly detection everywhere
+    - evidence-led cuts
+    - contracts renegotiated
+    - tools consolidated

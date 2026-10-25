@@ -7,14 +7,10 @@ import Cards from './content/Cards.astro';
 import Chain from './content/Chain.astro';
 import Check from './content/Check.astro';
 import Checks from './content/Checks.astro';
-import Chip from './content/Chip.astro';
-import Chips from './content/Chips.astro';
 import Compare from './content/Compare.astro';
 import Era from './content/Era.astro';
 import Evolution from './content/Evolution.astro';
 import Faq from './content/Faq.astro';
-import FileLink from './content/FileLink.astro';
-import FileLinks from './content/FileLinks.astro';
 import Flow from './content/Flow.astro';
 import FlowStep from './content/FlowStep.astro';
 import InPractice from './content/InPractice.astro';
@@ -66,14 +62,10 @@ export const components = {
   Chain,
   Check,
   Checks,
-  Chip,
-  Chips,
   Compare,
   Era,
   Evolution,
   Faq,
-  FileLink,
-  FileLinks,
   Flow,
   FlowStep,
   InPractice,

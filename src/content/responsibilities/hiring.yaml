@@ -1,0 +1,20 @@
+# hiring.md: a responsibility, as shown in the home page tour and on its own page.
+id: hire
+order: 2
+file: hiring.md
+group: team
+kicker: "hiring & onboarding"
+title: Building the team, from first interview to first deploy
+lede: "I've hired 10+ engineers, from full-time employees to outsourced engineers working in the team itself. I designed the interview process alongside the CTO and Deputy Head of Engineering, with a pre-interview technical screen and interactive coding exercises, and I've reshaped how new starters get up to speed as the tools changed."
+points:
+  - Candidates were judged on real code, through the technical screen and a live coding exercise.
+  - New starters could largely onboard themselves from AI-explained documentation.
+  - Redundancies and performance cases followed a process I helped shape, rather than being handled ad hoc.
+stat:
+  value: "10+"
+  label: engineers hired, in-house and outsourced
+flow:
+  label: how onboarding evolved
+  steps:
+    - people-led onboarding workflows
+    - largely self-driven, from AI-explained docs

@@ -1,0 +1,22 @@
+# process.md: a responsibility, as shown in the home page tour and on its own page.
+id: proc
+order: 4
+file: process.md
+group: team
+kicker: ways of working · scrum, kanban, definition of done
+title: Process that changes when the team does
+lede: "The team has worked in several ways over the years, from Scrum to Kanban to project-based delivery, and I've introduced and iterated on team process many times, most recently in the move to AI-driven workflows. I've set up and documented most of the Secure Development Policy and coding guidelines, and introduced KPIs built on a shared definition of done, such as cycle time and delivery time."
+points:
+  - One set of guidelines that both engineers and AI tools read, so LLM-generated code met the same requirements.
+  - Delivery was measured against a shared definition of done.
+  - The team kept working well as it moved to mostly remote.
+stat:
+  value: "4"
+  label: ways of working, iterated over the years
+flow:
+  label: ways of working
+  steps:
+    - Scrum
+    - Kanban
+    - project-based
+    - AI-driven workflows

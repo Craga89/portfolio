@@ -1,0 +1,26 @@
+# leadership.md: a responsibility, as shown in the home page tour and on its own page.
+id: lead
+order: 1
+file: leadership.md
+group: team
+kicker: engineering leadership · head of engineering since 2018
+title: Led the team, not just the platform
+lede: "As Head of Engineering I've set the engineering strategy and kept the technical roadmap aligned with product goals, leading a cross-functional team that grew to 12 engineers at its largest. I've explained problems to whoever needed to understand them, from engineers to directors and the CEO, and I'd rather remove friction for the team than add process."
+points:
+  - The technical roadmap was aligned with product goals, so platform investment was visible alongside features.
+  - The team adopted new tooling together, from CI to AI-assisted workflows, rather than in silos.
+  - We moved to continuous delivery, with daily releases.
+  - Incidents led to better tooling and runbooks, not finger-pointing.
+  - Outsourced engineers were onboarded into the team itself, and many stayed for 2+ years.
+stat:
+  value: "12"
+  label: engineers in the team at its largest
+flow:
+  label: what the role covered
+  steps:
+    - "strategy & roadmap"
+    - people
+    - outsourced teams
+    - delivery
+    - incidents
+    - stakeholders

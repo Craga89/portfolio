@@ -3,9 +3,9 @@ import { defineCollection, reference } from 'astro:content';
 import { file, glob } from 'astro/loaders';
 import { z } from 'astro/zod';
 
-/** A responsibility: the summary the tour shows, and the full file (the MDX body). */
+/** A responsibility: everything the tour and its own page show. */
 const responsibilities = defineCollection({
-  loader: glob({ pattern: '*.mdx', base: './src/content/responsibilities', generateId: ({ data }) => String(data.id) }),
+  loader: glob({ pattern: '*.yaml', base: './src/content/responsibilities', generateId: ({ data }) => String(data.id) }),
   schema: z.object({
     id: z.string(),
     order: z.number().int(),

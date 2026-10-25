@@ -23,16 +23,14 @@ test('stack search highlights matches and keeps focus while typing', async ({ pa
   await expect(page.locator('#stack mark').first()).toBeVisible();
 });
 
-test('responsibilities tour jumps to a segment, and its file stays open', { tag: '@desktop' }, async ({ page }) => {
+test('responsibilities tour jumps to a segment, and stays there', { tag: '@desktop' }, async ({ page }) => {
   const segs = page.locator('#r-deck').getByRole('tab');
   await expect(segs).toHaveCount(12);
   await segs.nth(4).click();
   await expect(segs.nth(4)).toHaveAttribute('aria-selected', 'true');
-  const details = page.locator('#rp-aiproc details');
-  await details.locator('summary').click();
-  // The tour moves on by itself; an opened file must stay open.
-  await page.waitForTimeout(250);
-  await expect(details).toHaveJSProperty('open', true);
+  await expect(page.locator('#rp-aiproc')).toBeVisible();
+  // Picking a file stops the tour, so it doesn't move on by itself.
+  await expect(page.locator('#r-deck')).not.toHaveAttribute('data-playing');
 });
 
 test('the sidebar scrolls to a section and marks it current', { tag: '@desktop' }, async ({ page }) => {

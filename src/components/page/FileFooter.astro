@@ -13,11 +13,11 @@ interface Props {
   folder: string;
   files: Item[];
   current: number;
-  /** The MDX source, to find the glossary terms it uses. */
-  source: string;
+  /** The MDX source, to find the glossary terms it uses (none for a responsibility). */
+  source?: string;
   home: string;
 }
-const { folder, files, current, source, home } = Astro.props;
+const { folder, files, current, source = '', home } = Astro.props;
 const prev = files[(current - 1 + files.length) % files.length];
 const next = files[(current + 1) % files.length];
 const ids = [...new Set([...source.matchAll(/<Term id="([\w-]+)"/g)].map((m) => m[1]))];

@@ -18,16 +18,13 @@ for (const colorScheme of /** @type {const} */ (['dark', 'light'])) {
         await axe('all details open', '#faq');
       });
 
-      test('every responsibilities tab, with its file open', async ({ page, axe }) => {
+      test('every responsibilities tab', async ({ page, axe }) => {
         test.setTimeout(180_000);
         const segs = page.locator('#r-deck').getByRole('tab');
         const n = await segs.count();
         for (let i = 0; i < n; i++) {
           await segs.nth(i).click();
           await expect(segs.nth(i)).toHaveAttribute('aria-selected', 'true');
-          await page
-            .locator('#responsibilities details')
-            .evaluateAll((all) => all.forEach((d) => d.setAttribute('open', '')));
           await axe(`responsibilities tab ${i + 1}`, '#responsibilities');
         }
       });

@@ -1,4 +1,4 @@
----
+# incidents.md: a responsibility, as shown in the home page tour and on its own page.
 id: inc
 order: 10
 file: incidents.md
@@ -22,19 +22,3 @@ flow:
     - status page updates
     - post-mortem
     - "runbook & fixes"
----
-<Chain label="How an incident ran">
-  <Step>on-call rota</Step>
-  <Step tone="acc">incident led</Step>
-  <Step tone="acc">status page updates</Step>
-  <Step>post-mortem</Step>
-  <Step tone="ok">runbook & actionable fixes</Step>
-</Chain>
-
-<Cards>
-  <Card title="On-call rota">Set up and maintained with Jira Service Desk and Google Calendar integrations, so it was always clear who was on call.</Card>
-  <Card title="Status page">A status page for service outage updates.</Card>
-  <Card title="Incident leadership">Led on incidents from temporary issues affecting specific clients to larger outages affecting everyone.</Card>
-  <Card title="Outage suite">Helped produce in-depth write-ups of past outages, runbooks for similar problems, and recommended, actionable improvements to prevent them.</Card>
-  <Card title="Disaster recovery">Directly involved in the business's disaster recovery process, covering the technical estate as well as comms and ownership.</Card>
-</Cards>

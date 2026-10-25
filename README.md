@@ -5,7 +5,7 @@ Personal site and CV of Craig Michael Thompson, served by GitHub Pages at <https
 ## Layout
 
 - `src/` is an [Astro](https://astro.build) site, built to static HTML:
-  - `content/`: the words, as Markdown and MDX. One file per responsibility, case study, role in the career log and blog post, plus the intro, FAQ, recognition, education and the plain CV (`content/sections/`). `content.config.ts` checks each file's front matter at build time.
+  - `content/`: the words. One file per case study, role in the career log and blog post (Markdown and MDX) and per responsibility (YAML), plus the intro, FAQ, recognition, education and the plain CV (`content/sections/`). `content.config.ts` checks each file at build time.
   - `data/`: the lists (stack, projects, focus views, recommendations, the glossary) as YAML.
   - `components/`: `content/` are the pieces MDX files use (steps, chains, stats, toggletip terms…), `figures/` the diagrams in the case studies, `sections/` the home page's sections, `files/` the responsibility and case-study cards, `home/` and `page/` the page furniture.
   - `layouts/`, `pages/` (the home page, the file pages, the blog, the CV, the 404 page, and the text, JSON, vCard and icon endpoints), `lib/` (build-time helpers), `scripts/` (the page's TypeScript, one module per behaviour) and `styles/` (the shared tokens and base styles; each component has its own scoped styles).
