@@ -1,0 +1,637 @@
+{
+  "at": "2026-10-26T11:00:19.835Z",
+  "prs": 59,
+  "repos": 35,
+  "since": 2012,
+  "qtip": {
+    "stars": 1970,
+    "forks": 458,
+    "commits": 1384
+  },
+  "timeline": [
+    {
+      "y": 2012,
+      "q": 3,
+      "n": 1,
+      "repos": [
+        "andris9/highlight"
+      ]
+    },
+    {
+      "y": 2013,
+      "q": 1,
+      "n": 1,
+      "repos": [
+        "cdnjs/cdnjs"
+      ]
+    },
+    {
+      "y": 2013,
+      "q": 3,
+      "n": 1,
+      "repos": [
+        "cdnjs/cdnjs"
+      ]
+    },
+    {
+      "y": 2013,
+      "q": 4,
+      "n": 4,
+      "repos": [
+        "jsdelivr/jsdelivr",
+        "cdnjs/cdnjs",
+        "Mottie/tablesorter"
+      ]
+    },
+    {
+      "y": 2014,
+      "q": 1,
+      "n": 4,
+      "repos": [
+        "etodanik/veinjs",
+        "itsjavi/bootstrap-colorpicker"
+      ]
+    },
+    {
+      "y": 2014,
+      "q": 2,
+      "n": 7,
+      "repos": [
+        "BlueSpire/Durandal",
+        "dobtco/jquery-resizable-columns",
+        "giggio/npm-nuget"
+      ]
+    },
+    {
+      "y": 2014,
+      "q": 3,
+      "n": 1,
+      "repos": [
+        "jsdelivr/jsdelivr"
+      ]
+    },
+    {
+      "y": 2015,
+      "q": 1,
+      "n": 3,
+      "repos": [
+        "codesuki/react-d3-components",
+        "aurelia/skeleton-navigation",
+        "rniemeyer/knockout-delegatedEvents"
+      ]
+    },
+    {
+      "y": 2015,
+      "q": 3,
+      "n": 4,
+      "repos": [
+        "mbest/knockout.punches",
+        "jakubburkiewicz/uncss-brunch",
+        "BlueSpire/Durandal-Bower"
+      ]
+    },
+    {
+      "y": 2015,
+      "q": 4,
+      "n": 2,
+      "repos": [
+        "cdnjs/cdnjs"
+      ]
+    },
+    {
+      "y": 2016,
+      "q": 1,
+      "n": 2,
+      "repos": [
+        "preactjs/preact",
+        "jakubburkiewicz/uncss-brunch"
+      ]
+    },
+    {
+      "y": 2016,
+      "q": 3,
+      "n": 2,
+      "repos": [
+        "unindented/stats-webpack-plugin",
+        "shipshapecode/tether"
+      ]
+    },
+    {
+      "y": 2016,
+      "q": 4,
+      "n": 2,
+      "repos": [
+        "electrode-io/electrode-webpack-reporter"
+      ]
+    },
+    {
+      "y": 2017,
+      "q": 1,
+      "n": 7,
+      "repos": [
+        "communicator/dockerized-magento",
+        "camwest/react-slot-fill",
+        "robinweser/fela"
+      ]
+    },
+    {
+      "y": 2017,
+      "q": 2,
+      "n": 3,
+      "repos": [
+        "ianstormtaylor/slate"
+      ]
+    },
+    {
+      "y": 2017,
+      "q": 3,
+      "n": 3,
+      "repos": [
+        "KoryNunn/scroll-into-view",
+        "faceyspacey/babel-plugin-dual-import",
+        "lerna/lerna"
+      ]
+    },
+    {
+      "y": 2017,
+      "q": 4,
+      "n": 3,
+      "repos": [
+        "camwest/react-slot-fill",
+        "tomkp/react-split-pane"
+      ]
+    },
+    {
+      "y": 2018,
+      "q": 1,
+      "n": 2,
+      "repos": [
+        "communicator/magento-plugin"
+      ]
+    },
+    {
+      "y": 2018,
+      "q": 2,
+      "n": 1,
+      "repos": [
+        "gregberge/recompact"
+      ]
+    },
+    {
+      "y": 2018,
+      "q": 3,
+      "n": 1,
+      "repos": [
+        "Popmotion/popmotion"
+      ]
+    },
+    {
+      "y": 2019,
+      "q": 3,
+      "n": 1,
+      "repos": [
+        "slefevre/gitin2it"
+      ]
+    },
+    {
+      "y": 2022,
+      "q": 1,
+      "n": 1,
+      "repos": [
+        "swc-project/swc-node"
+      ]
+    },
+    {
+      "y": 2022,
+      "q": 2,
+      "n": 1,
+      "repos": [
+        "buildkite/test-collector-javascript"
+      ]
+    },
+    {
+      "y": 2026,
+      "q": 2,
+      "n": 2,
+      "repos": [
+        "shuding/nextra",
+        "better-auth/better-auth"
+      ]
+    }
+  ],
+  "pulls": [
+    {
+      "repo": "shuding/nextra",
+      "number": 4995,
+      "title": "fix(nextra): use repository.workdir() for GIT_ROOT to support git worktrees",
+      "merged": "2026-05-11",
+      "url": "https://github.com/shuding/nextra/pull/4995"
+    },
+    {
+      "repo": "better-auth/better-auth",
+      "number": 9398,
+      "title": "fix(sso): use findSAMLProvider in spMetadata so defaultSSO works",
+      "merged": "2026-04-29",
+      "url": "https://github.com/better-auth/better-auth/pull/9398"
+    },
+    {
+      "repo": "buildkite/test-collector-javascript",
+      "number": 30,
+      "title": "feat(monorepos): Add BUILDKITE_ANALYTICS_LOCATION_PREFIX var",
+      "merged": "2022-06-09",
+      "url": "https://github.com/buildkite/test-collector-javascript/pull/30"
+    },
+    {
+      "repo": "swc-project/swc-node",
+      "number": 647,
+      "title": "feat(register): return addHook result to it can be reverted",
+      "merged": "2022-03-31",
+      "url": "https://github.com/swc-project/swc-node/pull/647"
+    },
+    {
+      "repo": "slefevre/gitin2it",
+      "number": 4,
+      "title": "docs: fix typo",
+      "merged": "2019-09-09",
+      "url": "https://github.com/slefevre/gitin2it/pull/4"
+    },
+    {
+      "repo": "Popmotion/popmotion",
+      "number": 506,
+      "title": "fix(IE11): Convert Map constructor to a set call",
+      "merged": "2018-09-21",
+      "url": "https://github.com/Popmotion/popmotion/pull/506"
+    },
+    {
+      "repo": "gregberge/recompact",
+      "number": 107,
+      "title": "doc(setStatic): Wrong example documentation",
+      "merged": "2018-05-23",
+      "url": "https://github.com/gregberge/recompact/pull/107"
+    },
+    {
+      "repo": "communicator/magento-plugin",
+      "number": 3,
+      "title": "Merge pull request #2 from communicator/develop",
+      "merged": "2018-02-20",
+      "url": "https://github.com/communicator/magento-plugin/pull/3"
+    },
+    {
+      "repo": "communicator/magento-plugin",
+      "number": 2,
+      "title": "fix composer.json license entry",
+      "merged": "2018-02-20",
+      "url": "https://github.com/communicator/magento-plugin/pull/2"
+    },
+    {
+      "repo": "camwest/react-slot-fill",
+      "number": 32,
+      "title": "chore: Remove alpha status from README",
+      "merged": "2017-11-17",
+      "url": "https://github.com/camwest/react-slot-fill/pull/32"
+    },
+    {
+      "repo": "tomkp/react-split-pane",
+      "number": 225,
+      "title": "feat: Support the CSS order property",
+      "merged": "2017-11-15",
+      "url": "https://github.com/tomkp/react-split-pane/pull/225"
+    },
+    {
+      "repo": "tomkp/react-split-pane",
+      "number": 226,
+      "title": "feat: Allow passing class names to Pane components",
+      "merged": "2017-11-12",
+      "url": "https://github.com/tomkp/react-split-pane/pull/226"
+    },
+    {
+      "repo": "KoryNunn/scroll-into-view",
+      "number": 41,
+      "title": "feat: Add iframe support",
+      "merged": "2017-09-17",
+      "url": "https://github.com/KoryNunn/scroll-into-view/pull/41"
+    },
+    {
+      "repo": "faceyspacey/babel-plugin-dual-import",
+      "number": 4,
+      "title": "[feature] Prevent duplicate stylesheets",
+      "merged": "2017-08-16",
+      "url": "https://github.com/faceyspacey/babel-plugin-dual-import/pull/4"
+    },
+    {
+      "repo": "lerna/lerna",
+      "number": 904,
+      "title": "feat(canary): Improved canary option functionality",
+      "merged": "2017-07-06",
+      "url": "https://github.com/lerna/lerna/pull/904"
+    },
+    {
+      "repo": "ianstormtaylor/slate",
+      "number": 730,
+      "title": "feat: Add extendSelection utility",
+      "merged": "2017-04-19",
+      "url": "https://github.com/ianstormtaylor/slate/pull/730"
+    },
+    {
+      "repo": "ianstormtaylor/slate",
+      "number": 729,
+      "title": "feat: Add ES6 polyfill to examples page",
+      "merged": "2017-04-19",
+      "url": "https://github.com/ianstormtaylor/slate/pull/729"
+    },
+    {
+      "repo": "ianstormtaylor/slate",
+      "number": 728,
+      "title": "feat: Add findClosestNode utility",
+      "merged": "2017-04-19",
+      "url": "https://github.com/ianstormtaylor/slate/pull/728"
+    },
+    {
+      "repo": "communicator/dockerized-magento",
+      "number": 5,
+      "title": "Update docker-compose.yml",
+      "merged": "2017-03-30",
+      "url": "https://github.com/communicator/dockerized-magento/pull/5"
+    },
+    {
+      "repo": "communicator/dockerized-magento",
+      "number": 4,
+      "title": "Add cron service",
+      "merged": "2017-03-30",
+      "url": "https://github.com/communicator/dockerized-magento/pull/4"
+    },
+    {
+      "repo": "communicator/dockerized-magento",
+      "number": 3,
+      "title": "Merge from develop",
+      "merged": "2017-03-30",
+      "url": "https://github.com/communicator/dockerized-magento/pull/3"
+    },
+    {
+      "repo": "communicator/dockerized-magento",
+      "number": 2,
+      "title": "Add cron service",
+      "merged": "2017-03-30",
+      "url": "https://github.com/communicator/dockerized-magento/pull/2"
+    },
+    {
+      "repo": "camwest/react-slot-fill",
+      "number": 8,
+      "title": "feat: Replace DOM usage with mitt pub-sub",
+      "merged": "2017-03-21",
+      "url": "https://github.com/camwest/react-slot-fill/pull/8"
+    },
+    {
+      "repo": "communicator/dockerized-magento",
+      "number": 1,
+      "title": "Update README.md",
+      "merged": "2017-03-17",
+      "url": "https://github.com/communicator/dockerized-magento/pull/1"
+    },
+    {
+      "repo": "robinweser/fela",
+      "number": 193,
+      "title": "feat(react-fela): Use `Themed<displayName>` for connected components",
+      "merged": "2017-02-10",
+      "url": "https://github.com/robinweser/fela/pull/193"
+    },
+    {
+      "repo": "electrode-io/electrode-webpack-reporter",
+      "number": 10,
+      "title": "[Bugfix] Add missing jsonData variable",
+      "merged": "2016-11-28",
+      "url": "https://github.com/electrode-io/electrode-webpack-reporter/pull/10"
+    },
+    {
+      "repo": "electrode-io/electrode-webpack-reporter",
+      "number": 9,
+      "title": "[Bugfix] Ensure \"ignored\" modules don't break output",
+      "merged": "2016-11-28",
+      "url": "https://github.com/electrode-io/electrode-webpack-reporter/pull/9"
+    },
+    {
+      "repo": "unindented/stats-webpack-plugin",
+      "number": 10,
+      "title": "Add alternative webpack 2 dependency range",
+      "merged": "2016-08-12",
+      "url": "https://github.com/unindented/stats-webpack-plugin/pull/10"
+    },
+    {
+      "repo": "shipshapecode/tether",
+      "number": 179,
+      "title": "[Enhancement] Support nodes within other frames",
+      "merged": "2016-07-14",
+      "url": "https://github.com/shipshapecode/tether/pull/179"
+    },
+    {
+      "repo": "preactjs/preact",
+      "number": 66,
+      "title": "[Bug] Fix multiple camelCase'd CSS properties",
+      "merged": "2016-02-25",
+      "url": "https://github.com/preactjs/preact/pull/66"
+    },
+    {
+      "repo": "jakubburkiewicz/uncss-brunch",
+      "number": 6,
+      "title": "Update README.md",
+      "merged": "2016-01-19",
+      "url": "https://github.com/jakubburkiewicz/uncss-brunch/pull/6"
+    },
+    {
+      "repo": "cdnjs/cdnjs",
+      "number": 6439,
+      "title": "qTip2 - Amend homepage",
+      "merged": "2015-12-08",
+      "url": "https://github.com/cdnjs/cdnjs/pull/6439"
+    },
+    {
+      "repo": "cdnjs/cdnjs",
+      "number": 6438,
+      "title": "qTip2 - Update package.json - npmName + npmFileMap",
+      "merged": "2015-12-08",
+      "url": "https://github.com/cdnjs/cdnjs/pull/6438"
+    },
+    {
+      "repo": "jakubburkiewicz/uncss-brunch",
+      "number": 4,
+      "title": "Bump UnCSS version to 0.12.1",
+      "merged": "2015-09-24",
+      "url": "https://github.com/jakubburkiewicz/uncss-brunch/pull/4"
+    },
+    {
+      "repo": "jakubburkiewicz/uncss-brunch",
+      "number": 3,
+      "title": "Add ability to use dynamic files callback",
+      "merged": "2015-09-24",
+      "url": "https://github.com/jakubburkiewicz/uncss-brunch/pull/3"
+    },
+    {
+      "repo": "mbest/knockout.punches",
+      "number": 58,
+      "title": "Add package.json for NPM publish",
+      "merged": "2015-09-22",
+      "url": "https://github.com/mbest/knockout.punches/pull/58"
+    },
+    {
+      "repo": "BlueSpire/Durandal-Bower",
+      "number": 6,
+      "title": "Publish to NPM",
+      "merged": "2015-08-03",
+      "url": "https://github.com/BlueSpire/Durandal-Bower/pull/6"
+    },
+    {
+      "repo": "codesuki/react-d3-components",
+      "number": 3,
+      "title": "package.json `main` value should point to the dist",
+      "merged": "2015-02-28",
+      "url": "https://github.com/codesuki/react-d3-components/pull/3"
+    },
+    {
+      "repo": "aurelia/skeleton-navigation",
+      "number": 16,
+      "title": "Split gulpfile.js into manageable task files.",
+      "merged": "2015-02-05",
+      "url": "https://github.com/aurelia/skeleton-navigation/pull/16"
+    },
+    {
+      "repo": "rniemeyer/knockout-delegatedEvents",
+      "number": 9,
+      "title": "Add delegated<Event>Bubble property",
+      "merged": "2015-01-03",
+      "url": "https://github.com/rniemeyer/knockout-delegatedEvents/pull/9"
+    },
+    {
+      "repo": "jsdelivr/jsdelivr",
+      "number": 1644,
+      "title": "Add 2.2.1 release",
+      "merged": "2014-09-07",
+      "url": "https://github.com/jsdelivr/jsdelivr/pull/1644"
+    },
+    {
+      "repo": "BlueSpire/Durandal",
+      "number": 514,
+      "title": "Don't enforce viewPlugin",
+      "merged": "2014-05-15",
+      "url": "https://github.com/BlueSpire/Durandal/pull/514"
+    },
+    {
+      "repo": "dobtco/jquery-resizable-columns",
+      "number": 27,
+      "title": "Add event support",
+      "merged": "2014-04-24",
+      "url": "https://github.com/dobtco/jquery-resizable-columns/pull/27"
+    },
+    {
+      "repo": "dobtco/jquery-resizable-columns",
+      "number": 26,
+      "title": "Add support for tables w/o headers via `selector`",
+      "merged": "2014-04-24",
+      "url": "https://github.com/dobtco/jquery-resizable-columns/pull/26"
+    },
+    {
+      "repo": "dobtco/jquery-resizable-columns",
+      "number": 24,
+      "title": "Add frame support",
+      "merged": "2014-04-24",
+      "url": "https://github.com/dobtco/jquery-resizable-columns/pull/24"
+    },
+    {
+      "repo": "BlueSpire/Durandal",
+      "number": 486,
+      "title": "Allow `app.title` to be an observable.",
+      "merged": "2014-04-24",
+      "url": "https://github.com/BlueSpire/Durandal/pull/486"
+    },
+    {
+      "repo": "giggio/npm-nuget",
+      "number": 5,
+      "title": "Update npm.js.targets",
+      "merged": "2014-04-18",
+      "url": "https://github.com/giggio/npm-nuget/pull/5"
+    },
+    {
+      "repo": "dobtco/jquery-resizable-columns",
+      "number": 23,
+      "title": "Update bower.json",
+      "merged": "2014-04-10",
+      "url": "https://github.com/dobtco/jquery-resizable-columns/pull/23"
+    },
+    {
+      "repo": "etodanik/veinjs",
+      "number": 5,
+      "title": "Add missing property var",
+      "merged": "2014-02-02",
+      "url": "https://github.com/etodanik/veinjs/pull/5"
+    },
+    {
+      "repo": "etodanik/veinjs",
+      "number": 3,
+      "title": "Small optimizations and formatting clean up",
+      "merged": "2014-02-02",
+      "url": "https://github.com/etodanik/veinjs/pull/3"
+    },
+    {
+      "repo": "itsjavi/bootstrap-colorpicker",
+      "number": 55,
+      "title": "Fix offset issue when using relative positioned `container` option",
+      "merged": "2014-01-21",
+      "url": "https://github.com/itsjavi/bootstrap-colorpicker/pull/55"
+    },
+    {
+      "repo": "itsjavi/bootstrap-colorpicker",
+      "number": 54,
+      "title": "Add AMD support",
+      "merged": "2014-01-21",
+      "url": "https://github.com/itsjavi/bootstrap-colorpicker/pull/54"
+    },
+    {
+      "repo": "jsdelivr/jsdelivr",
+      "number": 222,
+      "title": "Add missing 2.1.0 release",
+      "merged": "2013-12-17",
+      "url": "https://github.com/jsdelivr/jsdelivr/pull/222"
+    },
+    {
+      "repo": "cdnjs/cdnjs",
+      "number": 2185,
+      "title": "qTip2 v2.2.0 release",
+      "merged": "2013-12-16",
+      "url": "https://github.com/cdnjs/cdnjs/pull/2185"
+    },
+    {
+      "repo": "jsdelivr/jsdelivr",
+      "number": 203,
+      "title": "Add qTip2 v2.2.0",
+      "merged": "2013-12-12",
+      "url": "https://github.com/jsdelivr/jsdelivr/pull/203"
+    },
+    {
+      "repo": "Mottie/tablesorter",
+      "number": 403,
+      "title": "Fix jQuery UI dateFormat conflict ",
+      "merged": "2013-10-30",
+      "url": "https://github.com/Mottie/tablesorter/pull/403"
+    },
+    {
+      "repo": "cdnjs/cdnjs",
+      "number": 1520,
+      "title": "Add qTip2 v2.1.0",
+      "merged": "2013-07-12",
+      "url": "https://github.com/cdnjs/cdnjs/pull/1520"
+    },
+    {
+      "repo": "cdnjs/cdnjs",
+      "number": 1071,
+      "title": "Add qTip2 2.0.1",
+      "merged": "2013-03-23",
+      "url": "https://github.com/cdnjs/cdnjs/pull/1071"
+    },
+    {
+      "repo": "andris9/highlight",
+      "number": 10,
+      "title": "Maintain <code> block attributes (useCodeBlocks)",
+      "merged": "2012-08-14",
+      "url": "https://github.com/andris9/highlight/pull/10"
+    }
+  ]
+}
