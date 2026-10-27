@@ -12,6 +12,7 @@ on:
       - accessibility
       - blog-import
       - bootstrap/**
+      - dependabot/**
       - evals
       - lighthouse
       - node-modules
@@ -38,6 +39,7 @@ jobs:
     timeout-minutes: 15
     permissions:
       contents: write # the site-store branch
+      statuses: write # the "preview" status, with the preview's link, on the commit
     steps:
       - name: Name the preview after the branch
         id: slug
@@ -47,6 +49,14 @@ jobs:
           slug=$(printf '%s' "$BRANCH" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/-/g; s/^-+|-+$//g' | cut -c1-60)
           echo "slug=$slug" >> "$GITHUB_OUTPUT"
           echo "url=https://craigthompson.dev/preview/$slug/" >> "$GITHUB_OUTPUT"
+      - name: Mark the preview as building
+        if: github.event_name == 'push'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          URL: ${{ steps.slug.outputs.url }}
+        run: |
+          gh api -X POST "repos/$GITHUB_REPOSITORY/statuses/$GITHUB_SHA" -f state=pending -f context=preview \
+            -f description="Building ${URL#https://}" -f target_url="$URL" >/dev/null
       # On a delete, this checks out main (the branch is gone).
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
       - if: github.event_name == 'delete'
@@ -67,7 +77,18 @@ jobs:
         name: Stamp the commit into the page
         run: sed -i "s/__BUILD_SHA__/${GITHUB_SHA}/g; s/__BUILD_SHORT__/${GITHUB_SHA::7}/g; s/__BUILD_AT__/$(git log -1 --format=%cI)/g" site/index.html
       - if: github.event_name != 'delete'
-        run: tools/site-store.sh put "preview/${{ steps.slug.outputs.slug }}" site
+        # .preview: the commit and link, so Pages can mark the commit's status once it's live.
+        run: |
+          echo "$GITHUB_SHA ${{ steps.slug.outputs.url }}" > site/.preview
+          tools/site-store.sh put "preview/${{ steps.slug.outputs.slug }}" site
       - if: github.event_name != 'delete'
         name: Link the preview
         run: echo "Preview (live in a minute or two, once Pages publishes it) → ${{ steps.slug.outputs.url }}" >> "$GITHUB_STEP_SUMMARY"
+      - name: Mark the preview as failed
+        if: failure() && github.event_name == 'push'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          URL: ${{ steps.slug.outputs.url }}
+        run: |
+          gh api -X POST "repos/$GITHUB_REPOSITORY/statuses/$GITHUB_SHA" -f state=failure -f context=preview \
+            -f description="The preview build failed" -f target_url="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" >/dev/null
