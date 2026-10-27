@@ -1,7 +1,7 @@
 ---
-// README.md, as a terminal window: whoami (the name and portrait), the role, then the tagline and
-// introduction (src/content/sections/intro.mdx) and a prompt to get in touch. Behind it, the Tyne
-// Bridge; the Konami code lights it up (scripts/bridge.ts).
+// The introduction, as a terminal window: whoami (the name and portrait), the role, the tagline and
+// introduction (src/content/sections/intro.mdx), and a prompt to get in touch. In its corner, the
+// Tyne Bridge; the Konami code lights it up (scripts/bridge.ts).
 import { Picture } from 'astro:assets';
 import { getEntry, render } from 'astro:content';
 import portrait from '../../assets/portrait.webp';
@@ -16,35 +16,21 @@ const intro = await getEntry('sections', 'intro');
 if (!intro) throw new Error('src/content/sections/intro.mdx is missing');
 const { Content } = await render(intro);
 
-// The bridge: two arches, seven hangers rising in turn, the deck, and lamps along the arch.
-const hangers = [150, 300, 450, 600, 750, 900, 1050].map((x, i) => ({ x, top: [220, 140, 95, 80, 95, 140, 220][i] }));
-const lamps = [
-  [75, 260],
-  [150, 226],
-  [225, 196],
-  [300, 172],
-  [375, 154],
-  [450, 141],
-  [525, 133],
-  [600, 130],
-  [675, 133],
-  [750, 141],
-  [825, 154],
-  [900, 172],
-  [975, 196],
-  [1050, 226],
-  [1125, 260],
-];
+// The Tyne Bridge, in a 1000×190 box: the arch (two ribs), the deck running through it, hangers
+// from the arch to the deck, the towers at each end and the river below.
+const HANGERS = 'M241 124 V117 M315 124 V92 M389 124 V75 M463 124 V66 M537 124 V66 M611 124 V75 M685 124 V92 M759 124 V117';
+const RIVER = 'M0 182 Q40 176 80 182 T160 182 T240 182 T320 182 T400 182 T480 182 T560 182 T640 182 T720 182 T800 182 T880 182 T960 182 T1040 182';
 ---
 
 <section aria-label="Introduction" class="intro">
   <div class="term">
-    <svg class="bridge" viewBox="0 0 1200 320" preserveAspectRatio="none" aria-hidden="true" focusable="false">
-      <path class="arch" d="M0 300 Q600 -40 1200 300" pathLength="1"></path>
-      <path class="arch arch2" d="M60 300 Q600 10 1140 300" pathLength="1"></path>
-      <g class="hangers">{hangers.map((h) => <path d={`M${h.x} 300 L${h.x} ${h.top}`} pathLength="1" />)}</g>
-      <path class="deck" d="M0 300 H1200" pathLength="1"></path>
-      <g class="lamps">{lamps.map(([x, y]) => <path d={`M${x} ${y}h0`} />)}</g>
+    <svg class="bridge" viewBox="0 0 1000 190" aria-hidden="true" focusable="false">
+      <path class="arch" d="M130 172 Q500 -42 870 172" pathLength="1"></path>
+      <path class="arch rib" d="M150 172 Q500 -12 850 172" pathLength="1"></path>
+      <path class="hangers" d={HANGERS} pathLength="1"></path>
+      <path class="deck" d="M0 124 H1000" pathLength="1"></path>
+      <path class="towers" d="M70 124 V56 H118 V124 M882 124 V56 H930 V124 M70 76 H118 M882 76 H930" pathLength="1"></path>
+      <path class="river" d={RIVER}></path>
     </svg>
     <div class="bar" aria-hidden="true"><i></i><i></i><i></i><span translate="no">craig@newcastle: ~</span></div>
     <div class="body">
@@ -52,21 +38,19 @@ const lamps = [
         <div class="who">
           <p class="pr" translate="no">$ whoami</p>
           <h1>{NAME}</h1>
-          <p class="pr" translate="no">$ cat role.txt</p>
           <p class="role">{ROLE}</p>
         </div>
         <figure class="ph">
           {/* Daytime in the light theme, lamplight in the dark one. Only the one showing is fetched (the other is display: none and lazy). The whole <picture> is hidden, not just its image, so the hidden one doesn't take up a gap in the column. */}
           <Picture pictureAttributes={{ class: 'when-light' }} src={portrait} alt={PORTRAIT_ALT} formats={['avif', 'webp']} widths={[96, 192, 352]} sizes="(max-width: 600px) 96px, 200px" loading="lazy" />
           <Picture pictureAttributes={{ class: 'when-dark' }} src={portraitNight} alt={PORTRAIT_ALT_NIGHT} formats={['avif', 'webp']} widths={[96, 192, 352]} sizes="(max-width: 600px) 96px, 200px" loading="lazy" />
-          <figcaption aria-hidden="true" translate="no">portrait.webp · Newcastle</figcaption>
+          <figcaption aria-hidden="true" translate="no">portrait.webp</figcaption>
         </figure>
       </div>
-      <p class="pr" translate="no">$ cat README.md</p>
       <p class="print-only"><a href={`mailto:${EMAIL}`}>{EMAIL}</a> · <a href="https://craigthompson.dev/">craigthompson.dev</a> · github.com/Craga89 · linkedin.com/in/craigmichaelthompson · Newcastle upon Tyne, UK<br />The short CV is at craigthompson.dev/cv.</p>
       <div id="about" class="about"><Content components={components} /></div>
       <Focus />
-      <p class="cta"><span class="pr" aria-hidden="true">$</span><a class="c-btn" href="#contact">./get-in-touch</a><a class="cv" href="/cv.pdf" translate="no">cat cv.pdf</a><span class="cursor" aria-hidden="true"></span></p>
+      <p class="cta"><a class="c-btn" href="#contact">./get-in-touch</a><a class="cv" href="/cv.pdf" translate="no">cat cv.pdf</a><span class="cursor" aria-hidden="true"></span></p>
     </div>
   </div>
   <div class="mcta">
@@ -80,114 +64,83 @@ const lamps = [
     padding-top: 8px;
     padding-bottom: 64px;
   }
-  /* The bridge, faint, in the theme's text colour, across the foot of the window. The lit version
-     (below) draws over it. */
-  .term::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: -1;
-    aspect-ratio: 1200 / 680;
-    pointer-events: none;
-    background-color: var(--text);
-    opacity: 0.12;
-    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 320' preserveAspectRatio='none'%3E%3Cpath d='M0 300 Q600 -40 1200 300' fill='none' stroke='%23000' stroke-opacity='.83' stroke-width='3'/%3E%3Cpath d='M60 300 Q600 10 1140 300' fill='none' stroke='%23000' stroke-opacity='.5' stroke-width='2'/%3E%3Cg stroke='%23000' stroke-opacity='.5' stroke-width='1.5'%3E%3Cpath d='M150 300 L150 220M300 300 L300 140M450 300 L450 95M600 300 L600 80M750 300 L750 95M900 300 L900 140M1050 300 L1050 220'/%3E%3C/g%3E%3Cpath d='M0 300 H1200' stroke='%23000' stroke-width='3'/%3E%3C/svg%3E") no-repeat center / 100% 100%;
-  }
+  /* The bridge: faint, in the bottom corner of the window behind the prompt, cut off by its edge.
+     Lit up, it's drawn in the accent colour. */
   .bridge {
+    --b: var(--line3);
     position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    right: -60px;
+    bottom: -14px;
     z-index: -1;
-    width: 100%;
+    width: min(620px, 80%);
     height: auto;
-    aspect-ratio: 1200 / 680;
     overflow: visible;
     pointer-events: none;
-    opacity: 0;
+    opacity: 0.5;
     transition: opacity 0.6s ease;
+  }
+  :root[data-theme='light'] .bridge {
+    --b: var(--line2);
   }
   .bridge path {
     fill: none;
-    stroke: var(--acc);
+    stroke: var(--b);
     stroke-linecap: round;
-    vector-effect: non-scaling-stroke;
+    stroke-linejoin: round;
+    transition: stroke 0.6s ease;
   }
   .arch,
   .deck {
-    stroke-width: 3;
-    stroke-dasharray: 1;
-    stroke-dashoffset: 1;
+    stroke-width: 5;
   }
-  .arch {
-    filter: drop-shadow(0 0 6px var(--acc));
+  .rib {
+    stroke-width: 2.5;
   }
-  .arch2 {
+  .hangers {
     stroke-width: 2;
-    opacity: 0.7;
   }
-  .hangers path {
-    stroke-width: 1.5;
-    stroke-dasharray: 1;
-    stroke-dashoffset: 1;
-    opacity: 0.8;
+  .towers {
+    stroke-width: 4;
   }
-  .lamps path {
-    stroke: var(--acc-h);
-    stroke-width: 7;
-    opacity: 0;
-    filter: drop-shadow(0 0 5px var(--acc-h));
+  .river {
+    stroke-width: 2;
+    opacity: 0.6;
   }
   :root[data-bridge] .bridge {
     opacity: 1;
   }
-  :root[data-bridge] .arch,
-  :root[data-bridge] .deck {
+  :root[data-bridge] .bridge path:not(.river) {
+    stroke: var(--acc);
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
     animation: draw 1.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
   }
-  :root[data-bridge] .arch2 {
-    animation-delay: 0.25s;
+  :root[data-bridge] .arch {
+    filter: drop-shadow(0 0 6px var(--acc));
   }
-  :root[data-bridge] .hangers path {
-    animation: draw 0.5s ease-out forwards;
-    animation-delay: calc(0.78s + sibling-index() * 0.12s);
+  :root[data-bridge] .rib {
+    animation-delay: 0.2s;
   }
-  :root[data-bridge] .lamps path {
-    animation: twinkle 2.4s ease-in-out infinite;
-    animation-delay: calc(1.53s + sibling-index() * 0.07s);
+  :root[data-bridge] .hangers {
+    animation-delay: 0.7s;
+  }
+  :root[data-bridge] .towers {
+    animation-delay: 0.4s;
   }
   /* Without motion, it's simply lit. */
-  :root[data-bridge][data-motion='off'] :is(.arch, .deck, .hangers path) {
+  :root[data-bridge][data-motion='off'] .bridge path {
+    animation: none;
     stroke-dashoffset: 0;
   }
-  :root[data-bridge][data-motion='off'] .lamps path {
-    opacity: 1;
-  }
   @media (prefers-reduced-motion: reduce) {
-    :root[data-bridge] :is(.arch, .deck, .hangers path) {
+    :root[data-bridge] .bridge path {
+      animation: none;
       stroke-dashoffset: 0;
-    }
-    :root[data-bridge] .lamps path {
-      opacity: 1;
     }
   }
   @keyframes draw {
     to {
       stroke-dashoffset: 0;
-    }
-  }
-  @keyframes twinkle {
-    0% {
-      opacity: 0;
-    }
-    20%,
-    70% {
-      opacity: 1;
-    }
-    100% {
-      opacity: 0.35;
     }
   }
   /* The window: a panel with a title bar, with the bridge drawn inside it behind the text. */
@@ -214,7 +167,13 @@ const lamps = [
     width: 12px;
     height: 12px;
     border-radius: 50%;
-    background: var(--line3);
+    background: #ff5f57;
+  }
+  .bar i:nth-child(2) {
+    background: #febc2e;
+  }
+  .bar i:nth-child(3) {
+    background: #28c840;
   }
   .bar span {
     margin-inline-start: 10px;
@@ -415,7 +374,6 @@ const lamps = [
     .intro {
       padding: 0;
     }
-    .term::before,
     .bridge,
     .mcta {
       display: none;

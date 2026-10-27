@@ -423,8 +423,6 @@ document.addEventListener('click', (e) => {
   }
 });
 
-addEventListener('craga:ask', (e) => ask((e as CustomEvent<string>).detail));
-
 // ---------- the chat bar ----------
 
 const chat = $('[data-chat]');

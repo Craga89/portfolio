@@ -5,6 +5,8 @@ import { $, $$ } from './dom';
 import { goTo } from './anchors';
 import { cases } from './cases';
 import { tour, holdTour } from './deck';
+import { movesPage } from './commands';
+import { ask as askSh } from './ask';
 
 function open(kind: string, id: string, scroll = true) {
   if (kind === 'case' && cases) {
@@ -55,10 +57,12 @@ function apply(u: URL, initial = false): boolean {
   }
   const ask = q.get('ask');
   if (ask) {
-    dispatchEvent(new CustomEvent('craga:ask', { detail: ask.slice(0, 300) }));
+    void askSh(ask.slice(0, 300));
     handled = true;
   }
-  const hash = decodeURIComponent(u.hash.slice(1)) || (ask ? 'ask' : '');
+  // Asking goes to the answer, unless the command goes somewhere itself (search and jump's
+  // "Ask ask.sh: bridge" would otherwise scroll down to ask.sh, then back up to the bridge).
+  const hash = ask && movesPage(ask) ? '' : decodeURIComponent(u.hash.slice(1)) || (ask ? 'ask' : '');
   if (!initial) {
     if (hash) goTo(hash);
     else if (view) goTo('top');

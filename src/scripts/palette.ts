@@ -1,5 +1,6 @@
 // Search and jump: filters /palette.json as you type, best match first, with "ask ask.sh" last.
 // Loaded on first use (scripts/keys.ts).
+import { movesPage } from './commands';
 import { $, el } from './dom';
 import { navigate } from './navigate';
 import { copyText } from './copy';
@@ -60,7 +61,12 @@ function search(q: string): PaletteItem[] {
     .map((x) => x.o);
   return [
     ...found,
-    { icon: '$', label: `Ask ask.sh: “${q.trim()}”`, kind: 'ask', path: `/?ask=${encodeURIComponent(q.trim())}#ask` },
+    {
+      icon: '$',
+      label: `Ask ask.sh: “${q.trim()}”`,
+      kind: 'ask',
+      path: `/?ask=${encodeURIComponent(q.trim())}${movesPage(q) ? '' : '#ask'}`,
+    },
   ];
 }
 

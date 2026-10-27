@@ -111,7 +111,7 @@ test.describe('a German browser', () => {
     await expect(page).toHaveTitle(/^«de» Craig Michael Thompson/);
     await expect(page.locator('h1')).toHaveText('Craig Michael Thompson');
     // The section's aria-label is translated too, so find the prompt by its text.
-    await expect(page.locator('p[translate="no"]', { hasText: '$ cat README.md' })).toHaveText('$ cat README.md');
+    await expect(page.locator('p[translate="no"]', { hasText: '$ whoami' })).toHaveText('$ whoami');
     await expect(page.locator('.c-cmd').first()).toHaveText(/^\$ cat career\.log/);
     await expect(page.locator('aside select[data-tr-menu]')).toHaveValue('de');
     const untranslated = await page.evaluate(() =>

@@ -105,3 +105,22 @@ for (const path of ['case-studies/monorepo/', 'blog/', 'cv/']) {
     await page.waitForURL(/\/responsibilities\/hiring\/$/);
   });
 }
+
+test('a link that asks ask.sh answers on arrival', async ({ page }) => {
+  await page.goto('/?ask=whoami#ask');
+  await expect(page.locator('#ask [data-ask-log]')).toContainText('Craig Michael Thompson');
+});
+
+test(
+  '"bridge" from search and jump lights the bridge without a detour to ask.sh',
+  { tag: '@desktop' },
+  async ({ page }) => {
+    await page.goto('cv/');
+    await page.keyboard.press('Control+k');
+    await page.locator('#c-pal-field').fill('bridge');
+    await page.keyboard.press('Enter');
+    await page.waitForURL(/\?ask=bridge$/);
+    await expect(page.locator('html')).toHaveAttribute('data-bridge', '');
+    expect(await page.evaluate(() => scrollY)).toBeLessThan(50);
+  },
+);
