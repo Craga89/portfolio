@@ -19,6 +19,9 @@ const { Content } = await render(intro);
 // The Tyne Bridge, in a 1000×190 box: the arch (two ribs), the deck running through it, hangers
 // from the arch to the deck, the towers at each end and the river below.
 const HANGERS = 'M241 124 V117 M315 124 V92 M389 124 V75 M463 124 V66 M537 124 V66 M611 124 V75 M685 124 V92 M759 124 V117';
+// Fireworks over the bridge when it's lit: six bursts of twelve sparks.
+const BURSTS = [0, 1, 2, 3, 4, 5];
+const SPARKS = Array.from({ length: 12 }, (_, i) => i);
 const RIVER = 'M0 182 Q40 176 80 182 T160 182 T240 182 T320 182 T400 182 T480 182 T560 182 T640 182 T720 182 T800 182 T880 182 T960 182 T1040 182';
 ---
 
@@ -32,6 +35,7 @@ const RIVER = 'M0 182 Q40 176 80 182 T160 182 T240 182 T320 182 T400 182 T480 18
       <path class="towers" d="M70 124 V56 H118 V124 M882 124 V56 H930 V124 M70 76 H118 M882 76 H930" pathLength="1"></path>
       <path class="river" d={RIVER}></path>
     </svg>
+    <div class="fw" aria-hidden="true">{BURSTS.map(() => <span class="burst">{SPARKS.map(() => <i></i>)}</span>)}</div>
     <div class="bar" aria-hidden="true"><i></i><i></i><i></i><span translate="no">craig@newcastle: ~</span></div>
     <div class="body">
       <div class="top">
@@ -64,8 +68,7 @@ const RIVER = 'M0 182 Q40 176 80 182 T160 182 T240 182 T320 182 T400 182 T480 18
     padding-top: 8px;
     padding-bottom: 64px;
   }
-  /* The bridge: faint, in the bottom corner of the window behind the prompt, cut off by its edge.
-     Lit up, it's drawn in the accent colour. */
+  /* The bridge: faint, in the bottom corner of the window behind the prompt, cut off by its edge. */
   .bridge {
     --b: var(--line3);
     position: absolute;
@@ -106,17 +109,39 @@ const RIVER = 'M0 182 Q40 176 80 182 T160 182 T240 182 T320 182 T400 182 T480 18
     stroke-width: 2;
     opacity: 0.6;
   }
+  /* Lit up, it's the real bridge's colours: the green steel arch and deck, the granite towers and
+     the river, drawn in as it lights, with fireworks over it. */
+  .bridge {
+    --steel: #237a4c;
+    --granite: #8c8576;
+    --water: #3d7fb5;
+  }
+  :root:not([data-theme='light']) .bridge {
+    --steel: #4cbb7f;
+    --granite: #c9c2b2;
+    --water: #5aa9e6;
+  }
   :root[data-bridge] .bridge {
     opacity: 1;
   }
   :root[data-bridge] .bridge path:not(.river) {
-    stroke: var(--acc);
     stroke-dasharray: 1;
     stroke-dashoffset: 1;
     animation: draw 1.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
   }
+  :root[data-bridge] :is(.arch, .rib, .hangers, .deck) {
+    stroke: var(--steel);
+  }
   :root[data-bridge] .arch {
-    filter: drop-shadow(0 0 6px var(--acc));
+    filter: drop-shadow(0 0 6px var(--steel));
+  }
+  :root[data-bridge] .towers {
+    stroke: var(--granite);
+    animation-delay: 0.4s;
+  }
+  :root[data-bridge] .river {
+    stroke: var(--water);
+    opacity: 1;
   }
   :root[data-bridge] .rib {
     animation-delay: 0.2s;
@@ -124,8 +149,140 @@ const RIVER = 'M0 182 Q40 176 80 182 T160 182 T240 182 T320 182 T400 182 T480 18
   :root[data-bridge] .hangers {
     animation-delay: 0.7s;
   }
-  :root[data-bridge] .towers {
-    animation-delay: 0.4s;
+  /* Fireworks: each burst is twelve sparks flying out from one point and falling as they fade.
+     Only while the bridge is lit, and only with motion on. */
+  .fw {
+    display: none;
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+  }
+  .burst {
+    --c: #ffd166;
+    --r: 110px;
+    position: absolute;
+    right: 24%;
+    bottom: 40%;
+    width: 0;
+    height: 0;
+  }
+  .burst:nth-child(2) {
+    --c: #ef476f;
+    --r: 90px;
+    right: 46%;
+    bottom: 55%;
+  }
+  .burst:nth-child(3) {
+    --c: #06d6a0;
+    --r: 120px;
+    right: 9%;
+    bottom: 62%;
+  }
+  .burst:nth-child(4) {
+    --c: #f4f1de;
+    --r: 80px;
+    right: 34%;
+    bottom: 72%;
+  }
+  .burst:nth-child(5) {
+    --c: #8ecae6;
+    --r: 100px;
+    right: 60%;
+    bottom: 38%;
+  }
+  .burst:nth-child(6) {
+    --c: #ffb4a2;
+    --r: 95px;
+    right: 15%;
+    bottom: 30%;
+  }
+  :root[data-theme='light'] .burst:nth-child(4) {
+    --c: #7b5cd6;
+  }
+  :root[data-theme='light'] .burst:nth-child(5) {
+    --c: #1d6fa5;
+  }
+  .burst i {
+    --a: 0deg;
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    margin: -3px;
+    border-radius: 50%;
+    background: var(--c);
+    box-shadow: 0 0 6px 1px var(--c);
+    opacity: 0;
+  }
+  .burst i:nth-child(2) {
+    --a: 30deg;
+  }
+  .burst i:nth-child(3) {
+    --a: 60deg;
+  }
+  .burst i:nth-child(4) {
+    --a: 90deg;
+  }
+  .burst i:nth-child(5) {
+    --a: 120deg;
+  }
+  .burst i:nth-child(6) {
+    --a: 150deg;
+  }
+  .burst i:nth-child(7) {
+    --a: 180deg;
+  }
+  .burst i:nth-child(8) {
+    --a: 210deg;
+  }
+  .burst i:nth-child(9) {
+    --a: 240deg;
+  }
+  .burst i:nth-child(10) {
+    --a: 270deg;
+  }
+  .burst i:nth-child(11) {
+    --a: 300deg;
+  }
+  .burst i:nth-child(12) {
+    --a: 330deg;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    :root[data-bridge]:not([data-motion='off']) .fw {
+      display: block;
+    }
+    :root[data-bridge] .burst i {
+      animation: spark 1.8s cubic-bezier(0.2, 0.7, 0.3, 1) infinite;
+      animation-delay: 1.4s;
+    }
+    :root[data-bridge] .burst:nth-child(2) i {
+      animation-delay: 1.85s;
+    }
+    :root[data-bridge] .burst:nth-child(3) i {
+      animation-delay: 2.3s;
+    }
+    :root[data-bridge] .burst:nth-child(4) i {
+      animation-delay: 2.75s;
+    }
+    :root[data-bridge] .burst:nth-child(5) i {
+      animation-delay: 2.05s;
+    }
+    :root[data-bridge] .burst:nth-child(6) i {
+      animation-delay: 1.6s;
+    }
+  }
+  @keyframes spark {
+    0% {
+      opacity: 1;
+      transform: rotate(var(--a)) translateX(0) scale(1.4);
+    }
+    70% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+      transform: translateY(28px) rotate(var(--a)) translateX(var(--r)) scale(0.4);
+    }
   }
   /* Without motion, it's simply lit. */
   :root[data-bridge][data-motion='off'] .bridge path {
