@@ -12,6 +12,7 @@ on:
       - accessibility
       - blog-import
       - bootstrap/**
+      - dependabot/**
       - evals
       - lighthouse
       - node-modules
