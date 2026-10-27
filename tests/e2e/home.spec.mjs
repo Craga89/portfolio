@@ -74,7 +74,7 @@ test.describe('without JavaScript', () => {
 
   test('the content is all there', async ({ page }) => {
     const text = await page.locator('main').evaluate((el) => el.textContent || '');
-    expect(text).toContain('Craig Michael Thompson');
+    expect(text).toContain('Craig Thompson');
     expect(text).toContain('hiring.md');
     expect(text).toContain('monorepo');
   });

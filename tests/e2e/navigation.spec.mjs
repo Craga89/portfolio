@@ -108,7 +108,7 @@ for (const path of ['case-studies/monorepo/', 'blog/', 'cv/']) {
 
 test('a link that asks ask.sh answers on arrival', async ({ page }) => {
   await page.goto('/?ask=whoami#ask');
-  await expect(page.locator('#ask [data-ask-log]')).toContainText('Craig Michael Thompson');
+  await expect(page.locator('#ask [data-ask-log]')).toContainText('Craig Thompson');
 });
 
 test(

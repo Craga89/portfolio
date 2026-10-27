@@ -1,6 +1,6 @@
 # craigthompson.dev
 
-Personal site and CV of Craig Michael Thompson, served by GitHub Pages at <https://craigthompson.dev>.
+Personal site and CV of Craig Thompson, served by GitHub Pages at <https://craigthompson.dev>.
 
 ## Layout
 

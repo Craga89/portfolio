@@ -10,7 +10,7 @@ import { describeTools, callTool, hasTool, SERVER_INSTRUCTIONS } from '../../sha
 
 export const MODERN = ['2026-07-28'];
 export const LEGACY = ['2025-11-25', '2025-06-18', '2025-03-26'];
-export const SERVER = { name: 'craigthompson-dev', title: 'Craig Michael Thompson (portfolio)', version: '1.0.0' };
+export const SERVER = { name: 'craigthompson-dev', title: 'Craig Thompson (portfolio)', version: '1.0.0' };
 const META = {
   version: 'io.modelcontextprotocol/protocolVersion',
   serverInfo: 'io.modelcontextprotocol/serverInfo',

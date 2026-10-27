@@ -246,7 +246,7 @@ export const TOOLS = [
     name: 'get_profile',
     title: 'Profile and contact',
     description:
-      "Craig Michael Thompson's profile: headline, summary, location, what roles he's open to, how to contact him, links to his CV (web, PDF, JSON Resume), GitHub and LinkedIn, and his skills.",
+      "Craig Thompson's profile: headline, summary, location, what roles he's open to, how to contact him, links to his CV (web, PDF, JSON Resume), GitHub and LinkedIn, and his skills.",
     inputSchema: NONE,
     readOnly: true,
     async run(a, src) {
@@ -623,4 +623,4 @@ export async function callTool(name, args, src, surface, signal) {
 }
 
 export const SERVER_INSTRUCTIONS =
-  'Read-only tools about Craig Michael Thompson, Head of Engineering and full-stack engineer: his profile and contact details, career, case studies and responsibilities, open-source work, old blog posts, and how his portfolio site is tested. Every answer comes from his portfolio site. Start with get_profile or list_files; use search_site or ask for specific questions.';
+  'Read-only tools about Craig Thompson, Head of Engineering and full-stack engineer: his profile and contact details, career, case studies and responsibilities, open-source work, old blog posts, and how his portfolio site is tested. Every answer comes from his portfolio site. Start with get_profile or list_files; use search_site or ask for specific questions.';

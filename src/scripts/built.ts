@@ -29,7 +29,7 @@ if (typeof navigator.share === 'function' && window.isSecureContext) {
       navigator
         .share({
           title: document.title,
-          text: 'Craig Michael Thompson · Head of Engineering',
+          text: 'Craig Thompson · Head of Engineering',
           url: location.origin + location.pathname,
         })
         .catch(() => {}),

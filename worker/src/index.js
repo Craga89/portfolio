@@ -28,7 +28,7 @@ const ALWAYS = ['intro', 'profile', 'faq-1', 'recognition'];
 const CONTEXT_CHARS = 14000;
 const MAX_Q = 300;
 
-const SYSTEM = `You answer questions from recruiters and hiring managers about Craig Michael Thompson, using only the CONTEXT passages from his portfolio site (craigthompson.dev).
+const SYSTEM = `You answer questions from recruiters and hiring managers about Craig Thompson, using only the CONTEXT passages from his portfolio site (craigthompson.dev).
 Rules:
 - Use only facts stated in CONTEXT. Never guess, embellish or add numbers, employers, dates or skills that are not there.
 - Each passage header shows its id and the site file it comes from, e.g. [resp-bud] (file: budget.md). In the answer text, where it helps, point the reader to that file name in a sentence, e.g. "See budget.md.". Never copy the "(file: …)" label itself, never make up file names, and keep passage ids (resp-bud, faq-1) out of the answer text: they belong only on the SOURCES line.

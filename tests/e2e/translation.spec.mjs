@@ -108,8 +108,8 @@ test.describe('a German browser', () => {
 
   test('the page translates, keeping names, file names and commands', { tag: '@desktop' }, async ({ page }) => {
     await expect(page.locator('html')).toHaveAttribute('lang', 'de');
-    await expect(page).toHaveTitle(/^«de» Craig Michael Thompson/);
-    await expect(page.locator('h1')).toHaveText('Craig Michael Thompson');
+    await expect(page).toHaveTitle(/^«de» Craig Thompson/);
+    await expect(page.locator('h1')).toHaveText('Craig Thompson');
     // The section's aria-label is translated too, so find the prompt by its text.
     await expect(page.locator('p[translate="no"]', { hasText: '$ whoami' })).toHaveText('$ whoami');
     await expect(page.locator('.c-cmd').first()).toHaveText(/^\$ cat career\.log/);

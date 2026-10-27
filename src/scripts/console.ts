@@ -22,7 +22,7 @@ const S = {
 const parts: [keyof typeof S, string][] = [
   ['art', BANNER],
   ['cmd', '\n$ whoami'],
-  ['head', '\nCraig Michael Thompson'],
+  ['head', '\nCraig Thompson'],
   ['text', '\nHead of Engineering · hands-on, AI-first · Newcastle upon Tyne, UK'],
   ['dim', '\n● open to new roles'],
   ['cmd', '\n\n$ ls ./links'],

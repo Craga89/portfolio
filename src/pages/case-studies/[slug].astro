@@ -18,17 +18,17 @@ const entry = all[current];
 const { file, title, id } = entry.data;
 const path = `case-studies/${slugOf(file)}/`;
 const home = `/?case=${id}#case-studies`;
-const description = describe(entry.body, `${title}: case studies from Craig Michael Thompson's portfolio.`);
+const description = describe(entry.body, `${title}: case studies from Craig Thompson's portfolio.`);
 const files = all.map((e) => ({ file: e.data.file, href: `/case-studies/${slugOf(e.data.file)}/` }));
 ---
 
 <FilePage
-  title={`${title} · ${file} · Craig Michael Thompson`}
+  title={`${title} · ${file} · Craig Thompson`}
   description={description}
   path={path}
   type="article"
   image={`/${path}og.png`}
-  imageAlt={`${title}. case-studies/${file}, Craig Michael Thompson`}
+  imageAlt={`${title}. case-studies/${file}, Craig Thompson`}
   ld={articleLd({ headline: title, name: file, description, path })}
   tips
   mono
