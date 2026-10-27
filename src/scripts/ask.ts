@@ -3,6 +3,7 @@
 // the day's free allowance), the closest passage from the site's own search index answers
 // instead. A few shell commands are answered here. Answers can be shared, read aloud, and the
 // question dictated.
+import { url } from '../lib/url';
 import { $, $$, el } from './dom';
 import { copyText } from './copy';
 import { note } from './toast';
@@ -30,7 +31,7 @@ interface Entry {
 
 const ASK_LOG = $('[data-ask-log]');
 const CHAT_LOG = $('[data-chat-log]');
-const INDEX_URL = '/assets/ask-index.json';
+const INDEX_URL = url('/assets/ask-index.json');
 
 let log: Entry[] = [];
 let busy = false;
@@ -94,7 +95,7 @@ function linked(text: string): (Node | string)[] {
     const L = links!.map[m.toLowerCase()] ?? (m.includes('@') ? { href: 'mailto:' + m } : null);
     if (!L) return m;
     if (at > last) out.push(text.slice(last, at));
-    out.push(el('a', { class: 'c-ask-ln', href: L.href, 'data-open': L.open, translate: 'no', text: m }));
+    out.push(el('a', { class: 'c-ask-ln', href: url(L.href), 'data-open': L.open, translate: 'no', text: m }));
     last = at + m.length;
     return m;
   });

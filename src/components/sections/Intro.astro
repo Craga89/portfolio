@@ -2,6 +2,7 @@
 // The introduction, as a terminal window: whoami (the name and portrait), the role, the tagline and
 // introduction (src/content/sections/intro.mdx), and a prompt to get in touch. In its corner, the
 // Tyne Bridge; the Konami code lights it up (scripts/bridge.ts).
+import { url } from '../../lib/url';
 import { Picture } from 'astro:assets';
 import { getEntry, render } from 'astro:content';
 import portrait from '../../assets/portrait.webp';
@@ -54,7 +55,7 @@ const RIVER = 'M0 182 Q40 176 80 182 T160 182 T240 182 T320 182 T400 182 T480 18
       <p class="print-only"><a href={`mailto:${EMAIL}`}>{EMAIL}</a> · <a href="https://craigthompson.dev/">craigthompson.dev</a> · github.com/Craga89 · linkedin.com/in/craigmichaelthompson · Newcastle upon Tyne, UK<br />The short CV is at craigthompson.dev/cv.</p>
       <div id="about" class="about"><Content components={components} /></div>
       <Focus />
-      <p class="cta"><a class="c-btn" href="#contact">./get-in-touch</a><a class="cv" href="/cv.pdf" translate="no">cat cv.pdf</a><span class="cursor" aria-hidden="true"></span></p>
+      <p class="cta"><a class="c-btn" href="#contact">./get-in-touch</a><a class="cv" href={url('/cv.pdf')} translate="no">cat cv.pdf</a><span class="cursor" aria-hidden="true"></span></p>
     </div>
   </div>
   <div class="mcta">

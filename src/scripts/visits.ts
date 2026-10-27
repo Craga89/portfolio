@@ -1,6 +1,7 @@
 // Counting visits, without cookies or anything that identifies anyone: one small beacon as the
 // visitor leaves (the page, the site they came from, the kind of device, the home page's
 // sections they saw, time on the page). Skipped for Do Not Track and Global Privacy Control.
+import { PREVIEW } from '../lib/url';
 import { WORKER_ORIGIN } from '../site';
 
 (function hit() {
@@ -9,7 +10,9 @@ import { WORKER_ORIGIN } from '../site';
     document.addEventListener('prerenderingchange', hit, { once: true });
     return;
   }
+  // A branch preview isn't a visit.
   if (
+    PREVIEW ||
     !WORKER_ORIGIN ||
     (navigator as { globalPrivacyControl?: boolean }).globalPrivacyControl ||
     navigator.doNotTrack === '1' ||

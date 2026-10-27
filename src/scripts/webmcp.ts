@@ -2,6 +2,7 @@
 // page. Only where the browser offers it (document.modelContext; navigator.modelContext before
 // Chrome 150). The tools themselves are shared with the Worker's MCP server (shared/agent-tools.js);
 // this is where they get their data on the page.
+import { url } from '../lib/url';
 import { $ } from './dom';
 import { askIndex } from './ask';
 import { goTo } from './anchors';
@@ -28,10 +29,10 @@ export async function bindAgentTools() {
   const sections = [...document.querySelectorAll('main section[id]')].map((s) => s.id);
   const src = {
     url: (p: string) => new URL(p, location.href).href,
-    cv: () => (cv ??= getJson('/cv.json').catch((e) => ((cv = null), Promise.reject(e)))),
+    cv: () => (cv ??= getJson(url('/cv.json')).catch((e) => ((cv = null), Promise.reject(e)))),
     index: () => askIndex(),
-    live: () => getJson('/live.json').catch(() => ({})),
-    oss: () => getJson('/oss.json'),
+    live: () => getJson(url('/live.json')).catch(() => ({})),
+    oss: () => getJson(url('/oss.json')),
     projects: () => A.linkedProjects(document),
     build: () => {
       const b = $<HTMLAnchorElement>('[data-built]');
@@ -51,7 +52,7 @@ export async function bindAgentTools() {
     sections: () => sections,
     show: (f: { section: string; key: string; url: string }) => {
       if (f.section === 'blog') return void (location.href = f.url);
-      navigate(`/?${f.section === 'case-studies' ? 'case' : 'resp'}=${f.key}#${f.section}`);
+      navigate(url(`/?${f.section === 'case-studies' ? 'case' : 'resp'}=${f.key}#${f.section}`));
     },
     scroll: (id: string) => goTo(id),
   };

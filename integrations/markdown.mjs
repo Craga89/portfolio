@@ -19,3 +19,24 @@ export const codeBlocks = defineHastPlugin({
     },
   },
 });
+
+/**
+ * Links to the site's own pages ("/blog/…/", "/cv/") under the site's base, so they work in a
+ * branch preview (served from /preview/<branch>/) as well as on the live site.
+ * @param {string} base the site's base, ending in "/"
+ */
+export const baseLinks = (base) =>
+  defineHastPlugin({
+    name: 'base-links',
+    element: {
+      filter: ['a', 'img'],
+      visit(node, ctx) {
+        if (base === '/') return;
+        for (const prop of ['href', 'src']) {
+          const v = node.properties?.[prop];
+          if (typeof v === 'string' && v.startsWith('/') && !v.startsWith('//') && !v.startsWith(base))
+            ctx.setProperty(node, prop, base + v.slice(1));
+        }
+      },
+    },
+  });

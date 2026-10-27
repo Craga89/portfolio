@@ -1,0 +1,51 @@
+# Publishes the site-store branch to GitHub Pages (the live site plus every branch preview) after
+# a preview is built or removed. It runs from main, which the github-pages environment allows to
+# deploy; the CI workflow publishes the same way when main changes.
+name: Pages
+
+on:
+  workflow_run:
+    workflows: [Preview]
+    types: [completed]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    name: Publish to GitHub Pages
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+      statuses: write # the preview link on the branch's commit
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+      - uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5.0.0
+      - run: tools/site-store.sh assemble site
+      # v3: v4 leaves out dotfiles, and the site has .well-known/.
+      - uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3.0.1
+        with:
+          path: site
+      - id: deployment
+        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4.0.5
+      - name: Link the preview from the branch's commit
+        if: github.event_name == 'workflow_run' && github.event.workflow_run.event == 'push'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SHA: ${{ github.event.workflow_run.head_sha }}
+          BRANCH: ${{ github.event.workflow_run.head_branch }}
+        run: |
+          slug=$(printf '%s' "$BRANCH" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/-/g; s/^-+|-+$//g' | cut -c1-60)
+          gh api -X POST "repos/$GITHUB_REPOSITORY/statuses/$SHA" -f state=success -f context=preview \
+            -f description="Preview published" -f target_url="https://craigthompson.dev/preview/$slug/"

@@ -1,6 +1,7 @@
 // The latest CI results and open-source counts (live.json, written by CI with each deploy),
 // fetched once they're needed: when the sections that show them come near, or the visitor does
 // anything. Until then the page shows what it was built with.
+import { url } from '../lib/url';
 import { $, $$, el } from './dom';
 import { fmt, stars } from '../lib/oss-format';
 
@@ -116,7 +117,7 @@ function load() {
   started = true;
   io.disconnect();
   for (const t of EVENTS) removeEventListener(t, load, true);
-  fetch('/live.json', { cache: 'no-cache' })
+  fetch(url('/live.json'), { cache: 'no-cache' })
     .then((r) => (r.ok ? r.json() : null))
     .then((d) => d && typeof d === 'object' && show(d as Live))
     .catch(() => {});

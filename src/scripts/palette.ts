@@ -1,5 +1,6 @@
 // Search and jump: filters /palette.json as you type, best match first, with "ask ask.sh" last.
 // Loaded on first use (scripts/keys.ts).
+import { BASE, url } from '../lib/url';
 import { movesPage } from './commands';
 import { $, el } from './dom';
 import { navigate } from './navigate';
@@ -21,7 +22,7 @@ let index = 0;
 
 const loaded = (async () => {
   try {
-    const r = await fetch('/palette.json');
+    const r = await fetch(url('/palette.json'));
     const d: PaletteItem[] = r.ok ? await r.json() : [];
     items = d.filter((o) => o.action !== 'share' || typeof navigator.share === 'function');
   } catch {
@@ -65,7 +66,7 @@ function search(q: string): PaletteItem[] {
       icon: '$',
       label: `Ask ask.sh: “${q.trim()}”`,
       kind: 'ask',
-      path: `/?ask=${encodeURIComponent(q.trim())}${movesPage(q) ? '' : '#ask'}`,
+      path: url(`/?ask=${encodeURIComponent(q.trim())}${movesPage(q) ? '' : '#ask'}`),
     },
   ];
 }
@@ -117,7 +118,7 @@ function run(o: PaletteItem | undefined) {
       navigator.share({ title: document.title, url: location.origin + location.pathname }).catch(() => {});
       return;
   }
-  const to = o.page && location.pathname !== '/' ? o.page : o.path;
+  const to = o.page && location.pathname !== BASE ? o.page : o.path;
   if (to) navigate(to);
 }
 

@@ -7,6 +7,9 @@
 #          ├─ a11y ──┘
 #          └─ visual (screenshots; reported, doesn't block)
 #
+# Branches also get a preview at /preview/<branch>/, built without waiting for any of this
+# (preview.yml, then pages.yml).
+#
 # Daily, it runs again so live.json picks up the latest results from the report branches.
 name: CI
 
@@ -219,7 +222,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:
-      contents: read
+      contents: write # the site-store branch, which also holds the branch previews
       pages: write
       id-token: write
     concurrency:
@@ -240,6 +243,11 @@ jobs:
           node tools/live.mjs site/live.json
       - name: Stamp the commit into the page
         run: sed -i "s/__BUILD_SHA__/${GITHUB_SHA}/g; s/__BUILD_SHORT__/${GITHUB_SHA::7}/g; s/__BUILD_AT__/$(git log -1 --format=%cI)/g" site/index.html
+      # The live site goes in site-store's main/, and Pages serves it with the branch previews.
+      - name: Add the branch previews (site-store branch)
+        run: |
+          tools/site-store.sh put main site
+          tools/site-store.sh assemble site
       # v3: v4 leaves out dotfiles, and the site has .well-known/.
       - uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3.0.1
         with:

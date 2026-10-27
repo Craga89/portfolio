@@ -1,6 +1,7 @@
 ---
 // The document every page shares: head (meta, social cards, structured data, theme, fonts,
 // navigation between pages) and the scripts that run on every page.
+import { PREVIEW, url } from '../lib/url';
 import '../styles/fonts.css';
 import '../styles/tokens.css';
 import '../styles/base.css';
@@ -38,7 +39,7 @@ const {
   chrome = 'home',
   mono = false,
 } = Astro.props;
-const url = SITE + '/' + path;
+const canonical = SITE + '/' + path;
 const imageUrl = new URL(image, SITE).href;
 const [dark, light] = CHROME[chrome];
 // Speculation rules: load these pages ahead of a click (on hover or touch).
@@ -46,7 +47,7 @@ const prerender = {
   prerender: [
     {
       source: 'document',
-      where: { or: ['/', '/cv/', '/blog/*', '/case-studies/*', '/responsibilities/*'].map((p) => ({ href_matches: p })) },
+      where: { or: ['/', '/cv/', '/blog/*', '/case-studies/*', '/responsibilities/*'].map((p) => ({ href_matches: url(p) })) },
       eagerness: 'moderate',
     },
   ],
@@ -61,20 +62,20 @@ const prerender = {
     <style is:inline set:html={NAV_CSS} />
     <title>{title}</title>
     <meta name="description" content={description} />
-    {!INDEXING && <meta name="robots" content="noindex, nofollow, noarchive" />}
-    <link rel="canonical" href={url} />
+    {(!INDEXING || PREVIEW) && <meta name="robots" content="noindex, nofollow, noarchive" />}
+    <link rel="canonical" href={canonical} />
     <meta name="color-scheme" content="dark light" />
     <meta name="theme-color" content={dark} media="(prefers-color-scheme: dark)" data-dark={dark} data-light={light} />
     <meta name="theme-color" content={light} media="(prefers-color-scheme: light)" data-dark={dark} data-light={light} />
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="icon" href={url('/favicon.svg')} type="image/svg+xml" />
+    <link rel="apple-touch-icon" href={url('/apple-touch-icon.png')} />
 
     <meta property="og:type" content={type} />
     <meta property="og:site_name" content="craigthompson.dev" />
     <meta property="og:locale" content="en_GB" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:url" content={url} />
+    <meta property="og:url" content={canonical} />
     <meta property="og:image" content={imageUrl} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
@@ -109,7 +110,7 @@ const prerender = {
     <script>
       import '../scripts/boot';
     </script>
-    <script is:inline set:html={ANALYTICS} />
+    {!PREVIEW && <script is:inline set:html={ANALYTICS} />}
   </body>
 </html>
 

@@ -1,0 +1,73 @@
+# A preview of every branch at craigthompson.dev/preview/<branch>/, rebuilt on each push.
+# It doesn't wait for the tests: it builds the branch under that path, puts it in the site-store
+# branch (tools/site-store.sh), and the Pages workflow publishes it. Deleting the branch removes
+# its preview. Previews stay out of search engines and don't count visits.
+name: Preview
+
+on:
+  push:
+    branches-ignore:
+      - main
+      # Branches that hold reports and data, not changes to the site.
+      - accessibility
+      - blog-import
+      - bootstrap/**
+      - evals
+      - lighthouse
+      - node-modules
+      - oss
+      - redirect-data
+      - site-store
+      - visual-baselines
+  delete:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: preview-${{ github.event_name == 'delete' && github.event.ref || github.ref_name }}
+  cancel-in-progress: true
+
+jobs:
+  preview:
+    name: Build and store the preview
+    # Deleting a report branch has no preview to remove.
+    if: github.event_name != 'delete' || github.event.ref_type == 'branch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write # the site-store branch
+    steps:
+      - name: Name the preview after the branch
+        id: slug
+        env:
+          BRANCH: ${{ github.event_name == 'delete' && github.event.ref || github.ref_name }}
+        run: |
+          slug=$(printf '%s' "$BRANCH" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/-/g; s/^-+|-+$//g' | cut -c1-60)
+          echo "slug=$slug" >> "$GITHUB_OUTPUT"
+          echo "url=https://craigthompson.dev/preview/$slug/" >> "$GITHUB_OUTPUT"
+      # On a delete, this checks out main (the branch is gone).
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+      - if: github.event_name == 'delete'
+        run: tools/site-store.sh rm "preview/${{ steps.slug.outputs.slug }}"
+      - if: github.event_name != 'delete'
+        uses: ./.github/actions/setup-node
+      - if: github.event_name != 'delete'
+        uses: ./.github/actions/setup-playwright
+      - if: github.event_name != 'delete'
+        run: git fetch -q --depth=1 origin oss:refs/remotes/origin/oss || true
+      - if: github.event_name != 'delete'
+        name: Build under /preview/${{ steps.slug.outputs.slug }}/
+        run: npm run build
+        env:
+          PREVIEW_BASE: /preview/${{ steps.slug.outputs.slug }}/
+          ALLOW_INDEXING: 'false'
+      - if: github.event_name != 'delete'
+        name: Stamp the commit into the page
+        run: sed -i "s/__BUILD_SHA__/${GITHUB_SHA}/g; s/__BUILD_SHORT__/${GITHUB_SHA::7}/g; s/__BUILD_AT__/$(git log -1 --format=%cI)/g" site/index.html
+      - if: github.event_name != 'delete'
+        run: tools/site-store.sh put "preview/${{ steps.slug.outputs.slug }}" site
+      - if: github.event_name != 'delete'
+        name: Link the preview
+        run: echo "Preview (live in a minute or two, once Pages publishes it) → ${{ steps.slug.outputs.url }}" >> "$GITHUB_STEP_SUMMARY"

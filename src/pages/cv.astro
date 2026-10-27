@@ -1,6 +1,7 @@
 ---
 // The plain CV: one page, built to print (and printed to cv.pdf at build). Its look is its own,
 // paper-like, in the site's saved theme on screen and always light on paper.
+import { url } from '../lib/url';
 import { getEntry, render } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import Job from '../components/cv/Job.astro';
@@ -18,12 +19,12 @@ const host = (u: string) => u.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/,
 ---
 
 <Base title={`CV · ${NAME}, Head of Engineering`} description={CV_DESC} path="cv/" chrome="cv">
-  <link slot="head" rel="alternate" type="application/json" href="/cv.json" title="CV (JSON Resume)" />
+  <link slot="head" rel="alternate" type="application/json" href={url('/cv.json')} title="CV (JSON Resume)" />
   <div class="cv">
     <div class="bar noprint">
-      <a href="/">← craigthompson.dev</a>
+      <a href={url('/')}>← craigthompson.dev</a>
       <span class="tools">
-        <a class="btn alt" href="/cv.pdf" download="Craig-Michael-Thompson-CV.pdf">Download PDF</a>
+        <a class="btn alt" href={url('/cv.pdf')} download="Craig-Michael-Thompson-CV.pdf">Download PDF</a>
         <button type="button" class="btn" data-print>Print</button>
         <button type="button" class="btn alt" data-palette aria-haspopup="dialog" aria-keyshortcuts="Control+K Meta+K" title="Search and jump (Ctrl+K)">Search</button>
         <span data-lang hidden><select class="lang" data-tr-menu aria-label="Language" title="Language" translate="no"></select></span>

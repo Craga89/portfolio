@@ -1,5 +1,6 @@
 ---
 // blog/: the newest posts, with the rest a click away (scripts/blog.ts shows them in place).
+import { url } from '../../lib/url';
 import Section from '../home/Section.astro';
 import Ledger from '../home/Ledger.astro';
 import LedgerItem from '../home/LedgerItem.astro';
@@ -20,7 +21,7 @@ const span = `${Math.min(...years)}–${Math.max(...years)}`;
           date={p.data.date}
           title={p.data.title}
           sub={`${p.slug}.md`}
-          href={`/blog/${p.slug}/`}
+          href={url(`/blog/${p.slug}/`)}
           vt={`p-${p.slug}`}
           meta={[...p.data.tags.slice(0, 3), `${p.minutes} min`].join(' · ')}
           hidden={i >= SHOWN}
@@ -30,7 +31,7 @@ const span = `${Math.min(...years)}–${Math.max(...years)}`;
   </Ledger>
   <div class="more">
     {all.length > SHOWN && <button type="button" class="b" aria-expanded="false" data-blog-more>show all {all.length} posts</button>}
-    <a class="b" href="/blog/">blog/ index →</a>
+    <a class="b" href={url('/blog/')}>blog/ index →</a>
   </div>
 </Section>
 

@@ -1,6 +1,7 @@
 ---
 // case-studies/: one tab per file (scripts/tabs.ts). Without script the first file shows, and the
 // rest are a link away on their own pages.
+import { url } from '../../lib/url';
 import Section from '../home/Section.astro';
 import CaseStudyCard from '../files/CaseStudyCard.astro';
 import { caseStudies, slugOf } from '../../lib/files';
@@ -23,7 +24,7 @@ const first = all[0].data;
     </div>
     <div class="panels">
       {all.map((entry, i) => <CaseStudyCard entry={entry} panel={{ hidden: i > 0 }} />)}
-      <p class="c-perma"><a href={`/case-studies/${slugOf(first.file)}/`} data-tabs-perma>{first.file} on its own page <span aria-hidden="true">↗</span></a></p>
+      <p class="c-perma"><a href={url(`/case-studies/${slugOf(first.file)}/`)} data-tabs-perma>{first.file} on its own page <span aria-hidden="true">↗</span></a></p>
     </div>
   </div>
 </Section>

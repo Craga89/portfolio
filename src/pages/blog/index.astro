@@ -1,5 +1,6 @@
 ---
 // The blog: every post from the old craigsworks blogs, newest first, by year.
+import { url } from '../../lib/url';
 import FilePage from '../../layouts/FilePage.astro';
 import Cta from '../../components/page/Cta.astro';
 import { posts } from '../../lib/posts';
@@ -24,7 +25,7 @@ const dayMonth = (d: Date) => d.toLocaleDateString('en-GB', { day: 'numeric', mo
 ---
 
 <FilePage title="Blog · Craig Michael Thompson" description={description} path="blog/" image="/blog/og.png" imageAlt={`Blog: ${all.length} posts, ${span}. Craig Michael Thompson`} ld={ld} mono>
-  <p class="crumb">$ ls -t <a href="/#blog">blog/</a></p>
+  <p class="crumb">$ ls -t <a href={url('/#blog')}>blog/</a></p>
   <h1 class="c-sr">Blog</h1>
   <p class="intro">{all.length} posts from my old blog on craigsworks.com, {span}, kept as they were written. Some of the tools have since moved on.</p>
   {
@@ -38,7 +39,7 @@ const dayMonth = (d: Date) => d.toLocaleDateString('en-GB', { day: 'numeric', mo
               <li>
                 <time datetime={p.data.date.toISOString().slice(0, 10)}>{dayMonth(p.data.date)}</time>
                 <div>
-                  <a href={`/blog/${p.slug}/`} data-vt={`p-${p.slug}`}>
+                  <a href={url(`/blog/${p.slug}/`)} data-vt={`p-${p.slug}`}>
                     {p.data.title}
                   </a>
                   <p>{p.summary}</p>

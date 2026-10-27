@@ -1,5 +1,6 @@
 ---
 // A post from the old blog, kept as it was written.
+import { url } from '../../lib/url';
 import type { GetStaticPaths } from 'astro';
 import { render } from 'astro:content';
 import FilePage from '../../layouts/FilePage.astro';
@@ -56,12 +57,12 @@ const ld = {
     <div class="b"><Content /></div>
   </article>
   <nav class="pn" aria-label="More posts">
-    {newer ? <a href={`/blog/${newer.slug}/`}><span>← newer</span><b>{newer.data.title}</b></a> : <span />}
-    {older && <a class="next" href={`/blog/${older.slug}/`}><span>older →</span><b>{older.data.title}</b></a>}
+    {newer ? <a href={url(`/blog/${newer.slug}/`)}><span>← newer</span><b>{newer.data.title}</b></a> : <span />}
+    {older && <a class="next" href={url(`/blog/${older.slug}/`)}><span>older →</span><b>{older.data.title}</b></a>}
   </nav>
   <section class="more" aria-labelledby="sp-more-h">
     <h2 id="sp-more-h">$ ls blog/</h2>
-    <ul>{all.map((x) => <li><a href={`/blog/${x.slug}/`} aria-current={x.slug === post.slug ? 'page' : undefined}>{x.slug}.md</a></li>)}</ul>
+    <ul>{all.map((x) => <li><a href={url(`/blog/${x.slug}/`)} aria-current={x.slug === post.slug ? 'page' : undefined}>{x.slug}.md</a></li>)}</ul>
   </section>
   <Cta home="/#blog" homeText="the portfolio" />
 </FilePage>

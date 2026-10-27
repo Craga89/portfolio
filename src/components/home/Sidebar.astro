@@ -1,6 +1,7 @@
 ---
 // The sidebar on wider screens: who and where, the explorer (the sections, with the one in view
 // marked by scripts/spy.ts), get in touch, and the build it came from.
+import { url } from '../../lib/url';
 import Icon from '../Icon.astro';
 import ContactLinks from './ContactLinks.astro';
 import { SECTIONS } from '../../lib/sections';
@@ -51,7 +52,7 @@ const built = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 's
       {/* The language menu, where the browser can translate on the device (scripts/i18n.ts). */}
       <label class="lang" data-lang hidden><Icon name="globe" size={14} /><span class="c-sr">Language</span><select class="lang-s" translate="no" data-tr-menu></select><span class="lang-mt" title="Translated by your browser on your device, not by a person." data-lang-mt hidden>machine translation</span></label>
       <a class="ver" href={`${SOURCE}/commit/__BUILD_SHA__`} title={`Built from commit __BUILD_SHORT__, ${built}`} data-built="__BUILD_AT__"><span translate="no">main@__BUILD_SHORT__</span> · <span data-built-ago>just now</span></a>
-      <a class="ver qual" href="/?case=site#case-studies" data-open="case/site" data-live-side>CI checks · this-site.md</a>
+      <a class="ver qual" href={url('/?case=site#case-studies')} data-open="case/site" data-live-side>CI checks · this-site.md</a>
     </div>
   </div>
 </aside>

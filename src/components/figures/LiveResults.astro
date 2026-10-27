@@ -1,6 +1,7 @@
 ---
 // this-site.md: the latest CI results. The fallbacks below are replaced from live.json when the
 // page loads (scripts/live.ts).
+import { url } from '../../lib/url';
 const cards = [
   { key: 'lh', name: 'Lighthouse', sub: 'performance, accessibility and best practices, mobile and desktop' },
   { key: 'a11y', name: 'WCAG 2.2 AA suite', sub: 'axe-core in every page state, plus keyboard, focus, reflow and motion checks' },
@@ -22,7 +23,7 @@ const cards = [
             {c.key === 'ev' ? (
               <>
                 {' · '}
-                <a href="/#c-tests" data-open-tests>see the tests</a>
+                <a href={url('/#c-tests')} data-open-tests>see the tests</a>
               </>
             ) : (
               <span data-live-run hidden>

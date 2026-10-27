@@ -1,6 +1,7 @@
 ---
 // A highlighted phrase in prose that opens a file on the home page (README.md's links into the
 // responsibilities). Without JavaScript, it's a link to the file's own page.
+import { url } from '../../lib/url';
 import { findFile } from '../../lib/files';
 
 interface Props {
@@ -15,9 +16,9 @@ const f = await findFile(to);
 
 {
   trail ? (
-    <span class="c-nb"><a class="jump" href={'/' + f.page} data-open={to}><slot /></a>{trail}</span>
+    <span class="c-nb"><a class="jump" href={url('/' + f.page)} data-open={to}><slot /></a>{trail}</span>
   ) : (
-    <a class="jump" href={'/' + f.page} data-open={to}><slot /></a>
+    <a class="jump" href={url('/' + f.page)} data-open={to}><slot /></a>
   )
 }
 
