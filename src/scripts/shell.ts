@@ -45,7 +45,7 @@ export function shell(
     case 'whoami':
       return {
         answer:
-          "visitor\nYou're reading the portfolio of Craig Michael Thompson: Head of Engineering, hands-on and AI-first, in Newcastle upon Tyne, UK.",
+          "visitor\nYou're reading the portfolio of Craig Thompson: Head of Engineering, hands-on and AI-first, in Newcastle upon Tyne, UK.",
       };
     case 'pwd':
       return { answer: '/home/craig/portfolio' };

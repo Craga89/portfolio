@@ -22,7 +22,7 @@ export async function ogCards(): Promise<OgCard[]> {
   const blog = await posts();
   const years = blog.map((p) => p.data.date.getUTCFullYear());
   return [
-    { path: '', cmd: 'cat README.md', kicker: '# intro', title: 'Craig Michael Thompson', home: true },
+    { path: '', cmd: 'cat README.md', kicker: '# intro', title: 'Craig Thompson', home: true },
     ...(await caseStudies()).map(({ data }) => ({
       path: `case-studies/${slugOf(data.file)}/`,
       cmd: `cat case-studies/${data.file}`,

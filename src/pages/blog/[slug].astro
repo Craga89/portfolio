@@ -37,12 +37,12 @@ const ld = {
   datePublished: iso,
   keywords: tags.join(', '),
   author,
-  isPartOf: { '@type': 'Blog', name: 'Craig Michael Thompson · blog', url: `${SITE}/blog/` },
+  isPartOf: { '@type': 'Blog', name: 'Craig Thompson · blog', url: `${SITE}/blog/` },
   ...(original ? { sameAs: original } : {}),
 };
 ---
 
-<FilePage title={`${title} · blog · Craig Michael Thompson`} description={description} path={path} type="article" image={`/${path}og.png`} imageAlt={`${title}. blog/${post.slug}.md, Craig Michael Thompson`} ld={ld} mono>
+<FilePage title={`${title} · blog · Craig Thompson`} description={description} path={path} type="article" image={`/${path}og.png`} imageAlt={`${title}. blog/${post.slug}.md, Craig Thompson`} ld={ld} mono>
   <div class="prog" aria-hidden="true"></div>
   <Crumb folder="blog/" file={`${post.slug}.md`} home="/blog/" />
   <article class="post">

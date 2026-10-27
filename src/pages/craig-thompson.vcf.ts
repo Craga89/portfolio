@@ -25,7 +25,7 @@ export const GET: APIRoute = async () => {
   const lines = [
     'BEGIN:VCARD',
     'VERSION:3.0',
-    'N:Thompson;Craig;Michael;;',
+    'N:Thompson;Craig;;;',
     `FN:${NAME}`,
     'TITLE:Head of Engineering',
     `EMAIL;TYPE=INTERNET,PREF:${EMAIL}`,

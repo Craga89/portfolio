@@ -249,7 +249,7 @@ const TOKEN = /\{(\/?)(\d+)\}/g;
 const STORE = 'craga-tr-';
 // Never translated, wherever they appear: the name, email addresses, domains and file names.
 const KEEP =
-  /Craig Michael Thompson|Craig Thompson|[\w.+-]+@[\w-]+\.[\w.]*[a-z]|\b(?:[\w-]+\.)+(?:dev|com|io|org|net)(?:\/[\w./-]*)?|(?:\.\/)?\b[\w/-]+\.(?:md|log|txt|json|pdf|sh|vcf)\b/g;
+  /Craig Thompson|[\w.+-]+@[\w-]+\.[\w.]*[a-z]|\b(?:[\w-]+\.)+(?:dev|com|io|org|net)(?:\/[\w./-]*)?|(?:\.\/)?\b[\w/-]+\.(?:md|log|txt|json|pdf|sh|vcf)\b/g;
 
 // The visitor's choices and the translation cache. Storage can be unavailable (private
 // browsing, blocked cookies); then nothing is remembered, and everything still works.

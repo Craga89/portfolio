@@ -77,7 +77,7 @@ test.describe('WebMCP tools', { tag: '@desktop' }, () => {
 
   test('get_profile and get_career', async ({ page }) => {
     const profile = (await call(page, 'get_profile')).data;
-    expect(profile.name).toBe('Craig Michael Thompson');
+    expect(profile.name).toBe('Craig Thompson');
     expect(profile.email).toContain('@');
     expect(profile.links.cv_pdf).toMatch(/cv\.pdf$/);
     const career = (await call(page, 'get_career')).data;

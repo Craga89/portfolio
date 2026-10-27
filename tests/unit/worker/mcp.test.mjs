@@ -117,7 +117,7 @@ describe('/mcp', () => {
 
   it('tools/call: profile, files, search and errors', async () => {
     const p = await call(rpc('tools/call', { name: 'get_profile', arguments: {} }));
-    assert.equal(p.body.result.structuredContent.name, 'Craig Michael Thompson');
+    assert.equal(p.body.result.structuredContent.name, 'Craig Thompson');
     assert.equal(toolData(p.body).links.cv_pdf, 'https://craigthompson.dev/cv.pdf');
     const list = await call(rpc('tools/call', { name: 'list_files', arguments: { section: 'case-studies' } }));
     assert.ok(list.body.result.structuredContent.files.length >= 12);
