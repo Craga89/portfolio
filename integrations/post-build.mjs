@@ -13,13 +13,17 @@ const WORKER = join(ROOT, 'worker');
 
 /** @returns {import('astro').AstroIntegration} */
 export function postBuild() {
+  let base = '/';
   return {
     name: 'craigthompson:post-build',
     hooks: {
+      'astro:config:done': ({ config }) => {
+        base = config.base;
+      },
       'astro:build:done': async ({ dir, logger }) => {
         const out = fileURLToPath(dir);
         const { chromium } = await import('playwright');
-        const srv = await serve(out);
+        const srv = await serve(out, 0, base);
         const browser = await chromium.launch();
         // Only the built site: no analytics, visit counts or live data from a build.
         const context = await browser.newContext({ reducedMotion: 'reduce' });

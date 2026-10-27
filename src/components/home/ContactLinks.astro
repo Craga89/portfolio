@@ -1,6 +1,7 @@
 ---
 // Email (with a copy button), GitHub, LinkedIn and the CV in its three forms: in the sidebar and
 // the mobile menu.
+import { url } from '../../lib/url';
 import Icon from '../Icon.astro';
 import { EMAIL, GITHUB, LINKEDIN } from '../../site';
 
@@ -15,9 +16,9 @@ const { class: cls, label } = Astro.props;
   <a class="soc" href={`mailto:${EMAIL}`} title={EMAIL}><Icon name="mail" />email</a><button type="button" class="copy" aria-label="Copy email address" title="Copy email address" data-copy={EMAIL} data-copy-note="Email address copied"><Icon name="copy" size={14} class="idle" /><Icon name="check" size={14} class="done" /></button>
   <a class="soc" href={GITHUB}><Icon name="github" />github</a>
   <a class="soc" href={LINKEDIN}><Icon name="linkedin" size={14} />linkedin</a>
-  <a class="soc" href="/cv/"><Icon name="file" />plain CV</a>
-  <a class="soc" href="/cv.pdf" download="Craig-Michael-Thompson-CV.pdf"><Icon name="download" />cv.pdf</a>
-  <a class="soc" href="/craig-thompson.vcf" download="Craig-Michael-Thompson.vcf"><Icon name="contact" />add contact</a>
+  <a class="soc" href={url('/cv/')}><Icon name="file" />plain CV</a>
+  <a class="soc" href={url('/cv.pdf')} download="Craig-Michael-Thompson-CV.pdf"><Icon name="download" />cv.pdf</a>
+  <a class="soc" href={url('/craig-thompson.vcf')} download="Craig-Michael-Thompson.vcf"><Icon name="contact" />add contact</a>
   <button type="button" class="share" data-share hidden><Icon name="share" />share</button>
 </div>
 

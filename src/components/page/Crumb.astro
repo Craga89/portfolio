@@ -1,5 +1,6 @@
 ---
 // The "$ cat folder/file.md" line at the top of a page; the folder links back to the home page.
+import { url } from '../../lib/url';
 interface Props {
   folder: string;
   file: string;
@@ -8,7 +9,7 @@ interface Props {
 const { folder, file, home } = Astro.props;
 ---
 
-<p class="crumb">$ cat <a href={home}>{folder}</a>{file}</p>
+<p class="crumb">$ cat <a href={url(home)}>{folder}</a>{file}</p>
 
 <style>
   .crumb {

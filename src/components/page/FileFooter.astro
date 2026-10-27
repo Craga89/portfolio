@@ -1,6 +1,7 @@
 ---
 // Under a file on its own page: the terms it uses, the previous and next files, every file in the
 // folder, and the call to action.
+import { url } from '../../lib/url';
 import { getEntry } from 'astro:content';
 import Cta from './Cta.astro';
 
@@ -40,12 +41,12 @@ const terms = (await Promise.all(ids.map((id) => getEntry('glossary', id)))).fil
   )
 }
 <nav class="pn" aria-label={`More ${folder}`}>
-  <a href={prev.href}><span>← previous</span><b>{prev.file}</b></a>
-  <a class="next" href={next.href}><span>next →</span><b>{next.file}</b></a>
+  <a href={url(prev.href)}><span>← previous</span><b>{prev.file}</b></a>
+  <a class="next" href={url(next.href)}><span>next →</span><b>{next.file}</b></a>
 </nav>
 <section class="more" aria-labelledby="sp-more-h">
   <h2 id="sp-more-h">$ ls {folder}</h2>
-  <ul>{files.map((f, i) => <li><a href={f.href} aria-current={i === current ? 'page' : undefined}>{f.file}</a></li>)}</ul>
+  <ul>{files.map((f, i) => <li><a href={url(f.href)} aria-current={i === current ? 'page' : undefined}>{f.file}</a></li>)}</ul>
 </section>
 <Cta home={home} />
 

@@ -39,4 +39,18 @@ describe('serve', () => {
     const r = await fetch(server.url + '..%2f..%2fetc%2fpasswd');
     assert.ok(r.status === 403 || r.status === 404, String(r.status));
   });
+
+  it('serves the site under a base path, and nothing outside it', async () => {
+    const sub = await serve(dir, 0, '/preview/x');
+    try {
+      assert.match(sub.url, /\/preview\/x\/$/);
+      assert.equal(await (await fetch(sub.url)).text(), '<h1>home</h1>');
+      assert.equal(await (await fetch(sub.url + 'cv/')).text(), '<h1>cv</h1>');
+      assert.equal(await (await fetch(sub.url.slice(0, -1))).text(), '<h1>home</h1>');
+      const outside = await fetch(new URL('/cv/', sub.url));
+      assert.equal(outside.status, 404);
+    } finally {
+      sub.close();
+    }
+  });
 });

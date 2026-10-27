@@ -1,5 +1,6 @@
 // What search-and-jump lists (scripts/palette.ts): the sections, every file and post, the FAQ,
 // and actions. `path` is where an item goes; `action` is something the page does instead.
+import { url } from '../lib/url';
 import type { APIRoute } from 'astro';
 import { getCollection } from 'astro:content';
 import { SECTIONS } from '../lib/sections';
@@ -86,5 +87,10 @@ export const GET: APIRoute = async () => {
       page: `/case-studies/${slugOf(c.data.file)}/`,
     });
   for (const q of await faqQuestions()) items.push({ icon: '?', label: q, kind: 'faq', path: `/#${faqId(q)}` });
+  // Under the site's base, for a branch preview.
+  for (const o of items) {
+    if (o.path) o.path = url(o.path);
+    if (o.page) o.page = url(o.page);
+  }
   return new Response(JSON.stringify(items), { headers: { 'content-type': 'application/json' } });
 };

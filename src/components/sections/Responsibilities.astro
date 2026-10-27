@@ -1,6 +1,7 @@
 ---
 // responsibilities/: a tour that plays through each file (scripts/deck.ts), one tab per file.
 // Without script the first file shows, and each tab links to its file's own page.
+import { url } from '../../lib/url';
 import Section from '../home/Section.astro';
 import ResponsibilityCard from '../files/ResponsibilityCard.astro';
 import { responsibilities, slugOf } from '../../lib/files';
@@ -38,7 +39,7 @@ const first = all[0].data;
       <button type="button" data-deck-next>next<span class="c-sr"> file</span> <span aria-hidden="true">→</span></button>
     </div>
   </div>
-  <p class="c-perma"><a href={`/responsibilities/${slugOf(first.file)}/`} data-deck-perma>{first.file} on its own page <span aria-hidden="true">↗</span></a></p>
+  <p class="c-perma"><a href={url(`/responsibilities/${slugOf(first.file)}/`)} data-deck-perma>{first.file} on its own page <span aria-hidden="true">↗</span></a></p>
 </Section>
 
 <style>

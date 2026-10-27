@@ -5,15 +5,19 @@ import sitemap from '@astrojs/sitemap';
 import { createHash } from 'node:crypto';
 import { satteri } from '@astrojs/markdown-satteri';
 import { postBuild } from './integrations/post-build.mjs';
-import { codeBlocks } from './integrations/markdown.mjs';
+import { baseLinks, codeBlocks } from './integrations/markdown.mjs';
 import { INLINE_SCRIPTS, NAV_CSS } from './src/scripts/inline.mjs';
 
 /** @param {string} s @returns {`sha256-${string}`} */
 const sha256 = (s) => `sha256-${createHash('sha256').update(s).digest('base64')}`;
 
+const base = process.env.PREVIEW_BASE || '/';
+
 export default defineConfig({
   site: 'https://craigthompson.dev',
   outDir: './site',
+  // A preview of a branch is built to live under /preview/<branch>/ (see .github/workflows/preview.yml).
+  base,
   trailingSlash: 'always',
   build: { format: 'directory', assets: 'assets' },
   // Every page gets a Content-Security-Policy with hashes for its own scripts and styles.
@@ -34,7 +38,7 @@ export default defineConfig({
       styleDirective: { hashes: [sha256(NAV_CSS)] },
     },
   },
-  markdown: { syntaxHighlight: false, processor: satteri({ hastPlugins: [codeBlocks] }) },
+  markdown: { syntaxHighlight: false, processor: satteri({ hastPlugins: [codeBlocks, baseLinks(base)] }) },
   compressHTML: true,
   integrations: [
     mdx(),

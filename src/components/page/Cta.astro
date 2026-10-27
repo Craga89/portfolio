@@ -1,5 +1,6 @@
 ---
 // "Open to new roles", at the foot of the file pages and the blog.
+import { url } from '../../lib/url';
 import { EMAIL } from '../../site';
 
 interface Props {
@@ -14,8 +15,8 @@ const { home, homeText = 'see it in the portfolio' } = Astro.props;
   <p><b>Craig Michael Thompson</b>, Head of Engineering: hands-on, AI-first, from start-up to acquisition. Open to new roles.</p>
   <div class="links">
     <a class="go" href={`mailto:${EMAIL}`}>./get-in-touch</a>
-    <a class="alt" href={home}>{homeText}</a>
-    <a class="alt" href="/cv/">CV</a>
+    <a class="alt" href={url(home)}>{homeText}</a>
+    <a class="alt" href={url('/cv/')}>CV</a>
   </div>
 </aside>
 

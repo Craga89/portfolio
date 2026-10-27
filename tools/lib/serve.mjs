@@ -30,10 +30,12 @@ const TYPES = {
  * Serve `dir` on 127.0.0.1.
  * @param {string} dir
  * @param {number} [port] 0 picks a free port
+ * @param {string} [base] the path the site is mounted under, such as /preview/x/
  * @returns {Promise<http.Server & { url: string }>}
  */
-export function serve(dir, port = 0) {
+export function serve(dir, port = 0, base = '/') {
   const root = resolve(dir);
+  const prefix = base.replace(/\/?$/, '/');
   const server = http.createServer((req, res) => {
     let path;
     try {
@@ -42,13 +44,14 @@ export function serve(dir, port = 0) {
       res.writeHead(400).end();
       return;
     }
-    let file = join(root, path);
+    const inside = (path + '/').startsWith(prefix);
+    let file = join(root, inside ? path.slice(prefix.length) : '');
     if (!file.startsWith(root)) {
       res.writeHead(403).end();
       return;
     }
     if (existsSync(file) && statSync(file).isDirectory()) file = join(file, 'index.html');
-    if (!existsSync(file)) {
+    if (!inside || !existsSync(file)) {
       const notFound = join(root, '404.html');
       res.writeHead(404, { 'content-type': TYPES['.html'] });
       res.end(existsSync(notFound) ? readFileSync(notFound) : 'Not found');
@@ -61,13 +64,13 @@ export function serve(dir, port = 0) {
     server.once('error', fail);
     server.listen(port, '127.0.0.1', () => {
       const address = server.address();
-      const url = `http://127.0.0.1:${typeof address === 'object' && address ? address.port : port}/`;
+      const url = `http://127.0.0.1:${typeof address === 'object' && address ? address.port : port}${prefix}`;
       done(Object.assign(server, { url }));
     });
   });
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
-  const server = await serve(process.argv[2] || 'site', Number(process.argv[3] || 4173));
+  const server = await serve(process.argv[2] || 'site', Number(process.argv[3] || 4173), process.argv[4]);
   console.log(`serving ${process.argv[2] || 'site'} at ${server.url}`);
 }

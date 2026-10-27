@@ -1,6 +1,7 @@
 ---
 // Suggested reading orders (/?focus=…), one per view in src/data/focus.yaml. All hidden until
 // scripts/home.ts shows the one in the address.
+import { url } from '../../lib/url';
 import { getCollection } from 'astro:content';
 import { findFile } from '../../lib/files';
 
@@ -26,7 +27,7 @@ const views = await Promise.all(
       <ol class="l">
         {v.items.map((f) => (
           <li>
-            <a href={`/${f.page}`} data-open={`${f.kind}/${f.id}`}>
+            <a href={url(`/${f.page}`)} data-open={`${f.kind}/${f.id}`}>
               <span class="f">
                 {f.section}/{f.file}
               </span>
