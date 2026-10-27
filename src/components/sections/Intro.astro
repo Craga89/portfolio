@@ -38,14 +38,14 @@ const lamps = [
 ---
 
 <section aria-label="Introduction" class="intro">
-  <svg class="bridge" viewBox="0 0 1200 320" preserveAspectRatio="none" aria-hidden="true" focusable="false">
-    <path class="arch" d="M0 300 Q600 -40 1200 300" pathLength="1"></path>
-    <path class="arch arch2" d="M60 300 Q600 10 1140 300" pathLength="1"></path>
-    <g class="hangers">{hangers.map((h) => <path d={`M${h.x} 300 L${h.x} ${h.top}`} pathLength="1" />)}</g>
-    <path class="deck" d="M0 300 H1200" pathLength="1"></path>
-    <g class="lamps">{lamps.map(([x, y]) => <path d={`M${x} ${y}h0`} />)}</g>
-  </svg>
   <div class="term">
+    <svg class="bridge" viewBox="0 0 1200 320" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+      <path class="arch" d="M0 300 Q600 -40 1200 300" pathLength="1"></path>
+      <path class="arch arch2" d="M60 300 Q600 10 1140 300" pathLength="1"></path>
+      <g class="hangers">{hangers.map((h) => <path d={`M${h.x} 300 L${h.x} ${h.top}`} pathLength="1" />)}</g>
+      <path class="deck" d="M0 300 H1200" pathLength="1"></path>
+      <g class="lamps">{lamps.map(([x, y]) => <path d={`M${x} ${y}h0`} />)}</g>
+    </svg>
     <div class="bar" aria-hidden="true"><i></i><i></i><i></i><span translate="no">craig@newcastle: ~</span></div>
     <div class="body">
       <div class="top">
@@ -77,13 +77,12 @@ const lamps = [
 
 <style>
   .intro {
-    position: relative;
-    isolation: isolate;
     padding-top: 8px;
     padding-bottom: 64px;
   }
-  /* The bridge, faint, in the theme's text colour. The lit version (below) draws over it. */
-  .intro::before {
+  /* The bridge, faint, in the theme's text colour, across the foot of the window. The lit version
+     (below) draws over it. */
+  .term::before {
     content: '';
     position: absolute;
     left: 0;
@@ -191,12 +190,14 @@ const lamps = [
       opacity: 0.35;
     }
   }
-  /* The window: a panel with a title bar, just translucent enough for the bridge to show through. */
+  /* The window: a panel with a title bar, with the bridge drawn inside it behind the text. */
   .term {
+    position: relative;
+    isolation: isolate;
     overflow: hidden;
     border: 1px solid var(--line3);
     border-radius: 14px;
-    background: color-mix(in srgb, var(--panel) 92%, transparent);
+    background: var(--panel);
     box-shadow: 0 30px 60px -32px rgb(0 0 0 / 0.45);
   }
   .bar {
@@ -414,7 +415,7 @@ const lamps = [
     .intro {
       padding: 0;
     }
-    .intro::before,
+    .term::before,
     .bridge,
     .mcta {
       display: none;
