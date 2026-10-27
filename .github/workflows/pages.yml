@@ -22,7 +22,7 @@ jobs:
       contents: read
       pages: write
       id-token: write
-      statuses: write # the preview link on the branch's commit
+      statuses: write # the preview links on the branches' commits
     concurrency:
       group: pages
       cancel-in-progress: false
@@ -39,13 +39,19 @@ jobs:
           path: site
       - id: deployment
         uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4.0.5
-      - name: Link the preview from the branch's commit
-        if: github.event_name == 'workflow_run' && github.event.workflow_run.event == 'push'
+      # Each preview's commit carries a "preview" status linking to it (preview.yml sets it pending
+      # while building). Every publish marks all the previews it carries, so a preview whose own
+      # publish was replaced by a newer one in the queue is still marked live.
+      - name: Mark the previews live on their commits
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: tools/site-store.sh mark site
+      - name: Mark the preview failed on the branch's commit
+        if: failure() && github.event_name == 'workflow_run' && github.event.workflow_run.event == 'push'
         env:
           GH_TOKEN: ${{ github.token }}
           SHA: ${{ github.event.workflow_run.head_sha }}
-          BRANCH: ${{ github.event.workflow_run.head_branch }}
         run: |
-          slug=$(printf '%s' "$BRANCH" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/-/g; s/^-+|-+$//g' | cut -c1-60)
-          gh api -X POST "repos/$GITHUB_REPOSITORY/statuses/$SHA" -f state=success -f context=preview \
-            -f description="Preview published" -f target_url="https://craigthompson.dev/preview/$slug/"
+          gh api -X POST "repos/$GITHUB_REPOSITORY/statuses/$SHA" -f state=failure -f context=preview \
+            -f description="Built, but publishing to Pages failed" \
+            -f target_url="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" >/dev/null

@@ -6,6 +6,8 @@
 #   tools/site-store.sh put <path> <dir>   replace <path> (main or preview/<slug>) with <dir>
 #   tools/site-store.sh rm <path>          remove <path>
 #   tools/site-store.sh assemble <out>     write the site to serve into <out>
+#   tools/site-store.sh mark <out>         after publishing <out>, mark each preview's commit live
+#                                          (its "preview" status, linking to it; needs GH_TOKEN)
 #
 # The branch keeps one commit (each change replaces it), so it doesn't grow with every push.
 # Changes retry when another job pushed first.
@@ -64,6 +66,18 @@ case "$cmd" in
     cp -a "$work/tree/main/." "$out/"
     if [ -d "$work/tree/preview" ]; then mkdir -p "$out/preview" && cp -a "$work/tree/preview/." "$out/preview/"; fi
     echo "site-store: assembled the live site and $(find "$out/preview" -mindepth 1 -maxdepth 1 -type d 2>/dev/null | wc -l) preview(s)"
+    ;;
+  mark)
+    out=${2:?the published directory}
+    for f in "$out"/preview/*/.preview; do
+      [ -f "$f" ] || continue
+      read -r sha url < "$f"
+      state=$(gh api "repos/$GITHUB_REPOSITORY/commits/$sha/statuses" --jq '[.[] | select(.context == "preview")][0].state' 2>/dev/null || true)
+      [ "$state" = success ] && continue
+      gh api -X POST "repos/$GITHUB_REPOSITORY/statuses/$sha" -f state=success -f context=preview \
+        -f description="Live at ${url#https://}" -f target_url="$url" > /dev/null &&
+        echo "site-store: marked ${sha::7} live at $url" || echo "::warning::couldn't mark ${sha::7}"
+    done
     ;;
   *)
     echo "unknown command: $cmd" >&2
