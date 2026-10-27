@@ -66,6 +66,17 @@ import { homeLd } from '../lib/seo';
     margin: 0 auto;
     padding: clamp(28px, 4vw, 56px) clamp(20px, 4vw, 56px) 96px;
   }
+  /* Big screens: a wider column, so less of the screen is empty either side. */
+  @media (min-width: 1700px) {
+    .main {
+      max-width: 1440px;
+    }
+  }
+  @media (min-width: 2200px) {
+    .main {
+      max-width: 1640px;
+    }
+  }
   @media (min-width: 601px) and (max-width: 900px) {
     .shell {
       --side-w: 236px;
