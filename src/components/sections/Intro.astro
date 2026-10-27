@@ -43,12 +43,12 @@ const RIVER = 'M0 182 Q40 176 80 182 T160 182 T240 182 T320 182 T400 182 T480 18
         <div class="who">
           <p class="pr" translate="no">$ whoami</p>
           <h1>{NAME}</h1>
-          <p class="role">{ROLE}</p>
+          <p class="role">{ROLE.split(' · ').map((part, i, all) => <>{i > 0 && ' '}<span>{part}{i < all.length - 1 && ' ·'}</span></>)}</p>
         </div>
         <figure class="ph">
           {/* Daytime in the light theme, lamplight in the dark one. Only the one showing is fetched (the other is display: none and lazy). The whole <picture> is hidden, not just its image, so the hidden one doesn't take up a gap in the column. */}
-          <Picture pictureAttributes={{ class: 'when-light' }} src={portrait} alt={PORTRAIT_ALT} formats={['avif', 'webp']} widths={[96, 192, 352]} sizes="(max-width: 600px) 96px, 200px" loading="lazy" />
-          <Picture pictureAttributes={{ class: 'when-dark' }} src={portraitNight} alt={PORTRAIT_ALT_NIGHT} formats={['avif', 'webp']} widths={[96, 192, 352]} sizes="(max-width: 600px) 96px, 200px" loading="lazy" />
+          <Picture pictureAttributes={{ class: 'when-light' }} src={portrait} alt={PORTRAIT_ALT} formats={['avif', 'webp']} widths={[96, 192, 352]} sizes="(max-width: 600px) 120px, 200px" loading="lazy" />
+          <Picture pictureAttributes={{ class: 'when-dark' }} src={portraitNight} alt={PORTRAIT_ALT_NIGHT} formats={['avif', 'webp']} widths={[96, 192, 352]} sizes="(max-width: 600px) 120px, 200px" loading="lazy" />
           <figcaption aria-hidden="true" translate="no">portrait.webp</figcaption>
         </figure>
       </div>
@@ -341,12 +341,15 @@ const RIVER = 'M0 182 Q40 176 80 182 T160 182 T240 182 T320 182 T400 182 T480 18
     flex-direction: column;
     gap: 14px;
     padding: clamp(22px, 3.2vw, 36px) clamp(20px, 3.6vw, 40px) clamp(24px, 3.6vw, 40px);
+    /* The name and portrait size themselves to the window's width (cqi), so they sit side by side
+       on every screen. */
+    container-type: inline-size;
   }
   .top {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
     align-items: center;
-    gap: clamp(20px, 3.5vw, 40px);
+    gap: clamp(14px, 4cqi, 40px);
     margin-bottom: 6px;
   }
   .who {
@@ -364,12 +367,18 @@ const RIVER = 'M0 182 Q40 176 80 182 T160 182 T240 182 T320 182 T400 182 T480 18
   }
   h1 {
     margin: 0 0 4px;
-    font-size: clamp(56px, 7.4vw, 96px);
+    /* Sized so "Thompson", the longest line, fits beside the portrait: the column is what's left
+       after the portrait (24cqi) and the gap. */
+    font-size: clamp(34px, 15.5cqi, 96px);
     font-weight: 900;
     line-height: 0.88;
     letter-spacing: 0.005em;
     color: var(--head);
     text-wrap: balance;
+  }
+  /* Each part of the role ("Head of Engineering", "hands-on, AI-first") stays on one line. */
+  .role span {
+    white-space: nowrap;
   }
   .role {
     margin: 0 0 4px;
@@ -380,7 +389,7 @@ const RIVER = 'M0 182 Q40 176 80 182 T160 182 T240 182 T320 182 T400 182 T480 18
     display: flex;
     flex-direction: column;
     gap: 8px;
-    width: clamp(140px, 17vw, 200px);
+    width: clamp(72px, 24cqi, 200px);
     margin: 0;
   }
   .ph :global(img) {
@@ -518,12 +527,7 @@ const RIVER = 'M0 182 Q40 176 80 182 T160 182 T240 182 T320 182 T400 182 T480 18
       border-radius: 12px;
     }
     .top {
-      grid-template-columns: minmax(0, 1fr);
-      gap: 16px;
-    }
-    .ph {
-      order: -1;
-      width: 96px;
+      align-items: start;
     }
     figcaption,
     .cursor {
