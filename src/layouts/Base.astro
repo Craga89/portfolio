@@ -9,7 +9,7 @@ import bodyFont from '../assets/fonts/public-sans-latin-400.woff2?url';
 import headFont from '../assets/fonts/big-shoulders-display-latin-600.woff2?url';
 import monoFont from '../assets/fonts/red-hat-mono-latin-400.woff2?url';
 import { SITE, CHROME, INDEXING } from '../site';
-import { THEME_BOOT, ANALYTICS, NAV_CSS } from '../scripts/inline.mjs';
+import { THEME_BOOT, NAV_CSS } from '../scripts/inline.mjs';
 import Toast from '../components/page/Toast.astro';
 import Palette from '../components/page/Palette.astro';
 
@@ -110,7 +110,6 @@ const prerender = {
     <script>
       import '../scripts/boot';
     </script>
-    {!PREVIEW && <script is:inline set:html={ANALYTICS} />}
   </body>
 </html>
 

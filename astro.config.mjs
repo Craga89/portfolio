@@ -31,6 +31,8 @@ export default defineConfig({
         "object-src 'none'",
         "base-uri 'self'",
       ],
+      // static.cloudflareinsights.com and cloudflareinsights.com: the Web Analytics beacon, which
+      // Cloudflare adds to each page as it serves it (automatic setup).
       scriptDirective: {
         resources: ["'self'", 'https://static.cloudflareinsights.com'],
         hashes: INLINE_SCRIPTS.map(sha256),

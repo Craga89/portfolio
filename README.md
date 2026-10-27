@@ -151,7 +151,7 @@ The open-source section has a heatmap of merged pull requests to other projects 
 
 ## Visits and questions (anonymous)
 
-- **Cloudflare Web Analytics** (cookieless) runs on the home page and CV, only on craigthompson.dev, and not for Do Not Track or Global Privacy Control. It loads on the first interaction (scroll, tap, key) or 6s after the page has loaded, so it never competes with the page for the network. The token is in `src/scripts/inline.mjs` (`CF_ANALYTICS_TOKEN`); the dashboard is Cloudflare → Analytics & Logs → Web Analytics.
+- **Cloudflare Web Analytics** (cookieless): Cloudflare adds the beacon to each page as it serves it (automatic setup, now that the domain is on Cloudflare), so the site has no snippet of its own; the Content-Security-Policy allows the beacon's script and endpoint. Settings and the dashboard: Cloudflare → Analytics & Logs → Web Analytics.
 
 - The Worker keeps two tables in the D1 database `craga-ask` (schema in `worker/schema.sql`). `questions` holds each ask.sh question, whether it was answered, the model and the sources. `visits` holds one row per page view: path, referring site, country, device class, sections seen and seconds on the page. No IP addresses, cookies or user agents are stored. Bots, CI traffic (`x-craga-test: 1`) and Do Not Track / Global Privacy Control visitors are skipped. The page says so in ask.sh, the chat and the FAQ.
 - `.github/workflows/stats.yml` writes a weekly summary to its run page: visits, referrers, how far people read, devices, countries, and the questions ask.sh couldn't answer (FAQ candidates). You can also query the tables in the Cloudflare dashboard (D1 → craga-ask → Console).
@@ -181,7 +181,7 @@ While the content is being finished, the build keeps the site out of search engi
 ## Between pages
 
 - **Transitions:** moving between pages cross-fades (cross-document view transitions, `@view-transition { navigation: auto }`), and a post's title moves from the list into place on its page. It's off with reduced motion, and when animations are paused on the site (`pagereveal` skips it). Browsers without it just load the page.
-- **Loading ahead:** speculation rules prerender a page on hover or touch (`eagerness: moderate`) for the home page, the CV, the blog, case studies and responsibilities, so they open instantly. The visit beacon and analytics wait until a prerendered page is actually shown (`document.prerendering`), so nothing is counted for pages no one opened.
+- **Loading ahead:** speculation rules prerender a page on hover or touch (`eagerness: moderate`) for the home page, the CV, the blog, case studies and responsibilities, so they open instantly. The visit beacon waits until a prerendered page is actually shown (`document.prerendering`), so nothing is counted for pages no one opened.
 - **Reading progress** on blog posts is a CSS scroll-driven animation (`animation-timeline: scroll(root)`), with no script; it's hidden where unsupported.
 - **The language menus** are customizable selects (`appearance: base-select`) where the browser supports them, styled like the site; each language is written in its own script. Elsewhere they're the browser's own menu.
 
