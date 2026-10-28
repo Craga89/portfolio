@@ -176,7 +176,7 @@ Automated checks can't cover all of WCAG; screen reader passes (VoiceOver, NVDA)
 
 ## Search engines
 
-The live site is open to search engines: CI builds it with `ALLOW_INDEXING=true` (`.github/workflows/build.yml`), so `robots.txt` allows crawling and points to the sitemap. Branch previews stay out: `robots.txt` disallows `/preview/`, and preview pages carry `<meta name="robots" content="noindex">`. Building without `ALLOW_INDEXING=true` (locally, or set it to `false` in `build.yml`) keeps the whole site out: `robots.txt` disallows everything and every page carries the noindex tag.
+The live site is open to search engines: CI builds it with `ALLOW_INDEXING=true` (`.github/workflows/build.yml`), so `robots.txt` allows crawling and points to the sitemap. Branch previews stay out of results through their `<meta name="robots" content="noindex">` tag; `robots.txt` doesn't block `/preview/`, because a crawler can only read that tag on a page it's allowed to fetch. Building without `ALLOW_INDEXING=true` (locally, or set it to `false` in `build.yml`) keeps the whole site out: `robots.txt` disallows everything and every page carries the noindex tag.
 
 ## Between pages
 
