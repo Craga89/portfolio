@@ -176,7 +176,7 @@ Automated checks can't cover all of WCAG; screen reader passes (VoiceOver, NVDA)
 
 ## Search engines
 
-While the content is being finished, the build keeps the site out of search engines: `robots.txt` disallows everything and every page carries `<meta name="robots" content="noindex">`. When it's ready to be found, build with `ALLOW_INDEXING=true` (set it in `.github/workflows/build.yml`) and push.
+The live site is open to search engines: CI builds it with `ALLOW_INDEXING=true` (`.github/workflows/build.yml`), so `robots.txt` allows crawling and points to the sitemap. Branch previews stay out: `robots.txt` disallows `/preview/`, and preview pages carry `<meta name="robots" content="noindex">`. Building without `ALLOW_INDEXING=true` (locally, or set it to `false` in `build.yml`) keeps the whole site out: `robots.txt` disallows everything and every page carries the noindex tag.
 
 ## Between pages
 
