@@ -15,6 +15,9 @@ export function setTheme(t: 'dark' | 'light') {
   setTimeout(() => delete h.dataset.vtTheme, 600);
   store.set('theme', t);
   for (const m of $$<HTMLMetaElement>('meta[name="theme-color"]')) m.content = m.dataset[t] ?? m.content;
+  // The favicon in the theme's colours (favicon-dark.svg or favicon-light.svg).
+  const icon = document.querySelector<HTMLLinkElement>('link[rel="icon"]');
+  if (icon) icon.href = icon.href.replace(/favicon(-dark|-light)?\.svg/, `favicon-${t}.svg`);
   note(t === 'light' ? 'Light theme' : 'Dark theme');
 }
 

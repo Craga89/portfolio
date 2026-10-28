@@ -2,8 +2,11 @@
 // plain strings so that astro.config.mjs can put their hashes in the Content-Security-Policy (Astro
 // hashes the scripts and styles it bundles itself, but not inline ones).
 
-/** The saved (or system) theme and motion setting, before anything paints. */
-export const THEME_BOOT = `try{var d=document.documentElement,t=localStorage.getItem('theme'),l=t?t==='light':matchMedia('(prefers-color-scheme: light)').matches;d.dataset.theme=l?'light':'dark';if(localStorage.getItem('motion')==='off')d.dataset.motion='off';if(t)document.querySelectorAll('meta[name="theme-color"]').forEach(function(m){m.content=m.dataset[l?'light':'dark']})}catch(e){}
+/**
+ * The saved (or system) theme and motion setting, before anything paints. A saved theme also picks
+ * the matching favicon; without one, favicon.svg follows the system's light or dark setting itself.
+ */
+export const THEME_BOOT = `try{var d=document.documentElement,t=localStorage.getItem('theme'),l=t?t==='light':matchMedia('(prefers-color-scheme: light)').matches;d.dataset.theme=l?'light':'dark';if(localStorage.getItem('motion')==='off')d.dataset.motion='off';if(t){document.querySelectorAll('meta[name="theme-color"]').forEach(function(m){m.content=m.dataset[l?'light':'dark']});var f=document.querySelector('link[rel="icon"]');if(f)f.href=f.href.replace(/favicon(-dark|-light)?\\.svg/,'favicon-'+(l?'light':'dark')+'.svg')}}catch(e){}
 function vt(e){var v=e.viewTransition;if(!v)return;[v.ready,v.finished,v.updateCallbackDone].forEach(function(p){p&&p.catch(function(){})});try{if(localStorage.getItem('motion')==='off')v.skipTransition()}catch(x){}}
 addEventListener('pageswap',vt);addEventListener('pagereveal',vt);`;
 
