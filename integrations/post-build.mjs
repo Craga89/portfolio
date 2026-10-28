@@ -165,7 +165,7 @@ function serviceWorker(out) {
   const assets = [
     ...new Set([...home.matchAll(/(?:src|href)="\/(assets\/[^"]+\.(?:js|css|woff2))"/g)].map((m) => m[1])),
   ];
-  const core = ['./', 'cv/', ...assets, 'favicon.svg'];
+  const core = ['./', 'cv/', ...assets, 'favicon.svg', 'favicon-dark.svg', 'favicon-light.svg'];
   const version = createHash('sha256')
     .update(core.join('|') + home)
     .digest('hex')
