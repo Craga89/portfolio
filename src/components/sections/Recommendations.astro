@@ -48,7 +48,7 @@ const recs = await getCollection('recommendations').then((all) => all.sort((a, b
   }
   .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, max(420px, calc(50% - 9px))), 1fr));
     gap: 18px;
   }
   .c-card {
