@@ -1,0 +1,18 @@
+# When a pull request is opened, comments its preview link (once). Previews pushed while a pull
+# request is open get the comment from preview.yml instead; this covers a branch pushed before its
+# pull request existed.
+name: Preview comment
+
+on:
+  pull_request:
+    types: [opened, reopened]
+
+permissions:
+  contents: read
+
+jobs:
+  comment:
+    uses: Craga89/standards/.github/workflows/preview-comment.yml@2683e4116e18f128c46fce9261c4bd5d1284e8ff # v1
+    permissions:
+      pages: read
+      pull-requests: write

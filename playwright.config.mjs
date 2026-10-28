@@ -1,7 +1,7 @@
 // End-to-end, accessibility and screenshot tests for the built site (site/).
-//   npx playwright test                       everything, against a local server for site/
-//   npx playwright test --project=desktop     one project
-//   BASE_URL=https://craigthompson.dev/ npx playwright test --project=a11y-desktop
+//   pnpm exec playwright test                       everything, against a local server for site/
+//   pnpm exec playwright test --project=desktop     one project
+//   BASE_URL=https://craigthompson.dev/ pnpm exec playwright test --project=a11y-desktop
 import { defineConfig, devices } from '@playwright/test';
 
 const CI = !!process.env.CI;

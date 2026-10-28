@@ -23,7 +23,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - run: mkdir -p out/reports && cp oss.json out/reports/oss.json
-      - uses: ./.github/actions/publish-branch
+      - uses: Craga89/standards/publish-branch@2683e4116e18f128c46fce9261c4bd5d1284e8ff # v1
         with:
           branch: oss
           source: out

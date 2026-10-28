@@ -31,11 +31,16 @@ jobs:
       URL: ${{ inputs.url }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version-file: .node-version
       - name: Install Lighthouse
-        run: npm i -g lighthouse@12
+        run: |
+          mkdir -p "$RUNNER_TEMP/lighthouse" && cd "$RUNNER_TEMP/lighthouse"
+          echo '{"private":true}' > package.json
+          pnpm add lighthouse@12 --config.strict-dep-builds=false > /dev/null
+          echo "$RUNNER_TEMP/lighthouse/node_modules/.bin" >> "$GITHUB_PATH"
       - name: Audit
         run: |
           mkdir -p out
@@ -69,10 +74,11 @@ jobs:
         run: |
           mkdir -p report/reports && cp out/summary.json report/reports/summary.json
           for f in out/mobile-2.json out/desktop-2.json; do [ -f "$f" ] && cp "$f" report/reports/; done
-          echo "${{ github.event.workflow_run.head_sha || github.sha }}" > report/reports/commit.txt
-          echo "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" > report/reports/run.txt
-          date -u +%FT%TZ > report/reports/at.txt
-      - uses: ./.github/actions/publish-branch
+      - uses: Craga89/standards/report-meta@2683e4116e18f128c46fce9261c4bd5d1284e8ff # v1
+        with:
+          dir: report/reports
+          sha: ${{ github.event.workflow_run.head_sha || github.sha }}
+      - uses: Craga89/standards/publish-branch@2683e4116e18f128c46fce9261c4bd5d1284e8ff # v1
         with:
           branch: lighthouse
           source: report

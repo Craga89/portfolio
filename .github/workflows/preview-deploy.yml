@@ -1,0 +1,22 @@
+# Publishes the pages branch to GitHub Pages (the live site plus every branch preview) once a
+# preview is built or removed, then marks the previews live on their commits. It runs from main,
+# which the github-pages environment allows to deploy; CI publishes the same way when main changes.
+name: Preview deploy
+
+on:
+  workflow_run:
+    workflows: [Preview]
+    types: [completed]
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    if: github.event.workflow_run.conclusion == 'success'
+    uses: Craga89/standards/.github/workflows/pages-deploy.yml@2683e4116e18f128c46fce9261c4bd5d1284e8ff # v1
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+      statuses: write

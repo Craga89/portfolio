@@ -1,4 +1,5 @@
-# Weekly updates for the npm dev dependencies and the pinned GitHub Actions, grouped into one
+# Weekly updates for the dev dependencies (the npm ecosystem, which covers pnpm-lock.yaml) and the
+# pinned GitHub Actions (Craga89/standards included), grouped into one
 # pull request each so CI checks them together.
 version: 2
 updates:
@@ -10,7 +11,7 @@ updates:
       dev-dependencies:
         patterns: ['*']
   - package-ecosystem: github-actions
-    directories: ['/', '/.github/actions/*']
+    directory: /
     schedule:
       interval: weekly
     groups:

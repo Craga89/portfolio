@@ -15,12 +15,12 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: ./.github/actions/setup-node
-      - uses: ./.github/actions/setup-playwright
+      - uses: Craga89/standards/setup-node@2683e4116e18f128c46fce9261c4bd5d1284e8ff # v1
+      - uses: Craga89/standards/setup-playwright@2683e4116e18f128c46fce9261c4bd5d1284e8ff # v1
       - name: Fetch the open-source counts (oss branch)
         run: git fetch -q --depth=1 origin oss:refs/remotes/origin/oss || echo "::notice::No oss branch yet; the build uses its fallback counts."
       - name: Build
-        run: npm run build
+        run: pnpm run build
         env:
           # The site stays out of search engines until this is true.
           ALLOW_INDEXING: 'false'
