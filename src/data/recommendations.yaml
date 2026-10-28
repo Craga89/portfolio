@@ -1,12 +1,23 @@
-# From LinkedIn, quoted as written.
-joe-forster:
+# From LinkedIn, quoted as written. A blank line in a quote starts a new paragraph.
+lloyd-rodrigues-powell:
   order: 1
+  name: Lloyd Rodrigues Powell
+  role: Head of Software Development at Northumbria Healthcare NHS Foundation Trust
+  when: May 2021 · worked with Craig on the same team
+  quote: |-
+    I worked with Craig over a number of years whilst we were both in the development team at Communicator. Craig's passion towards getting the best solution in place is unmatched. He cares about both the smaller details and bigger picture. I enjoyed working with Craig on a number of projects, we developed a great rapport and I would happily highlight that Craig went from colleague to friend whilst we worked on a number of fantastic features that were added to the Communicator platform.
+
+    Craig keeps himself ahead of the game, he understands all of the bleeding edge technology, when it would be worthy of considering as a developmental option and when it's still too much in its infancy to risk adopting. I'd recommend him to anyone and believe his front end skillset is of a substantially high quality.
+
+    Even after a number of years separated professionally, I still call Craig a friend and wouldn't think twice about accepting the invitation of a catch up over a cold beverage. I'd also jump at the chance to collaborate again in the future and I really hope our paths will cross again!
+joe-forster:
+  order: 2
   name: Joe Forster
   role: Senior AI Programmer at Ubisoft Reflections
   when: October 2012 · worked with Craig on the same team
   quote: Craig is a very able developer, who is capable of putting together high-quality front-end solutions at lightning speed. Always friendly and willing to lend his expertise JavaScript, jQuery, CSS and related web technologies, he is indispensable part of the Auto Club Revolution web team.
 peter-davies:
-  order: 2
+  order: 3
   name: Peter Davies
   role: Software Engineering Leader | Product Business | Technology
   when: October 2012 · worked with Craig at different companies
