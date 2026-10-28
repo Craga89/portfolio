@@ -3,7 +3,7 @@ import ask from '../ask.config.json' with { type: 'json' };
 
 export const SITE = 'https://craigthompson.dev';
 export const NAME = 'Craig Thompson';
-export const EMAIL = 'craga89@gmail.com';
+export const EMAIL = 'craig@craigthompson.dev';
 export const GITHUB = 'https://github.com/Craga89';
 export const LINKEDIN = 'https://www.linkedin.com/in/craigmichaelthompson/';
 export const SOURCE = 'https://github.com/Craga89/portfolio';

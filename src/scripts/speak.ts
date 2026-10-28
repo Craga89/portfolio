@@ -56,7 +56,7 @@ const spoken = (t: string) =>
     .replace(/\bfaq\.md\b/gi, 'the FAQ')
     .replace(/\bcareer\.log\b/gi, 'the career log')
     .replace(/\b([a-z][\w-]*)\.md\b/gi, (_, f: string) => `the ${f.replace(/-/g, ' ')} file`)
-    .replace(/craga89@gmail\.com/gi, 'craga89 at gmail dot com');
+    .replace(/craig@craigthompson\.dev/gi, 'craig at craigthompson dot dev');
 
 /**
  * Read text aloud as answer `i`, or stop if it's the one being read. `update` re-renders the

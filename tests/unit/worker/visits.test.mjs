@@ -14,7 +14,7 @@ describe('question log', () => {
     const notCovered = env({
       DB,
       AI: ai(() => ({
-        response: "That isn't covered on the site, but Craig can answer it directly: craga89@gmail.com.",
+        response: "That isn't covered on the site, but Craig can answer it directly: craig@craigthompson.dev.",
       })),
     });
     await worker.fetch(request({ q: 'What is his favourite colour?' }), notCovered);
