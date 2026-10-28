@@ -11,21 +11,30 @@ const recs = await getCollection('recommendations').then((all) => all.sort((a, b
   <p class="intro">From LinkedIn, quoted as written. <a href={`${LINKEDIN}details/recommendations/`}>See them on LinkedIn →</a></p>
   <div class="grid">
     {
-      recs.map(({ data: r }) => (
-        <figure class="c-card">
-          <blockquote>
-            <span class="q" aria-hidden="true">
-              “
-            </span>
-            {r.quote}
-          </blockquote>
-          <figcaption>
-            <div class="name">{r.name}</div>
-            <div class="role">{r.role}</div>
-            <div class="when">{r.when}</div>
-          </figcaption>
-        </figure>
-      ))
+      recs.map(({ data: r }) => {
+        const paras = r.quote.split(/\n\s*\n/);
+        return (
+          <figure class:list={['c-card', { wide: paras.length > 1 }]}>
+            <blockquote>
+              {paras.map((text, i) => (
+                <p>
+                  {i === 0 && (
+                    <span class="q" aria-hidden="true">
+                      “
+                    </span>
+                  )}
+                  {text}
+                </p>
+              ))}
+            </blockquote>
+            <figcaption>
+              <div class="name">{r.name}</div>
+              <div class="role">{r.role}</div>
+              <div class="when">{r.when}</div>
+            </figcaption>
+          </figure>
+        );
+      })
     }
   </div>
 </Section>
@@ -64,6 +73,23 @@ const recs = await getCollection('recommendations').then((all) => all.sort((a, b
     font-size: 16px;
     line-height: 1.7;
     color: var(--text2);
+  }
+  blockquote p {
+    margin: 0;
+  }
+  blockquote p + p {
+    margin-top: 12px;
+  }
+  /* A longer recommendation, in paragraphs: the full width, in two columns where there's room. */
+  .wide {
+    grid-column: 1 / -1;
+  }
+  .wide blockquote {
+    columns: 2 340px;
+    column-gap: 40px;
+  }
+  .wide blockquote p {
+    break-inside: avoid;
   }
   .q {
     margin-inline-end: 4px;
