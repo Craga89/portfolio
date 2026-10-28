@@ -98,13 +98,18 @@ const host = (u: string) => u.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/,
     --cv-btn-t: #111214;
     color-scheme: dark;
   }
+  /* The page's own background on <html> as well as <body>: the browser paints anything below the body,
+     and the overscroll, with <html>'s, which is otherwise the site's green. */
+  :global(html:has(.cv)),
   :global(body:has(.cv)) {
     background: #f4f4f2;
   }
+  :global(:root[data-theme='dark']:has(.cv)),
   :global(:root[data-theme='dark'] body:has(.cv)) {
     background: #111214;
   }
   @media print {
+    :global(html:has(.cv)),
     :global(body:has(.cv)) {
       background: #fff;
     }
