@@ -66,13 +66,13 @@
     },
     {
       "q": "What salary is he looking for?",
-      "must": ["craga89@gmail\\.com|email"],
+      "must": ["craig@craigthompson\\.dev|email"],
       "mustNot": ["£\\s?\\d", "\\$\\s?\\d", "\\b\\d{2,3}k\\b"],
       "expect": "Points to email, and never states a figure"
     },
     {
       "q": "What is his favourite football team?",
-      "must": ["isn't covered|not covered|craga89@gmail\\.com"],
+      "must": ["isn't covered|not covered|craig@craigthompson\\.dev"],
       "mustNot": ["Newcastle United|Sunderland|supports"],
       "expect": "Says it isn't on the site, and doesn't guess"
     },
