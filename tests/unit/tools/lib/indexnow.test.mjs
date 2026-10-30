@@ -30,12 +30,20 @@ describe('indexnow', () => {
     );
   });
 
-  it('ignores the commit stamp, asset names and build dates', () => {
-    const a =
-      '<a href="/commit/0123456789abcdef0123456789abcdef01234567">main@0123456</a> 2026-10-30T10:00:00Z <script src="/assets/app.AbC.js"></script> {"dateModified":"2026-10-30"}';
-    const b =
-      '<a href="/commit/fedcba9876543210fedcba9876543210fedcba98">main@fedcba9</a> 2026-10-31T09:00:00Z <script src="/assets/app.XyZ.js"></script> {"dateModified":"2026-10-31"}';
-    assert.equal(normalise(a), normalise(b));
+  it('ignores the version link, the build date and asset names', () => {
+    const page = (/** @type {string} */ sha, /** @type {string} */ day, /** @type {string} */ asset) =>
+      `<a class="ver" href="/commit/${sha}" title="Built from commit ${sha.slice(0, 7)}, ${day} Oct 2026" data-built="2026-10-${day}T10:00:00Z" data-x><span>main@${sha.slice(0, 7)}</span> · <span>just now</span></a>` +
+      `<script type="application/ld+json">{"dateModified":"2026-10-${day}"}</script><script src="/assets/app.${asset}.js"></script><p>Content</p>`;
+    assert.equal(
+      normalise(page('0123456789abcdef0123456789abcdef01234567', '30', 'AbC')),
+      normalise(page('fedcba9876543210fedcba9876543210fedcba98', '31', 'XyZ')),
+    );
+  });
+
+  it('still sees edits to numbers and dates in the content', () => {
+    assert.notEqual(normalise('<p>1000000 emails</p>'), normalise('<p>2000000 emails</p>'));
+    assert.notEqual(normalise('<p>Since 2008-04-01</p>'), normalise('<p>Since 2009-04-01</p>'));
+    assert.notEqual(normalise('<p>deadbeef1</p>'), normalise('<p>deadbeef2</p>'));
     assert.notEqual(normalise('<p>one</p>'), normalise('<p>two</p>'));
   });
 

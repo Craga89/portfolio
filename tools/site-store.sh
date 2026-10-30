@@ -3,11 +3,14 @@
 # branch preview in preview/<slug>/. Every deploy assembles the site from it, so a deploy never
 # drops a preview, and a preview never drops the live site.
 #
-#   tools/site-store.sh put <path> <dir>   replace <path> (main or preview/<slug>) with <dir>
+#   tools/site-store.sh put <path> <dir>   replace <path> (main, deployed or preview/<slug>) with <dir>
 #   tools/site-store.sh rm <path>          remove <path>
 #   tools/site-store.sh assemble <out>     write the site to serve into <out>
 #   tools/site-store.sh mark <out>         after publishing <out>, mark each preview's commit live
 #                                          (its "preview" status, linking to it; needs GH_TOKEN)
+#
+# deployed/ is the live site as IndexNow was last told about it (moved on only after Pages publishes
+# and IndexNow accepts), so a failed deploy never hides its pages from the next one. It isn't served.
 #
 # The branch keeps one commit (each change replaces it), so it doesn't grow with every push.
 # Changes retry when another job pushed first.
@@ -32,7 +35,7 @@ fetch() {
 case "$cmd" in
   put | rm)
     path=${2:?a path: main or preview/<slug>}
-    [[ "$path" =~ ^(main|preview/[a-z0-9][a-z0-9-]*)$ ]] || { echo "bad path: $path" >&2; exit 1; }
+    [[ "$path" =~ ^(main|deployed|preview/[a-z0-9][a-z0-9-]*)$ ]] || { echo "bad path: $path" >&2; exit 1; }
     if [ "$cmd" = put ]; then src=$(cd "${3:?a directory}" && pwd); fi
     for attempt in 1 2 3 4 5 6 7 8; do
       fetch

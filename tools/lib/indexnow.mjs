@@ -15,16 +15,17 @@ export const ENDPOINT = 'https://api.indexnow.org/indexnow';
 export const sitemapUrls = (xml) => [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1].trim());
 
 /**
- * A page's HTML without what changes on every deploy: the commit stamp, and asset file names,
- * which change whenever any page's scripts or styles do.
+ * A page's HTML without what changes on every deploy, so only real edits count: the sidebar's
+ * version link (the commit and build date, stamped as one element), the structured data's
+ * dateModified (the build date), and asset file names, which change whenever any page's scripts
+ * or styles do. Nothing else is touched, so a changed number or date in the content still counts.
  * @param {string} html
  */
 export const normalise = (html) =>
   html
-    .replace(/[0-9a-f]{40}|[0-9a-f]{7}(?=[^0-9a-f])/g, '')
-    .replace(/\/assets\/[^"'\s)]+/g, '/assets/')
-    .replace(/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}[^"'<\s]*/g, '')
-    .replace(/"dateModified":"[^"]*"/g, '');
+    .replace(/<a class="ver"[^>]*>[\s\S]*?<\/a>/g, '')
+    .replace(/"dateModified":"[^"]*"/g, '')
+    .replace(/\/assets\/[^"'\s)]+/g, '/assets/');
 
 /**
  * The site path (e.g. "blog/x/") of every page under `dir`.

@@ -9,5 +9,9 @@ const status = await submit(urls, site);
 console.log(
   urls.length ? `IndexNow: ${urls.length} page(s), HTTP ${status}\n${urls.join('\n')}` : 'IndexNow: no pages changed',
 );
-// 200 and 202 mean accepted; anything else is reported but doesn't fail the deploy.
-if (status && status !== 200 && status !== 202) console.log(`::warning::IndexNow answered HTTP ${status}`);
+// 200 and 202 mean accepted. Anything else fails this step (which CI lets fail without failing the
+// deploy), so the snapshot it compares against isn't moved on and the pages are sent next time.
+if (status && status !== 200 && status !== 202) {
+  console.log(`::warning::IndexNow answered HTTP ${status}`);
+  process.exitCode = 1;
+}
