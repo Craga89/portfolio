@@ -55,11 +55,7 @@ function pagePaths(dir) {
  * @returns {string[]}
  */
 export function changedUrls(oldDir, newDir, site) {
-  const listed = new Set(
-    readdirSync(newDir)
-      .filter((f) => /^sitemap-\d+\.xml$/.test(f))
-      .flatMap((f) => sitemapUrls(readFileSync(join(newDir, f), 'utf8'))),
-  );
+  const listed = new Set(sitemapUrls(readFileSync(join(newDir, 'sitemap.xml'), 'utf8')));
   return pagePaths(newDir)
     .filter((p) => {
       const before = join(oldDir, p, 'index.html');
