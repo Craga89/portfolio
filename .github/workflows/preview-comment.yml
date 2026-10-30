@@ -16,5 +16,6 @@ jobs:
     if: ${{ !startsWith(github.head_ref, 'dependabot/') && !startsWith(github.head_ref, 'bootstrap/') }}
     uses: Craga89/standards/.github/workflows/preview-comment.yml@0c41b52a17c2687d2fe3c3b95f838b653a4e4e1b # v1
     permissions:
+      contents: read # what the shared workflow declares; a called workflow can't get more than this grants
       pages: read
       pull-requests: write
