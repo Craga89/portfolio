@@ -21,7 +21,6 @@ on:
       - node-modules
       - oss
       - redirect-data
-      - site-store
       - visual-baselines
   delete:
   workflow_dispatch:
