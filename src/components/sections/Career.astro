@@ -5,14 +5,14 @@ import Section from '../home/Section.astro';
 import { components } from '../mdx';
 
 const roles = (await getCollection('career')).sort((a, b) => a.data.order - b.data.order);
-const items = await Promise.all(roles.map(async (r) => ({ ...r.data, Content: (await render(r)).Content })));
+const items = await Promise.all(roles.map(async (r) => ({ data: r.data, Content: (await render(r)).Content })));
 ---
 
 <Section id="career" cmd="cat career.log" note="experience" file="career.log" gap={32}>
   <div class="timeline">
     <div class="line" aria-hidden="true"></div>
     {
-      items.map((r) => {
+      items.map(({ data: r, Content }) => {
         const [before, after] = r.roleLink ? r.role.split(r.roleLink.text) : [r.role, undefined];
         return (
           <article id={r.anchor} class="job" data-kind={r.kind} aria-label={r.kind === 'next' ? r.role : undefined}>
@@ -32,7 +32,7 @@ const items = await Promise.all(roles.map(async (r) => ({ ...r.data, Content: (a
               </ul>
             )}
             <div class="body">
-              <r.Content components={components} />
+              <Content components={components} />
             </div>
           </article>
         );

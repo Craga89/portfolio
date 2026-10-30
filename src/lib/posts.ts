@@ -17,17 +17,19 @@ const plain = (md: string) =>
 
 export async function posts(): Promise<Post[]> {
   const all = await getCollection('blog');
-  return all
-    .map((p) => {
-      const text = plain(p.body ?? '');
-      const first = text.match(/^(.{60,240}?[.!?])(\s|$)/);
-      const words = text.split(/\s+/).filter(Boolean).length;
-      return {
-        ...p,
-        slug: p.id,
-        minutes: Math.max(1, Math.round(words / 220)),
-        summary: p.data.summary || (first ? first[1] : text.slice(0, 200).replace(/\s\S*$/, '') + '…'),
-      };
-    })
-    .sort((a, b) => +b.data.date - +a.data.date || a.slug.localeCompare(b.slug));
+  // A copy per post: there are few, and adding the fields to each entry instead would change the
+  // collection Astro caches for every page.
+  // oxlint-disable-next-line oxc/no-map-spread
+  const withFacts = all.map((p) => {
+    const text = plain(p.body ?? '');
+    const first = text.match(/^(.{60,240}?[.!?])(\s|$)/);
+    const words = text.split(/\s+/).filter(Boolean).length;
+    return {
+      ...p,
+      slug: p.id,
+      minutes: Math.max(1, Math.round(words / 220)),
+      summary: p.data.summary || (first ? first[1] : text.slice(0, 200).replace(/\s\S*$/, '') + '…'),
+    };
+  });
+  return withFacts.sort((a, b) => +b.data.date - +a.data.date || a.slug.localeCompare(b.slug));
 }
