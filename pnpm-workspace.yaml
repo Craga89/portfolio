@@ -1,6 +1,7 @@
 # pnpm settings (the package manager is pinned in package.json's packageManager field).
 # Craga89/standards' lint, format and TypeScript configs come from a config dependency, installed
-# before anything else into node_modules/.pnpm-config/. Update it with `pnpm update @craga89/standards`.
+# before anything else into node_modules/.pnpm-config/. Updating: see
+# Craga89/standards guidelines/linting-and-formatting.md (pnpm update skips it).
 bootConfig:
   # Our own package, reviewed in Craga89/standards: no waiting a day for a new release.
   minimumReleaseAgeExclude:
@@ -13,4 +14,4 @@ allowBuilds:
   esbuild: false
   workerd: false
 configDependencies:
-  '@craga89/standards': 1.0.0+sha512-YGF8shFudCtlwfHTb6wx3s06nODRrGunBs+lB3r1FqhXBrddRdtGS/4ONREv1qwGq+V68Mzu8jGx/Ztqh9C1gw==
+  '@craga89/standards': 1.0.1+sha512-pijyQCZhFjjTSsWxJ9wVZgTV5PZ60iLQ4cw+X/tEfwSqbFmBGgar3kDhaVHQK8nQNXSNp+xZq2AdgMKLm/Xirw==

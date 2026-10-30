@@ -6,8 +6,8 @@ importers:
   .:
     configDependencies:
       '@craga89/standards':
-        specifier: 1.0.0
-        version: 1.0.0
+        specifier: 1.0.1
+        version: 1.0.1
     packageManagerDependencies:
       pnpm:
         specifier: 12.15.0
@@ -15,8 +15,8 @@ importers:
 
 packages:
 
-  '@craga89/standards@1.0.0':
-    resolution: {integrity: sha512-YGF8shFudCtlwfHTb6wx3s06nODRrGunBs+lB3r1FqhXBrddRdtGS/4ONREv1qwGq+V68Mzu8jGx/Ztqh9C1gw==}
+  '@craga89/standards@1.0.1':
+    resolution: {integrity: sha512-pijyQCZhFjjTSsWxJ9wVZgTV5PZ60iLQ4cw+X/tEfwSqbFmBGgar3kDhaVHQK8nQNXSNp+xZq2AdgMKLm/Xirw==}
 
   '@pnpm/exe.android-arm64@12.15.0':
     resolution: {integrity: sha512-eVCqmscY70LGvgRzu3mi8IBWBFGix+a6mNZoWmXxESsBdeiKEF9xQSuaeel10yn+zI7TXy2jlI63vFLzETk+aQ==}
@@ -102,7 +102,7 @@ packages:
 
 snapshots:
 
-  '@craga89/standards@1.0.0': {}
+  '@craga89/standards@1.0.1': {}
 
   '@pnpm/exe.android-arm64@12.15.0':
     optional: true

@@ -273,9 +273,6 @@ jobs:
           mkdir -p "$RUNNER_TEMP/before" "$RUNNER_TEMP/live"
           if git fetch -q --depth=1 origin indexnow; then
             git archive FETCH_HEAD | tar -x -C "$RUNNER_TEMP/before"
-          # Until the indexnow branch exists: the last snapshot from site-store's deployed/.
-          elif git fetch -q --depth=1 origin site-store; then
-            git archive FETCH_HEAD deployed | tar -x -C "$RUNNER_TEMP/before" --strip-components=1 || true
           fi
           git fetch -q --depth=1 origin pages
           git archive FETCH_HEAD | tar -x -C "$RUNNER_TEMP/live"
