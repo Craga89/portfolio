@@ -2,7 +2,7 @@
 # It doesn't wait for the tests: it builds the branch under that path and stores it on the pages
 # branch, and preview-deploy.yml publishes it. The commit gets a "Preview" status linking to it,
 # and the branch's pull request one comment. Deleting the branch removes its preview. Previews stay
-# out of search engines and don't count visits. See Craga89/standards docs/guidelines/previews.md.
+# out of search engines and don't count visits. See Craga89/standards guidelines/previews.md.
 name: Preview
 
 on:
@@ -37,7 +37,7 @@ jobs:
   preview:
     # Deleting a report branch has no preview to remove.
     if: github.event_name != 'delete' || github.event.ref_type == 'branch'
-    uses: Craga89/standards/.github/workflows/preview.yml@0c41b52a17c2687d2fe3c3b95f838b653a4e4e1b # v1
+    uses: Craga89/standards/.github/workflows/preview.yml@b8f7b51e18400dff89a9fcb8f296334c5e269e38 # v1
     permissions:
       contents: write # the pages branch
       pages: read # where Pages serves the site

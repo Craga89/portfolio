@@ -74,11 +74,11 @@ jobs:
         run: |
           mkdir -p report/reports && cp out/summary.json report/reports/summary.json
           for f in out/mobile-2.json out/desktop-2.json; do [ -f "$f" ] && cp "$f" report/reports/; done
-      - uses: Craga89/standards/report-meta@0c41b52a17c2687d2fe3c3b95f838b653a4e4e1b # v1
+      - uses: Craga89/standards/github/actions/report-meta@b8f7b51e18400dff89a9fcb8f296334c5e269e38 # v1
         with:
           dir: report/reports
           sha: ${{ github.event.workflow_run.head_sha || github.sha }}
-      - uses: Craga89/standards/publish-branch@0c41b52a17c2687d2fe3c3b95f838b653a4e4e1b # v1
+      - uses: Craga89/standards/github/actions/publish-branch@b8f7b51e18400dff89a9fcb8f296334c5e269e38 # v1
         with:
           branch: lighthouse
           source: report

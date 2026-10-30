@@ -38,7 +38,7 @@ jobs:
           head -c 3000 out/archived.md
           mkdir -p data/archive && cp out/archived.json out/archived.md data/archive/
       - if: inputs.task == 'discover'
-        uses: Craga89/standards/publish-branch@0c41b52a17c2687d2fe3c3b95f838b653a4e4e1b # v1
+        uses: Craga89/standards/github/actions/publish-branch@b8f7b51e18400dff89a9fcb8f296334c5e269e38 # v1
         with:
           branch: redirect-data
           source: data

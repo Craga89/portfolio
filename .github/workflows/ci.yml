@@ -45,7 +45,7 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: Craga89/standards/setup-node@0c41b52a17c2687d2fe3c3b95f838b653a4e4e1b # v1
+      - uses: Craga89/standards/github/actions/setup-node@b8f7b51e18400dff89a9fcb8f296334c5e269e38 # v1
       - run: pnpm run lint
       - run: pnpm run format:check
 
@@ -59,7 +59,7 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: Craga89/standards/setup-node@0c41b52a17c2687d2fe3c3b95f838b653a4e4e1b # v1
+      - uses: Craga89/standards/github/actions/setup-node@b8f7b51e18400dff89a9fcb8f296334c5e269e38 # v1
       # The worker and its tests read the passages the build wrote.
       - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
@@ -78,8 +78,8 @@ jobs:
         project: [desktop, mobile]
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: Craga89/standards/setup-node@0c41b52a17c2687d2fe3c3b95f838b653a4e4e1b # v1
-      - uses: Craga89/standards/setup-playwright@0c41b52a17c2687d2fe3c3b95f838b653a4e4e1b # v1
+      - uses: Craga89/standards/github/actions/setup-node@b8f7b51e18400dff89a9fcb8f296334c5e269e38 # v1
+      - uses: Craga89/standards/github/actions/setup-playwright@b8f7b51e18400dff89a9fcb8f296334c5e269e38 # v1
       - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: build
@@ -102,8 +102,8 @@ jobs:
         shard: [1, 2, 3, 4]
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: Craga89/standards/setup-node@0c41b52a17c2687d2fe3c3b95f838b653a4e4e1b # v1
-      - uses: Craga89/standards/setup-playwright@0c41b52a17c2687d2fe3c3b95f838b653a4e4e1b # v1
+      - uses: Craga89/standards/github/actions/setup-node@b8f7b51e18400dff89a9fcb8f296334c5e269e38 # v1
+      - uses: Craga89/standards/github/actions/setup-playwright@b8f7b51e18400dff89a9fcb8f296334c5e269e38 # v1
       - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: build
@@ -125,7 +125,7 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: Craga89/standards/setup-node@0c41b52a17c2687d2fe3c3b95f838b653a4e4e1b # v1
+      - uses: Craga89/standards/github/actions/setup-node@b8f7b51e18400dff89a9fcb8f296334c5e269e38 # v1
       - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           pattern: a11y-blob-*
@@ -154,11 +154,11 @@ jobs:
         run: |
           mkdir -p out/reports && cp a11y.json out/reports/latest.json
       - if: env.DEPLOY == 'true'
-        uses: Craga89/standards/report-meta@0c41b52a17c2687d2fe3c3b95f838b653a4e4e1b # v1
+        uses: Craga89/standards/github/actions/report-meta@b8f7b51e18400dff89a9fcb8f296334c5e269e38 # v1
         with:
           dir: out/reports
       - if: env.DEPLOY == 'true'
-        uses: Craga89/standards/publish-branch@0c41b52a17c2687d2fe3c3b95f838b653a4e4e1b # v1
+        uses: Craga89/standards/github/actions/publish-branch@b8f7b51e18400dff89a9fcb8f296334c5e269e38 # v1
         with:
           branch: accessibility
           source: out
@@ -173,8 +173,8 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: Craga89/standards/setup-node@0c41b52a17c2687d2fe3c3b95f838b653a4e4e1b # v1
-      - uses: Craga89/standards/setup-playwright@0c41b52a17c2687d2fe3c3b95f838b653a4e4e1b # v1
+      - uses: Craga89/standards/github/actions/setup-node@b8f7b51e18400dff89a9fcb8f296334c5e269e38 # v1
+      - uses: Craga89/standards/github/actions/setup-playwright@b8f7b51e18400dff89a9fcb8f296334c5e269e38 # v1
       - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: build
@@ -205,7 +205,7 @@ jobs:
           pnpm exec playwright test --project=visual --update-snapshots=all
           { echo "## Screenshot baselines updated"; echo; ls tests/visual/__screenshots__ | sed 's/^/- /'; } >> "$GITHUB_STEP_SUMMARY"
       - if: steps.mode.outputs.update == 'true'
-        uses: Craga89/standards/publish-branch@0c41b52a17c2687d2fe3c3b95f838b653a4e4e1b # v1
+        uses: Craga89/standards/github/actions/publish-branch@b8f7b51e18400dff89a9fcb8f296334c5e269e38 # v1
         with:
           branch: visual-baselines
           source: tests/visual/__screenshots__
@@ -238,13 +238,13 @@ jobs:
           for b in lighthouse accessibility evals oss; do git fetch -q --depth=1 origin "$b:refs/remotes/origin/$b" || true; done
           node tools/live.mjs site/live.json
       # Stamps the commit into the pages (__BUILD_SHA__, __BUILD_SHORT__, __BUILD_AT__) as it stores.
-      - uses: Craga89/standards/pages-store@0c41b52a17c2687d2fe3c3b95f838b653a4e4e1b # v1
+      - uses: Craga89/standards/github/actions/pages-store@b8f7b51e18400dff89a9fcb8f296334c5e269e38 # v1
         with:
           source: site
 
   pages:
     needs: deploy
-    uses: Craga89/standards/.github/workflows/pages-deploy.yml@0c41b52a17c2687d2fe3c3b95f838b653a4e4e1b # v1
+    uses: Craga89/standards/.github/workflows/pages-deploy.yml@b8f7b51e18400dff89a9fcb8f296334c5e269e38 # v1
     permissions:
       contents: read
       pages: write
@@ -286,7 +286,7 @@ jobs:
         run: node tools/indexnow.mjs "$RUNNER_TEMP/before" "$RUNNER_TEMP/live" https://craigthompson.dev
       - name: Remember what IndexNow was told (indexnow branch)
         if: steps.indexnow.outcome == 'success'
-        uses: Craga89/standards/publish-branch@0c41b52a17c2687d2fe3c3b95f838b653a4e4e1b # v1
+        uses: Craga89/standards/github/actions/publish-branch@b8f7b51e18400dff89a9fcb8f296334c5e269e38 # v1
         with:
           branch: indexnow
           source: ${{ runner.temp }}/live
@@ -329,7 +329,7 @@ jobs:
             echo "SMOKE_AI=1" >> "$GITHUB_ENV"
           fi
       - if: env.HAS_TOKEN == 'true'
-        uses: Craga89/standards/setup-node@0c41b52a17c2687d2fe3c3b95f838b653a4e4e1b # v1
+        uses: Craga89/standards/github/actions/setup-node@b8f7b51e18400dff89a9fcb8f296334c5e269e38 # v1
       - name: Smoke test
         if: env.HAS_TOKEN == 'true'
         run: sleep 5 && pnpm run test:smoke

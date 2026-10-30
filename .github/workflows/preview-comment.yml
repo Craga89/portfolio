@@ -14,7 +14,7 @@ jobs:
   comment:
     # The branches Preview skips get no preview to link (and Dependabot's token can't comment).
     if: ${{ !startsWith(github.head_ref, 'dependabot/') && !startsWith(github.head_ref, 'bootstrap/') }}
-    uses: Craga89/standards/.github/workflows/preview-comment.yml@0c41b52a17c2687d2fe3c3b95f838b653a4e4e1b # v1
+    uses: Craga89/standards/.github/workflows/preview-comment.yml@b8f7b51e18400dff89a9fcb8f296334c5e269e38 # v1
     permissions:
       contents: read # what the shared workflow declares; a called workflow can't get more than this grants
       pages: read

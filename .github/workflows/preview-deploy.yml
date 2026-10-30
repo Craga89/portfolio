@@ -14,7 +14,7 @@ permissions:
 jobs:
   deploy:
     if: github.event.workflow_run.conclusion == 'success'
-    uses: Craga89/standards/.github/workflows/pages-deploy.yml@0c41b52a17c2687d2fe3c3b95f838b653a4e4e1b # v1
+    uses: Craga89/standards/.github/workflows/pages-deploy.yml@b8f7b51e18400dff89a9fcb8f296334c5e269e38 # v1
     permissions:
       contents: read
       pages: write
