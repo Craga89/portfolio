@@ -66,7 +66,6 @@ export async function homeLd() {
       '@type': 'Person',
       '@id': SITE + '/#person',
       name: NAME,
-      alternateName: 'Craig Thompson',
       jobTitle: 'Head of Engineering',
       worksFor: { '@type': 'Organization', name: 'Hive HR' },
       description: OG_DESC,
