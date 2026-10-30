@@ -14,7 +14,7 @@ const q = (sql) => {
   try {
     out = execFileSync(
       'pnpm',
-      ['dlx', 'wrangler@4', 'd1', 'execute', 'craga-ask', '--remote', '--json', '--command', sql],
+      ['exec', 'wrangler', 'd1', 'execute', 'craga-ask', '--remote', '--json', '--command', sql],
       { cwd: join(ROOT, 'worker'), encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] },
     );
   } catch (err) {

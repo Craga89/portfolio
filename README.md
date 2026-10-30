@@ -216,7 +216,7 @@ The `ask.sh` section at the bottom of the home page answers questions about the 
 Deploying the Worker:
 
 1. Create a free Cloudflare account and an API token from the **Edit Cloudflare Workers** template (it covers Workers AI).
-2. Add `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` as repository secrets. CI then deploys it from every push to `main`, with the passages from that build. You can also run `pnpm run build && cd worker && pnpm dlx wrangler@4 deploy`.
+2. Add `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` as repository secrets. CI then deploys it from every push to `main`, with the passages from that build. You can also run `pnpm run build && cd worker && pnpm exec wrangler deploy`.
 3. Put the Worker URL in `ask.config.json`, for example `{ "endpoint": "https://craga-ask.<subdomain>.workers.dev/ask" }`, then rebuild and push.
 
 Its unit tests (`tests/unit/worker/`, in `pnpm run test:unit`) run without Cloudflare: Workers AI, D1 and the rate limiters are stand-ins. `WORKER_URL=… pnpm run test:smoke` tests a deployed one.

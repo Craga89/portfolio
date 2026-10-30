@@ -29,7 +29,7 @@ jobs:
           pnpm add --save-exact --save-dev --config.strict-dep-builds=false \
             @axe-core/playwright@latest @modelcontextprotocol/sdk@1 @playwright/test@latest playwright@latest \
             @types/node@22 axe-core@latest oxfmt@latest oxlint@latest sharp@latest typescript@6 \
-            astro@latest @astrojs/mdx@latest @astrojs/sitemap@latest @astrojs/check@latest @astrojs/markdown-satteri@latest satteri@latest
+            astro@latest @astrojs/mdx@latest @astrojs/sitemap@latest @astrojs/check@latest @astrojs/markdown-satteri@latest satteri@latest wrangler@4
       - name: Format and fix
         run: |
           pnpm exec oxfmt --version && pnpm exec oxfmt .

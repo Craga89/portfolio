@@ -1,4 +1,8 @@
 # pnpm settings (the package manager is pinned in package.json's packageManager field).
 # Dependencies' install scripts only run when they're allowed here, and pnpm fails the install if
 # one hasn't been reviewed.
-allowBuilds: {}
+allowBuilds:
+  # wrangler's: both ship their binaries as platform packages, so their install scripts (which only
+  # check or speed up the binary) aren't needed.
+  esbuild: false
+  workerd: false
