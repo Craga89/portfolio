@@ -4,13 +4,19 @@ lockfileVersion: '9.0'
 importers:
 
   .:
-    configDependencies: {}
+    configDependencies:
+      '@craga89/standards':
+        specifier: 1.0.0
+        version: 1.0.0
     packageManagerDependencies:
       pnpm:
         specifier: 12.15.0
         version: 12.15.0
 
 packages:
+
+  '@craga89/standards@1.0.0':
+    resolution: {integrity: sha512-YGF8shFudCtlwfHTb6wx3s06nODRrGunBs+lB3r1FqhXBrddRdtGS/4ONREv1qwGq+V68Mzu8jGx/Ztqh9C1gw==}
 
   '@pnpm/exe.android-arm64@12.15.0':
     resolution: {integrity: sha512-eVCqmscY70LGvgRzu3mi8IBWBFGix+a6mNZoWmXxESsBdeiKEF9xQSuaeel10yn+zI7TXy2jlI63vFLzETk+aQ==}
@@ -95,6 +101,8 @@ packages:
     hasBin: true
 
 snapshots:
+
+  '@craga89/standards@1.0.0': {}
 
   '@pnpm/exe.android-arm64@12.15.0':
     optional: true
