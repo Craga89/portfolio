@@ -1,0 +1,51 @@
+---
+// On branch previews only: a bar across the top saying this is a preview of a branch, not the live
+// site, with links to the other previews and to the live site.
+import { BASE, PREVIEW, PREVIEW_BRANCH } from '../../lib/url';
+
+// The previews live at /preview/<branch>/: the list of them is one level up, and the live site two.
+const previews = BASE.replace(/[^/]+\/$/, '');
+const live = previews.replace(/[^/]+\/$/, '');
+---
+
+{
+  PREVIEW && (
+    <aside class="preview-bar" aria-label="Branch preview">
+      <p>
+        <strong>Branch preview</strong> of <code>{PREVIEW_BRANCH || BASE}</code>, built before the checks run.
+        <a href={previews}>All previews</a> · <a href={live}>Live site</a>
+      </p>
+    </aside>
+  )
+}
+
+<style>
+  .preview-bar {
+    background: var(--acc-bg);
+    border-bottom: 1px solid var(--line2);
+    color: var(--text);
+    font-size: 0.875rem;
+  }
+  p {
+    margin: 0;
+    padding: 8px 24px;
+  }
+  strong {
+    color: var(--head);
+  }
+  code {
+    font-family: var(--f-mono);
+    color: var(--acc);
+    /* A long branch name wraps rather than widening the page. */
+    overflow-wrap: anywhere;
+  }
+  /* Kept out of the printed CV (cv.pdf is printed from the page). */
+  @media print {
+    .preview-bar {
+      display: none;
+    }
+  }
+  a {
+    color: var(--head);
+  }
+</style>
