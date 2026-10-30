@@ -25,7 +25,7 @@ export default class A11yReport {
   /** @param {{ outputFile?: string }} [options] */
   constructor(options = {}) {
     this.outputFile = options.outputFile || 'a11y.json';
-    /** @type {Map<string, Violation & { states: string[] }>} */
+    /** @type {Map<string, Omit<Violation, 'id'> & { rule: string, states: string[] }>} */
     this.violations = new Map();
     /** @type {{ check: string, state: string, what: string }[]} */
     this.failures = [];
@@ -47,7 +47,12 @@ export default class A11yReport {
       this.axeRuns++;
       for (const v of run.violations) {
         const key = v.id + '|' + v.target;
-        const entry = this.violations.get(key) || { ...v, states: [] };
+        let entry = this.violations.get(key);
+        if (!entry) {
+          // axe's id is the report's rule.
+          const { id, ...rest } = v;
+          entry = { rule: id, ...rest, states: [] };
+        }
         const state = `${run.label} (${project.replace('a11y-', '')})`;
         if (!entry.states.includes(state)) entry.states.push(state);
         this.violations.set(key, entry);
@@ -65,9 +70,9 @@ export default class A11yReport {
   onEnd() {
     if (!this.tests) return;
     const order = ['critical', 'serious', 'moderate', 'minor'];
-    const violations = [...this.violations.values()]
-      .map(({ id, ...v }) => ({ rule: id, ...v }))
-      .sort((a, b) => order.indexOf(a.impact || 'minor') - order.indexOf(b.impact || 'minor'));
+    const violations = [...this.violations.values()].sort(
+      (a, b) => order.indexOf(a.impact || 'minor') - order.indexOf(b.impact || 'minor'),
+    );
     const report = {
       url: process.env.BASE_URL || 'the built site',
       at: new Date().toISOString(),
