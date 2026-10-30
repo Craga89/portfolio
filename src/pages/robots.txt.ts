@@ -5,6 +5,4 @@ import type { APIRoute } from 'astro';
 import { INDEXING, SITE } from '../site';
 
 export const GET: APIRoute = () =>
-  new Response(
-    INDEXING ? `User-agent: *\nAllow: /\nSitemap: ${SITE}/sitemap-index.xml\n` : 'User-agent: *\nDisallow: /\n',
-  );
+  new Response(INDEXING ? `User-agent: *\nAllow: /\nSitemap: ${SITE}/sitemap.xml\n` : 'User-agent: *\nDisallow: /\n');

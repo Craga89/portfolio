@@ -130,7 +130,7 @@ for (const colorScheme of /** @type {const} */ (['dark', 'light'])) {
       for (const section of ['case-studies', 'responsibilities', 'blog']) {
         test(`every ${section} page`, async ({ page, axe, request, baseURL }) => {
           test.setTimeout(240_000);
-          const sitemap = await (await request.get('sitemap-0.xml')).text();
+          const sitemap = await (await request.get('sitemap.xml')).text();
           const paths = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)]
             .map((m) => new URL(m[1]).pathname.replace(/^\//, ''))
             .filter((p) => p.startsWith(section + '/'));

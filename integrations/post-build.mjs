@@ -6,6 +6,7 @@ import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { serve } from '../tools/lib/serve.mjs';
+import { flattenSitemap } from '../tools/lib/sitemap.mjs';
 import { homePassages, postPassage } from './passages.mjs';
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url));
@@ -22,6 +23,8 @@ export function postBuild() {
       },
       'astro:build:done': async ({ dir, logger }) => {
         const out = fileURLToPath(dir);
+        // @astrojs/sitemap (which runs first) writes an index and numbered files; the site serves one sitemap.xml.
+        logger.info(`sitemap.xml: ${flattenSitemap(out)} addresses`);
         const { chromium } = await import('playwright');
         const srv = await serve(out, 0, base);
         const browser = await chromium.launch();

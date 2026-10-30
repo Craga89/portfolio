@@ -16,7 +16,7 @@ function site(/** @type {Record<string, string>} */ pages, /** @type {string[]} 
     writeFileSync(join(dir, p, 'index.html'), html);
   }
   writeFileSync(
-    join(dir, 'sitemap-0.xml'),
+    join(dir, 'sitemap.xml'),
     `<urlset>${listed.map((p) => `<url><loc>${SITE}/${p}</loc></url>`).join('')}</urlset>`,
   );
   return dir;
