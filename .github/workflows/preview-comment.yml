@@ -12,7 +12,9 @@ permissions:
 
 jobs:
   comment:
-    uses: Craga89/standards/.github/workflows/preview-comment.yml@2683e4116e18f128c46fce9261c4bd5d1284e8ff # v1
+    # The branches Preview skips get no preview to link (and Dependabot's token can't comment).
+    if: ${{ !startsWith(github.head_ref, 'dependabot/') && !startsWith(github.head_ref, 'bootstrap/') }}
+    uses: Craga89/standards/.github/workflows/preview-comment.yml@0c41b52a17c2687d2fe3c3b95f838b653a4e4e1b # v1
     permissions:
       pages: read
       pull-requests: write
