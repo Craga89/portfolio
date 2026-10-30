@@ -36,6 +36,14 @@ const live = previews.replace(/[^/]+\/$/, '');
   code {
     font-family: var(--f-mono);
     color: var(--acc);
+    /* A long branch name wraps rather than widening the page. */
+    overflow-wrap: anywhere;
+  }
+  /* Kept out of the printed CV (cv.pdf is printed from the page). */
+  @media print {
+    .preview-bar {
+      display: none;
+    }
   }
   a {
     color: var(--head);
