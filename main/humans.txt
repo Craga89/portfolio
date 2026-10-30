@@ -1,0 +1,14 @@
+/* TEAM */
+Name: Craig Thompson
+Role: Head of Engineering, full-stack engineer
+Contact: craig@craigthompson.dev
+GitHub: https://github.com/Craga89
+From: Newcastle upon Tyne, UK
+
+/* SITE */
+Last update: 2026-10-30
+Standards: HTML, CSS, TypeScript, WCAG 2.2 AA
+Components: Astro, with the content in Markdown and MDX
+Fonts: Big Shoulders Display, Public Sans, Red Hat Mono, Inter (self-hosted)
+Hosting: GitHub Pages; ask.sh on Cloudflare Workers AI
+Source: https://github.com/Craga89/portfolio

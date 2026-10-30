@@ -1,0 +1,143 @@
+<!DOCTYPE html><html lang="en-GB" data-theme="dark"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><style>@media (prefers-reduced-motion:no-preference){@view-transition{navigation:auto}}</style><title>Durandal and Webpack: Part 2 - Composition · blog · Craig Thompson</title><meta name="description" content="This post is part of a series of posts entitled Durandal and Webpack."><meta name="robots" content="noindex, nofollow, noarchive"><link rel="canonical" href="https://craigthompson.dev/blog/durandal-and-webpack-part-2-composition/"><meta name="color-scheme" content="dark light"><meta name="theme-color" content="#16271F" media="(prefers-color-scheme: dark)" data-dark="#16271F" data-light="#E2EEE8"><meta name="theme-color" content="#E2EEE8" media="(prefers-color-scheme: light)" data-dark="#16271F" data-light="#E2EEE8"><link rel="icon" href="/preview/fix-cv-page-background/favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="/preview/fix-cv-page-background/apple-touch-icon.png"><meta property="og:type" content="article"><meta property="og:site_name" content="craigthompson.dev"><meta property="og:locale" content="en_GB"><meta property="og:title" content="Durandal and Webpack: Part 2 - Composition · blog · Craig Thompson"><meta property="og:description" content="This post is part of a series of posts entitled Durandal and Webpack."><meta property="og:url" content="https://craigthompson.dev/blog/durandal-and-webpack-part-2-composition/"><meta property="og:image" content="https://craigthompson.dev/blog/durandal-and-webpack-part-2-composition/og.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="Durandal and Webpack: Part 2 - Composition. blog/durandal-and-webpack-part-2-composition.md, Craig Thompson"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Durandal and Webpack: Part 2 - Composition · blog · Craig Thompson"><meta name="twitter:description" content="This post is part of a series of posts entitled Durandal and Webpack."><meta name="twitter:image" content="https://craigthompson.dev/blog/durandal-and-webpack-part-2-composition/og.png"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"Durandal and Webpack: Part 2 - Composition","description":"This post is part of a series of posts entitled Durandal and Webpack.","url":"https://craigthompson.dev/blog/durandal-and-webpack-part-2-composition/","image":"https://craigthompson.dev/blog/durandal-and-webpack-part-2-composition/og.png","inLanguage":"en-GB","datePublished":"2015-07-26","keywords":"","author":{"@type":"Person","@id":"https://craigthompson.dev/#person","name":"Craig Thompson","url":"https://craigthompson.dev/"},"isPartOf":{"@type":"Blog","name":"Craig Thompson · blog","url":"https://craigthompson.dev/blog/"},"sameAs":"https://blog.craigsworks.com/durandal-and-webpack-part-2-composition/"}</script><script>try{var d=document.documentElement,t=localStorage.getItem('theme'),l=t?t==='light':matchMedia('(prefers-color-scheme: light)').matches;d.dataset.theme=l?'light':'dark';if(localStorage.getItem('motion')==='off')d.dataset.motion='off';if(t)document.querySelectorAll('meta[name="theme-color"]').forEach(function(m){m.content=m.dataset[l?'light':'dark']})}catch(e){}
+function vt(e){var v=e.viewTransition;if(!v)return;[v.ready,v.finished,v.updateCallbackDone].forEach(function(p){p&&p.catch(function(){})});try{if(localStorage.getItem('motion')==='off')v.skipTransition()}catch(x){}}
+addEventListener('pageswap',vt);addEventListener('pagereveal',vt);</script><link rel="preload" href="/preview/fix-cv-page-background/assets/big-shoulders-display-latin-600.EACME5TP.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="/preview/fix-cv-page-background/assets/public-sans-latin-400.DdeTHZLK.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="/preview/fix-cv-page-background/assets/red-hat-mono-latin-400.Dwfc5A3M.woff2" as="font" type="font/woff2" crossorigin><script type="speculationrules">{"prerender":[{"source":"document","where":{"or":[{"href_matches":"/preview/fix-cv-page-background/"},{"href_matches":"/preview/fix-cv-page-background/cv/"},{"href_matches":"/preview/fix-cv-page-background/blog/*"},{"href_matches":"/preview/fix-cv-page-background/case-studies/*"},{"href_matches":"/preview/fix-cv-page-background/responsibilities/*"}]},"eagerness":"moderate"}]}</script><meta http-equiv="content-security-policy" content="default-src 'self';img-src 'self' data:;media-src 'self' blob: data:;connect-src 'self' https://*.workers.dev https://cloudflareinsights.com;object-src 'none';base-uri 'self'; script-src 'self' https://static.cloudflareinsights.com 'sha256-mdxw4ERTqpdslWL6DghDzqeRYS7uK4BfEWg7lZCzdIg=' 'sha256-xIb/Pa7FUshAu4ihwjchYcQpyCI8eS8kt40GpOAYCz8=' 'sha256-1BvDVWLr3QCC20uHhUDi27eDFVJpk1uMQJGIWKUks2I=' 'sha256-kmZE/W8I1iuTnl1b3yqzv9/DQZenPngd3NjSKMQl7y0=' 'sha256-Y8t0ntteBwH+PqGKUyjWW3CAk+BNJKSoQc0xZ68FjhM=' 'sha256-0O7iB6zr9x0r6X6eWYITC9V5q+yWCGAoFvcysBGbY9Q=' 'sha256-UIrFqcaitjA3OKa9mHKajg3N+0Y7tW9+y0o3QmMFeZQ=' 'sha256-At4sXbunobuxXv56+YxR7rwL4c3n8ubyPDiI7CIowSo='; style-src 'self' 'sha256-SX7UqyxGVDSLzV90icKkPuaEGi8NcinaZfagIyBzAuY=' 'sha256-vv9IoKo7BSLbWcUHr3tNmfNVmm5L/9Cfn2H6LMk7/ow=' 'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=';"><link rel="stylesheet" href="/preview/fix-cv-page-background/assets/Crumb.Qqj24-y3.css"><link rel="stylesheet" href="/preview/fix-cv-page-background/assets/fonts.oOu1LZ9I.css"><link rel="stylesheet" href="/preview/fix-cv-page-background/assets/FilePage.B7Tov9wQ.css"><link rel="stylesheet" href="/preview/fix-cv-page-background/assets/Toggletip.B3DZPIxZ.css"><link rel="stylesheet" href="/preview/fix-cv-page-background/assets/Cta.ssityJUw.css"><link rel="stylesheet" href="/preview/fix-cv-page-background/assets/_slug_.BoWL_u4I.css"><link rel="stylesheet" href="/preview/fix-cv-page-background/assets/translate.DGGanBDF.css"></head> <body>   <div class="sp" data-astro-cid-2xyv2ckx> <header class="top" data-astro-cid-2xyv2ckx> <a class="home" href="/preview/fix-cv-page-background/" data-astro-cid-2xyv2ckx><span class="c-dot" aria-hidden="true" data-astro-cid-2xyv2ckx></span>craigthompson.dev</a> <div class="tools" data-astro-cid-2xyv2ckx> <button type="button" class="b" data-palette aria-haspopup="dialog" aria-keyshortcuts="Control+K Meta+K" title="Search and jump (Ctrl+K)" data-astro-cid-2xyv2ckx> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" data-astro-cid-2xyv2ckx><circle cx="11" cy="11" r="7" data-astro-cid-2xyv2ckx></circle><path d="m20 20-3.5-3.5" data-astro-cid-2xyv2ckx></path></svg>search
+</button> <button type="button" class="b" data-theme-toggle data-astro-cid-2xyv2ckx><span class="when-dark" data-astro-cid-2xyv2ckx>light theme</span><span class="when-light" data-astro-cid-2xyv2ckx>dark theme</span></button> <button type="button" class="b" data-motion-toggle data-astro-cid-2xyv2ckx><span class="when-moving" data-astro-cid-2xyv2ckx>pause animations</span><span class="when-still" data-astro-cid-2xyv2ckx>play animations</span></button> </div> </header> <main class="main" data-astro-cid-2xyv2ckx>  <div class="prog" aria-hidden="true" data-astro-cid-zg7dkzxc></div> <p class="crumb" data-astro-cid-uvyt32ub>$ cat <a href="/preview/fix-cv-page-background/blog/" data-astro-cid-uvyt32ub>blog/</a>durandal-and-webpack-part-2-composition.md</p> <article class="post" data-astro-cid-zg7dkzxc> <header class="h" data-astro-cid-zg7dkzxc> <p class="k" data-astro-cid-zg7dkzxc><time datetime="2015-07-26" data-astro-cid-zg7dkzxc>26 July 2015</time> · 4 min read</p> <h1 data-vt="p-durandal-and-webpack-part-2-composition" data-astro-cid-zg7dkzxc>Durandal and Webpack: Part 2 - Composition</h1>  <p class="note" data-astro-cid-zg7dkzxc>
+First published on my old blog (<a href="https://web.archive.org/web/20180628012739/http://blog.craigsworks.com/durandal-and-webpack-part-2-composition/" data-astro-cid-zg7dkzxc>blog.craigsworks.com</a>) in July 2015, and kept as it was written. Some code and links are out of date.
+</p> </header> <div class="b" data-astro-cid-zg7dkzxc><p><em>This post is part of a series of posts entitled <strong>Durandal and Webpack</strong>. Check-out the <a href="/preview/fix-cv-page-background/blog/durandal-and-webpack-introduction/">Introduction</a> here if you haven’t already, as well as the <a href="http://craga89.github.io/durandal-webpack">online examples</a></em></p>
+<p><a href="http://durandaljs.com/">Durandal</a> implements a process known as <a href="http://durandaljs.com/documentation/Using-Composition.html">composition</a>, which allows developers to compose arbitrary Views and ViewModels together into a single output. Much like how <a href="https://facebook.github.io/react/">React</a> lets you nest Components within your <code>render</code> method. This <code>composition</code> workflow is used extensively in Durandal and is the process by which your <code>ViewModel</code> and <code>View</code>(s) are stitched together to create the basic building blocks of your application.</p>
+<p>By default, the <code>composition</code> engine deals with what are known in Durandal as <code>moduleId</code>s and <code>viewUrl</code>s, which are URLs that point to where the <code>ViewModel</code> or <code>View</code> are situated, respectively. Since Webpack doesn’t understand this natively, we’ll need to enhance this functionality a little and <strong>allow us to directly pass the module, rather than a path pointing to it</strong>.</p>
+<h2 id="systemacquire">system.acquire</h2>
+<p>The logic for this method is fairly straight forward, taking a single <code>moduleId</code> string and returning a <a href="https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a> instance that resolves with the <code>module</code>:</p>
+<pre tabindex="0" translate="no" data-lang="js"><code class="language-js">system.acquire = function(moduleId: String) {}
+</code></pre>
+<p>We’ll override this method to allow the <code>moduleId</code> to be either a <strong><code>String</code> or a <code>Function</code></strong>. In the latter case, this function is given a single argument, another function we’ll call <code>cb</code>, which takes the following form:</p>
+<pre tabindex="0" translate="no" data-lang="js"><code class="language-js">function cb(err?: Error, module: Object|Function)
+</code></pre>
+<p>The <code>cb</code> function should be called with <code>null</code> as the first argument if no error occurred, and the resolved <code>module</code> as the second parameter. This may look familiar to you if you’ve used Node extensively, as it’s the <a href="http://fredkschott.com/post/2014/03/understanding-error-first-callbacks-in-node-js/">standard Node.js callback pattern</a>.</p>
+<p>With this in mind, let’s take a look at the override in full:</p>
+<pre tabindex="0" translate="no" data-lang="js"><code class="language-js">var system = require('durandal/system');
+
+var acquire = system.acquire;
+system.acquire = function(moduleIdOrModule) {
+    var moduleType = typeof moduleIdOrModule;
+
+    if(moduleType !== 'string') {
+        return system.defer(function(dfd) {
+            // If the moduleId is a funcction...
+            if(moduleIdOrModule instanceof Function) {
+                // Execute the funcction, passing a callback that should be 
+                // called when the (possibly) async operation is finished
+                var result = moduleIdOrModule(function(err, module) {
+                    if(err) { dfd.reject(err); }
+                    dfd.resolve(module);
+                });
+
+                // Also allow shorthand `return` from the funcction, which 
+                // resolves the Promise with whatever was immediately returned
+                if(result !== undefined) {
+                    dfd.resolve(result);
+                }
+            }
+
+            // If the moduleId is actually an object, simply resolve with it
+            else {
+                dfd.resolve(moduleIdOrModule);
+            }
+        });
+    }
+
+    // super()
+    return acquire.apply(this, arguments);
+};
+</code></pre>
+<p>This may look complex, but basically all it’s allowing you to do is specify <code>moduleId</code> as a <code>Function</code>, which can either return the <code>module</code> directly, or execute a passed callback when you’ve retrieved it asynchronously (more on why we want this later!).</p>
+<h2 id="viewlocatorlocateview">viewLocator.locateView</h2>
+<p>The logic for this method is a little more complex, but we’re only interested in the first parameter:</p>
+<pre tabindex="0" translate="no" data-lang="js"><code class="language-js">viewLocator.locateView = function(  
+    viewOrUrlOrId: String|DOMElement,
+    area?: String,
+    elementsToSearch?: DOMElement[]
+) {}
+</code></pre>
+<p>We’ll need to override this method to allow the <code>viewOrUrlOrId</code> to be a bare HTML string (a <code>String</code> whose first character is a <code>&lt;</code>).</p>
+<pre tabindex="0" translate="no" data-lang="js"><code class="language-js">var $ = require('jquery');
+var system = require('durandal/system');
+var viewLocator = require('durandal/viewLocator');
+
+// Allow using `function` or bare HTML string as a view
+var locateView = viewLocator.locateView;
+viewLocator.locateView = function(viewOrUrlOrId, area) {
+    var viewId;
+
+    // HTML here will be passed into `processMarkup`
+    if('string' === typeof viewOrUrlOrId &amp;&amp; $.trim(viewOrUrlOrId).charAt(0) === '&lt;') {
+        return system.defer(function(dfd) {
+            dfd.resolve(viewOrUrlOrId);
+        });
+    }
+
+    // super()
+    return locateView.apply(this, arguments);
+};
+</code></pre>
+<p>First, we check the <code>viewOrUrlOrId</code> parameter to see <em>if it’s both a string <strong>and</strong> starts with a <code>&lt;</code></em>. If it does, we assume it’s actually a view as opposed to a <code>viewUrl</code>, and return it as a resolved <a href="https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>. If it doesn’t, we simply proceed with the normal Durandal functionality, which helps us maintain backwards compatibility.</p>
+<h4 id="a-note-on-these-enhancements">A note on these enhancements</h4>
+<p>You’ll need to include these enhancements before your</p>
+<p>app.setRoot()</p>
+<p>call, to ensure any calls are intercepted by the new functionality. Otherwise, things may not work as expected</p>
+<h2 id="sample-usage">Sample usage</h2>
+<p>Now we’ve got our new functionality in place via our enhancements, let’s see a practical example of how to use this new functionality with Durandal, so Webpack can bundle our <code>Views</code> and <code>ViewModels</code>!</p>
+<h3 id="viewmodel-views">ViewModel views</h3>
+<p>Normally, you wouldn’t need to specify the <code>View</code> for a particular <code>ViewModel</code> instance, as it’s inferred by convention by Durandal, depending on the view strategy you’ve got set up. We’ll need to make things more explicit if we want Webpack to bundle our views, however.</p>
+<p>We can specify our views as explicit dependencies directly on the ViewModel instances by setting our <code>getView</code> method to one which returns our <code>require</code>d view HTML:</p>
+<pre tabindex="0" translate="no" data-lang="js"><code class="language-js">var jQuery = require('jquery');
+var viewEngine = require('durandal/viewEngine');
+
+var ViewModel = {  
+    getView: function() {
+        var view = require('./view');
+        return viewEngine.processMarkup(view);
+    }
+};
+</code></pre>
+<p>Notice we are using the built-in <code>viewEngine.processMarkup</code> method here. Durandal expects the output of a <code>getView</code> call to be a <code>DOMElement</code> instance, so we’ll delegate this parsing operation to Durandal since it’s already included and handles it nicely.</p>
+<p>That’s it. Together with our enhancements this is all that’s needed to allow both Durandal and Webpack to understand the inter-dependency of our <code>View</code> and <code>ViewModel</code>. Durandal composes just like before, and Webpack can bundle our view together with our app. Simples!</p>
+<h3 id="composition-binding-handler"><em>composition</em> Binding Handler</h3>
+<p>The <code>compose</code> binding handler can take various forms, as explained in the <a href="http://durandaljs.com/documentation/Using-Composition.html">Durandal documentation</a>. A sample of these is given below</p>
+<pre tabindex="0" translate="no" data-lang="js"><code class="language-js">//  Locates the view, realizes it, binds it to the parent binding context and composes it into the DOM node on which the binding is declared.
+data-bind="compose: 'myView.html'"
+
+// Uses RequireJS to get the shell module, locates the view conventionally, binds it and injects it into the DOM node on which the binding is declared.
+data-bind="compose: 'shell'"
+
+//  Evaluates the binding to obtain the result of someProperty. If it is a string, assume it's a view, otherwise assume it's a viewmodel, and follow the steps above
+data-bind="compose: someProperty"
+</code></pre>
+<p>Since we’re not using Require.js, we’ll no longer pass <code>moduleId</code>s or <code>viewUrl</code>s to the <code>compose</code> binding, and will instead always pass a module or HTML instead, respectively. We’ll store these as properties on the <code>ViewModel</code>, using <code>require</code> to retrieve them as static dependencies. For example, amending the previous code sample:</p>
+<pre tabindex="0" translate="no" data-lang="js"><code class="language-js">var jQuery = require('jquery');
+var viewEngine = require('durandal/viewEngine');
+
+var ViewModel = {  
+    myView: require('./myView.html'),
+    myViewModel: require('./myViewModel'),
+
+    getView: function() {
+            var view = require('./view');
+            return viewEngine.processMarkup(view);
+    }
+};
+
+module.exports = ViewModel;
+</code></pre>
+<pre tabindex="0" translate="no" data-lang="html"><code class="language-html">&lt;!-- Composes and binds the View HTML stored in the `myView` property into this view --&gt;  
+&lt;div data-bind="compose: myView"&gt;&lt;/div&gt;
+
+&lt;!-- Composes the ViewModel stored in the `myViewModel` property into this view --&gt;  
+&lt;div data-bind="compose: myView"&gt;&lt;/div&gt;
+</code></pre>
+<p>Notice how the dependencies for this <code>ViewModel</code> are immediately visible by simply viewing the <code>viewModel.js</code> file. This is a helpful by-product of this approach and should help you quickly review the top-level dependency graph of your <code>ViewModel</code> without the need to look over your view file.</p>
+<h2 id="summary">Summary</h2>
+<p>We’ve implemented some enhancements to the core Durandal <code>system.acquire</code> and <code>viewLocator.locateView</code> methods which allow us to pass <code>module</code> and <code>view</code> HTML directly to the <code>composition</code> engine. This lets us specify our dependencies directly on the ViewModel, and allows Webpack to understand and bundle the different parts of our application together in an effective way.</p>
+<p>For a more hands-on approach, or for those of you who’d simply like to look over the code in action, take a look at the <a href="https://github.com/craga89/durandal-webpack">durandal-webpack</a> repository and the <a href="https://craga89.github.io/durandal-webpack">online example</a>.</p>
+<h4 id="next-chapter-coming-soon-durandal-and-webpack-part-3---router">Next Chapter (coming soon!): <strong>Durandal and Webpack: Part 3 - Router</strong></h4>
+</div> </article> <nav class="pn" aria-label="More posts" data-astro-cid-zg7dkzxc> <a href="/preview/fix-cv-page-background/blog/durandal-and-webpack-part-1-module-format/" data-astro-cid-zg7dkzxc><span data-astro-cid-zg7dkzxc>← newer</span><b data-astro-cid-zg7dkzxc>Durandal and Webpack: Part 1 - Module format</b></a> <a class="next" href="/preview/fix-cv-page-background/blog/github-pages-and-webpack-2/" data-astro-cid-zg7dkzxc><span data-astro-cid-zg7dkzxc>older →</span><b data-astro-cid-zg7dkzxc>GitHub Pages + Webpack Chunks = output.publicPath</b></a> </nav> <section class="more" aria-labelledby="sp-more-h" data-astro-cid-zg7dkzxc> <h2 id="sp-more-h" data-astro-cid-zg7dkzxc>$ ls blog/</h2> <ul data-astro-cid-zg7dkzxc><li data-astro-cid-zg7dkzxc><a href="/preview/fix-cv-page-background/blog/generating-roman-numerals/" data-astro-cid-zg7dkzxc>generating-roman-numerals.md</a></li><li data-astro-cid-zg7dkzxc><a href="/preview/fix-cv-page-background/blog/tether-js-transition-small-changes/" data-astro-cid-zg7dkzxc>tether-js-transition-small-changes.md</a></li><li data-astro-cid-zg7dkzxc><a href="/preview/fix-cv-page-background/blog/durandal-and-webpack-introduction/" data-astro-cid-zg7dkzxc>durandal-and-webpack-introduction.md</a></li><li data-astro-cid-zg7dkzxc><a href="/preview/fix-cv-page-background/blog/durandal-and-webpack-part-1-module-format/" data-astro-cid-zg7dkzxc>durandal-and-webpack-part-1-module-format.md</a></li><li data-astro-cid-zg7dkzxc><a href="/preview/fix-cv-page-background/blog/durandal-and-webpack-part-2-composition/" aria-current="page" data-astro-cid-zg7dkzxc>durandal-and-webpack-part-2-composition.md</a></li><li data-astro-cid-zg7dkzxc><a href="/preview/fix-cv-page-background/blog/github-pages-and-webpack-2/" data-astro-cid-zg7dkzxc>github-pages-and-webpack-2.md</a></li><li data-astro-cid-zg7dkzxc><a href="/preview/fix-cv-page-background/blog/gulp-watch-less/" data-astro-cid-zg7dkzxc>gulp-watch-less.md</a></li><li data-astro-cid-zg7dkzxc><a href="/preview/fix-cv-page-background/blog/less-file-import-list/" data-astro-cid-zg7dkzxc>less-file-import-list.md</a></li><li data-astro-cid-zg7dkzxc><a href="/preview/fix-cv-page-background/blog/knockout-bootstrap-3-buttons-and-the-enable-binding/" data-astro-cid-zg7dkzxc>knockout-bootstrap-3-buttons-and-the-enable-binding.md</a></li><li data-astro-cid-zg7dkzxc><a href="/preview/fix-cv-page-background/blog/durandal-type-cast-querystring-parameters/" data-astro-cid-zg7dkzxc>durandal-type-cast-querystring-parameters.md</a></li><li data-astro-cid-zg7dkzxc><a href="/preview/fix-cv-page-background/blog/knockout-value-binding-input-number/" data-astro-cid-zg7dkzxc>knockout-value-binding-input-number.md</a></li><li data-astro-cid-zg7dkzxc><a href="/preview/fix-cv-page-background/blog/jquery-ui-draggable-exclusive-draggables/" data-astro-cid-zg7dkzxc>jquery-ui-draggable-exclusive-draggables.md</a></li><li data-astro-cid-zg7dkzxc><a href="/preview/fix-cv-page-background/blog/ckeditor-key-modifiers/" data-astro-cid-zg7dkzxc>ckeditor-key-modifiers.md</a></li><li data-astro-cid-zg7dkzxc><a href="/preview/fix-cv-page-background/blog/bootstrap-3-disabled-dropdown-links/" data-astro-cid-zg7dkzxc>bootstrap-3-disabled-dropdown-links.md</a></li><li data-astro-cid-zg7dkzxc><a href="/preview/fix-cv-page-background/blog/jquery-ui-draggable-droppables-in-an-iframe/" data-astro-cid-zg7dkzxc>jquery-ui-draggable-droppables-in-an-iframe.md</a></li><li data-astro-cid-zg7dkzxc><a href="/preview/fix-cv-page-background/blog/qtip2-now-on-jsdelivr/" data-astro-cid-zg7dkzxc>qtip2-now-on-jsdelivr.md</a></li><li data-astro-cid-zg7dkzxc><a href="/preview/fix-cv-page-background/blog/60fps-scrolling-using-pointer-events-none/" data-astro-cid-zg7dkzxc>60fps-scrolling-using-pointer-events-none.md</a></li><li data-astro-cid-zg7dkzxc><a href="/preview/fix-cv-page-background/blog/qtip2-v2-2-0-released/" data-astro-cid-zg7dkzxc>qtip2-v2-2-0-released.md</a></li><li data-astro-cid-zg7dkzxc><a href="/preview/fix-cv-page-background/blog/scratchpad-io/" data-astro-cid-zg7dkzxc>scratchpad-io.md</a></li><li data-astro-cid-zg7dkzxc><a href="/preview/fix-cv-page-background/blog/qtip2-pre-release-changes-aka-what-happened-to-my-qtip-styles/" data-astro-cid-zg7dkzxc>qtip2-pre-release-changes-aka-what-happened-to-my-qtip-styles.md</a></li><li data-astro-cid-zg7dkzxc><a href="/preview/fix-cv-page-background/blog/noty-css-themes/" data-astro-cid-zg7dkzxc>noty-css-themes.md</a></li><li data-astro-cid-zg7dkzxc><a href="/preview/fix-cv-page-background/blog/qtip2-tips-plugins-dimension-options-changed/" data-astro-cid-zg7dkzxc>qtip2-tips-plugins-dimension-options-changed.md</a></li><li data-astro-cid-zg7dkzxc><a href="/preview/fix-cv-page-background/blog/var-commas-and-equals/" data-astro-cid-zg7dkzxc>var-commas-and-equals.md</a></li><li data-astro-cid-zg7dkzxc><a href="/preview/fix-cv-page-background/blog/javascript-ios-version-detection/" data-astro-cid-zg7dkzxc>javascript-ios-version-detection.md</a></li><li data-astro-cid-zg7dkzxc><a href="/preview/fix-cv-page-background/blog/qtip2-styles-update/" data-astro-cid-zg7dkzxc>qtip2-styles-update.md</a></li><li data-astro-cid-zg7dkzxc><a href="/preview/fix-cv-page-background/blog/efficient-javascript-delta-encoding-merging-json-objects/" data-astro-cid-zg7dkzxc>efficient-javascript-delta-encoding-merging-json-objects.md</a></li></ul> </section> <aside class="cta" aria-label="About Craig" data-astro-cid-7vfifl7y> <p data-astro-cid-7vfifl7y><b data-astro-cid-7vfifl7y>Craig Thompson</b>, Head of Engineering: hands-on, AI-first, from start-up to acquisition. Open to new roles.</p> <div class="links" data-astro-cid-7vfifl7y> <a class="go" href="mailto:craga89@gmail.com" data-astro-cid-7vfifl7y>./get-in-touch</a> <a class="alt" href="/preview/fix-cv-page-background/#blog" data-astro-cid-7vfifl7y>the portfolio</a> <a class="alt" href="/preview/fix-cv-page-background/cv/" data-astro-cid-7vfifl7y>CV</a> </div> </aside>  </main> </div>  <div class="toast" data-toast aria-hidden="true" data-astro-cid-tlumhsg5></div> <span class="c-sr" role="status" data-status data-astro-cid-tlumhsg5></span> <dialog id="c-pal" class="pal" aria-labelledby="c-pal-t" data-astro-cid-6mik5hcj> <h2 id="c-pal-t" class="c-sr" data-astro-cid-6mik5hcj>Search and jump</h2> <div class="in" data-astro-cid-6mik5hcj> <svg class="ico" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg> <input id="c-pal-field" class="field" type="text" role="combobox" aria-expanded="true" aria-controls="c-pal-list" aria-autocomplete="list" aria-label="Search sections, files and actions" autocomplete="off" spellcheck="false" placeholder="Jump to a section or file, or ask a question…" data-astro-cid-6mik5hcj> </div> <ul id="c-pal-list" class="list" role="listbox" aria-label="Results" data-astro-cid-6mik5hcj></ul> <div class="foot" aria-hidden="true" data-astro-cid-6mik5hcj><span data-astro-cid-6mik5hcj><kbd data-astro-cid-6mik5hcj>↑</kbd><kbd data-astro-cid-6mik5hcj>↓</kbd> move</span><span data-astro-cid-6mik5hcj><kbd data-astro-cid-6mik5hcj>↵</kbd> open</span><span data-astro-cid-6mik5hcj><kbd data-astro-cid-6mik5hcj>esc</kbd> close</span></div> <p class="c-sr" role="status" data-pal-count data-astro-cid-6mik5hcj></p> </dialog><script type="module" src="/preview/fix-cv-page-background/assets/Base.astro_astro_type_script_index_0_lang.CQHOlB84.js"></script> </body> </html>
