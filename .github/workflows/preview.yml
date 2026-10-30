@@ -1,19 +1,22 @@
-# A preview of every branch at craigthompson.dev/preview/<branch>/, rebuilt on each push.
-# It doesn't wait for the tests: it builds the branch under that path, puts it in the site-store
-# branch (tools/site-store.sh), and the Pages workflow publishes it. Deleting the branch removes
-# its preview. Previews stay out of search engines and don't count visits.
+# A preview of every branch at craigthompson.dev/preview/<branch>-<hash>/, rebuilt on each push.
+# It doesn't wait for the tests: it builds the branch under that path and stores it on the pages
+# branch, and preview-deploy.yml publishes it. The commit gets a "Preview" status linking to it,
+# and the branch's pull request one comment. Deleting the branch removes its preview. Previews stay
+# out of search engines and don't count visits. See Craga89/standards guidelines/previews.md.
 name: Preview
 
 on:
   push:
     branches-ignore:
       - main
+      - pages # what Pages serves (written by the workflows)
       # Branches that hold reports and data, not changes to the site.
       - accessibility
       - blog-import
       - bootstrap/**
       - dependabot/**
       - evals
+      - indexnow
       - lighthouse
       - node-modules
       - oss
@@ -32,63 +35,16 @@ concurrency:
 
 jobs:
   preview:
-    name: Build and store the preview
     # Deleting a report branch has no preview to remove.
     if: github.event_name != 'delete' || github.event.ref_type == 'branch'
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
+    uses: Craga89/standards/.github/workflows/preview.yml@b8f7b51e18400dff89a9fcb8f296334c5e269e38 # v1
     permissions:
-      contents: write # the site-store branch
-      statuses: write # the "preview" status, with the preview's link, on the commit
-    steps:
-      - name: Name the preview after the branch
-        id: slug
-        env:
-          BRANCH: ${{ github.event_name == 'delete' && github.event.ref || github.ref_name }}
-        run: |
-          slug=$(printf '%s' "$BRANCH" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/-/g; s/^-+|-+$//g' | cut -c1-60)
-          echo "slug=$slug" >> "$GITHUB_OUTPUT"
-          echo "url=https://craigthompson.dev/preview/$slug/" >> "$GITHUB_OUTPUT"
-      - name: Mark the preview as building
-        if: github.event_name == 'push'
-        env:
-          GH_TOKEN: ${{ github.token }}
-          URL: ${{ steps.slug.outputs.url }}
-        run: |
-          gh api -X POST "repos/$GITHUB_REPOSITORY/statuses/$GITHUB_SHA" -f state=pending -f context=preview \
-            -f description="Building ${URL#https://}" -f target_url="$URL" >/dev/null
-      # On a delete, this checks out main (the branch is gone).
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - if: github.event_name == 'delete'
-        run: tools/site-store.sh rm "preview/${{ steps.slug.outputs.slug }}"
-      - if: github.event_name != 'delete'
-        uses: ./.github/actions/setup-node
-      - if: github.event_name != 'delete'
-        uses: ./.github/actions/setup-playwright
-      - if: github.event_name != 'delete'
-        run: git fetch -q --depth=1 origin oss:refs/remotes/origin/oss || true
-      - if: github.event_name != 'delete'
-        name: Build under /preview/${{ steps.slug.outputs.slug }}/
-        run: npm run build
-        env:
-          PREVIEW_BASE: /preview/${{ steps.slug.outputs.slug }}/
-          ALLOW_INDEXING: 'false'
-      - if: github.event_name != 'delete'
-        name: Stamp the commit into the page
-        run: sed -i "s/__BUILD_SHA__/${GITHUB_SHA}/g; s/__BUILD_SHORT__/${GITHUB_SHA::7}/g; s/__BUILD_AT__/$(git log -1 --format=%cI)/g" site/index.html
-      - if: github.event_name != 'delete'
-        # .preview: the commit and link, so Pages can mark the commit's status once it's live.
-        run: |
-          echo "$GITHUB_SHA ${{ steps.slug.outputs.url }}" > site/.preview
-          tools/site-store.sh put "preview/${{ steps.slug.outputs.slug }}" site
-      - if: github.event_name != 'delete'
-        name: Link the preview
-        run: echo "Preview (live in a minute or two, once Pages publishes it) → ${{ steps.slug.outputs.url }}" >> "$GITHUB_STEP_SUMMARY"
-      - name: Mark the preview as failed
-        if: failure() && github.event_name == 'push'
-        env:
-          GH_TOKEN: ${{ github.token }}
-          URL: ${{ steps.slug.outputs.url }}
-        run: |
-          gh api -X POST "repos/$GITHUB_REPOSITORY/statuses/$GITHUB_SHA" -f state=failure -f context=preview \
-            -f description="The preview build failed" -f target_url="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" >/dev/null
+      contents: write # the pages branch
+      pages: read # where Pages serves the site
+      statuses: write # the "Preview" status on the commit
+      pull-requests: write # the comment with the link
+    with:
+      # The open-source counts come from the oss branch, as in build.yml.
+      build-command: git fetch -q --depth=1 origin oss:refs/remotes/origin/oss || true; pnpm run build
+      base-env: PREVIEW_BASE
+      playwright: true

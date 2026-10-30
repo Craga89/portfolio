@@ -1,7 +1,7 @@
 // Screenshots of the built site compared with the baselines (the visual-baselines branch), to
 // catch unintended visual changes. A commit with "[visual]" in its message accepts the new look.
-//   npx playwright test --project=visual                      compare
-//   npx playwright test --project=visual --update-snapshots   accept the current look
+//   pnpm exec playwright test --project=visual                      compare
+//   pnpm exec playwright test --project=visual --update-snapshots   accept the current look
 import { test, expect, addStyle } from '../fixtures.mjs';
 
 // Things that change on their own (the clock, the build stamp) or float over content (the chat bar).

@@ -13,8 +13,8 @@ const q = (sql) => {
   let out;
   try {
     out = execFileSync(
-      'npx',
-      ['-y', 'wrangler@4', 'd1', 'execute', 'craga-ask', '--remote', '--json', '--command', sql],
+      'pnpm',
+      ['dlx', 'wrangler@4', 'd1', 'execute', 'craga-ask', '--remote', '--json', '--command', sql],
       { cwd: join(ROOT, 'worker'), encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] },
     );
   } catch (err) {

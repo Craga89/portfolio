@@ -2,13 +2,14 @@
 # passes, the build is deployed to GitHub Pages and the ask.sh worker to Cloudflare.
 #
 #   lint ────────────┐
-#   build ─┬─ unit ──┼─ deploy (Pages)
+#   build ─┬─ unit ──┼─ deploy (store the live site) ─ pages (GitHub Pages)
 #          ├─ e2e ───┤   └─ worker (Cloudflare), smoke tests
 #          ├─ a11y ──┘
 #          └─ visual (screenshots; reported, doesn't block)
 #
-# Branches also get a preview at /preview/<branch>/, built without waiting for any of this
-# (preview.yml, then pages.yml).
+# Branches also get a preview at /preview/<branch>-<hash>/, built without waiting for any of this
+# (preview.yml, then preview-deploy.yml). The actions and the Pages workflows come from
+# Craga89/standards; the job names are the ruleset's required checks, so keep them.
 #
 # Daily, it runs again so live.json picks up the latest results from the report branches.
 name: CI
@@ -44,9 +45,9 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: ./.github/actions/setup-node
-      - run: npm run lint
-      - run: npm run format:check
+      - uses: Craga89/standards/github/actions/setup-node@b8f7b51e18400dff89a9fcb8f296334c5e269e38 # v1
+      - run: pnpm run lint
+      - run: pnpm run format:check
 
   build:
     uses: ./.github/workflows/build.yml
@@ -58,13 +59,13 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: ./.github/actions/setup-node
+      - uses: Craga89/standards/github/actions/setup-node@b8f7b51e18400dff89a9fcb8f296334c5e269e38 # v1
       # The worker and its tests read the passages the build wrote.
       - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: build
-      - run: npm run typecheck
-      - run: npm run test:unit
+      - run: pnpm run typecheck
+      - run: pnpm run test:unit
 
   e2e:
     name: End-to-end (${{ matrix.project }})
@@ -77,12 +78,12 @@ jobs:
         project: [desktop, mobile]
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: ./.github/actions/setup-node
-      - uses: ./.github/actions/setup-playwright
+      - uses: Craga89/standards/github/actions/setup-node@b8f7b51e18400dff89a9fcb8f296334c5e269e38 # v1
+      - uses: Craga89/standards/github/actions/setup-playwright@b8f7b51e18400dff89a9fcb8f296334c5e269e38 # v1
       - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: build
-      - run: npx playwright test --project=${{ matrix.project }}
+      - run: pnpm exec playwright test --project=${{ matrix.project }}
       - if: failure()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
@@ -101,12 +102,12 @@ jobs:
         shard: [1, 2, 3, 4]
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: ./.github/actions/setup-node
-      - uses: ./.github/actions/setup-playwright
+      - uses: Craga89/standards/github/actions/setup-node@b8f7b51e18400dff89a9fcb8f296334c5e269e38 # v1
+      - uses: Craga89/standards/github/actions/setup-playwright@b8f7b51e18400dff89a9fcb8f296334c5e269e38 # v1
       - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: build
-      - run: npx playwright test --project=a11y-desktop --project=a11y-mobile --shard=${{ matrix.shard }}/4 --reporter=blob
+      - run: pnpm exec playwright test --project=a11y-desktop --project=a11y-mobile --shard=${{ matrix.shard }}/4 --reporter=blob
       - if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
@@ -124,14 +125,14 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: ./.github/actions/setup-node
+      - uses: Craga89/standards/github/actions/setup-node@b8f7b51e18400dff89a9fcb8f296334c5e269e38 # v1
       - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           pattern: a11y-blob-*
           path: blob-report
           merge-multiple: true
       - name: Merge the shards
-        run: npx playwright merge-reports --reporter=github,html,./tests/reporters/a11y-report.mjs blob-report
+        run: pnpm exec playwright merge-reports --reporter=github,html,./tests/reporters/a11y-report.mjs blob-report
       - name: Summary
         run: |
           node -e '
@@ -152,11 +153,12 @@ jobs:
         if: env.DEPLOY == 'true'
         run: |
           mkdir -p out/reports && cp a11y.json out/reports/latest.json
-          echo "$GITHUB_SHA" > out/reports/commit.txt
-          echo "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" > out/reports/run.txt
-          date -u +%FT%TZ > out/reports/at.txt
       - if: env.DEPLOY == 'true'
-        uses: ./.github/actions/publish-branch
+        uses: Craga89/standards/github/actions/report-meta@b8f7b51e18400dff89a9fcb8f296334c5e269e38 # v1
+        with:
+          dir: out/reports
+      - if: env.DEPLOY == 'true'
+        uses: Craga89/standards/github/actions/publish-branch@b8f7b51e18400dff89a9fcb8f296334c5e269e38 # v1
         with:
           branch: accessibility
           source: out
@@ -171,8 +173,8 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: ./.github/actions/setup-node
-      - uses: ./.github/actions/setup-playwright
+      - uses: Craga89/standards/github/actions/setup-node@b8f7b51e18400dff89a9fcb8f296334c5e269e38 # v1
+      - uses: Craga89/standards/github/actions/setup-playwright@b8f7b51e18400dff89a9fcb8f296334c5e269e38 # v1
       - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: build
@@ -196,14 +198,14 @@ jobs:
           fi
       - name: Compare
         if: steps.base.outputs.have == 'true' && steps.mode.outputs.update != 'true'
-        run: npx playwright test --project=visual
+        run: pnpm exec playwright test --project=visual
       - name: Accept the current look
         if: steps.mode.outputs.update == 'true'
         run: |
-          npx playwright test --project=visual --update-snapshots=all
+          pnpm exec playwright test --project=visual --update-snapshots=all
           { echo "## Screenshot baselines updated"; echo; ls tests/visual/__screenshots__ | sed 's/^/- /'; } >> "$GITHUB_STEP_SUMMARY"
       - if: steps.mode.outputs.update == 'true'
-        uses: ./.github/actions/publish-branch
+        uses: Craga89/standards/github/actions/publish-branch@b8f7b51e18400dff89a9fcb8f296334c5e269e38 # v1
         with:
           branch: visual-baselines
           source: tests/visual/__screenshots__
@@ -215,6 +217,9 @@ jobs:
           path: playwright-report
           retention-days: 14
 
+  # Stores the live site at the root of the pages branch (the branch previews under preview/ are
+  # kept), and `pages` then deploys the branch. This job keeps the name of the ruleset's required
+  # "Deploy to GitHub Pages" check.
   deploy:
     name: Deploy to GitHub Pages
     needs: [lint, unit, e2e, a11y]
@@ -222,58 +227,70 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:
-      contents: write # the site-store branch, which also holds the branch previews
-      statuses: write # marks the previews it publishes live on their commits
-      pages: write
-      id-token: write
-    concurrency:
-      group: pages
-      cancel-in-progress: false
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+      contents: write # the pages branch, which also holds the branch previews
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: build
-      - uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
       - name: Publish the latest CI results (live.json)
         run: |
           for b in lighthouse accessibility evals oss; do git fetch -q --depth=1 origin "$b:refs/remotes/origin/$b" || true; done
           node tools/live.mjs site/live.json
-      - name: Stamp the commit into the page
-        run: sed -i "s/__BUILD_SHA__/${GITHUB_SHA}/g; s/__BUILD_SHORT__/${GITHUB_SHA::7}/g; s/__BUILD_AT__/$(git log -1 --format=%cI)/g" site/index.html
-      # The live site goes in site-store's main/, and Pages serves it with the branch previews. A copy
-      # of this build, and site-store's deployed/ (the site IndexNow was last told about), are kept
-      # so IndexNow can be told what changed.
-      - name: Add the branch previews (site-store branch)
-        run: |
-          mkdir -p "$RUNNER_TEMP/before"
-          if git fetch -q --depth=1 origin site-store; then git archive FETCH_HEAD deployed | tar -x -C "$RUNNER_TEMP/before" || true; fi
-          cp -a site "$RUNNER_TEMP/live"
-          tools/site-store.sh put main site
-          tools/site-store.sh assemble site
-      # v3: v4 leaves out dotfiles, and the site has .well-known/.
-      - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+      # Stamps the commit into the pages (__BUILD_SHA__, __BUILD_SHORT__, __BUILD_AT__) as it stores.
+      - uses: Craga89/standards/github/actions/pages-store@b8f7b51e18400dff89a9fcb8f296334c5e269e38 # v1
         with:
-          path: site
-      - id: deployment
-        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1
-      - name: Mark the branch previews live on their commits
-        run: tools/site-store.sh mark site
-        env:
-          GH_TOKEN: ${{ github.token }}
-      # Bing, Yandex, Seznam, Naver and Yep recrawl the pages that changed (tools/lib/indexnow.mjs).
-      # Pages has published by now (these steps only run when it succeeds). A failure here doesn't
-      # fail the deploy, and leaves deployed/ where it was, so the pages are sent again next time.
+          source: site
+
+  pages:
+    needs: deploy
+    uses: Craga89/standards/.github/workflows/pages-deploy.yml@b8f7b51e18400dff89a9fcb8f296334c5e269e38 # v1
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+      statuses: write # marks the branch previews it publishes live on their commits
+
+  # Bing, Yandex, Seznam, Naver and Yep recrawl the pages that changed (tools/lib/indexnow.mjs). It
+  # compares the live site just published (the root of the pages branch, previews left out) with the
+  # indexnow branch: the site as IndexNow was last told about it. That branch moves on only once
+  # IndexNow accepts, so a failed run's pages are sent again next time, and a failure here doesn't
+  # fail the deploy.
+  indexnow:
+    name: Tell search engines what changed (IndexNow)
+    needs: pages
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write # the indexnow branch
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .node-version
+      - name: The live site, before and after
+        run: |
+          mkdir -p "$RUNNER_TEMP/before" "$RUNNER_TEMP/live"
+          if git fetch -q --depth=1 origin indexnow; then
+            git archive FETCH_HEAD | tar -x -C "$RUNNER_TEMP/before"
+          # Until the indexnow branch exists: the last snapshot from site-store's deployed/.
+          elif git fetch -q --depth=1 origin site-store; then
+            git archive FETCH_HEAD deployed | tar -x -C "$RUNNER_TEMP/before" --strip-components=1 || true
+          fi
+          git fetch -q --depth=1 origin pages
+          git archive FETCH_HEAD | tar -x -C "$RUNNER_TEMP/live"
+          rm -rf "$RUNNER_TEMP/live/preview"
       - name: Tell search engines what changed (IndexNow)
         id: indexnow
         continue-on-error: true
-        run: node tools/indexnow.mjs "$RUNNER_TEMP/before/deployed" "$RUNNER_TEMP/live" https://craigthompson.dev
-      - name: Remember what IndexNow was told (site-store deployed/)
+        run: node tools/indexnow.mjs "$RUNNER_TEMP/before" "$RUNNER_TEMP/live" https://craigthompson.dev
+      - name: Remember what IndexNow was told (indexnow branch)
         if: steps.indexnow.outcome == 'success'
-        run: tools/site-store.sh put deployed "$RUNNER_TEMP/live"
+        uses: Craga89/standards/github/actions/publish-branch@b8f7b51e18400dff89a9fcb8f296334c5e269e38 # v1
+        with:
+          branch: indexnow
+          source: ${{ runner.temp }}/live
+          message: IndexNow snapshot for ${{ github.sha }}
 
   worker:
     name: Deploy the ask.sh worker
@@ -312,7 +329,7 @@ jobs:
             echo "SMOKE_AI=1" >> "$GITHUB_ENV"
           fi
       - if: env.HAS_TOKEN == 'true'
-        uses: ./.github/actions/setup-node
+        uses: Craga89/standards/github/actions/setup-node@b8f7b51e18400dff89a9fcb8f296334c5e269e38 # v1
       - name: Smoke test
         if: env.HAS_TOKEN == 'true'
-        run: sleep 5 && npm run test:smoke
+        run: sleep 5 && pnpm run test:smoke

@@ -8,7 +8,7 @@
     "tools/vendor/**",
     "worker/knowledge.json",
     "worker/agent-data.json",
-    "package-lock.json",
+    "pnpm-lock.yaml",
     "src/assets/fonts/**",
     "src/content/**",
     "src/data/**"

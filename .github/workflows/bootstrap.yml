@@ -1,4 +1,4 @@
-# Installs the dev dependencies at their latest versions, writes package-lock.json, formats the
+# Installs the dev dependencies at their latest versions, writes pnpm-lock.yaml, formats the
 # code with oxfmt and applies oxlint's safe fixes. Run by hand (the result goes to the `bootstrap`
 # branch for review), or by pushing a `bootstrap/…` branch (the result is committed back to it).
 name: Bootstrap dependencies and formatting
@@ -17,22 +17,24 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version-file: .node-version
       - name: Install the latest versions
         run: |
-          rm -f package-lock.json
-          # Exact versions in package.json; package-lock.json pins the rest.
-          npm install --save-exact --no-audit --no-fund --save-dev \
+          rm -f pnpm-lock.yaml
+          # Exact versions in package.json; pnpm-lock.yaml pins the rest. Dependencies with
+          # unreviewed install scripts are listed in pnpm-workspace.yaml (allowBuilds) to review.
+          pnpm add --save-exact --save-dev --config.strict-dep-builds=false \
             @axe-core/playwright@latest @modelcontextprotocol/sdk@1 @playwright/test@latest playwright@latest \
             @types/node@22 axe-core@latest oxfmt@latest oxlint@latest sharp@latest typescript@6 \
             astro@latest @astrojs/mdx@latest @astrojs/sitemap@latest @astrojs/check@latest @astrojs/markdown-satteri@latest satteri@latest
       - name: Format and fix
         run: |
-          npx oxfmt --version && npx oxfmt .
-          npx oxlint --fix || true
-          npx oxlint > oxlint.txt 2>&1 || true
+          pnpm exec oxfmt --version && pnpm exec oxfmt .
+          pnpm exec oxlint --fix || true
+          pnpm exec oxlint > oxlint.txt 2>&1 || true
           tail -80 oxlint.txt
           git add -f oxlint.txt
       - name: Commit

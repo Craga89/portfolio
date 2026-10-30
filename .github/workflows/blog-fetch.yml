@@ -34,7 +34,7 @@ jobs:
             node tools/blog-fetch.mjs archived.json out
           fi
       - run: mkdir -p data && mv out data/import
-      - uses: ./.github/actions/publish-branch
+      - uses: Craga89/standards/github/actions/publish-branch@b8f7b51e18400dff89a9fcb8f296334c5e269e38 # v1
         with:
           branch: blog-import
           source: data

@@ -20,21 +20,21 @@ Personal site and CV of Craig Thompson, served by GitHub Pages at <https://craig
 
 ## Development
 
-Node 22 (see `.node-version`).
+Node 22 (see `.node-version`) and pnpm (the version in `package.json`'s `packageManager`; `corepack enable` sets it up).
 
 ```sh
-npm ci
-npx playwright install chromium
-npm run dev            # Astro's dev server, with live reload
-npm run build          # src/ → site/
-npm run serve          # site/ at http://127.0.0.1:4173/
-npm run verify         # lint, format check, type check and unit tests
-npm run test:e2e       # end-to-end tests on a desktop and a phone
-npm run test:a11y      # the WCAG 2.2 AA suite
-npm run test:visual    # screenshots against the baselines
+pnpm install
+pnpm exec playwright install chromium
+pnpm run dev           # Astro's dev server, with live reload
+pnpm run build         # src/ → site/
+pnpm run serve         # site/ at http://127.0.0.1:4173/
+pnpm run verify        # lint, format check, type check and unit tests
+pnpm run test:e2e      # end-to-end tests on a desktop and a phone
+pnpm run test:a11y     # the WCAG 2.2 AA suite
+pnpm run test:visual   # screenshots against the baselines
 ```
 
-- **Lint and format:** [oxlint](https://oxc.rs/docs/guide/usage/linter) (`.oxlintrc.json`) and [oxfmt](https://oxc.rs/docs/guide/usage/formatter) (`.oxfmtrc.json`); `npm run format` rewrites files. `.editorconfig` sets the basics for editors.
+- **Lint and format:** [oxlint](https://oxc.rs/docs/guide/usage/linter) (`.oxlintrc.json`) and [oxfmt](https://oxc.rs/docs/guide/usage/formatter) (`.oxfmtrc.json`); `pnpm run format` rewrites files. `.editorconfig` sets the basics for editors.
 - **Types:** the page's scripts are TypeScript, and the rest is JavaScript type-checked from its JSDoc (`checkJs`), in three projects for the three places code runs: `tsconfig.json` (the site, strict, checked by `astro check` along with the `.astro` files), `tsconfig.worker.json` (the Workers runtime, strict; its bindings are typed in `worker/src/env.d.ts`) and `tsconfig.node.json` (the tools and tests). Type-checking needs a build first, since the worker imports the passages the build writes.
 - **Unit tests** (`tests/unit/`, mirroring the source tree) run on Node's own test runner with coverage, and fail under 95% of lines, 80% of branches or 90% of functions in `worker/src/`, `shared/` and `tools/lib/`. Code that needs a browser (the page's scripts, `src/i18n.js` beyond its pure functions) is covered by the end-to-end tests instead.
 - **Playwright** (`playwright.config.mjs`) serves `site/` itself. Its projects: `desktop` and `mobile` (a Pixel 7) for behaviour, where a test tagged `@desktop` or `@mobile` runs on that one only; `a11y-desktop` and `a11y-mobile`; and `visual`. Shared fixtures (`tests/fixtures.mjs`) keep every test off the network (ask.sh's answers come from stand-ins the test sets), fail a test on any page error, and offer a stand-in for the browser's Translator API. Set `BASE_URL` to test a deployed site instead.
@@ -45,11 +45,11 @@ npm run test:visual    # screenshots against the baselines
 
 - **lint** (oxlint, oxfmt) and **build** (`build.yml`, a reusable workflow that uploads `site/` and the worker's data as the `build` artifact), side by side;
 - on that build: **types and unit tests**, **end-to-end** tests on each project, the **WCAG suite** in four shards (merged into one report), and the **screenshot** comparison;
-- on `main`, once lint, unit, end-to-end and WCAG pass: **deploy** to GitHub Pages, with `live.json` and the commit stamped in, and **deploy the worker**, then its smoke tests (`tests/smoke/`). Those ask real questions only when the worker's code changed, to save the day's AI allowance.
+- on `main`, once lint, unit, end-to-end and WCAG pass: **deploy** to GitHub Pages (the live site, with `live.json` and the commit stamped in, is stored on the `pages` branch, then Craga89/standards' `pages-deploy.yml` publishes it), and **deploy the worker**, then its smoke tests (`tests/smoke/`). Those ask real questions only when the worker's code changed, to save the day's AI allowance.
 
-**Branch previews.** Every push to another branch is built under `/preview/<branch>/` (lower case, with anything other than letters and digits as `-`) and published there within a few minutes, without waiting for the tests: `.github/workflows/preview.yml` builds it and `pages.yml` publishes it, and the commit's `preview` status links to it: pending while it builds, then green with the address once it's live (red if either step fails; every publish marks all the previews it carries, so none is left pending). Deleting the branch removes its preview. Previews are `noindex`, don't count visits and don't register the service worker. Pages serves one site, so the live site and the previews are kept together in the `site-store` branch (`tools/site-store.sh`: `main/` and `preview/<branch>/`, one commit that each change replaces), and every deploy, of main or of a preview, publishes all of it. The base path comes from `PREVIEW_BASE` (`astro.config.mjs`); links in components go through `url()` (`src/lib/url.ts`) and links in Markdown through the `baseLinks` plugin (`integrations/markdown.mjs`). Try one locally with `PREVIEW_BASE=/preview/test/ npm run build`, then `node tools/lib/serve.mjs site 4173 /preview/test/`.
+**Branch previews.** Every push to another branch is built under `/preview/<branch>-<hash>/` (the branch name lowercased with anything other than letters and digits as `-`, then six characters of a hash of the exact name, so branches that read alike never share a folder) and published there within a few minutes, without waiting for the tests. The flow comes from [Craga89/standards](https://github.com/Craga89/standards) (`guidelines/previews.md`): `.github/workflows/preview.yml` builds and stores it, `preview-deploy.yml` publishes it, and the commit's **Preview** status links to it: pending while it builds, then green with the address once it's live (red if either step fails; every publish marks all the previews it carries, so none is left pending). The pull request gets one comment with the link (from `preview.yml`, or `preview-comment.yml` when the pull request is opened after the push), never repeated. Deleting the branch removes its preview, and previews of branches that are gone are pruned on every update; <https://craigthompson.dev/preview/> lists them. Previews are `noindex`, don't count visits and don't register the service worker. Pages serves one site, so the live site and the previews are kept together on the `pages` branch (the live site at the root, previews under `preview/`, one commit that each change replaces; neither ever overwrites the other), and every deploy, of main or of a preview, publishes all of it. The base path comes from `PREVIEW_BASE` (`astro.config.mjs`); links in components go through `url()` (`src/lib/url.ts`) and links in Markdown through the `baseLinks` plugin (`integrations/markdown.mjs`). Try one locally with `PREVIEW_BASE=/preview/test/ pnpm run build`, then `node tools/lib/serve.mjs site 4173 /preview/test/`.
 
-It also runs daily, so `live.json` picks up the latest results. Report branches (`accessibility`, `lighthouse`, `evals`, `oss`, `visual-baselines`, `redirect-data`, `blog-import`; they get no preview) are written by `.github/actions/publish-branch`. Node and Chromium are set up by `.github/actions/setup-node` and `.github/actions/setup-playwright` (cached). Actions are pinned to commit SHAs, and Dependabot (`.github/dependabot.yml`) proposes updates weekly. `.github/workflows/bootstrap.yml` (run by hand) refreshes `package-lock.json` and applies the formatter.
+It also runs daily, so `live.json` picks up the latest results. Report branches (`accessibility`, `lighthouse`, `evals`, `indexnow`, `oss`, `visual-baselines`, `redirect-data`, `blog-import`; they get no preview) are written by Craga89/standards' `publish-branch` and `report-meta`. pnpm, Node and Chromium are set up by its `setup-node` and `setup-playwright` (cached). Actions, Craga89/standards included, are pinned to commit SHAs, and Dependabot (`.github/dependabot.yml`) proposes updates weekly. `.github/workflows/bootstrap.yml` (run by hand) refreshes `pnpm-lock.yaml` and applies the formatter.
 
 ## Performance
 
@@ -165,7 +165,7 @@ The open-source section has a heatmap of merged pull requests to other projects 
 
 ## Accessibility (WCAG 2.2 AA)
 
-`npm run test:a11y` (`tests/a11y/`) checks the built site against WCAG 2.2 AA:
+`pnpm run test:a11y` (`tests/a11y/`) checks the built site against WCAG 2.2 AA:
 
 - axe-core (through `@axe-core/playwright`) with every WCAG 2.0, 2.1 and 2.2 A/AA rule. It runs in both themes, on a desktop and a phone, on every responsibilities and case-study tab, with the FAQ open, in stack search, in ask.sh and the chat with an answer, in the command palette and shortcuts dialog, on translated pages, and on the plain CV, the 404 page and every file page in the sitemap: 392 axe runs.
 - Checks automated rule engines can't make: a keyboard-only walk through the whole page with a visible focus indicator at every stop (2.4.7), nothing focused hidden behind the sticky header or chat bar (2.4.11), reflow at 320px (1.4.10), text spacing (1.4.12), reduced motion and a pause control for the auto-playing tour (2.2.2, 2.3.3), and an off switch for single-key shortcuts (2.1.4).
@@ -180,7 +180,7 @@ The live site is open to search engines: CI builds it with `ALLOW_INDEXING=true`
 
 - **Sitemap:** one flat `sitemap.xml` lists every page except the 404 and the social-card pages (the build merges `@astrojs/sitemap`'s index and numbered files into it, `tools/lib/sitemap.mjs`; some engines count an index's child as a single page). Blog posts carry their date as `lastmod`; other pages have no reliable date of their own, so they go without.
 - **Each page** has a unique title and description, a self-referencing canonical address, `lang="en-GB"`, Open Graph and X card tags with its own social image, and structured data: `ProfilePage` and `Person` on the home page, `BlogPosting` on posts, `Article` on case studies and responsibilities. The 404 page is `noindex` and has no canonical address.
-- **IndexNow:** after each deploy, CI tells Bing, Yandex, Seznam, Naver and Yep which pages changed, so they recrawl them soon (`tools/indexnow.mjs`, `tools/lib/indexnow.mjs`). It compares the new build with `site-store`'s `deployed/`, the site as IndexNow was last told about it, which only moves on once Pages has published and IndexNow has accepted the pages, so a failed deploy or submission is sent again next time. The comparison ignores the sidebar's version link, the structured data's `dateModified` and asset file names, and nothing else. The key is in `public/<key>.txt`, which proves the site owns it.
+- **IndexNow:** after each deploy, CI tells Bing, Yandex, Seznam, Naver and Yep which pages changed, so they recrawl them soon (`tools/indexnow.mjs`, `tools/lib/indexnow.mjs`). It compares the live site just published (the root of the `pages` branch) with the `indexnow` branch, the site as IndexNow was last told about it, which only moves on once Pages has published and IndexNow has accepted the pages, so a failed deploy or submission is sent again next time. The comparison ignores the sidebar's version link, the structured data's `dateModified` and asset file names, and nothing else. The key is in `public/<key>.txt`, which proves the site owns it.
 - **Google** doesn't use IndexNow, and no longer takes sitemap pings: it finds the sitemap through `robots.txt`, or submit it in Search Console.
 
 ## Between pages
@@ -216,7 +216,7 @@ The `ask.sh` section at the bottom of the home page answers questions about the 
 Deploying the Worker:
 
 1. Create a free Cloudflare account and an API token from the **Edit Cloudflare Workers** template (it covers Workers AI).
-2. Add `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` as repository secrets. CI then deploys it from every push to `main`, with the passages from that build. You can also run `npm run build && cd worker && npx wrangler deploy`.
+2. Add `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` as repository secrets. CI then deploys it from every push to `main`, with the passages from that build. You can also run `pnpm run build && cd worker && pnpm dlx wrangler@4 deploy`.
 3. Put the Worker URL in `ask.config.json`, for example `{ "endpoint": "https://craga-ask.<subdomain>.workers.dev/ask" }`, then rebuild and push.
 
-Its unit tests (`tests/unit/worker/`, in `npm run test:unit`) run without Cloudflare: Workers AI, D1 and the rate limiters are stand-ins. `WORKER_URL=… npm run test:smoke` tests a deployed one.
+Its unit tests (`tests/unit/worker/`, in `pnpm run test:unit`) run without Cloudflare: Workers AI, D1 and the rate limiters are stand-ins. `WORKER_URL=… pnpm run test:smoke` tests a deployed one.

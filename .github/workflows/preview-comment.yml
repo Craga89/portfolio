@@ -1,0 +1,21 @@
+# When a pull request is opened, comments its preview link (once). Previews pushed while a pull
+# request is open get the comment from preview.yml instead; this covers a branch pushed before its
+# pull request existed.
+name: Preview comment
+
+on:
+  pull_request:
+    types: [opened, reopened]
+
+permissions:
+  contents: read
+
+jobs:
+  comment:
+    # The branches Preview skips get no preview to link (and Dependabot's token can't comment).
+    if: ${{ !startsWith(github.head_ref, 'dependabot/') && !startsWith(github.head_ref, 'bootstrap/') }}
+    uses: Craga89/standards/.github/workflows/preview-comment.yml@b8f7b51e18400dff89a9fcb8f296334c5e269e38 # v1
+    permissions:
+      contents: read # what the shared workflow declares; a called workflow can't get more than this grants
+      pages: read
+      pull-requests: write

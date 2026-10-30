@@ -27,21 +27,22 @@ jobs:
       BASE_URL: ${{ inputs.url || 'https://craigthompson.dev/' }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: ./.github/actions/setup-node
-      - uses: ./.github/actions/setup-playwright
+      - uses: Craga89/standards/github/actions/setup-node@b8f7b51e18400dff89a9fcb8f296334c5e269e38 # v1
+      - uses: Craga89/standards/github/actions/setup-playwright@b8f7b51e18400dff89a9fcb8f296334c5e269e38 # v1
       - name: Run the suite
         id: run
         continue-on-error: true
-        run: npx playwright test --project=a11y-desktop --project=a11y-mobile --workers=4
+        run: pnpm exec playwright test --project=a11y-desktop --project=a11y-mobile --workers=4
       - name: Save to the accessibility branch
         if: always() && hashFiles('a11y.json') != ''
         run: |
           mkdir -p out/reports && cp a11y.json out/reports/latest.json
-          git rev-parse HEAD > out/reports/commit.txt
-          echo "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" > out/reports/run.txt
-          date -u +%FT%TZ > out/reports/at.txt
       - if: always() && hashFiles('a11y.json') != ''
-        uses: ./.github/actions/publish-branch
+        uses: Craga89/standards/github/actions/report-meta@b8f7b51e18400dff89a9fcb8f296334c5e269e38 # v1
+        with:
+          dir: out/reports
+      - if: always() && hashFiles('a11y.json') != ''
+        uses: Craga89/standards/github/actions/publish-branch@b8f7b51e18400dff89a9fcb8f296334c5e269e38 # v1
         with:
           branch: accessibility
           source: out
