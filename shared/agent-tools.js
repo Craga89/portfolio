@@ -163,7 +163,7 @@ export function rank(index, q) {
 }
 
 export const NOT_FOUND =
-  "I couldn't find anything about that on the site. Email craga89@gmail.com and Craig will answer directly.";
+  "I couldn't find anything about that on the site. Email craig@craigthompson.dev and Craig will answer directly.";
 
 /**
  * The closest passage, trimmed to a few sentences: ask.sh's answer when the model isn't available.

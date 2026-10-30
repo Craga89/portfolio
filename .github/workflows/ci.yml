@@ -251,6 +251,47 @@ jobs:
       id-token: write
       statuses: write # marks the branch previews it publishes live on their commits
 
+  # Bing, Yandex, Seznam, Naver and Yep recrawl the pages that changed (tools/lib/indexnow.mjs). It
+  # compares the live site just published (the root of the pages branch, previews left out) with the
+  # indexnow branch: the site as IndexNow was last told about it. That branch moves on only once
+  # IndexNow accepts, so a failed run's pages are sent again next time, and a failure here doesn't
+  # fail the deploy.
+  indexnow:
+    name: Tell search engines what changed (IndexNow)
+    needs: pages
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write # the indexnow branch
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .node-version
+      - name: The live site, before and after
+        run: |
+          mkdir -p "$RUNNER_TEMP/before" "$RUNNER_TEMP/live"
+          if git fetch -q --depth=1 origin indexnow; then
+            git archive FETCH_HEAD | tar -x -C "$RUNNER_TEMP/before"
+          # Until the indexnow branch exists: the last snapshot from site-store's deployed/.
+          elif git fetch -q --depth=1 origin site-store; then
+            git archive FETCH_HEAD deployed | tar -x -C "$RUNNER_TEMP/before" --strip-components=1 || true
+          fi
+          git fetch -q --depth=1 origin pages
+          git archive FETCH_HEAD | tar -x -C "$RUNNER_TEMP/live"
+          rm -rf "$RUNNER_TEMP/live/preview"
+      - name: Tell search engines what changed (IndexNow)
+        id: indexnow
+        continue-on-error: true
+        run: node tools/indexnow.mjs "$RUNNER_TEMP/before" "$RUNNER_TEMP/live" https://craigthompson.dev
+      - name: Remember what IndexNow was told (indexnow branch)
+        if: steps.indexnow.outcome == 'success'
+        uses: Craga89/standards/publish-branch@0c41b52a17c2687d2fe3c3b95f838b653a4e4e1b # v1
+        with:
+          branch: indexnow
+          source: ${{ runner.temp }}/live
+          message: IndexNow snapshot for ${{ github.sha }}
+
   worker:
     name: Deploy the ask.sh worker
     needs: [lint, unit]

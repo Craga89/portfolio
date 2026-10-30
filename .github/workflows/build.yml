@@ -22,8 +22,9 @@ jobs:
       - name: Build
         run: pnpm run build
         env:
-          # The site stays out of search engines until this is true.
-          ALLOW_INDEXING: 'false'
+          # Search engines may index the live site (robots.txt and the robots meta tag). Branch previews
+          # stay out either way (preview.yml).
+          ALLOW_INDEXING: 'true'
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: build

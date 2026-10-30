@@ -14,7 +14,7 @@ export const ANSWER = {
   status: 200,
   json: {
     answer:
-      'Yes. He led engineering from start-up through to acquisition and represented engineering through due diligence. See acquisition.md, or email craga89@gmail.com.',
+      'Yes. He led engineering from start-up through to acquisition and represented engineering through due diligence. See acquisition.md, or email craig@craigthompson.dev.',
     sources: ['resp-acq', 'faq-13'],
     model: 'a11y-fixture',
   },

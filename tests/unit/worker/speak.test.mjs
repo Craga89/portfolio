@@ -22,7 +22,7 @@ describe('/speak', () => {
       }),
     });
     const r = await worker.fetch(
-      request({ text: 'He has. See budget.md and faq.md, or email craga89@gmail.com.' }, { path: '/speak' }),
+      request({ text: 'He has. See budget.md and faq.md, or email craig@craigthompson.dev.' }, { path: '/speak' }),
       e,
     );
     assert.equal(r.status, 200);
@@ -31,7 +31,7 @@ describe('/speak', () => {
     assert.equal(r.headers.get('access-control-allow-origin'), ORIGIN);
     assert.equal((await r.arrayBuffer()).byteLength, 4000);
     assert.equal(seen[0][0], '@cf/deepgram/aura-2-en');
-    assert.equal(seen[1][1].text, 'He has. See the budget file and the FAQ, or email craga89 at gmail dot com.');
+    assert.equal(seen[1][1].text, 'He has. See the budget file and the FAQ, or email craig at craigthompson dot dev.');
     assert.equal(seen[1][1].speaker, 'helios');
   });
 

@@ -72,7 +72,7 @@ export function homePassages() {
     add(
       'profile',
       'Profile',
-      txt(id) + '. Contact: craga89@gmail.com, github.com/Craga89, linkedin.com/in/craigmichaelthompson.',
+      txt(id) + '. Contact: craig@craigthompson.dev, github.com/Craga89, linkedin.com/in/craigmichaelthompson.',
       '#top',
     );
   qa('#career article.job').forEach((a, i) => {
