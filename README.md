@@ -178,6 +178,11 @@ Automated checks can't cover all of WCAG; screen reader passes (VoiceOver, NVDA)
 
 The live site is open to search engines: CI builds it with `ALLOW_INDEXING=true` (`.github/workflows/build.yml`), so `robots.txt` allows crawling and points to the sitemap. Branch previews stay out of results through their `<meta name="robots" content="noindex">` tag; `robots.txt` doesn't block `/preview/`, because a crawler can only read that tag on a page it's allowed to fetch. Building without `ALLOW_INDEXING=true` (locally, or set it to `false` in `build.yml`) keeps the whole site out: `robots.txt` disallows everything and every page carries the noindex tag.
 
+- **Sitemap:** `sitemap-index.xml` lists every page except the 404 and the social-card pages. Blog posts carry their date as `lastmod`; other pages have no reliable date of their own, so they go without.
+- **Each page** has a unique title and description, a self-referencing canonical address, `lang="en-GB"`, Open Graph and X card tags with its own social image, and structured data: `ProfilePage` and `Person` on the home page, `BlogPosting` on posts, `Article` on case studies and responsibilities. The 404 page is `noindex` and has no canonical address.
+- **IndexNow:** after each deploy, CI tells Bing, Yandex, Seznam, Naver and Yep which pages changed, so they recrawl them soon (`tools/indexnow.mjs`, `tools/lib/indexnow.mjs`). It compares the new build with `site-store`'s `deployed/`, the site as IndexNow was last told about it, which only moves on once Pages has published and IndexNow has accepted the pages, so a failed deploy or submission is sent again next time. The comparison ignores the sidebar's version link, the structured data's `dateModified` and asset file names, and nothing else. The key is in `public/<key>.txt`, which proves the site owns it.
+- **Google** doesn't use IndexNow, and no longer takes sitemap pings: it finds the sitemap through `robots.txt`, or submit it in Search Console.
+
 ## Between pages
 
 - **Transitions:** moving between pages cross-fades (cross-document view transitions, `@view-transition { navigation: auto }`), and a post's title moves from the list into place on its page. It's off with reduced motion, and when animations are paused on the site (`pagereveal` skips it). Browsers without it just load the page.

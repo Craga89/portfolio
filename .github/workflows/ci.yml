@@ -244,9 +244,14 @@ jobs:
           node tools/live.mjs site/live.json
       - name: Stamp the commit into the page
         run: sed -i "s/__BUILD_SHA__/${GITHUB_SHA}/g; s/__BUILD_SHORT__/${GITHUB_SHA::7}/g; s/__BUILD_AT__/$(git log -1 --format=%cI)/g" site/index.html
-      # The live site goes in site-store's main/, and Pages serves it with the branch previews.
+      # The live site goes in site-store's main/, and Pages serves it with the branch previews. A copy
+      # of this build, and site-store's deployed/ (the site IndexNow was last told about), are kept
+      # so IndexNow can be told what changed.
       - name: Add the branch previews (site-store branch)
         run: |
+          mkdir -p "$RUNNER_TEMP/before"
+          if git fetch -q --depth=1 origin site-store; then git archive FETCH_HEAD deployed | tar -x -C "$RUNNER_TEMP/before" || true; fi
+          cp -a site "$RUNNER_TEMP/live"
           tools/site-store.sh put main site
           tools/site-store.sh assemble site
       # v3: v4 leaves out dotfiles, and the site has .well-known/.
@@ -259,6 +264,16 @@ jobs:
         run: tools/site-store.sh mark site
         env:
           GH_TOKEN: ${{ github.token }}
+      # Bing, Yandex, Seznam, Naver and Yep recrawl the pages that changed (tools/lib/indexnow.mjs).
+      # Pages has published by now (these steps only run when it succeeds). A failure here doesn't
+      # fail the deploy, and leaves deployed/ where it was, so the pages are sent again next time.
+      - name: Tell search engines what changed (IndexNow)
+        id: indexnow
+        continue-on-error: true
+        run: node tools/indexnow.mjs "$RUNNER_TEMP/before/deployed" "$RUNNER_TEMP/live" https://craigthompson.dev
+      - name: Remember what IndexNow was told (site-store deployed/)
+        if: steps.indexnow.outcome == 'success'
+        run: tools/site-store.sh put deployed "$RUNNER_TEMP/live"
 
   worker:
     name: Deploy the ask.sh worker

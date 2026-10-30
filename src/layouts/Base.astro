@@ -26,6 +26,8 @@ interface Props {
   chrome?: keyof typeof CHROME;
   /** Preload the mono font too (pages that open with it above the fold). */
   mono?: boolean;
+  /** Keep the page out of search results, with no canonical address (the 404 page). */
+  noindex?: boolean;
 }
 
 const {
@@ -38,6 +40,7 @@ const {
   ld,
   chrome = 'home',
   mono = false,
+  noindex = false,
 } = Astro.props;
 const canonical = SITE + '/' + path;
 const imageUrl = new URL(image, SITE).href;
@@ -63,7 +66,8 @@ const prerender = {
     <title>{title}</title>
     <meta name="description" content={description} />
     {(!INDEXING || PREVIEW) && <meta name="robots" content="noindex, nofollow, noarchive" />}
-    <link rel="canonical" href={canonical} />
+    {INDEXING && !PREVIEW && noindex && <meta name="robots" content="noindex" />}
+    {!noindex && <link rel="canonical" href={canonical} />}
     <meta name="color-scheme" content="dark light" />
     <meta name="theme-color" content={dark} media="(prefers-color-scheme: dark)" data-dark={dark} data-light={light} />
     <meta name="theme-color" content={light} media="(prefers-color-scheme: light)" data-dark={dark} data-light={light} />

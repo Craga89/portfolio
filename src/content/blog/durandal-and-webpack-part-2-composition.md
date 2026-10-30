@@ -1,6 +1,7 @@
 ---
 title: "Durandal and Webpack: Part 2 - Composition"
 date: 2015-07-26
+summary: "Part 2 of Durandal and Webpack: extending Durandal's composition (system.acquire, viewLocator) to take modules directly, not paths Webpack can't follow."
 tags: []
 original: https://blog.craigsworks.com/durandal-and-webpack-part-2-composition/
 archived: https://web.archive.org/web/20180628012739/http://blog.craigsworks.com/durandal-and-webpack-part-2-composition/

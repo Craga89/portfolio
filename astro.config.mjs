@@ -3,6 +3,8 @@ import { defineConfig } from 'astro/config';
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import { createHash } from 'node:crypto';
+import { readFileSync, readdirSync } from 'node:fs';
+import { join } from 'node:path';
 import { satteri } from '@astrojs/markdown-satteri';
 import { postBuild } from './integrations/post-build.mjs';
 import { baseLinks, codeBlocks } from './integrations/markdown.mjs';
@@ -12,6 +14,16 @@ import { INLINE_SCRIPTS, NAV_CSS } from './src/scripts/inline.mjs';
 const sha256 = (s) => `sha256-${createHash('sha256').update(s).digest('base64')}`;
 
 const base = process.env.PREVIEW_BASE || '/';
+
+/** Each blog post's address and date (its front matter's `date`), for the sitemap. */
+const POST_DATES = new Map(
+  readdirSync('src/content/blog')
+    .filter((f) => /\.mdx?$/.test(f))
+    .flatMap((f) => {
+      const date = /^date:\s*['"]?(\d{4}-\d{2}-\d{2})/m.exec(readFileSync(join('src/content/blog', f), 'utf8'))?.[1];
+      return date ? [[`https://craigthompson.dev/blog/${f.replace(/\.mdx?$/, '')}/`, date]] : [];
+    }),
+);
 
 export default defineConfig({
   site: 'https://craigthompson.dev',
@@ -44,7 +56,15 @@ export default defineConfig({
   compressHTML: true,
   integrations: [
     mdx(),
-    sitemap({ filter: (page) => !page.endsWith('/404/') && !page.includes('/og-card/') }),
+    sitemap({
+      filter: (page) => !page.endsWith('/404/') && !page.includes('/og-card/'),
+      // Blog posts carry their date as lastmod, which Bing in particular uses to decide what to
+      // recrawl. Other pages have no reliable date of their own, so they go without one.
+      serialize: (item) => {
+        const date = POST_DATES.get(item.url);
+        return date ? { ...item, lastmod: date } : item;
+      },
+    }),
     postBuild(),
   ],
   vite: {

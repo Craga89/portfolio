@@ -1,6 +1,7 @@
 ---
 title: "Durandal and Webpack: Part 1 - Module format"
 date: 2015-07-26
+summary: "Part 1 of Durandal and Webpack: moving Durandal's AMD modules to CommonJS, so Webpack can bundle them without the asynchronous closures they no longer need."
 tags: [Knockout.js, Durandal, jQuery, Webpack, Guide, Require.js]
 original: https://blog.craigsworks.com/durandal-and-webpack-part-1-module-format/
 archived: https://web.archive.org/web/20180628012752/http://blog.craigsworks.com/durandal-and-webpack-part-1-module-format/
