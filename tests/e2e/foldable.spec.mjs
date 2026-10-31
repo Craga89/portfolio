@@ -119,3 +119,17 @@ test('the fold is remembered, and a page loaded half-open is split from the star
   await expect(page.locator('html')).toHaveAttribute('data-fold-at', '0');
   expect(await page.evaluate(() => localStorage.getItem('fold'))).toBe('split');
 });
+
+test('the sidebar keeps its place, with no fade, from one file page to the next @desktop', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 600 });
+  await page.goto('/case-studies/accessibility/');
+  const inner = page.locator('aside.side .inner');
+  await inner.evaluate((el) => (el.scrollTop = 200));
+  const y = await inner.evaluate((el) => el.scrollTop);
+  expect(y).toBeGreaterThan(0);
+  expect(await page.locator('aside.side').evaluate((el) => getComputedStyle(el).viewTransitionName)).toBe('side');
+
+  await page.getByRole('complementary', { name: 'Site' }).getByRole('link', { name: 'i18n.md' }).click();
+  await page.waitForURL(/i18n/);
+  await expect.poll(() => inner.evaluate((el) => el.scrollTop)).toBe(y);
+});

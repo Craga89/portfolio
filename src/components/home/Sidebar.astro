@@ -87,6 +87,8 @@ const built = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 's
   .side {
     grid-column: 2;
     grid-row: 1;
+    /* Stays put between pages, rather than fading with the page (Base.astro's view transitions). */
+    view-transition-name: side;
     border-inline-start: 1px solid var(--line2);
     background: var(--panel);
   }

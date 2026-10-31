@@ -43,12 +43,18 @@ const live = previews.replace(/[^/]+\/$/, '');
       // show the ordinary layout for a moment before the fold's.
       const at = document.documentElement.dataset.foldAt;
       if (at) parts.push(`split ${at === '0' ? 'from the start' : `after ${at} ms`}`);
+      const waited = document.documentElement.dataset.foldWaited;
+      if (waited) parts.push(`waited ${waited} ms for it`);
+      const vt = document.documentElement.dataset.vt;
+      if (vt) parts.push(vt === 'yes' ? 'view transition' : 'no view transition');
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) parts.push('reduced motion (no transitions)');
       const nav = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming & { activationStart?: number };
       if (nav?.activationStart) parts.push(`prerendered, shown after ${Math.round(nav.activationStart)} ms`);
       out.textContent = `Foldable: ${parts.join(' · ')}`;
       out.hidden = false;
     };
     show();
+    addEventListener('load', show);
     addEventListener('resize', show);
     matchMedia('(horizontal-viewport-segments: 2), (vertical-viewport-segments: 2)').addEventListener('change', show);
     posture?.addEventListener('change', show);
