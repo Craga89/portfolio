@@ -235,9 +235,8 @@ const avatarNight = await getImage({ src: portraitNight, width: 56, height: 56, 
       font-size: 16px;
     }
   }
-  /* Foldables, half-open (see index.astro): ask.sh is docked to one side of the fold, opened by
-     scripts/ask.ts, instead of floating over the page. Book posture: across the foot of the second
-     page, under the sidebar. */
+  /* Foldables, half-open (see index.astro): ask.sh is docked to one side of the fold instead of
+     floating over the page. Book posture: across the foot of the second page, under the sidebar. */
   @media (horizontal-viewport-segments: 2) {
     .chat,
     .chat[data-open='true'] {
@@ -259,7 +258,8 @@ const avatarNight = await getImage({ src: portraitNight, width: 56, height: 56, 
       height: min(460px, 50vh);
     }
   }
-  /* Tabletop: the whole lower half, like a laptop's keyboard, with the page above. */
+  /* Tabletop: the bar across the foot of the screen, and once opened the whole lower half, like a
+     laptop's keyboard, with the page above. */
   @media (vertical-viewport-segments: 2) {
     .chat,
     .chat[data-open='true'] {

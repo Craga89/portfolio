@@ -431,38 +431,19 @@ if (chat) {
   const bar = $<HTMLButtonElement>('[data-chat-toggle]', chat)!;
   const panel = $('#c-chat-panel', chat)!;
   const field = $<HTMLInputElement>('#c-chat-field', chat)!;
-  const setOpen = (open: boolean, focus = true) => {
+  const setOpen = (open: boolean) => {
     chat.dataset.open = String(open);
     bar.setAttribute('aria-expanded', String(open));
     bar.title = open ? 'Minimise' : 'Ask about my experience';
     panel.hidden = !open;
     if (open) {
-      chat.dataset.hide = 'false';
       render();
-      if (focus && matchMedia('(pointer: fine)').matches) field.focus();
+      if (matchMedia('(pointer: fine)').matches) field.focus();
     }
   };
-  // A foldable half-open: see fold() below.
+  bar.addEventListener('click', () => setOpen(chat.dataset.open !== 'true'));
+  // A foldable half-open, where ask.sh docks to one side of the fold (Chat.astro).
   const split = matchMedia('(horizontal-viewport-segments: 2), (vertical-viewport-segments: 2)');
-  let opened = false;
-  bar.addEventListener('click', () => {
-    opened = false;
-    setOpen(chat.dataset.open !== 'true');
-  });
-  // A foldable half-open (Chat.astro): ask.sh is docked to one side of the fold, so it opens by
-  // itself, without taking focus, and closes again when the device is folded or opened flat, unless
-  // it was opened or closed by hand in the meantime.
-  const fold = () => {
-    if (split.matches && chat.dataset.open !== 'true') {
-      setOpen(true, false);
-      opened = true;
-    } else if (!split.matches && opened) {
-      setOpen(false);
-      opened = false;
-    }
-  };
-  split.addEventListener('change', fold);
-  fold();
   field.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
       setOpen(false);
@@ -471,10 +452,9 @@ if (chat) {
   });
   // Out of the way while the ask.sh section itself is on screen.
   addEventListener('craga:section', (e) => {
-    if (chat.dataset.open !== 'true' && !split.matches)
-      chat.dataset.hide = String((e as CustomEvent<string>).detail === 'ask');
+    if (chat.dataset.open !== 'true') chat.dataset.hide = String((e as CustomEvent<string>).detail === 'ask');
   });
-  // On a small screen, following a link in an answer closes the chat.
+  // On a small screen, following a link in an answer closes the chat, unless it's docked beside the page.
   chat.addEventListener('click', (e) => {
     if ((e.target as Element).closest('a') && innerWidth <= 900 && !split.matches) setTimeout(() => setOpen(false), 0);
   });

@@ -4,7 +4,7 @@ import type { GetStaticPaths } from 'astro';
 import FilePage from '../../layouts/FilePage.astro';
 import ResponsibilityCard from '../../components/files/ResponsibilityCard.astro';
 import Crumb from '../../components/page/Crumb.astro';
-import FileFooter from '../../components/page/FileFooter.astro';
+import FileNav from '../../components/page/FileNav.astro';
 import { responsibilities, slugOf } from '../../lib/files';
 import { articleLd, describe } from '../../lib/seo';
 
@@ -35,5 +35,5 @@ const files = all.map((e) => ({ file: e.data.file, href: `/responsibilities/${sl
   <Crumb folder="responsibilities/" file={file} home={home} />
   <h1 class="c-sr">{title}</h1>
   <ResponsibilityCard entry={entry} index={current} total={all.length} level={2} standalone />
-  <FileFooter folder="responsibilities/" files={files} current={current} home={home} />
+    <FileNav slot="end" folder="responsibilities/" files={files} current={current} home={home} />
 </FilePage>

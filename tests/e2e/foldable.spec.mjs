@@ -40,24 +40,27 @@ test('book posture: the page on one side of the fold, the sidebar and ask.sh on 
   const side = await box(page.locator('aside.side'));
   expect(side.x).toBeGreaterThanOrEqual(crease);
 
-  // ask.sh opens by itself, docked under the sidebar, and doesn't take focus.
+  // ask.sh stays closed until it's opened, then docks under the sidebar.
   const chat = page.locator('[data-chat]');
+  await expect(chat).toHaveAttribute('data-open', 'false');
+  await page.locator('[data-chat-toggle]').click();
   await expect(chat).toHaveAttribute('data-open', 'true');
   const c = await box(chat);
   expect(c.x).toBeGreaterThanOrEqual(crease);
   expect(c.x + c.width).toBeLessThanOrEqual(W);
-  await expect(page.locator('#c-chat-field')).not.toBeFocused();
 
   // The sections lay out for the width of their page, so nothing scrolls sideways.
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(W);
 });
 
-test('tabletop: ask.sh takes the lower half, and the page can be read to its end above it @desktop', async ({
+test('tabletop: ask.sh, once opened, takes the lower half, and the page can be read to its end above it @desktop', async ({
   page,
 }) => {
   await page.goto('/');
   const crease = await fold(page, 'horizontal');
   const chat = page.locator('[data-chat]');
+  await expect(chat).toHaveAttribute('data-open', 'false');
+  await page.locator('[data-chat-toggle]').click();
   await expect(chat).toHaveAttribute('data-open', 'true');
   const c = await box(chat);
   expect(c.y).toBeGreaterThanOrEqual(crease - 1);
@@ -73,10 +76,18 @@ test('tabletop: ask.sh takes the lower half, and the page can be read to its end
     .toBeLessThanOrEqual(crease);
 });
 
-test('other pages: the page on one side of the fold and the header on the other @desktop', async ({ page }) => {
+test('file pages: the page on one side of the fold; the header and the links to other files on the other @desktop', async ({
+  page,
+}) => {
   await page.goto('/case-studies/accessibility/');
   const crease = await fold(page, 'vertical');
   await expect.poll(async () => (await box(page.locator('header.top'))).x).toBeGreaterThanOrEqual(crease);
   const main = await box(page.locator('main'));
   expect(main.x + main.width).toBeLessThanOrEqual(crease);
+
+  // The previous and next links stay in view beside the page as it scrolls.
+  const nav = page.getByRole('navigation', { name: 'More case-studies/' });
+  await page.evaluate(() => scrollTo({ top: document.documentElement.scrollHeight / 2, behavior: 'instant' }));
+  await expect(nav).toBeInViewport();
+  expect((await box(nav)).x).toBeGreaterThanOrEqual(crease);
 });
