@@ -1,0 +1,757 @@
+{
+  "mobile": {
+    "runs": 3,
+    "scores": {
+      "performance": 96,
+      "accessibility": 100,
+      "best-practices": 93,
+      "seo": 100
+    },
+    "metrics": {
+      "first-contentful-paint": 1908,
+      "largest-contentful-paint": 2395,
+      "total-blocking-time": 0,
+      "cumulative-layout-shift": 0,
+      "speed-index": 1918,
+      "interactive": 2395
+    },
+    "totalBytes": 218116,
+    "lcpElement": "[{\"type\":\"table\",\"headings\":[{\"key\":\"node\",\"valueType\":\"node\",\"label\":\"Element\"}],\"items\":[{\"node\":{\"type\":\"node\",\"lhId\":\"page-0-P\",\"path\":\"1,HTML,1,BODY,1,DIV,1,MAIN,0,SECTION,0,DIV,3,DIV,2,DIV,1,P\",\"selector\":\"div.term > div.body > div#about > p\",\"boundingRect\":{\"top\":482,\"bottom\":727,\"left\":41,\"right\":371,\"width\":330,\"height\":245},\"snippet\":\"<p>\",\"nodeLabel\":\"I’m a hands-on, full-stack engineer",
+    "failing": [
+      {
+        "category": "performance",
+        "id": "first-contentful-paint",
+        "title": "First Contentful Paint",
+        "score": 0.87,
+        "display": "1.9 s",
+        "items": []
+      },
+      {
+        "category": "performance",
+        "id": "cache-insight",
+        "title": "Use efficient cache lifetimes",
+        "score": 0,
+        "display": "Est savings of 109 KiB",
+        "items": [
+          {
+            "url": "https://craigthompson.dev/assets/big-shoulders-display-latin-600.EACME5TP.woff2",
+            "wastedBytes": 24622.8,
+            "totalBytes": 36210
+          },
+          {
+            "url": "https://craigthompson.dev/assets/public-sans-latin-400.DdeTHZLK.woff2",
+            "wastedBytes": 18757.8,
+            "totalBytes": 27585
+          },
+          {
+            "url": "https://craigthompson.dev/assets/red-hat-mono-latin-400.Dwfc5A3M.woff2",
+            "wastedBytes": 15749.479999999998,
+            "totalBytes": 23161
+          },
+          {
+            "url": "https://craigthompson.dev/assets/index.astro_astro_type_script_index_0_lang.Bb5KPvHT.js",
+            "wastedBytes": 11805.48,
+            "totalBytes": 17361
+          },
+          {
+            "url": "https://craigthompson.dev/assets/index.DThpyamL.css",
+            "wastedBytes": 8691.759999999998,
+            "totalBytes": 12782
+          }
+        ]
+      },
+      {
+        "category": "performance",
+        "id": "network-dependency-tree-insight",
+        "title": "Network dependency tree",
+        "score": 0,
+        "display": "",
+        "items": [
+          {
+            "value": {
+              "type": "network-tree",
+              "chains": {
+                "39ED496429FB3FA203AC974559172163": {
+                  "url": "https://craigthompson.dev/",
+                  "navStartToEndTime": 147,
+                  "transferSize": 48240,
+                  "isLongest": true,
+                  "children": {
+                    "3076.26": {
+                      "url": "https://craigthompson.dev/assets/index.astro_astro_type_script_index_0_lang.Bb5KPvHT.js",
+                      "navStartToEndTime": 301,
+                      "transferSize": 17361,
+                      "isLongest": true,
+                      "children": {
+                        "3076.29": {
+                          "url": "https://craigthompson.dev/assets/site.Cx5tZ9QU.js",
+                          "navStartToEndTime": 341,
+                          "transferSize": 2049,
+                          "isLongest": true,
+                          "children": {
+                            "3076.31": {
+                              "url": "https://craigthompson.dev/cdn-cgi/rum?",
+                              "navStartToEndTime": 406,
+                              "transferSize": 459,
+                              "isLongest": true,
+                              "children": {}
+                            }
+                          }
+                        },
+                        "3076.30": {
+                          "url": "https://craigthompson.dev/assets/navigate.Suq7XmLc.js",
+                          "navStartToEndTime": 322,
+                          "transferSize": 977,
+                          "children": {}
+                        }
+                      }
+                    },
+                    "3076.27": {
+                      "url": "https://craigthompson.dev/assets/Base.astro_astro_type_script_index_0_lang.ok1OaVCs.js",
+                      "navStartToEndTime": 313,
+                      "transferSize": 6197,
+                      "children": {}
+                    },
+                    "3076.28": {
+                      "url": "https://static.cloudflareinsights.com/beacon.min.js/vce701823e78c4301a35b7e07294d87301792088814092",
+                      "navStartToEndTime": 308,
+                      "transferSize": 10478,
+                      "children": {}
+                    },
+                    "3076.9": {
+                      "url": "https://craigthompson.dev/assets/ResponsibilityCard.BsFI2vpU.css",
+                      "navStartToEndTime": 188,
+                      "transferSize": 1604,
+                      "children": {}
+                    },
+                    "3076.6": {
+                      "url": "https://craigthompson.dev/assets/Toggletip.Dj8vCSgx.css",
+                      "navStartToEndTime": 180,
+                      "transferSize": 4314,
+                      "children": {}
+                    },
+                    "3076.5": {
+                      "url": "https://craigthompson.dev/assets/fonts.BIMLu4lF.css",
+                      "navStartToEndTime": 176,
+                      "transferSize": 1444,
+                      "children": {}
+                    },
+                    "3076.8": {
+                      "url": "https://craigthompson.dev/assets/translate.DGGanBDF.css",
+                      "navStartToEndTime": 176,
+                      "transferSize": 2175,
+                      "children": {}
+                    },
+                    "3076.10": {
+                      "url": "https://craigthompson.dev/assets/CaseStudyCard.BBUQeutq.css",
+                      "navStartToEndTime": 175,
+                      "transferSize": 6686,
+                      "children": {}
+                    },
+                    "3076.7": {
+                      "url": "https://craigthompson.dev/assets/index.DThpyamL.css",
+                      "navStartToEndTime": 174,
+                      "transferSize": 12782,
+                      "children": {}
+                    },
+                    "3076.15": {
+                      "url": "https://craigthompson.dev/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js",
+                      "navStartToEndTime": 164,
+                      "transferSize": 1050,
+                      "children": {}
+                    }
+                  }
+                }
+              },
+              "longestChain": {
+                "duration": 406
+              }
+            }
+          },
+          {
+            "description": "[preconnect](https://developer.chrome.com/docs/lighthouse/performance/uses-rel-preconnect/) hints help the browser establish a connection earlier in the page load, saving time when the first request for that origin is made. The following are the origins that the page preconnected to.",
+            "value": {
+              "type": "text",
+              "value": "no origins were preconnected"
+            }
+          },
+          {
+            "description": "Add [preconnect](https://developer.chrome.com/docs/lighthouse/performance/uses-rel-preconnect/) hints to your most important origins, but try to use no more than 4.",
+            "value": {
+              "type": "text",
+              "value": "No additional origins are good candidates for preconnecting"
+            }
+          }
+        ]
+      },
+      {
+        "category": "performance",
+        "id": "render-blocking-insight",
+        "title": "Render blocking requests",
+        "score": 0,
+        "display": "Est savings of 630 ms",
+        "items": [
+          {
+            "url": "https://craigthompson.dev/assets/ResponsibilityCard.BsFI2vpU.css",
+            "wastedMs": 505,
+            "totalBytes": 1604
+          },
+          {
+            "url": "https://craigthompson.dev/assets/Toggletip.Dj8vCSgx.css",
+            "wastedMs": 505,
+            "totalBytes": 4314
+          },
+          {
+            "url": "https://craigthompson.dev/assets/fonts.BIMLu4lF.css",
+            "wastedMs": 188,
+            "totalBytes": 1444
+          },
+          {
+            "url": "https://craigthompson.dev/assets/translate.DGGanBDF.css",
+            "wastedMs": 505,
+            "totalBytes": 2175
+          },
+          {
+            "url": "https://craigthompson.dev/assets/CaseStudyCard.BBUQeutq.css",
+            "wastedMs": 663,
+            "totalBytes": 6686
+          }
+        ]
+      },
+      {
+        "category": "performance",
+        "id": "render-blocking-resources",
+        "title": "Eliminate render-blocking resources",
+        "score": 0,
+        "display": "Est savings of 620 ms",
+        "items": [
+          {
+            "url": "https://craigthompson.dev/assets/ResponsibilityCard.BsFI2vpU.css",
+            "wastedMs": 488,
+            "totalBytes": 1604
+          },
+          {
+            "url": "https://craigthompson.dev/assets/Toggletip.Dj8vCSgx.css",
+            "wastedMs": 488,
+            "totalBytes": 4314
+          },
+          {
+            "url": "https://craigthompson.dev/assets/fonts.BIMLu4lF.css",
+            "wastedMs": 171,
+            "totalBytes": 1444
+          },
+          {
+            "url": "https://craigthompson.dev/assets/translate.DGGanBDF.css",
+            "wastedMs": 488,
+            "totalBytes": 2175
+          },
+          {
+            "url": "https://craigthompson.dev/assets/CaseStudyCard.BBUQeutq.css",
+            "wastedMs": 646,
+            "totalBytes": 6686
+          }
+        ]
+      },
+      {
+        "category": "performance",
+        "id": "legacy-javascript",
+        "title": "Avoid serving legacy JavaScript to modern browsers",
+        "score": 0.5,
+        "display": "Est savings of 10 KiB",
+        "items": [
+          {
+            "url": "https://static.cloudflareinsights.com/beacon.min.js/vce701823e78c4301a35b7e07294d87301792088814092",
+            "wastedBytes": 10414,
+            "totalBytes": 0
+          }
+        ]
+      },
+      {
+        "category": "performance",
+        "id": "uses-long-cache-ttl",
+        "title": "Serve static assets with an efficient cache policy",
+        "score": 0.5,
+        "display": "17 resources found",
+        "items": [
+          {
+            "url": "https://craigthompson.dev/assets/big-shoulders-display-latin-600.EACME5TP.woff2",
+            "wastedBytes": 24622.8,
+            "totalBytes": 36210
+          },
+          {
+            "url": "https://craigthompson.dev/assets/public-sans-latin-400.DdeTHZLK.woff2",
+            "wastedBytes": 18757.8,
+            "totalBytes": 27585
+          },
+          {
+            "url": "https://craigthompson.dev/assets/red-hat-mono-latin-400.Dwfc5A3M.woff2",
+            "wastedBytes": 15749.479999999998,
+            "totalBytes": 23161
+          },
+          {
+            "url": "https://craigthompson.dev/assets/index.astro_astro_type_script_index_0_lang.Bb5KPvHT.js",
+            "wastedBytes": 11805.48,
+            "totalBytes": 17361
+          },
+          {
+            "url": "https://craigthompson.dev/assets/index.DThpyamL.css",
+            "wastedBytes": 8691.759999999998,
+            "totalBytes": 12782
+          }
+        ]
+      },
+      {
+        "category": "performance",
+        "id": "dom-size",
+        "title": "Avoid an excessive DOM size",
+        "score": 0.5,
+        "display": "3,109 elements",
+        "items": [
+          {
+            "value": {
+              "type": "numeric",
+              "granularity": 1,
+              "value": 3109
+            }
+          },
+          {
+            "node": "<span class=\"fill\" data-astro-cid-oahdww5h=\"\">",
+            "value": {
+              "type": "numeric",
+              "granularity": 1,
+              "value": 15
+            }
+          },
+          {
+            "node": "<div class=\"grid\" role=\"img\" aria-label=\"59 merged pull requests to other projects from 2012 to 2026, busiest in 20…\" data-astro-cid-pipslqh7=\"\">",
+            "value": {
+              "type": "numeric",
+              "granularity": 1,
+              "value": 80
+            }
+          }
+        ]
+      },
+      {
+        "category": "accessibility",
+        "id": "aria-allowed-role",
+        "title": "Uses ARIA roles on incompatible elements",
+        "score": 0,
+        "display": "",
+        "items": [
+          {
+            "node": "<article class=\"c-rs c-pop\" id=\"rp-lead\" role=\"tabpanel\" aria-label=\"leadership.md\" data-astro-cid-ooime6zq=\"\">"
+          },
+          {
+            "node": "<article class=\"c-pop case\" id=\"cp-mono\" role=\"tabpanel\" aria-label=\"monorepo.md\" data-astro-cid-w6e7c2ve=\"\">"
+          }
+        ]
+      },
+      {
+        "category": "best-practices",
+        "id": "errors-in-console",
+        "title": "Browser errors were logged to the console",
+        "score": 0,
+        "display": "",
+        "items": [
+          {
+            "source": "security",
+            "description": "Executing inline script violates the following Content Security Policy directive 'script-src 'self' https://static.cloudflareinsights.com 'sha256-Hv7M64MSCCpfPMpTNDcEzEShcFCE2UXfc+SXYo1cUY8=' 'sha256-xIb/Pa7FUshAu4ihwjchYcQpyCI8eS8kt40GpOAYCz8=' 'sha256-1BvDVWLr3QCC20uHhUDi27eDFVJpk1uMQJGIWKUks2I=' 'sha256-kmZE/W8I1iuTnl1b3yqzv9/DQZenPngd3NjSKMQl7y0=' 'sha256-Y8t0ntteBwH+PqGKUyjWW3CAk+BNJKSoQc0xZ68FjhM=' 'sha256-0O7iB6zr9x0r6X6eWYITC9V5q+yWCGAoFvcysBGbY9Q=' 'sha256-UIrFqcaitjA3OKa9mHKajg3N+0Y7tW9+y0o3QmMFeZQ=' 'sha256-At4sXbunobuxXv56+YxR7rwL4c3n8ubyPDiI7CIowSo=''. Either the 'unsafe-inline' keyword, a hash ('sha256-GPqqeh864YM2rUd4vAUhXvjzpArfRtwHE0ioih34bms='), or a nonce ('nonce-...') is required to enable inline execution. The action has been blocked."
+          }
+        ]
+      },
+      {
+        "category": "best-practices",
+        "id": "inspector-issues",
+        "title": "Issues were logged in the `Issues` panel in Chrome Devtools",
+        "score": 0,
+        "display": "",
+        "items": [
+          {}
+        ]
+      }
+    ]
+  },
+  "desktop": {
+    "runs": 3,
+    "scores": {
+      "performance": 100,
+      "accessibility": 100,
+      "best-practices": 93,
+      "seo": 100
+    },
+    "metrics": {
+      "first-contentful-paint": 620,
+      "largest-contentful-paint": 690,
+      "total-blocking-time": 0,
+      "cumulative-layout-shift": 0.006,
+      "speed-index": 620,
+      "interactive": 690
+    },
+    "totalBytes": 218129,
+    "lcpElement": "[{\"type\":\"table\",\"headings\":[{\"key\":\"node\",\"valueType\":\"node\",\"label\":\"Element\"}],\"items\":[{\"node\":{\"type\":\"node\",\"lhId\":\"page-0-P\",\"path\":\"1,HTML,1,BODY,1,DIV,1,MAIN,0,SECTION,0,DIV,3,DIV,2,DIV,1,P\",\"selector\":\"div.term > div.body > div#about > p\",\"boundingRect\":{\"top\":470,\"bottom\":579,\"left\":95,\"right\":960,\"width\":865,\"height\":109},\"snippet\":\"<p>\",\"nodeLabel\":\"I’m a hands-on, full-stack engineer",
+    "failing": [
+      {
+        "category": "performance",
+        "id": "cache-insight",
+        "title": "Use efficient cache lifetimes",
+        "score": 0,
+        "display": "Est savings of 109 KiB",
+        "items": [
+          {
+            "url": "https://craigthompson.dev/assets/big-shoulders-display-latin-600.EACME5TP.woff2",
+            "wastedBytes": 24622.8,
+            "totalBytes": 36210
+          },
+          {
+            "url": "https://craigthompson.dev/assets/public-sans-latin-400.DdeTHZLK.woff2",
+            "wastedBytes": 18756.44,
+            "totalBytes": 27583
+          },
+          {
+            "url": "https://craigthompson.dev/assets/red-hat-mono-latin-400.Dwfc5A3M.woff2",
+            "wastedBytes": 15752.199999999999,
+            "totalBytes": 23165
+          },
+          {
+            "url": "https://craigthompson.dev/assets/index.astro_astro_type_script_index_0_lang.Bb5KPvHT.js",
+            "wastedBytes": 11806.159999999998,
+            "totalBytes": 17362
+          },
+          {
+            "url": "https://craigthompson.dev/assets/index.DThpyamL.css",
+            "wastedBytes": 8689.039999999999,
+            "totalBytes": 12778
+          }
+        ]
+      },
+      {
+        "category": "performance",
+        "id": "network-dependency-tree-insight",
+        "title": "Network dependency tree",
+        "score": 0,
+        "display": "",
+        "items": [
+          {
+            "value": {
+              "type": "network-tree",
+              "chains": {
+                "A31530FD2328F30ED79F19D519FC5ECE": {
+                  "url": "https://craigthompson.dev/",
+                  "navStartToEndTime": 93,
+                  "transferSize": 48244,
+                  "isLongest": true,
+                  "children": {
+                    "3506.16": {
+                      "url": "https://craigthompson.dev/assets/index.astro_astro_type_script_index_0_lang.Bb5KPvHT.js",
+                      "navStartToEndTime": 158,
+                      "transferSize": 17362,
+                      "isLongest": true,
+                      "children": {
+                        "3506.19": {
+                          "url": "https://craigthompson.dev/assets/site.Cx5tZ9QU.js",
+                          "navStartToEndTime": 245,
+                          "transferSize": 2046,
+                          "isLongest": true,
+                          "children": {
+                            "3506.31": {
+                              "url": "https://craigthompson.dev/cdn-cgi/rum?",
+                              "navStartToEndTime": 317,
+                              "transferSize": 456,
+                              "isLongest": true,
+                              "children": {}
+                            }
+                          }
+                        },
+                        "3506.20": {
+                          "url": "https://craigthompson.dev/assets/navigate.Suq7XmLc.js",
+                          "navStartToEndTime": 246,
+                          "transferSize": 977,
+                          "children": {}
+                        }
+                      }
+                    },
+                    "3506.18": {
+                      "url": "https://static.cloudflareinsights.com/beacon.min.js/vce701823e78c4301a35b7e07294d87301792088814092",
+                      "navStartToEndTime": 246,
+                      "transferSize": 10478,
+                      "children": {}
+                    },
+                    "3506.17": {
+                      "url": "https://craigthompson.dev/assets/Base.astro_astro_type_script_index_0_lang.ok1OaVCs.js",
+                      "navStartToEndTime": 159,
+                      "transferSize": 6207,
+                      "children": {}
+                    },
+                    "3506.6": {
+                      "url": "https://craigthompson.dev/assets/Toggletip.Dj8vCSgx.css",
+                      "navStartToEndTime": 124,
+                      "transferSize": 4313,
+                      "children": {}
+                    },
+                    "3506.7": {
+                      "url": "https://craigthompson.dev/assets/index.DThpyamL.css",
+                      "navStartToEndTime": 122,
+                      "transferSize": 12778,
+                      "children": {}
+                    },
+                    "3506.8": {
+                      "url": "https://craigthompson.dev/assets/translate.DGGanBDF.css",
+                      "navStartToEndTime": 120,
+                      "transferSize": 2170,
+                      "children": {}
+                    },
+                    "3506.5": {
+                      "url": "https://craigthompson.dev/assets/fonts.BIMLu4lF.css",
+                      "navStartToEndTime": 120,
+                      "transferSize": 1437,
+                      "children": {}
+                    },
+                    "3506.9": {
+                      "url": "https://craigthompson.dev/assets/ResponsibilityCard.BsFI2vpU.css",
+                      "navStartToEndTime": 119,
+                      "transferSize": 1607,
+                      "children": {}
+                    },
+                    "3506.15": {
+                      "url": "https://craigthompson.dev/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js",
+                      "navStartToEndTime": 114,
+                      "transferSize": 1052,
+                      "children": {}
+                    },
+                    "3506.10": {
+                      "url": "https://craigthompson.dev/assets/CaseStudyCard.BBUQeutq.css",
+                      "navStartToEndTime": 114,
+                      "transferSize": 6683,
+                      "children": {}
+                    }
+                  }
+                }
+              },
+              "longestChain": {
+                "duration": 317
+              }
+            }
+          },
+          {
+            "description": "[preconnect](https://developer.chrome.com/docs/lighthouse/performance/uses-rel-preconnect/) hints help the browser establish a connection earlier in the page load, saving time when the first request for that origin is made. The following are the origins that the page preconnected to.",
+            "value": {
+              "type": "text",
+              "value": "no origins were preconnected"
+            }
+          },
+          {
+            "description": "Add [preconnect](https://developer.chrome.com/docs/lighthouse/performance/uses-rel-preconnect/) hints to your most important origins, but try to use no more than 4.",
+            "value": {
+              "type": "table",
+              "headings": [
+                {
+                  "key": "origin",
+                  "valueType": "text",
+                  "label": "Origin"
+                },
+                {
+                  "key": "wastedMs",
+                  "valueType": "ms",
+                  "label": "Est LCP savings"
+                }
+              ],
+              "items": [
+                {
+                  "origin": "https://static.cloudflareinsights.com",
+                  "wastedMs": 71.8059999999851
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "category": "performance",
+        "id": "render-blocking-insight",
+        "title": "Render blocking requests",
+        "score": 0,
+        "display": "Est savings of 50 ms",
+        "items": [
+          {
+            "url": "https://craigthompson.dev/assets/Toggletip.Dj8vCSgx.css",
+            "wastedMs": 177,
+            "totalBytes": 4313
+          },
+          {
+            "url": "https://craigthompson.dev/assets/index.DThpyamL.css",
+            "wastedMs": 226,
+            "totalBytes": 12778
+          },
+          {
+            "url": "https://craigthompson.dev/assets/fonts.BIMLu4lF.css",
+            "wastedMs": 79,
+            "totalBytes": 1437
+          },
+          {
+            "url": "https://craigthompson.dev/assets/translate.DGGanBDF.css",
+            "wastedMs": 177,
+            "totalBytes": 2170
+          },
+          {
+            "url": "https://craigthompson.dev/assets/ResponsibilityCard.BsFI2vpU.css",
+            "wastedMs": 177,
+            "totalBytes": 1607
+          }
+        ]
+      },
+      {
+        "category": "performance",
+        "id": "render-blocking-resources",
+        "title": "Eliminate render-blocking resources",
+        "score": 0,
+        "display": "Est savings of 40 ms",
+        "items": [
+          {
+            "url": "https://craigthompson.dev/assets/Toggletip.Dj8vCSgx.css",
+            "wastedMs": 158,
+            "totalBytes": 4313
+          },
+          {
+            "url": "https://craigthompson.dev/assets/index.DThpyamL.css",
+            "wastedMs": 207,
+            "totalBytes": 12778
+          },
+          {
+            "url": "https://craigthompson.dev/assets/fonts.BIMLu4lF.css",
+            "wastedMs": 60,
+            "totalBytes": 1437
+          },
+          {
+            "url": "https://craigthompson.dev/assets/translate.DGGanBDF.css",
+            "wastedMs": 158,
+            "totalBytes": 2170
+          },
+          {
+            "url": "https://craigthompson.dev/assets/ResponsibilityCard.BsFI2vpU.css",
+            "wastedMs": 158,
+            "totalBytes": 1607
+          }
+        ]
+      },
+      {
+        "category": "performance",
+        "id": "legacy-javascript",
+        "title": "Avoid serving legacy JavaScript to modern browsers",
+        "score": 0.5,
+        "display": "Est savings of 10 KiB",
+        "items": [
+          {
+            "url": "https://static.cloudflareinsights.com/beacon.min.js/vce701823e78c4301a35b7e07294d87301792088814092",
+            "wastedBytes": 10414,
+            "totalBytes": 0
+          }
+        ]
+      },
+      {
+        "category": "performance",
+        "id": "uses-long-cache-ttl",
+        "title": "Serve static assets with an efficient cache policy",
+        "score": 0.5,
+        "display": "17 resources found",
+        "items": [
+          {
+            "url": "https://craigthompson.dev/assets/big-shoulders-display-latin-600.EACME5TP.woff2",
+            "wastedBytes": 24622.8,
+            "totalBytes": 36210
+          },
+          {
+            "url": "https://craigthompson.dev/assets/public-sans-latin-400.DdeTHZLK.woff2",
+            "wastedBytes": 18756.44,
+            "totalBytes": 27583
+          },
+          {
+            "url": "https://craigthompson.dev/assets/red-hat-mono-latin-400.Dwfc5A3M.woff2",
+            "wastedBytes": 15752.199999999999,
+            "totalBytes": 23165
+          },
+          {
+            "url": "https://craigthompson.dev/assets/index.astro_astro_type_script_index_0_lang.Bb5KPvHT.js",
+            "wastedBytes": 11806.159999999998,
+            "totalBytes": 17362
+          },
+          {
+            "url": "https://craigthompson.dev/assets/index.DThpyamL.css",
+            "wastedBytes": 8689.039999999999,
+            "totalBytes": 12778
+          }
+        ]
+      },
+      {
+        "category": "performance",
+        "id": "dom-size",
+        "title": "Avoid an excessive DOM size",
+        "score": 0.5,
+        "display": "3,109 elements",
+        "items": [
+          {
+            "value": {
+              "type": "numeric",
+              "granularity": 1,
+              "value": 3109
+            }
+          },
+          {
+            "node": "<span class=\"fill\" data-astro-cid-oahdww5h=\"\">",
+            "value": {
+              "type": "numeric",
+              "granularity": 1,
+              "value": 15
+            }
+          },
+          {
+            "node": "<div class=\"grid\" role=\"img\" aria-label=\"59 merged pull requests to other projects from 2012 to 2026, busiest in 20…\" data-astro-cid-pipslqh7=\"\">",
+            "value": {
+              "type": "numeric",
+              "granularity": 1,
+              "value": 80
+            }
+          }
+        ]
+      },
+      {
+        "category": "accessibility",
+        "id": "aria-allowed-role",
+        "title": "Uses ARIA roles on incompatible elements",
+        "score": 0,
+        "display": "",
+        "items": [
+          {
+            "node": "<article class=\"c-rs c-pop\" id=\"rp-lead\" role=\"tabpanel\" aria-label=\"leadership.md\" data-astro-cid-ooime6zq=\"\">"
+          },
+          {
+            "node": "<article class=\"c-pop case\" id=\"cp-mono\" role=\"tabpanel\" aria-label=\"monorepo.md\" data-astro-cid-w6e7c2ve=\"\">"
+          }
+        ]
+      },
+      {
+        "category": "best-practices",
+        "id": "errors-in-console",
+        "title": "Browser errors were logged to the console",
+        "score": 0,
+        "display": "",
+        "items": [
+          {
+            "source": "security",
+            "description": "Executing inline script violates the following Content Security Policy directive 'script-src 'self' https://static.cloudflareinsights.com 'sha256-Hv7M64MSCCpfPMpTNDcEzEShcFCE2UXfc+SXYo1cUY8=' 'sha256-xIb/Pa7FUshAu4ihwjchYcQpyCI8eS8kt40GpOAYCz8=' 'sha256-1BvDVWLr3QCC20uHhUDi27eDFVJpk1uMQJGIWKUks2I=' 'sha256-kmZE/W8I1iuTnl1b3yqzv9/DQZenPngd3NjSKMQl7y0=' 'sha256-Y8t0ntteBwH+PqGKUyjWW3CAk+BNJKSoQc0xZ68FjhM=' 'sha256-0O7iB6zr9x0r6X6eWYITC9V5q+yWCGAoFvcysBGbY9Q=' 'sha256-UIrFqcaitjA3OKa9mHKajg3N+0Y7tW9+y0o3QmMFeZQ=' 'sha256-At4sXbunobuxXv56+YxR7rwL4c3n8ubyPDiI7CIowSo=''. Either the 'unsafe-inline' keyword, a hash ('sha256-PbPIW9aVFrwDR/BeCGHs596IYxYQei3JfcYQ98X/Jc0='), or a nonce ('nonce-...') is required to enable inline execution. The action has been blocked."
+          }
+        ]
+      },
+      {
+        "category": "best-practices",
+        "id": "inspector-issues",
+        "title": "Issues were logged in the `Issues` panel in Chrome Devtools",
+        "score": 0,
+        "display": "",
+        "items": [
+          {}
+        ]
+      }
+    ]
+  }
+}
