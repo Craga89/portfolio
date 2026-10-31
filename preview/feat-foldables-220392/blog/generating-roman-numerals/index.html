@@ -1,0 +1,99 @@
+<!DOCTYPE html><html lang="en-GB" data-theme="dark"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><style>@media (prefers-reduced-motion:no-preference){@view-transition{navigation:auto}}</style><title>Generating Roman Numerals · blog · Craig Thompson</title><meta name="description" content="We've been conducting pair programming exercises at work using the excellent FreeCodeCamp, and came upon an interesting problem to solve using JavaScript."><meta name="robots" content="noindex, nofollow, noarchive"><link rel="canonical" href="https://craigthompson.dev/blog/generating-roman-numerals/"><meta name="color-scheme" content="dark light"><meta name="theme-color" content="#16271F" media="(prefers-color-scheme: dark)" data-dark="#16271F" data-light="#E2EEE8"><meta name="theme-color" content="#E2EEE8" media="(prefers-color-scheme: light)" data-dark="#16271F" data-light="#E2EEE8"><link rel="icon" href="/preview/feat-foldables-220392/favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="/preview/feat-foldables-220392/apple-touch-icon.png"><meta property="og:type" content="article"><meta property="og:site_name" content="craigthompson.dev"><meta property="og:locale" content="en_GB"><meta property="og:title" content="Generating Roman Numerals · blog · Craig Thompson"><meta property="og:description" content="We've been conducting pair programming exercises at work using the excellent FreeCodeCamp, and came upon an interesting problem to solve using JavaScript."><meta property="og:url" content="https://craigthompson.dev/blog/generating-roman-numerals/"><meta property="og:image" content="https://craigthompson.dev/blog/generating-roman-numerals/og.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="Generating Roman Numerals. blog/generating-roman-numerals.md, Craig Thompson"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Generating Roman Numerals · blog · Craig Thompson"><meta name="twitter:description" content="We've been conducting pair programming exercises at work using the excellent FreeCodeCamp, and came upon an interesting problem to solve using JavaScript."><meta name="twitter:image" content="https://craigthompson.dev/blog/generating-roman-numerals/og.png"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"Generating Roman Numerals","description":"We've been conducting pair programming exercises at work using the excellent FreeCodeCamp, and came upon an interesting problem to solve using JavaScript.","url":"https://craigthompson.dev/blog/generating-roman-numerals/","image":"https://craigthompson.dev/blog/generating-roman-numerals/og.png","inLanguage":"en-GB","datePublished":"2015-12-02T00:00:00.000Z","keywords":"JavaScript","author":{"@type":"Person","@id":"https://craigthompson.dev/#person","name":"Craig Thompson","url":"https://craigthompson.dev/"},"isPartOf":{"@type":"Blog","name":"Craig Thompson · blog","url":"https://craigthompson.dev/blog/"},"sameAs":"https://blog.craigsworks.com/generating-roman-numerals/"}</script><script>try{var d=document.documentElement,t=localStorage.getItem('theme'),l=t?t==='light':matchMedia('(prefers-color-scheme: light)').matches;d.dataset.theme=l?'light':'dark';if(localStorage.getItem('motion')==='off')d.dataset.motion='off';if(t){document.querySelectorAll('meta[name="theme-color"]').forEach(function(m){m.content=m.dataset[l?'light':'dark']});var f=document.querySelector('link[rel="icon"]');if(f)f.href=f.href.replace(/favicon(-dark|-light)?\.svg/,'favicon-'+(l?'light':'dark')+'.svg')}}catch(e){}
+function vt(e){var v=e.viewTransition;if(!v)return;[v.ready,v.finished,v.updateCallbackDone].forEach(function(p){p&&p.catch(function(){})});try{if(localStorage.getItem('motion')==='off')v.skipTransition()}catch(x){}}
+addEventListener('pageswap',vt);addEventListener('pagereveal',vt);
+try{var q=matchMedia('(horizontal-viewport-segments: 2), (vertical-viewport-segments: 2)'),k='fold',
+fs=function(){try{localStorage.setItem(k,q.matches?'split':'')}catch(x){}},
+go=function(){delete d.dataset.foldWait},
+w=function(){if(q.matches)go();else setTimeout(function(){go();fs()},300)};
+q.addEventListener('change',function(){if(q.matches){d.dataset.foldAt=Math.round(performance.now());go()}fs()});
+if(q.matches)d.dataset.foldAt='0';
+if(!q.matches&&localStorage.getItem(k)==='split'){d.dataset.foldWait='';document.prerendering?addEventListener('prerenderingchange',w,{once:true}):w()}else fs()}catch(e){}</script><link rel="preload" href="/preview/feat-foldables-220392/assets/big-shoulders-display-latin-600.EACME5TP.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="/preview/feat-foldables-220392/assets/public-sans-latin-400.DdeTHZLK.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="/preview/feat-foldables-220392/assets/red-hat-mono-latin-400.Dwfc5A3M.woff2" as="font" type="font/woff2" crossorigin><script type="speculationrules">{"prerender":[{"source":"document","where":{"or":[{"href_matches":"/preview/feat-foldables-220392/"},{"href_matches":"/preview/feat-foldables-220392/cv/"},{"href_matches":"/preview/feat-foldables-220392/blog/*"},{"href_matches":"/preview/feat-foldables-220392/case-studies/*"},{"href_matches":"/preview/feat-foldables-220392/responsibilities/*"}]},"eagerness":"moderate"}]}</script><meta http-equiv="content-security-policy" content="default-src 'self';img-src 'self' data:;media-src 'self' blob: data:;connect-src 'self' https://*.workers.dev https://cloudflareinsights.com;object-src 'none';base-uri 'self'; script-src 'self' https://static.cloudflareinsights.com 'sha256-1t32I7lIik4flntc55ZHzvIUSXl4KXPIi3v6BTgDoBA=' 'sha256-xIb/Pa7FUshAu4ihwjchYcQpyCI8eS8kt40GpOAYCz8=' 'sha256-1BvDVWLr3QCC20uHhUDi27eDFVJpk1uMQJGIWKUks2I=' 'sha256-kmZE/W8I1iuTnl1b3yqzv9/DQZenPngd3NjSKMQl7y0=' 'sha256-Y8t0ntteBwH+PqGKUyjWW3CAk+BNJKSoQc0xZ68FjhM=' 'sha256-0O7iB6zr9x0r6X6eWYITC9V5q+yWCGAoFvcysBGbY9Q=' 'sha256-UIrFqcaitjA3OKa9mHKajg3N+0Y7tW9+y0o3QmMFeZQ=' 'sha256-At4sXbunobuxXv56+YxR7rwL4c3n8ubyPDiI7CIowSo='; style-src 'self' 'sha256-SX7UqyxGVDSLzV90icKkPuaEGi8NcinaZfagIyBzAuY=' 'sha256-vv9IoKo7BSLbWcUHr3tNmfNVmm5L/9Cfn2H6LMk7/ow=' 'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=';"><link rel="stylesheet" href="/preview/feat-foldables-220392/assets/Crumb.Qqj24-y3.css"><link rel="stylesheet" href="/preview/feat-foldables-220392/assets/fonts.ZTC_U2Dy.css"><link rel="stylesheet" href="/preview/feat-foldables-220392/assets/FilePage.CfUd1FF7.css"><link rel="stylesheet" href="/preview/feat-foldables-220392/assets/Toggletip.DfmLnAZn.css"><link rel="stylesheet" href="/preview/feat-foldables-220392/assets/Cta.ssityJUw.css"><link rel="stylesheet" href="/preview/feat-foldables-220392/assets/_slug_.BoWL_u4I.css"><link rel="stylesheet" href="/preview/feat-foldables-220392/assets/translate.DGGanBDF.css"></head> <body> <aside class="preview-bar" aria-label="Branch preview" data-astro-cid-a5al27s5> <p data-astro-cid-a5al27s5> <strong data-astro-cid-a5al27s5>Branch preview</strong> of <code data-astro-cid-a5al27s5>feat/foldables</code>, built before the checks run.
+<a href="/preview/" data-astro-cid-a5al27s5>All previews</a> · <a href="/" data-astro-cid-a5al27s5>Live site</a> </p> <p class="fold" data-fold hidden data-astro-cid-a5al27s5></p> </aside><script type="module" src="/preview/feat-foldables-220392/assets/PreviewBar.astro_astro_type_script_index_0_lang.ChC1-ZcE.js"></script>   <div class="sp" data-astro-cid-2xyv2ckx> <header class="top" data-astro-cid-2xyv2ckx> <a class="home" href="/preview/feat-foldables-220392/" data-astro-cid-2xyv2ckx><span class="c-dot" aria-hidden="true" data-astro-cid-2xyv2ckx></span>craigthompson.dev</a> <div class="tools" data-astro-cid-2xyv2ckx> <button type="button" class="b" data-palette aria-haspopup="dialog" aria-keyshortcuts="Control+K Meta+K" title="Search and jump (Ctrl+K)" data-astro-cid-2xyv2ckx> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" data-astro-cid-2xyv2ckx><circle cx="11" cy="11" r="7" data-astro-cid-2xyv2ckx></circle><path d="m20 20-3.5-3.5" data-astro-cid-2xyv2ckx></path></svg>search
+</button> <button type="button" class="b" data-theme-toggle data-astro-cid-2xyv2ckx><span class="when-dark" data-astro-cid-2xyv2ckx>light theme</span><span class="when-light" data-astro-cid-2xyv2ckx>dark theme</span></button> <button type="button" class="b" data-motion-toggle data-astro-cid-2xyv2ckx><span class="when-moving" data-astro-cid-2xyv2ckx>pause animations</span><span class="when-still" data-astro-cid-2xyv2ckx>play animations</span></button> </div> </header> <main class="main" data-astro-cid-2xyv2ckx>  <div class="prog" aria-hidden="true" data-astro-cid-zg7dkzxc></div> <p class="crumb" data-astro-cid-uvyt32ub>$ cat <a href="/preview/feat-foldables-220392/blog/" data-astro-cid-uvyt32ub>blog/</a>generating-roman-numerals.md</p> <article class="post" data-astro-cid-zg7dkzxc> <header class="h" data-astro-cid-zg7dkzxc> <p class="k" data-astro-cid-zg7dkzxc><time datetime="2015-12-02" data-astro-cid-zg7dkzxc>2 December 2015</time> · 1 min read</p> <h1 data-vt="p-generating-roman-numerals" data-astro-cid-zg7dkzxc>Generating Roman Numerals</h1> <ul class="tags" aria-label="Tags" data-astro-cid-zg7dkzxc><li data-astro-cid-zg7dkzxc>JavaScript</li></ul> <p class="note" data-astro-cid-zg7dkzxc>
+First published on my old blog (<a href="https://web.archive.org/web/20180628012730/http://blog.craigsworks.com/generating-roman-numerals/" data-astro-cid-zg7dkzxc>blog.craigsworks.com</a>) in December 2015, and kept as it was written. Some code and links are out of date.
+</p> </header> <div class="b" data-astro-cid-zg7dkzxc><p>We’ve been conducting pair programming exercises at work using the excellent <a href="http://www.freecodecamp.com/">FreeCodeCamp</a>, and came upon an interesting problem to solve using JavaScript. We needed to create a generic function for generating <a href="https://en.wikipedia.org/wiki/Roman_numerals">Roman Numeral</a> equivalent for any number within a reasonable range (say, to 10000). This is what we came up with!</p>
+<pre tabindex="0" translate="no" data-lang="js"><code class="language-js">var numeralsMap = {
+	1: 'I',
+	5: 'V',
+	10: 'X',
+	50: 'L',
+	100: 'C',
+	500: 'D',
+	1000: 'M',
+	5000: 'V`',
+	10000: 'X`',
+	50000: 'L`',
+	100000: 'C`',
+	500000: 'D`',
+	1000000: 'M`'
+};
+
+// Retrieves the most significant number of a given number
+// i.e. the left-hand most number: 5474 -&gt; 5, 4111 -&gt; 4 etc.
+function mostSignificantNumber(num) {
+	return Number(String(num).charAt(0));
+}
+
+// Generates the Roman Numeral for a given one, tens, hundreds
+// etc. number. padded by zeroes that signify it's column
+function partialRomanNumeral(num) {
+	var letter = numeralsMap[num];
+	if (letter) {
+		return letter;
+	}
+
+	var places = String(num).length;
+	var multiplier = Math.pow(10, places - 1);
+	var low = 1 * multiplier;
+	var mid = (5 - 1) * multiplier;
+	var high = (10 - 1) * multiplier;
+	var repeat;
+
+	// I -&gt; III
+	if (num &lt; mid) {
+		repeat = mostSignificantNumber(num);
+		return numeralsMap[low].repeat(repeat);
+	}
+	// IV
+	else if (num === mid) {
+		return numeralsMap[low] + numeralsMap[mid + low];
+	}
+	// V -&gt; VIII
+	else if(num &lt; high) {
+		repeat = mostSignificantNumber(num - (mid + multiplier));
+		return numeralsMap[mid + low] + numeralsMap[low].repeat(repeat);
+	}
+	// IX
+	else {
+		return numeralsMap[low] + numeralsMap[high + low];
+	}
+}
+
+// Generates the Roman numeral for any given number by splitting it
+// into individual ones, tens, hundreds etc. numbers, and combining
+// each individual columns Roman Numeral right-to-left.
+//
+// romanNumeral(51) -&gt; partialRomanNumeral(1) + partialRomanNumeral(50)
+//
+function romanNumeral(num) {
+	if (num &gt; 1000000) {
+		throw new Error('Number too large');
+	}
+
+	return Array.prototype.reduce.call(String(num), function(memo, n, i) {
+		var power = Math.pow(10, i + 1);
+		var numeral = num % power - num % (power / 10);
+
+		return partialRomanNumeral(numeral) + memo;
+	},
+	'');
+}
+</code></pre>
+<p>You can use it like so:</p>
+<pre tabindex="0" translate="no" data-lang="js"><code class="language-js">romanNumeral(5) // "V"
+romanNumeral(9) // "IX"
+romanNumeral(46) // "XL"
+romanNumeral(2015) // "MMXV"
+</code></pre>
+<p>Enjoy!</p>
+</div> </article> <nav class="pn" aria-label="More posts" data-astro-cid-zg7dkzxc> <span data-astro-cid-zg7dkzxc></span> <a class="next" href="/preview/feat-foldables-220392/blog/tether-js-transition-small-changes/" data-astro-cid-zg7dkzxc><span data-astro-cid-zg7dkzxc>older →</span><b data-astro-cid-zg7dkzxc>Tether.js - Transition small movements</b></a> </nav> <section class="more" aria-labelledby="sp-more-h" data-astro-cid-zg7dkzxc> <h2 id="sp-more-h" data-astro-cid-zg7dkzxc>$ ls blog/</h2> <ul data-astro-cid-zg7dkzxc><li data-astro-cid-zg7dkzxc><a href="/preview/feat-foldables-220392/blog/generating-roman-numerals/" aria-current="page" data-astro-cid-zg7dkzxc>generating-roman-numerals.md</a></li><li data-astro-cid-zg7dkzxc><a href="/preview/feat-foldables-220392/blog/tether-js-transition-small-changes/" data-astro-cid-zg7dkzxc>tether-js-transition-small-changes.md</a></li><li data-astro-cid-zg7dkzxc><a href="/preview/feat-foldables-220392/blog/durandal-and-webpack-introduction/" data-astro-cid-zg7dkzxc>durandal-and-webpack-introduction.md</a></li><li data-astro-cid-zg7dkzxc><a href="/preview/feat-foldables-220392/blog/durandal-and-webpack-part-1-module-format/" data-astro-cid-zg7dkzxc>durandal-and-webpack-part-1-module-format.md</a></li><li data-astro-cid-zg7dkzxc><a href="/preview/feat-foldables-220392/blog/durandal-and-webpack-part-2-composition/" data-astro-cid-zg7dkzxc>durandal-and-webpack-part-2-composition.md</a></li><li data-astro-cid-zg7dkzxc><a href="/preview/feat-foldables-220392/blog/github-pages-and-webpack-2/" data-astro-cid-zg7dkzxc>github-pages-and-webpack-2.md</a></li><li data-astro-cid-zg7dkzxc><a href="/preview/feat-foldables-220392/blog/gulp-watch-less/" data-astro-cid-zg7dkzxc>gulp-watch-less.md</a></li><li data-astro-cid-zg7dkzxc><a href="/preview/feat-foldables-220392/blog/less-file-import-list/" data-astro-cid-zg7dkzxc>less-file-import-list.md</a></li><li data-astro-cid-zg7dkzxc><a href="/preview/feat-foldables-220392/blog/knockout-bootstrap-3-buttons-and-the-enable-binding/" data-astro-cid-zg7dkzxc>knockout-bootstrap-3-buttons-and-the-enable-binding.md</a></li><li data-astro-cid-zg7dkzxc><a href="/preview/feat-foldables-220392/blog/durandal-type-cast-querystring-parameters/" data-astro-cid-zg7dkzxc>durandal-type-cast-querystring-parameters.md</a></li><li data-astro-cid-zg7dkzxc><a href="/preview/feat-foldables-220392/blog/knockout-value-binding-input-number/" data-astro-cid-zg7dkzxc>knockout-value-binding-input-number.md</a></li><li data-astro-cid-zg7dkzxc><a href="/preview/feat-foldables-220392/blog/jquery-ui-draggable-exclusive-draggables/" data-astro-cid-zg7dkzxc>jquery-ui-draggable-exclusive-draggables.md</a></li><li data-astro-cid-zg7dkzxc><a href="/preview/feat-foldables-220392/blog/ckeditor-key-modifiers/" data-astro-cid-zg7dkzxc>ckeditor-key-modifiers.md</a></li><li data-astro-cid-zg7dkzxc><a href="/preview/feat-foldables-220392/blog/bootstrap-3-disabled-dropdown-links/" data-astro-cid-zg7dkzxc>bootstrap-3-disabled-dropdown-links.md</a></li><li data-astro-cid-zg7dkzxc><a href="/preview/feat-foldables-220392/blog/jquery-ui-draggable-droppables-in-an-iframe/" data-astro-cid-zg7dkzxc>jquery-ui-draggable-droppables-in-an-iframe.md</a></li><li data-astro-cid-zg7dkzxc><a href="/preview/feat-foldables-220392/blog/qtip2-now-on-jsdelivr/" data-astro-cid-zg7dkzxc>qtip2-now-on-jsdelivr.md</a></li><li data-astro-cid-zg7dkzxc><a href="/preview/feat-foldables-220392/blog/60fps-scrolling-using-pointer-events-none/" data-astro-cid-zg7dkzxc>60fps-scrolling-using-pointer-events-none.md</a></li><li data-astro-cid-zg7dkzxc><a href="/preview/feat-foldables-220392/blog/qtip2-v2-2-0-released/" data-astro-cid-zg7dkzxc>qtip2-v2-2-0-released.md</a></li><li data-astro-cid-zg7dkzxc><a href="/preview/feat-foldables-220392/blog/scratchpad-io/" data-astro-cid-zg7dkzxc>scratchpad-io.md</a></li><li data-astro-cid-zg7dkzxc><a href="/preview/feat-foldables-220392/blog/qtip2-pre-release-changes-aka-what-happened-to-my-qtip-styles/" data-astro-cid-zg7dkzxc>qtip2-pre-release-changes-aka-what-happened-to-my-qtip-styles.md</a></li><li data-astro-cid-zg7dkzxc><a href="/preview/feat-foldables-220392/blog/noty-css-themes/" data-astro-cid-zg7dkzxc>noty-css-themes.md</a></li><li data-astro-cid-zg7dkzxc><a href="/preview/feat-foldables-220392/blog/qtip2-tips-plugins-dimension-options-changed/" data-astro-cid-zg7dkzxc>qtip2-tips-plugins-dimension-options-changed.md</a></li><li data-astro-cid-zg7dkzxc><a href="/preview/feat-foldables-220392/blog/var-commas-and-equals/" data-astro-cid-zg7dkzxc>var-commas-and-equals.md</a></li><li data-astro-cid-zg7dkzxc><a href="/preview/feat-foldables-220392/blog/javascript-ios-version-detection/" data-astro-cid-zg7dkzxc>javascript-ios-version-detection.md</a></li><li data-astro-cid-zg7dkzxc><a href="/preview/feat-foldables-220392/blog/qtip2-styles-update/" data-astro-cid-zg7dkzxc>qtip2-styles-update.md</a></li><li data-astro-cid-zg7dkzxc><a href="/preview/feat-foldables-220392/blog/efficient-javascript-delta-encoding-merging-json-objects/" data-astro-cid-zg7dkzxc>efficient-javascript-delta-encoding-merging-json-objects.md</a></li></ul> </section> <aside class="cta" aria-label="About Craig" data-astro-cid-7vfifl7y> <p data-astro-cid-7vfifl7y><b data-astro-cid-7vfifl7y>Craig Thompson</b>, Head of Engineering: hands-on, AI-first, from start-up to acquisition. Open to new roles.</p> <div class="links" data-astro-cid-7vfifl7y> <a class="go" href="mailto:craig@craigthompson.dev" data-astro-cid-7vfifl7y>./get-in-touch</a> <a class="alt" href="/preview/feat-foldables-220392/#blog" data-astro-cid-7vfifl7y>the portfolio</a> <a class="alt" href="/preview/feat-foldables-220392/cv/" data-astro-cid-7vfifl7y>CV</a> </div> </aside>  </main>  </div>  <div class="toast" data-toast aria-hidden="true" data-astro-cid-tlumhsg5></div> <span class="c-sr" role="status" data-status data-astro-cid-tlumhsg5></span> <dialog id="c-pal" class="pal" aria-labelledby="c-pal-t" data-astro-cid-6mik5hcj> <h2 id="c-pal-t" class="c-sr" data-astro-cid-6mik5hcj>Search and jump</h2> <div class="in" data-astro-cid-6mik5hcj> <svg class="ico" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg> <input id="c-pal-field" class="field" type="text" role="combobox" aria-expanded="true" aria-controls="c-pal-list" aria-autocomplete="list" aria-label="Search sections, files and actions" autocomplete="off" spellcheck="false" placeholder="Jump to a section or file, or ask a question…" data-astro-cid-6mik5hcj> </div> <ul id="c-pal-list" class="list" role="listbox" aria-label="Results" data-astro-cid-6mik5hcj></ul> <div class="foot" aria-hidden="true" data-astro-cid-6mik5hcj><span data-astro-cid-6mik5hcj><kbd data-astro-cid-6mik5hcj>↑</kbd><kbd data-astro-cid-6mik5hcj>↓</kbd> move</span><span data-astro-cid-6mik5hcj><kbd data-astro-cid-6mik5hcj>↵</kbd> open</span><span data-astro-cid-6mik5hcj><kbd data-astro-cid-6mik5hcj>esc</kbd> close</span></div> <p class="c-sr" role="status" data-pal-count data-astro-cid-6mik5hcj></p> </dialog><script type="module" src="/preview/feat-foldables-220392/assets/Base.astro_astro_type_script_index_0_lang.Cn7BlTeo.js"></script> </body> </html>

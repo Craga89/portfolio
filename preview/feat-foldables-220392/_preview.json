@@ -1,0 +1,7 @@
+{
+  "branch": "feat/foldables",
+  "sha": "2b354c7cb3b20713b02d5f04bc8f12e8e76f68b2",
+  "at": "2026-10-31T17:59:12.503Z",
+  "message": "feat(pages): show the sidebar beside file pages on wider screens, and wait for the fold on load",
+  "url": "https://craigthompson.dev/preview/feat-foldables-220392/"
+}

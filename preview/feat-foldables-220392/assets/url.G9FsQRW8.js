@@ -1,0 +1,1 @@
+var e=`/preview/feat-foldables-220392/`.replace(/\/?$/,`/`),t=e!==`/`,n=n=>!n.startsWith(`/`)||n.startsWith(`//`)||t&&n.startsWith(e)?n:e+n.slice(1);export{t as n,n as r,e as t};
