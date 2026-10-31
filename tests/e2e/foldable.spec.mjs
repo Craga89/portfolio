@@ -76,18 +76,22 @@ test('tabletop: ask.sh, once opened, takes the lower half, and the page can be r
     .toBeLessThanOrEqual(crease);
 });
 
-test('file pages: the page on one side of the fold; the header and the links to other files on the other @desktop', async ({
+test("file pages: the page on one side of the fold and the home page's sidebar on the other @desktop", async ({
   page,
 }) => {
   await page.goto('/case-studies/accessibility/');
+  const side = page.getByRole('complementary', { name: 'Site' });
+  await expect(side).toBeHidden();
+
   const crease = await fold(page, 'vertical');
-  await expect.poll(async () => (await box(page.locator('header.top'))).x).toBeGreaterThanOrEqual(crease);
+  await expect(side).toBeVisible();
+  expect((await box(side)).x).toBeGreaterThanOrEqual(crease);
   const main = await box(page.locator('main'));
   expect(main.x + main.width).toBeLessThanOrEqual(crease);
+  await expect(page.locator('header.top')).toBeHidden();
 
-  // The previous and next links stay in view beside the page as it scrolls.
-  const nav = page.getByRole('navigation', { name: 'More case-studies/' });
-  await page.evaluate(() => scrollTo({ top: document.documentElement.scrollHeight / 2, behavior: 'instant' }));
-  await expect(nav).toBeInViewport();
-  expect((await box(nav)).x).toBeGreaterThanOrEqual(crease);
+  // The explorer opens the page's folder, marks the page, and links back to the home page.
+  const tree = side.getByRole('navigation', { name: 'Main' });
+  await expect(tree.getByRole('link', { name: 'accessibility.md' })).toHaveAttribute('aria-current', 'page');
+  await expect(tree.getByRole('link', { name: 'career.log' })).toHaveAttribute('href', /\/#career$/);
 });

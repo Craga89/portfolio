@@ -5,7 +5,7 @@ import FilePage from '../../layouts/FilePage.astro';
 import CaseStudyCard from '../../components/files/CaseStudyCard.astro';
 import Crumb from '../../components/page/Crumb.astro';
 import FileFooter from '../../components/page/FileFooter.astro';
-import FileNav from '../../components/page/FileNav.astro';
+import Sidebar from '../../components/home/Sidebar.astro';
 import { caseStudies, slugOf } from '../../lib/files';
 import { articleLd, describe } from '../../lib/seo';
 
@@ -37,6 +37,6 @@ const files = all.map((e) => ({ file: e.data.file, href: `/case-studies/${slugOf
   <Crumb folder="case-studies/" file={file} home={home} />
   <h1 class="c-sr">{title}</h1>
   <CaseStudyCard entry={entry} level={2} />
-  <FileFooter source={entry.body ?? ''} />
-  <FileNav slot="end" folder="case-studies/" files={files} current={current} home={home} />
+  <FileFooter folder="case-studies/" files={files} current={current} source={entry.body ?? ''} home={home} />
+  <Sidebar slot="side" file={{ folder: 'case-studies/', files, current }} />
 </FilePage>

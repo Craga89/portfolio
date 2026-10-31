@@ -29,13 +29,7 @@ const { tips, ...base } = Astro.props;
     <main class="main">
       <slot />
     </main>
-    {
-      Astro.slots.has('end') && (
-        <div class="end">
-          <slot name="end" />
-        </div>
-      )
-    }
+    <slot name="side" />
   </div>
   {tips && <Toggletip />}
 </Base>
@@ -108,55 +102,41 @@ const { tips, ...base } = Astro.props;
   .main :global(.c-pop) {
     animation: none;
   }
-  /* Foldables in book posture (see index.astro): the page on one side of the fold and, on the other
-     like the home page's sidebar, the header and the links after the page (the slot "end"), which
-     stay in view as the page scrolls. */
+  /* Foldables in book posture (see index.astro): the page on one side of the fold and, on the other,
+     the home page's sidebar (the slot "side", for a case study or responsibility), or else the header,
+     so nothing sits across the fold. */
   @media (horizontal-viewport-segments: 2) {
     .sp {
       display: grid;
       grid-template-columns: env(viewport-segment-width 0 0) env(viewport-segment-width 1 0);
-      grid-template-rows: auto 1fr;
       column-gap: calc(env(viewport-segment-left 1 0) - env(viewport-segment-right 0 0));
       max-width: none;
       padding: 0;
-      background: linear-gradient(to right, transparent env(viewport-segment-left 1 0), var(--panel) 0);
-    }
-    :global(:root[dir='rtl']) .sp {
-      background: linear-gradient(to left, transparent env(viewport-segment-left 1 0), var(--panel) 0);
     }
     .main {
       grid-column: 1;
-      grid-row: 1 / span 2;
+      grid-row: 1;
       min-width: 0;
       padding: 28px 24px 72px;
     }
-    .top,
-    .end {
-      grid-column: 2;
-      box-sizing: border-box;
-      padding-inline: 24px;
-      border-inline-start: 1px solid var(--line2);
-    }
     .top {
+      position: sticky;
+      top: 0;
+      grid-column: 2;
       grid-row: 1;
+      box-sizing: border-box;
       flex-direction: column;
       align-items: flex-start;
       justify-content: flex-start;
+      height: 100vh;
       margin: 0;
-      padding-top: 24px;
+      padding: 24px;
+      border-inline-start: 1px solid var(--line2);
+      background: var(--panel);
     }
-    .end {
-      position: sticky;
-      top: 0;
-      grid-row: 2;
-      align-self: start;
-      max-height: 100vh;
-      overflow-y: auto;
-      padding-block: 16px 24px;
-    }
-    /* Spacing meant for the foot of the page, not a panel. */
-    .end > :global(:first-child) {
-      margin-top: 0;
+    /* The sidebar has the header's links and buttons. */
+    .sp:has(> :global(.side)) .top {
+      display: none;
     }
   }
   @media print {
