@@ -216,6 +216,11 @@ kbd {
 }
 
 /* Motion off: the visitor's system setting, or "pause animations" on the site (WCAG 2.2.2). */
+/* A foldable that was half-open last time waits, briefly, for the fold to be reported before it
+   shows anything (THEME_BOOT in scripts/inline.mjs), rather than showing the ordinary layout first. */
+:root[data-fold-wait] body {
+  visibility: hidden;
+}
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;

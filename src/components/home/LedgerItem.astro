@@ -135,7 +135,7 @@ const iso = date.toISOString().slice(0, 10);
     border-color: var(--acc);
     color: var(--head);
   }
-  @media (max-width: 640px) {
+  @media (max-width: 640px), (horizontal-viewport-segments: 2) {
     .item {
       grid-template-columns: minmax(0, 1fr);
       gap: 2px;

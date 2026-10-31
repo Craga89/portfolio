@@ -5,10 +5,22 @@
 /**
  * The saved (or system) theme and motion setting, before anything paints. A saved theme also picks
  * the matching favicon; without one, favicon.svg follows the system's light or dark setting itself.
+ *
+ * It also keeps a foldable that was half-open last time from showing the ordinary layout for a
+ * moment: Chrome can report the fold's segments a little after the first paint (or, for a
+ * prerendered page, once it's shown), so the page waits for them, up to 300 ms (base.css). The
+ * moment they arrived is kept in data-fold-at, for the preview bar.
  */
 export const THEME_BOOT = `try{var d=document.documentElement,t=localStorage.getItem('theme'),l=t?t==='light':matchMedia('(prefers-color-scheme: light)').matches;d.dataset.theme=l?'light':'dark';if(localStorage.getItem('motion')==='off')d.dataset.motion='off';if(t){document.querySelectorAll('meta[name="theme-color"]').forEach(function(m){m.content=m.dataset[l?'light':'dark']});var f=document.querySelector('link[rel="icon"]');if(f)f.href=f.href.replace(/favicon(-dark|-light)?\\.svg/,'favicon-'+(l?'light':'dark')+'.svg')}}catch(e){}
 function vt(e){var v=e.viewTransition;if(!v)return;[v.ready,v.finished,v.updateCallbackDone].forEach(function(p){p&&p.catch(function(){})});try{if(localStorage.getItem('motion')==='off')v.skipTransition()}catch(x){}}
-addEventListener('pageswap',vt);addEventListener('pagereveal',vt);`;
+addEventListener('pageswap',vt);addEventListener('pagereveal',vt);
+try{var q=matchMedia('(horizontal-viewport-segments: 2), (vertical-viewport-segments: 2)'),k='fold',
+fs=function(){try{localStorage.setItem(k,q.matches?'split':'')}catch(x){}},
+go=function(){delete d.dataset.foldWait},
+w=function(){if(q.matches)go();else setTimeout(function(){go();fs()},300)};
+q.addEventListener('change',function(){if(q.matches){d.dataset.foldAt=Math.round(performance.now());go()}fs()});
+if(q.matches)d.dataset.foldAt='0';
+if(!q.matches&&localStorage.getItem(k)==='split'){d.dataset.foldWait='';document.prerendering?addEventListener('prerenderingchange',w,{once:true}):w()}else fs()}catch(e){}`;
 
 /**
  * Cross-document view transitions (a cross-fade between pages), opted into before anything else

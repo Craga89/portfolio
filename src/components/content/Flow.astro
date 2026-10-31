@@ -21,7 +21,7 @@ const { label } = Astro.props;
     list-style: none;
     font-size: 14px;
   }
-  @media (max-width: 560px) {
+  @media (max-width: 560px), (horizontal-viewport-segments: 2) {
     .flow {
       flex-direction: column;
       align-items: stretch;
