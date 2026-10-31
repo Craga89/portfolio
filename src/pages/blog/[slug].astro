@@ -34,7 +34,8 @@ const ld = {
   url: `${SITE}/${path}`,
   image: `${SITE}/${path}og.png`,
   inLanguage: 'en-GB',
-  datePublished: iso,
+  // A full ISO 8601 date and time: search engines want the time (and zone) in structured data.
+  datePublished: date.toISOString(),
   keywords: tags.join(', '),
   author,
   isPartOf: { '@type': 'Blog', name: 'Craig Thompson · blog', url: `${SITE}/blog/` },
