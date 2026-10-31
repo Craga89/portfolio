@@ -1,6 +1,9 @@
 // Search and social descriptions, and structured data, for the file pages and posts.
 import { SITE, NAME, EMAIL, GITHUB, LINKEDIN, HOME_TITLE, OG_DESC } from '../site';
 
+/** When the site was built, as a full ISO 8601 date and time (structured data needs the time, not just the day). */
+const BUILT = new Date().toISOString();
+
 const MAX = 158;
 
 /** Text without MDX/HTML tags or comments, its whitespace collapsed. */
@@ -43,7 +46,7 @@ export function articleLd({
     url,
     image: url + 'og.png',
     inLanguage: 'en-GB',
-    dateModified: new Date().toISOString().slice(0, 10),
+    dateModified: BUILT,
     author,
     isPartOf: { '@type': 'WebSite', name: 'craigthompson.dev', url: SITE + '/' },
   };
@@ -60,7 +63,7 @@ export async function homeLd() {
     '@id': SITE + '/',
     url: SITE + '/',
     name: HOME_TITLE,
-    dateModified: new Date().toISOString().slice(0, 10),
+    dateModified: BUILT,
     inLanguage: 'en-GB',
     mainEntity: {
       '@type': 'Person',

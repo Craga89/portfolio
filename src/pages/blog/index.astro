@@ -19,7 +19,7 @@ const ld = {
   description,
   url: `${SITE}/blog/`,
   author,
-  blogPost: all.map((p) => ({ '@type': 'BlogPosting', headline: p.data.title, datePublished: p.data.date.toISOString().slice(0, 10), url: `${SITE}/blog/${p.slug}/` })),
+  blogPost: all.map((p) => ({ '@type': 'BlogPosting', headline: p.data.title, datePublished: p.data.date.toISOString(), url: `${SITE}/blog/${p.slug}/` })),
 };
 const dayMonth = (d: Date) => d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', timeZone: 'UTC' });
 ---
