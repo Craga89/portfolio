@@ -39,11 +39,18 @@ const live = previews.replace(/[^/]+\/$/, '');
           ? `${segs.length} segment${segs.length === 1 ? '' : 's'}: ${segs.map((r) => `${Math.round(r.width)}×${Math.round(r.height)} at ${Math.round(r.x)},${Math.round(r.y)}`).join(', ')}`
           : 'no Viewport Segments API',
       ];
+      // When the fold was reported (THEME_BOOT), and whether the page was prerendered, which can
+      // show the ordinary layout for a moment before the fold's.
+      const at = document.documentElement.dataset.foldAt;
+      if (at) parts.push(`split ${at === '0' ? 'from the start' : `after ${at} ms`}`);
+      const nav = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming & { activationStart?: number };
+      if (nav?.activationStart) parts.push(`prerendered, shown after ${Math.round(nav.activationStart)} ms`);
       out.textContent = `Foldable: ${parts.join(' · ')}`;
       out.hidden = false;
     };
     show();
     addEventListener('resize', show);
+    matchMedia('(horizontal-viewport-segments: 2), (vertical-viewport-segments: 2)').addEventListener('change', show);
     posture?.addEventListener('change', show);
   }
 </script>

@@ -76,22 +76,46 @@ test('tabletop: ask.sh, once opened, takes the lower half, and the page can be r
     .toBeLessThanOrEqual(crease);
 });
 
-test("file pages: the page on one side of the fold and the home page's sidebar on the other @desktop", async ({
+test("file pages: the home page's sidebar on the same screens as the home page, and beside the fold @desktop", async ({
   page,
 }) => {
   await page.goto('/case-studies/accessibility/');
   const side = page.getByRole('complementary', { name: 'Site' });
+  const header = page.locator('header.top');
+  await expect(side).toBeVisible();
+  await expect(header).toBeHidden();
+
+  // The explorer opens the page's folder, marks the page, and links back to the home page.
+  const tree = side.getByRole('navigation', { name: 'Main' });
+  await expect(tree.getByRole('link', { name: 'accessibility.md' })).toHaveAttribute('aria-current', 'page');
+  await expect(tree.getByRole('link', { name: 'career.log' })).toHaveAttribute('href', /\/#career$/);
+
+  // A phone: no sidebar, and the header is back.
+  await page.setViewportSize({ width: 412, height: 915 });
   await expect(side).toBeHidden();
+  await expect(header).toBeVisible();
 
   const crease = await fold(page, 'vertical');
   await expect(side).toBeVisible();
   expect((await box(side)).x).toBeGreaterThanOrEqual(crease);
   const main = await box(page.locator('main'));
   expect(main.x + main.width).toBeLessThanOrEqual(crease);
-  await expect(page.locator('header.top')).toBeHidden();
+  await expect(header).toBeHidden();
+});
 
-  // The explorer opens the page's folder, marks the page, and links back to the home page.
-  const tree = side.getByRole('navigation', { name: 'Main' });
-  await expect(tree.getByRole('link', { name: 'accessibility.md' })).toHaveAttribute('aria-current', 'page');
-  await expect(tree.getByRole('link', { name: 'career.log' })).toHaveAttribute('href', /\/#career$/);
+test('a device that was half-open last time shows the page even if the fold is never reported @desktop', async ({
+  page,
+}) => {
+  await page.addInitScript(() => localStorage.setItem('fold', 'split'));
+  await page.goto('/');
+  await expect(page.locator('html')).not.toHaveAttribute('data-fold-wait');
+  await expect(page.locator('#top')).toBeVisible();
+  expect(await page.evaluate(() => localStorage.getItem('fold'))).toBe('');
+});
+
+test('the fold is remembered, and a page loaded half-open is split from the start @desktop', async ({ page }) => {
+  await fold(page, 'vertical');
+  await page.goto('/');
+  await expect(page.locator('html')).toHaveAttribute('data-fold-at', '0');
+  expect(await page.evaluate(() => localStorage.getItem('fold'))).toBe('split');
 });

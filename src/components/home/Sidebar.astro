@@ -2,8 +2,8 @@
 // The sidebar on wider screens: who and where, the explorer (the sections, with the one in view
 // marked by scripts/spy.ts), get in touch, and the build it came from.
 //
-// A file's own page (a case study or responsibility) shows it too, on a foldable in book posture
-// only (FilePage): its links go to the home page, and the explorer opens the file's folder.
+// A file's own page (a case study or responsibility) shows it too (FilePage): its links go to the
+// home page, and the explorer opens the file's folder.
 import { url } from '../../lib/url';
 import Icon from '../Icon.astro';
 import ContactLinks from './ContactLinks.astro';
@@ -21,7 +21,7 @@ const MAPS = 'https://www.google.com/maps/search/?api=1&query=Newcastle+upon+Tyn
 const built = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'Europe/London' });
 ---
 
-<aside class="side" aria-label="Site" data-file={file ? '' : undefined}>
+<aside class="side" aria-label="Site">
   <div class="inner">
     <div class="top">
       <a href={to('top')} class="brand"><span class="c-dot" aria-hidden="true"></span>craigthompson.dev</a>
@@ -369,10 +369,7 @@ const built = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 's
     padding-inline-start: 30px;
     font-size: 13px;
   }
-  /* On a file's own page, only on a foldable in book posture (below). */
-  .side[data-file] {
-    display: none;
-  }
+
   .foot {
     display: flex;
     flex-direction: column;
@@ -561,8 +558,7 @@ const built = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 's
   /* Foldables, half-open (see index.astro). Book posture: the sidebar is the right-hand page, with
      ask.sh docked across its foot, so its links stop above the chat. */
   @media (horizontal-viewport-segments: 2) {
-    .side,
-    .side[data-file] {
+    .side {
       display: block;
     }
     .inner {
