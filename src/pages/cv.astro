@@ -248,7 +248,7 @@ const host = (u: string) => u.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/,
   .body :global(li) {
     margin: 0 0 4px;
   }
-  @media (max-width: 700px) {
+  @media (max-width: 700px), (horizontal-viewport-segments: 2) {
     .page {
       margin: 0;
       padding: 28px 18px;

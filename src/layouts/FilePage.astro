@@ -101,6 +101,38 @@ const { tips, ...base } = Astro.props;
   .main :global(.c-pop) {
     animation: none;
   }
+  /* Foldables in book posture (see index.astro): the page on one side of the fold and the header,
+     like the home page's sidebar, on the other, so nothing sits across the fold. */
+  @media (horizontal-viewport-segments: 2) {
+    .sp {
+      display: grid;
+      grid-template-columns: env(viewport-segment-width 0 0) env(viewport-segment-width 1 0);
+      column-gap: calc(env(viewport-segment-left 1 0) - env(viewport-segment-right 0 0));
+      max-width: none;
+      padding: 0;
+    }
+    .main {
+      grid-column: 1;
+      grid-row: 1;
+      min-width: 0;
+      padding: 28px 24px 72px;
+    }
+    .top {
+      position: sticky;
+      top: 0;
+      grid-column: 2;
+      grid-row: 1;
+      box-sizing: border-box;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: flex-start;
+      height: 100vh;
+      margin: 0;
+      padding: 24px;
+      border-inline-start: 1px solid var(--line2);
+      background: var(--panel);
+    }
+  }
   @media print {
     .tools {
       display: none;

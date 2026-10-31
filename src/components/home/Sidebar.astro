@@ -520,6 +520,25 @@ const built = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 's
       display: none;
     }
   }
+  /* Foldables, half-open (see index.astro). Book posture: the sidebar is the right-hand page, with
+     ask.sh docked across its foot, so its links stop above the chat. */
+  @media (horizontal-viewport-segments: 2) {
+    .side {
+      display: block;
+    }
+    .inner {
+      padding-inline: 24px;
+    }
+    :global(:root:has([data-chat][data-open='true'])) .inner {
+      padding-bottom: calc(min(460px, 50vh) + 72px);
+    }
+  }
+  /* Tabletop: only the upper half is the sidebar's while ask.sh fills the lower. */
+  @media (vertical-viewport-segments: 2) {
+    :global(:root:has([data-chat][data-open='true'])) .inner {
+      height: env(viewport-segment-height 0 0);
+    }
+  }
   @media print {
     .side {
       display: none !important;

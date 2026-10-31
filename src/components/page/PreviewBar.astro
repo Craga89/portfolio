@@ -15,9 +15,38 @@ const live = previews.replace(/[^/]+\/$/, '');
         <strong>Branch preview</strong> of <code>{PREVIEW_BRANCH || BASE}</code>, built before the checks run.
         <a href={previews}>All previews</a> · <a href={live}>Live site</a>
       </p>
+      <p class="fold" data-fold hidden />
     </aside>
   )
 }
+
+<script>
+  // What the browser reports about a foldable's screen, for trying the fold layouts on a device:
+  // the posture (Device Posture API) and the screen's segments (Viewport Segments API).
+  import { PREVIEW } from '../../lib/url';
+
+  type Fold = Window & { viewport?: { segments?: DOMRect[] | null } };
+  type Posture = Navigator & { devicePosture?: EventTarget & { type: string } };
+  const out = document.querySelector<HTMLElement>('[data-fold]');
+  const posture = (navigator as Posture).devicePosture;
+  if (PREVIEW && out) {
+    const show = () => {
+      const segs = (window as Fold).viewport?.segments;
+      const parts = [
+        `viewport ${innerWidth}×${innerHeight}`,
+        posture ? `posture ${posture.type}` : 'no Device Posture API',
+        segs
+          ? `${segs.length} segment${segs.length === 1 ? '' : 's'}: ${segs.map((r) => `${Math.round(r.width)}×${Math.round(r.height)} at ${Math.round(r.x)},${Math.round(r.y)}`).join(', ')}`
+          : 'no Viewport Segments API',
+      ];
+      out.textContent = `Foldable: ${parts.join(' · ')}`;
+      out.hidden = false;
+    };
+    show();
+    addEventListener('resize', show);
+    posture?.addEventListener('change', show);
+  }
+</script>
 
 <style>
   .preview-bar {
@@ -29,6 +58,15 @@ const live = previews.replace(/[^/]+\/$/, '');
   p {
     margin: 0;
     padding: 8px 24px;
+  }
+  .fold {
+    padding-top: 0;
+    font-family: var(--f-mono);
+    font-size: 0.75rem;
+    color: var(--mute);
+  }
+  .fold[hidden] {
+    display: none;
   }
   strong {
     color: var(--head);

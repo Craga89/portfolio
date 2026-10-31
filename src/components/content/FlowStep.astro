@@ -38,7 +38,7 @@ const { term, final } = Astro.props;
     display: inline-block;
     scale: -1 1;
   }
-  @media (max-width: 560px) {
+  @media (max-width: 560px), (horizontal-viewport-segments: 2) {
     .flow-step {
       flex-direction: column;
       align-items: stretch;

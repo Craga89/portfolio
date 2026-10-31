@@ -225,7 +225,7 @@ const edge = (i: number) => (i < 2 ? 'l' : i > years.length - 4 ? 'r' : undefine
     font-variant-numeric: tabular-nums;
     color: var(--head);
   }
-  @media (max-width: 560px) {
+  @media (max-width: 560px), (horizontal-viewport-segments: 2) {
     .grid {
       position: relative;
       gap: 3px;

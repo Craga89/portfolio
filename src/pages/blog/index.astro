@@ -112,7 +112,7 @@ const dayMonth = (d: Date) => d.toLocaleDateString('en-GB', { day: 'numeric', mo
     font-size: 14.5px;
     color: var(--text3);
   }
-  @media (max-width: 640px) {
+  @media (max-width: 640px), (horizontal-viewport-segments: 2) {
     li {
       grid-template-columns: minmax(0, 1fr);
     }
