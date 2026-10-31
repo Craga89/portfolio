@@ -1,12 +1,22 @@
 ---
 // The sidebar on wider screens: who and where, the explorer (the sections, with the one in view
 // marked by scripts/spy.ts), get in touch, and the build it came from.
+//
+// A file's own page (a case study or responsibility) shows it too (FilePage): its links go to the
+// home page, and the explorer opens the file's folder.
 import { url } from '../../lib/url';
 import Icon from '../Icon.astro';
 import ContactLinks from './ContactLinks.astro';
 import { SECTIONS } from '../../lib/sections';
 import { NAME, SOURCE } from '../../site';
 
+interface Props {
+  /** On a file's own page: its folder (as SECTIONS lists it), the folder's files, and which it is. */
+  file?: { folder: string; files: { file: string; href: string }[]; current: number };
+}
+const { file } = Astro.props;
+/** A link to a section: on the home page, its anchor; elsewhere, the home page's. */
+const to = (id: string) => (file ? url(id === 'top' ? '/' : `/#${id}`) : `#${id}`);
 const MAPS = 'https://www.google.com/maps/search/?api=1&query=Newcastle+upon+Tyne%2C+UK';
 const built = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'Europe/London' });
 ---
@@ -14,7 +24,7 @@ const built = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 's
 <aside class="side" aria-label="Site">
   <div class="inner">
     <div class="top">
-      <a href="#top" class="brand"><span class="c-dot" aria-hidden="true"></span>craigthompson.dev</a>
+      <a href={to('top')} class="brand"><span class="c-dot" aria-hidden="true"></span>craigthompson.dev</a>
       <button type="button" class="c-theme" data-theme-toggle title="Switch theme">
         <span class="when-dark"><Icon name="sun" size={18} /><span class="c-sr">Switch to light theme</span></span>
         <span class="when-light"><Icon name="moon" size={18} /><span class="c-sr">Switch to dark theme</span></span>
@@ -29,7 +39,7 @@ const built = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 's
         <Icon name="clock" size={14} />
         <span class="time-t"><span class="time-v" aria-hidden="true"><span data-clock-h></span><span class="colon">:</span><span data-clock-m></span><span class="off" data-clock-off></span></span><span class="c-sr" data-clock-sr></span> in Newcastle</span>
       </span>
-      <a class="open" href="#open-to-roles">open to new roles</a>
+      <a class="open" href={to('open-to-roles')}>open to new roles</a>
     </div>
     <div class="exprow">
       <div class="exp">EXPLORER</div>
@@ -37,16 +47,32 @@ const built = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 's
     </div>
     <nav class="tree" aria-label="Main" translate="no">
       {
-        SECTIONS.map((s, i) => (
-          <a href={`#${s.id}`} aria-current={i === 0 ? 'true' : 'false'} data-spy={s.id} data-dir={s.dir ? '' : undefined}>
-            <i aria-hidden="true" />
-            <bdi>{s.file}</bdi>
-          </a>
-        ))
+        SECTIONS.map((s, i) =>
+          file ? (
+            <>
+              <a href={to(s.id)} data-dir={s.dir ? '' : undefined}>
+                <i aria-hidden="true" />
+                <bdi>{s.file}</bdi>
+              </a>
+              {s.file === file.folder &&
+                file.files.map((f, j) => (
+                  <a class="sub" href={url(f.href)} aria-current={j === file.current ? 'page' : undefined}>
+                    <i aria-hidden="true" />
+                    <bdi>{f.file}</bdi>
+                  </a>
+                ))}
+            </>
+          ) : (
+            <a href={`#${s.id}`} aria-current={i === 0 ? 'true' : 'false'} data-spy={s.id} data-dir={s.dir ? '' : undefined}>
+              <i aria-hidden="true" />
+              <bdi>{s.file}</bdi>
+            </a>
+          ),
+        )
       }
     </nav>
     <div class="foot">
-      <a class="c-btn" href="#contact">./get-in-touch</a>
+      <a class="c-btn" href={to('contact')}>./get-in-touch</a>
       <ContactLinks />
       <button type="button" class="motion" data-motion-toggle><span class="when-moving"><Icon name="pause" size={14} />pause animations</span><span class="when-still"><Icon name="play" size={14} />play animations</span></button>
       {/* The language menu, where the browser can translate on the device (scripts/i18n.ts). */}
@@ -61,6 +87,8 @@ const built = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 's
   .side {
     grid-column: 2;
     grid-row: 1;
+    /* Stays put between pages, rather than fading with the page (Base.astro's view transitions). */
+    view-transition-name: side;
     border-inline-start: 1px solid var(--line2);
     background: var(--panel);
   }
@@ -312,7 +340,8 @@ const built = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 's
     background: var(--panel2);
     color: var(--head);
   }
-  .tree a[aria-current='true'] {
+  .tree a[aria-current='true'],
+  .tree a[aria-current='page'] {
     border-inline-start-color: var(--acc);
     background: var(--acc-bg);
     color: var(--head);
@@ -332,9 +361,17 @@ const built = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 's
   .tree a[data-dir] i::before {
     content: '●';
   }
-  .tree a[aria-current='true'] i::before {
+  .tree a[aria-current='true'] i::before,
+  .tree a[aria-current='page'] i::before {
     color: var(--acc);
   }
+  /* The files in a folder, under it, on a file's own page. */
+  .tree .sub {
+    min-height: 32px;
+    padding-inline-start: 30px;
+    font-size: 13px;
+  }
+
   .foot {
     display: flex;
     flex-direction: column;
@@ -520,6 +557,25 @@ const built = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 's
       display: none;
     }
   }
+  /* Foldables, half-open (see index.astro). Book posture: the sidebar is the right-hand page, with
+     ask.sh docked across its foot, so its links stop above the chat. */
+  @media (horizontal-viewport-segments: 2) {
+    .side {
+      display: block;
+    }
+    .inner {
+      padding-inline: 24px;
+    }
+    :global(:root:has([data-chat][data-open='true'])) .inner {
+      padding-bottom: calc(min(460px, 50vh) + 72px);
+    }
+  }
+  /* Tabletop: only the upper half is the sidebar's while ask.sh fills the lower. */
+  @media (vertical-viewport-segments: 2) {
+    :global(:root:has([data-chat][data-open='true'])) .inner {
+      height: env(viewport-segment-height 0 0);
+    }
+  }
   @media print {
     .side {
       display: none !important;
@@ -529,13 +585,15 @@ const built = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 's
     .side {
       border: 1px solid CanvasText;
     }
-    .tree a[aria-current='true'] {
+    .tree a[aria-current='true'],
+    .tree a[aria-current='page'] {
       forced-color-adjust: none;
       border-inline-start-color: HighlightText;
       background: Highlight;
       color: HighlightText;
     }
-    .tree a[aria-current='true'] i::before {
+    .tree a[aria-current='true'] i::before,
+    .tree a[aria-current='page'] i::before {
       color: HighlightText;
     }
     .c-dot,

@@ -235,6 +235,53 @@ const avatarNight = await getImage({ src: portraitNight, width: 56, height: 56, 
       font-size: 16px;
     }
   }
+  /* Foldables, half-open (see index.astro): ask.sh is docked to one side of the fold instead of
+     floating over the page. Book posture: across the foot of the second page, under the sidebar. */
+  @media (horizontal-viewport-segments: 2) {
+    .chat,
+    .chat[data-open='true'] {
+      left: env(viewport-segment-left 1 0);
+      right: 0;
+      width: auto;
+      border-inline: 0;
+      border-radius: 0;
+    }
+    :global(:root[dir='rtl']) .chat,
+    :global(:root[dir='rtl']) .chat[data-open='true'] {
+      left: 0;
+      right: calc(100vw - env(viewport-segment-right 0 0));
+    }
+    .bar {
+      border-radius: 0;
+    }
+    .panel {
+      height: min(460px, 50vh);
+    }
+  }
+  /* Tabletop: the bar across the foot of the screen, and once opened the whole lower half, like a
+     laptop's keyboard, with the page above. */
+  @media (vertical-viewport-segments: 2) {
+    .chat,
+    .chat[data-open='true'] {
+      left: 0;
+      right: 0;
+      width: auto;
+      border-inline: 0;
+      border-radius: 0;
+    }
+    .chat[data-open='true'] {
+      top: env(viewport-segment-top 0 1);
+      box-shadow: none;
+    }
+    .bar {
+      border-radius: 0;
+    }
+    .chat[data-open='true'] .panel {
+      flex: 1;
+      height: auto;
+      min-height: 0;
+    }
+  }
   @media print {
     .chat {
       display: none;

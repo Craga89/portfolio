@@ -88,6 +88,30 @@ import { homeLd } from '../lib/seo';
       grid-template-columns: minmax(0, 1fr);
     }
   }
+  /* Foldables, half-open (Viewport Segments API, Chrome and Edge 138+; elsewhere none of this
+     applies). Book posture, the fold running top to bottom: the page on one side and the sidebar,
+     with ask.sh beneath it, on the other, so nothing sits across the fold. */
+  @media (horizontal-viewport-segments: 2) {
+    .shell {
+      --side-w: env(viewport-segment-width 1 0);
+      grid-template-columns: env(viewport-segment-width 0 0) var(--side-w);
+      column-gap: calc(env(viewport-segment-left 1 0) - env(viewport-segment-right 0 0));
+    }
+    .main {
+      max-width: none;
+      padding-inline: 24px;
+    }
+  }
+  /* Tabletop, the fold running side to side: ask.sh takes the lower half (Chat.astro), so the page
+     scrolls in the upper half and can be read to the end above it. */
+  @media (vertical-viewport-segments: 2) {
+    :global(:root:has([data-chat][data-open='true'])) {
+      scroll-padding-bottom: env(viewport-segment-height 0 1);
+    }
+    :global(:root:has([data-chat][data-open='true'])) .main {
+      padding-bottom: calc(env(viewport-segment-height 0 1) + 48px);
+    }
+  }
   @media print {
     .shell {
       display: block;

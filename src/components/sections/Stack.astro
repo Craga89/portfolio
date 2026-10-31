@@ -223,7 +223,7 @@ const summary = `${tools} tools across ${areas.length} areas · type to search`;
       transform: translateY(6px) scale(0.96);
     }
   }
-  @media (max-width: 640px) {
+  @media (max-width: 640px), (horizontal-viewport-segments: 2) {
     .hit {
       padding: 4px 9px;
       font-size: 13px;

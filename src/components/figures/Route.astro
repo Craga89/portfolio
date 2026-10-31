@@ -69,7 +69,7 @@ const { name, hops } = Astro.props;
     display: inline-block;
     scale: -1 1;
   }
-  @media (max-width: 640px) {
+  @media (max-width: 640px), (horizontal-viewport-segments: 2) {
     .k {
       flex-basis: 100%;
     }

@@ -442,6 +442,8 @@ if (chat) {
     }
   };
   bar.addEventListener('click', () => setOpen(chat.dataset.open !== 'true'));
+  // A foldable half-open, where ask.sh docks to one side of the fold (Chat.astro).
+  const split = matchMedia('(horizontal-viewport-segments: 2), (vertical-viewport-segments: 2)');
   field.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
       setOpen(false);
@@ -452,8 +454,8 @@ if (chat) {
   addEventListener('craga:section', (e) => {
     if (chat.dataset.open !== 'true') chat.dataset.hide = String((e as CustomEvent<string>).detail === 'ask');
   });
-  // On a small screen, following a link in an answer closes the chat.
+  // On a small screen, following a link in an answer closes the chat, unless it's docked beside the page.
   chat.addEventListener('click', (e) => {
-    if ((e.target as Element).closest('a') && innerWidth <= 900) setTimeout(() => setOpen(false), 0);
+    if ((e.target as Element).closest('a') && innerWidth <= 900 && !split.matches) setTimeout(() => setOpen(false), 0);
   });
 }
