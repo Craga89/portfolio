@@ -1,0 +1,1 @@
+var e=`/`.replace(/\/?$/,`/`),t=e!==`/`,n=n=>!n.startsWith(`/`)||n.startsWith(`//`)||t&&n.startsWith(e)?n:e+n.slice(1);export{t as n,n as r,e as t};

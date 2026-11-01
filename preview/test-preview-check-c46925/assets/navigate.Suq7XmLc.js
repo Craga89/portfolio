@@ -1,0 +1,1 @@
+var e=e=>/^(bridge|lights)$/i.test(e.trim());function t(e){let t=new URL(e,location.href);(t.origin!==location.origin||t.pathname!==location.pathname||dispatchEvent(new CustomEvent(`craga:go`,{detail:t,cancelable:!0})))&&(location.href=t.href)}export{e as n,t};
