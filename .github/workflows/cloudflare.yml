@@ -111,3 +111,20 @@ jobs:
             -f state=success -f context="Cloudflare (pilot)" \
             -f target_url="$URL/" -f description="Served by Cloudflare Workers (pilot)" > /dev/null
           echo "Cloudflare (pilot): $URL/" >> "$GITHUB_STEP_SUMMARY"
+      - if: github.event_name != 'delete' && (steps.deploy.outputs.url || steps.preview.outputs.url)
+        name: Check it serves the site
+        env:
+          URL: ${{ steps.deploy.outputs.url || steps.preview.outputs.url }}
+        run: |
+          # A new address can take a few seconds to answer everywhere.
+          for i in 1 2 3 4 5 6; do curl -fsS -o /dev/null "$URL/" && break; sleep 5; done
+          status() { curl -sS -o /dev/null -w '%{http_code}' "$URL$1"; }
+          fail=0
+          check() { if [ "$2" = "$3" ]; then echo "ok   $1"; else echo "::error title=Cloudflare (pilot)::$1: expected $3, got $2"; fail=1; fi; }
+          check "home page" "$(status /)" 200
+          check "CV page" "$(status /cv/)" 200
+          check "/cv redirects to /cv/" "$(status /cv | cut -c1-2)" 30
+          check "unknown page" "$(status /no-such-page/)" 404
+          check "home page title" "$(curl -sS "$URL/" | grep -c '<title>')" 1
+          check "noindex header" "$(curl -sSI "$URL/" | grep -ci '^x-robots-tag: noindex')" 1
+          exit "$fail"
