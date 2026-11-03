@@ -54,13 +54,22 @@ jobs:
       # On a delete the workflow runs on the default branch; the deleted one is in event.ref.
       BRANCH: ${{ github.event_name == 'delete' && github.event.ref || github.ref_name }}
       WRANGLER: pnpm exec wrangler --config cloudflare/wrangler.jsonc
+    defaults:
+      run:
+        # Explicitly bash, which GitHub runs with pipefail: a failed wrangler piped into tee fails
+        # the step instead of passing it.
+        shell: bash
     steps:
       - name: Name the Preview
         id: name
         run: |
-          # Lowercase letters, digits and dashes, short enough for a hostname label.
-          name="$(printf '%s' "$BRANCH" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/-/g; s/^-+|-+$//g' | cut -c1-40 | sed -E 's/-+$//')"
-          echo "name=${name:-branch}" >> "$GITHUB_OUTPUT"
+          # The branch name in lowercase letters, digits and dashes, then six characters of a hash of
+          # the exact name, so branches that read alike (feature/foo, feature-foo, Feature-Foo) never
+          # share a Preview, as in the GitHub Pages previews. Short enough that
+          # <name>-craigthompson-site stays within a 63-character hostname label.
+          slug="$(printf '%s' "$BRANCH" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/-/g; s/^-+|-+$//g' | cut -c1-30 | sed -E 's/-+$//')"
+          hash="$(printf '%s' "$BRANCH" | sha256sum | cut -c1-6)"
+          echo "name=${slug:-branch}-$hash" >> "$GITHUB_OUTPUT"
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
@@ -84,7 +93,11 @@ jobs:
         id: deploy
         run: |
           $WRANGLER deploy | tee "$RUNNER_TEMP/wrangler.txt"
-          url="$(grep -oE 'https://[a-z0-9.-]+\.workers\.dev' "$RUNNER_TEMP/wrangler.txt" | head -1)"
+          url="$(grep -oE 'https://[a-z0-9.-]+\.workers\.dev' "$RUNNER_TEMP/wrangler.txt" | head -1 || true)"
+          if [ -z "$url" ]; then
+            echo "::error title=Cloudflare (pilot)::No workers.dev address in wrangler's output; see above"
+            exit 1
+          fi
           echo "url=$url" >> "$GITHUB_OUTPUT"
       - if: github.event_name != 'delete' && github.ref_name != 'main'
         name: Preview
@@ -95,7 +108,11 @@ jobs:
           $WRANGLER preview --name "$NAME" --json | tee "$RUNNER_TEMP/wrangler.json"
           # The first workers.dev address in the output is the Preview's (it always serves the
           # branch's latest deployment).
-          url="$(grep -oE 'https://[a-z0-9.-]+\.workers\.dev' "$RUNNER_TEMP/wrangler.json" | head -1)"
+          url="$(grep -oE 'https://[a-z0-9.-]+\.workers\.dev' "$RUNNER_TEMP/wrangler.json" | head -1 || true)"
+          if [ -z "$url" ]; then
+            echo "::error title=Cloudflare (pilot)::No workers.dev address in wrangler's output; see above"
+            exit 1
+          fi
           echo "url=$url" >> "$GITHUB_OUTPUT"
       - if: github.event_name != 'delete'
         name: Link the commit to it
@@ -103,15 +120,11 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           URL: ${{ steps.deploy.outputs.url || steps.preview.outputs.url }}
         run: |
-          if [ -z "$URL" ]; then
-            echo "::warning title=Cloudflare (pilot)::Deployed, but no workers.dev address was found in wrangler's output; see the log above"
-            exit 0
-          fi
           gh api "repos/$GITHUB_REPOSITORY/statuses/$GITHUB_SHA" \
             -f state=success -f context="Cloudflare (pilot)" \
             -f target_url="$URL/" -f description="Served by Cloudflare Workers (pilot)" > /dev/null
           echo "Cloudflare (pilot): $URL/" >> "$GITHUB_STEP_SUMMARY"
-      - if: github.event_name != 'delete' && (steps.deploy.outputs.url || steps.preview.outputs.url)
+      - if: github.event_name != 'delete'
         name: Check it serves the site
         env:
           URL: ${{ steps.deploy.outputs.url || steps.preview.outputs.url }}
