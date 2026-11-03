@@ -7,8 +7,8 @@
 #
 # Each built commit gets a "Cloudflare (pilot)" status linking to where it's served. Nothing here
 # touches craigthompson.dev, which GitHub Pages keeps serving, and none of it is a required check.
-# Pilot pages are served from /, so they have no preview bar, and ask.sh doesn't answer them (its
-# Worker only allows craigthompson.dev's origins); the page falls back to its own search.
+# Pilot builds get PREVIEW_BRANCH, so they show the preview bar, count no visits and stay noindex;
+# ask.sh's Worker allows their addresses.
 name: Cloudflare (pilot)
 
 on:
@@ -83,6 +83,10 @@ jobs:
         uses: Craga89/standards/github/actions/setup-playwright@b8f7b51e18400dff89a9fcb8f296334c5e269e38 # v1
       - if: github.event_name != 'delete'
         name: Build
+        env:
+          # Every pilot build is a preview (main's too, until the cutover): the preview bar, no visit
+          # counting, no service worker, noindex. ask.sh's Worker allows these origins.
+          PREVIEW_BRANCH: ${{ env.BRANCH }}
         run: |
           # The open-source counts come from the oss branch, as in build.yml.
           git fetch -q --depth=1 origin oss:refs/remotes/origin/oss || true

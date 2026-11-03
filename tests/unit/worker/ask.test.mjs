@@ -69,6 +69,19 @@ describe('/ask', () => {
     assert.equal((await worker.fetch(request({ q: '   ' }), e)).status, 400);
     assert.equal((await worker.fetch(request(null, { method: 'GET' }), e)).status, 405);
     assert.equal((await worker.fetch(request({ q: 'hi' }, { path: '/' }), e)).status, 404);
+    // The site on Cloudflare, and its branch Previews, are let in; other Workers aren't.
+    for (const origin of [
+      'https://craigthompson-site.craga89.workers.dev',
+      'https://feature-foo-f93203-craigthompson-site.craga89.workers.dev',
+    ])
+      assert.equal((await worker.fetch(request({ q: 'hi' }, { origin }), e)).status, 200, origin);
+    for (const origin of [
+      'https://craigthompson-site.evil.workers.dev',
+      'https://craigthompson-site.craga89.workers.dev.evil.example',
+      'https://other.craga89.workers.dev',
+      'http://craigthompson-site.craga89.workers.dev',
+    ])
+      assert.equal((await worker.fetch(request({ q: 'hi' }, { origin }), e)).status, 403, origin);
     const pre = await worker.fetch(
       new Request('https://x/ask', { method: 'OPTIONS', headers: { origin: 'http://localhost:8080' } }),
       e,
