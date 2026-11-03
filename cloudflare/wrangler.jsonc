@@ -1,0 +1,22 @@
+// Pilot: the site served by Cloudflare Workers static assets, alongside GitHub Pages, while we find
+// out whether to move (Craga89/standards guidelines/hosting.md). Deployed by
+// .github/workflows/cloudflare.yml: main to the Worker's workers.dev address, every other branch to a
+// Preview of its own. craigthompson.dev stays on GitHub Pages until the cutover.
+//
+// It's in its own folder so wrangler run from the repo root (tools/stats-report.mjs) doesn't pick it
+// up. Paths are relative to this file.
+{
+  "$schema": "../node_modules/wrangler/config-schema.json",
+  "name": "craigthompson-site",
+  "compatibility_date": "2026-10-13",
+  "workers_dev": true,
+  "previews": {},
+  "assets": {
+    // The build output (pnpm run build), with cloudflare/_headers copied in by the workflow.
+    "directory": "../site",
+    // Astro writes every page as <path>/index.html; /path redirects to /path/.
+    "html_handling": "auto-trailing-slash",
+    // Unknown paths get site/404.html with a 404, as on GitHub Pages.
+    "not_found_handling": "404-page",
+  },
+}

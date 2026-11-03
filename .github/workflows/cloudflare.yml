@@ -1,0 +1,113 @@
+# Pilot: the site on Cloudflare Workers static assets (cloudflare/wrangler.jsonc), alongside GitHub
+# Pages, to try the hosting proposed in Craga89/standards guidelines/hosting.md before switching.
+#
+#   push to main     → build → wrangler deploy           (the Worker's workers.dev address)
+#   push elsewhere   → build → wrangler preview --name   (a Preview of its own for each branch)
+#   branch deleted   → wrangler preview delete
+#
+# Each built commit gets a "Cloudflare (pilot)" status linking to where it's served. Nothing here
+# touches craigthompson.dev, which GitHub Pages keeps serving, and none of it is a required check.
+# Pilot pages are served from /, so they have no preview bar, and ask.sh doesn't answer them (its
+# Worker only allows craigthompson.dev's origins); the page falls back to its own search.
+name: Cloudflare (pilot)
+
+on:
+  push:
+    branches-ignore:
+      - pages # what GitHub Pages serves (written by the workflows)
+      # Branches that hold reports and data, not changes to the site (as in preview.yml).
+      - accessibility
+      - blog-import
+      - bootstrap/**
+      - dependabot/** # Dependabot's runs get no secrets
+      - evals
+      - indexnow
+      - lighthouse
+      - node-modules
+      - oss
+      - redirect-data
+      - visual-baselines
+  delete:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  # Per branch, so a newer push (or deleting the branch) replaces a run that hasn't finished.
+  group: cloudflare-${{ github.event_name == 'delete' && github.event.ref || github.ref_name }}
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    name: Deploy to Cloudflare (pilot)
+    # Deleting a tag has no Preview to remove.
+    if: github.event_name != 'delete' || github.event.ref_type == 'branch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      statuses: write # the "Cloudflare (pilot)" status on the commit
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      # On a delete the workflow runs on the default branch; the deleted one is in event.ref.
+      BRANCH: ${{ github.event_name == 'delete' && github.event.ref || github.ref_name }}
+      WRANGLER: pnpm exec wrangler --config cloudflare/wrangler.jsonc
+    steps:
+      - name: Name the Preview
+        id: name
+        run: |
+          # Lowercase letters, digits and dashes, short enough for a hostname label.
+          name="$(printf '%s' "$BRANCH" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/-/g; s/^-+|-+$//g' | cut -c1-40 | sed -E 's/-+$//')"
+          echo "name=${name:-branch}" >> "$GITHUB_OUTPUT"
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: Craga89/standards/github/actions/setup-node@b8f7b51e18400dff89a9fcb8f296334c5e269e38 # v1
+      - if: github.event_name == 'delete'
+        name: Delete the Preview
+        env:
+          NAME: ${{ steps.name.outputs.name }}
+        run: $WRANGLER preview delete --name "$NAME" --skip-confirmation
+      - if: github.event_name != 'delete'
+        uses: Craga89/standards/github/actions/setup-playwright@b8f7b51e18400dff89a9fcb8f296334c5e269e38 # v1
+      - if: github.event_name != 'delete'
+        name: Build
+        run: |
+          # The open-source counts come from the oss branch, as in build.yml.
+          git fetch -q --depth=1 origin oss:refs/remotes/origin/oss || true
+          pnpm run build
+          cp cloudflare/_headers site/_headers
+      - if: github.event_name != 'delete' && github.ref_name == 'main'
+        name: Deploy
+        id: deploy
+        run: |
+          $WRANGLER deploy | tee "$RUNNER_TEMP/wrangler.txt"
+          url="$(grep -oE 'https://[a-z0-9.-]+\.workers\.dev' "$RUNNER_TEMP/wrangler.txt" | head -1)"
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+      - if: github.event_name != 'delete' && github.ref_name != 'main'
+        name: Preview
+        id: preview
+        env:
+          NAME: ${{ steps.name.outputs.name }}
+        run: |
+          $WRANGLER preview --name "$NAME" --json | tee "$RUNNER_TEMP/wrangler.json"
+          # The first workers.dev address in the output is the Preview's (it always serves the
+          # branch's latest deployment).
+          url="$(grep -oE 'https://[a-z0-9.-]+\.workers\.dev' "$RUNNER_TEMP/wrangler.json" | head -1)"
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+      - if: github.event_name != 'delete'
+        name: Link the commit to it
+        env:
+          GH_TOKEN: ${{ github.token }}
+          URL: ${{ steps.deploy.outputs.url || steps.preview.outputs.url }}
+        run: |
+          if [ -z "$URL" ]; then
+            echo "::warning title=Cloudflare (pilot)::Deployed, but no workers.dev address was found in wrangler's output; see the log above"
+            exit 0
+          fi
+          gh api "repos/$GITHUB_REPOSITORY/statuses/$GITHUB_SHA" \
+            -f state=success -f context="Cloudflare (pilot)" \
+            -f target_url="$URL/" -f description="Served by Cloudflare Workers (pilot)" > /dev/null
+          echo "Cloudflare (pilot): $URL/" >> "$GITHUB_STEP_SUMMARY"
