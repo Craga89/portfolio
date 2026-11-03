@@ -7,10 +7,16 @@
 // up. Paths are relative to this file.
 {
   "$schema": "../node_modules/wrangler/config-schema.json",
-  // Named after the repository: served at portfolio.craga89.workers.dev.
+  // Named after the repository.
   "name": "portfolio",
   "compatibility_date": "2026-10-13",
-  "workers_dev": true,
+  // craigthompson.dev is served by this Worker (a custom domain). Listed here because each deploy
+  // replaces the Worker's routes with these: without it, a deploy would detach the domain. The www
+  // redirect is a Cloudflare redirect rule on the zone, not part of the Worker.
+  "routes": [{ "pattern": "craigthompson.dev", "custom_domain": true }],
+  // No copy at portfolio.craga89.workers.dev: craigthompson.dev is the site. Previews keep their own
+  // addresses, which this doesn't affect.
+  "workers_dev": false,
   "previews": {},
   "assets": {
     // The build output (pnpm run build), with cloudflare/_headers copied in by the workflow.
