@@ -22,9 +22,9 @@ const MODELS = [
 const ALLOWED = [
   /^https:\/\/(www\.)?craigthompson\.dev$/,
   /^https:\/\/craga89\.github\.io$/,
-  // The site on Cloudflare Workers (the pilot): the craigthompson-site Worker and its Previews
-  // (<preview>-craigthompson-site...). Only this account's Workers are served from craga89.workers.dev.
-  /^https:\/\/([a-z0-9-]+-)?craigthompson-site\.craga89\.workers\.dev$/,
+  // The site on Cloudflare Workers (the pilot): the portfolio Worker and its Previews
+  // (<preview>-portfolio...). Only this account's Workers are served from craga89.workers.dev.
+  /^https:\/\/([a-z0-9-]+-)?portfolio\.craga89\.workers\.dev$/,
   /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/,
 ];
 const ALWAYS = ['intro', 'profile', 'faq-1', 'recognition'];

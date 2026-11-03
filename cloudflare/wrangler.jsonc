@@ -7,7 +7,8 @@
 // up. Paths are relative to this file.
 {
   "$schema": "../node_modules/wrangler/config-schema.json",
-  "name": "craigthompson-site",
+  // Named after the repository: served at portfolio.craga89.workers.dev.
+  "name": "portfolio",
   "compatibility_date": "2026-10-13",
   "workers_dev": true,
   "previews": {},

@@ -66,7 +66,7 @@ jobs:
           # The branch name in lowercase letters, digits and dashes, then six characters of a hash of
           # the exact name, so branches that read alike (feature/foo, feature-foo, Feature-Foo) never
           # share a Preview, as in the GitHub Pages previews. Short enough that
-          # <name>-craigthompson-site stays within a 63-character hostname label.
+          # <name>-portfolio stays within a 63-character hostname label.
           slug="$(printf '%s' "$BRANCH" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/-/g; s/^-+|-+$//g' | cut -c1-30 | sed -E 's/-+$//')"
           hash="$(printf '%s' "$BRANCH" | sha256sum | cut -c1-6)"
           echo "name=${slug:-branch}-$hash" >> "$GITHUB_OUTPUT"
