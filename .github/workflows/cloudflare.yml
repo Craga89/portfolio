@@ -114,9 +114,11 @@ jobs:
           if-no-files-found: error
           retention-days: 3
 
-  # Uploads the build as the branch's Preview, or deletes the Preview of a deleted branch. The token
-  # is only given to wrangler; the only other code that runs is pnpm install of the locked
-  # dependencies (whose install scripts don't run unless pnpm-workspace.yaml allows them).
+  # Uploads the build as the branch's Preview, or deletes the Preview of a deleted branch. Nothing
+  # from the branch runs here: the checkout is the default branch (reviewed, merged code), so
+  # wrangler, its version and the Worker's config are the default branch's, and only the branch's
+  # built files come in, from the build job. A change to the Worker's config reaches Previews once
+  # it's merged. The token is only given to wrangler.
   deploy:
     name: Cloudflare preview
     needs: [name, build]
@@ -140,6 +142,7 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          ref: ${{ github.event.repository.default_branch }}
           persist-credentials: false
       - uses: Craga89/standards/github/actions/setup-node@b8f7b51e18400dff89a9fcb8f296334c5e269e38 # v1
       - if: github.event_name == 'delete'
