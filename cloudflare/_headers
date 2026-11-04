@@ -1,0 +1,9 @@
+# Response headers for the site on Cloudflare (Workers static assets). GitHub Pages can't set any.
+# Copied into site/ by .github/workflows/cloudflare.yml. The Content-Security-Policy stays in each
+# page's <meta> for now: Astro writes per-page hashes there.
+
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  # Pilot only: nothing on workers.dev should be indexed. Remove at the cutover to craigthompson.dev.
+  X-Robots-Tag: noindex

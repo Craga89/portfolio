@@ -2,18 +2,27 @@
 // On branch previews only: a bar across the top saying this is a preview of a branch, not the live
 // site, with links to the other previews and to the live site.
 import { BASE, PREVIEW, PREVIEW_BRANCH } from '../../lib/url';
+import { SITE } from '../../site';
 
-// The previews live at /preview/<branch>/: the list of them is one level up, and the live site two.
-const previews = BASE.replace(/[^/]+\/$/, '');
-const live = previews.replace(/[^/]+\/$/, '');
+// On GitHub Pages the previews live at /preview/<branch>/: the list of them is one level up, and
+// the live site two. A Cloudflare Preview is served from / on an address of its own, with no list.
+const CLOUDFLARE = BASE === '/';
+const previews = CLOUDFLARE ? '' : BASE.replace(/[^/]+\/$/, '');
+const live = CLOUDFLARE ? `${SITE}/` : previews.replace(/[^/]+\/$/, '');
 ---
 
 {
   PREVIEW && (
     <aside class="preview-bar" aria-label="Branch preview">
       <p>
-        <strong>Branch preview</strong> of <code>{PREVIEW_BRANCH || BASE}</code>, built before the checks run.
-        <a href={previews}>All previews</a> · <a href={live}>Live site</a>
+        <strong>{CLOUDFLARE ? 'Cloudflare preview' : 'Branch preview'}</strong> of
+        <code>{PREVIEW_BRANCH || BASE}</code>, built before the checks run.
+        {previews && (
+          <>
+            <a href={previews}>All previews</a> ·{' '}
+          </>
+        )}
+        <a href={live}>Live site</a>
       </p>
       <p class="fold" data-fold hidden />
     </aside>

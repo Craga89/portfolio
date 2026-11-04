@@ -3,11 +3,14 @@
 // goes through url(), so the same build works in either place.
 export const BASE: string = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 
-/** True for a preview build. */
-export const PREVIEW = BASE !== '/';
-
 /** On a preview build, the branch it previews (PREVIEW_BRANCH at build time); '' otherwise. */
 export const PREVIEW_BRANCH: string = import.meta.env.PREVIEW_BRANCH ?? '';
+
+/**
+ * True for a preview build: one built under a path (/preview/<branch>/ on GitHub Pages), or one
+ * given a branch to preview (Cloudflare Previews, served from /).
+ */
+export const PREVIEW = BASE !== '/' || PREVIEW_BRANCH !== '';
 
 /**
  * A path on this site ("/cv/", "/#faq", "/?ask=…"), under BASE. A path already under it, and
