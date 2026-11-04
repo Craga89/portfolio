@@ -110,7 +110,7 @@ const items = await Promise.all(roles.map(async (r) => ({ data: r.data, Content:
     @supports (animation-timeline: view()) {
       [data-kind='past'] .dot,
       [data-kind='side'] .dot {
-        animation-name: c-lit;
+        animation-name: c-dot-lit;
         animation-timing-function: linear;
         animation-fill-mode: both;
         animation-timeline: view();
@@ -118,7 +118,7 @@ const items = await Promise.all(roles.map(async (r) => ({ data: r.data, Content:
       }
     }
   }
-  @keyframes c-lit {
+  @keyframes c-dot-lit {
     to {
       background: var(--lit, var(--acc));
     }

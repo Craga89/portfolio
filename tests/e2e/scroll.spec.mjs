@@ -36,3 +36,16 @@ test('section headings type out over the scroll, a character at a time @desktop'
   expect(clip).not.toBe('none');
   expect(clip).not.toMatch(/inset\(0(px)?\)$/);
 });
+
+test('on a phone, the selected case study is brought into the row of tabs @mobile', async ({ page }) => {
+  await page.goto('/?case=site#case-studies');
+  const row = page.locator('#case-studies [role="tablist"]');
+  const tab = row.locator('[aria-selected="true"]');
+  await expect(tab).toHaveText('this-site.md');
+  await expect
+    .poll(async () => {
+      const [t, r] = await Promise.all([tab.boundingBox(), row.boundingBox()]);
+      return !!t && !!r && t.x >= r.x && t.x + t.width <= r.x + r.width;
+    })
+    .toBe(true);
+});
