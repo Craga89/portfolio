@@ -11,6 +11,12 @@ url="${1:?usage: cloudflare-check.sh <url> <preview|live>}"
 kind="${2:?usage: cloudflare-check.sh <url> <preview|live>}"
 url="${url%/}"
 
+# Previews behind Cloudflare Access: sign in with the service token the Preview workflow passes
+# (CF_ACCESS_CLIENT_ID and CF_ACCESS_CLIENT_SECRET), on every request.
+if [ -n "${CF_ACCESS_CLIENT_ID:-}" ]; then
+  curl() { command curl -H "CF-Access-Client-Id: $CF_ACCESS_CLIENT_ID" -H "CF-Access-Client-Secret: $CF_ACCESS_CLIENT_SECRET" "$@"; }
+fi
+
 # A new address can take a few seconds to answer everywhere.
 for _ in 1 2 3 4 5 6; do curl -fsS -o /dev/null "$url/" && break; sleep 5; done
 
