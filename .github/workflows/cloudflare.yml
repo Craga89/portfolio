@@ -1,15 +1,11 @@
 # Cloudflare Previews of every branch: the site on the portfolio Worker (cloudflare/wrangler.jsonc),
-# each branch at an address of its own. main isn't previewed: ci.yml's deploy job deploys it to the
-# Worker, which serves craigthompson.dev, once it has passed every check. See Craga89/standards
-# guidelines/hosting.md.
-#
-#   push to a branch    → build (no token) → wrangler preview --name → check → "Preview" status,
-#                         PR comment (once)
-#   pull request opened → PR comment (once), for a branch pushed before its pull request
-#   branch deleted      → wrangler preview delete
+# each branch at an address of its own, through Craga89/standards' shared Preview workflow. main
+# isn't previewed: ci.yml's deploy job deploys it to the Worker, which serves craigthompson.dev,
+# once it has passed every check. See Craga89/standards guidelines/hosting.md.
 #
 # Previews get PREVIEW_BRANCH, so they show the preview bar, count no visits and stay noindex;
-# ask.sh's Worker allows their addresses. Not a required check.
+# ask.sh's Worker allows their addresses. Previews are behind Cloudflare Access: CI's check signs
+# in with a service token. Not a required check.
 name: Preview
 
 on:
@@ -26,11 +22,10 @@ on:
       - lighthouse
       - node-modules
       - oss
-      - pages # GitHub Pages' old branch, until it's deleted
       - redirect-data
       - visual-baselines
   pull_request:
-    types: [opened, reopened]
+    types: [opened, reopened] # comments the link on a branch pushed before its pull request
   delete:
   workflow_dispatch:
 
@@ -44,8 +39,7 @@ concurrency:
   cancel-in-progress: ${{ github.event_name != 'pull_request' }}
 
 jobs:
-  name:
-    name: Name the Preview
+  preview:
     # Deleting a tag has no Preview to remove; Dependabot's, bootstrap and forks' pull requests get
     # none.
     if: >-
@@ -53,190 +47,22 @@ jobs:
       (github.event_name != 'pull_request' ||
         (!startsWith(github.head_ref, 'dependabot/') && !startsWith(github.head_ref, 'bootstrap/') &&
          github.event.pull_request.head.repo.full_name == github.repository))
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    outputs:
-      branch: ${{ steps.name.outputs.branch }}
-      name: ${{ steps.name.outputs.name }}
-      url: ${{ steps.name.outputs.url }}
-    steps:
-      - id: name
-        env:
-          # On a delete the workflow runs on the default branch; the deleted one is in event.ref. On a
-          # pull request, the branch is the pull request's head.
-          BRANCH: ${{ github.event_name == 'delete' && github.event.ref || github.head_ref || github.ref_name }}
-        run: |
-          # The branch name in lowercase letters, digits and dashes, then six characters of a hash of
-          # the exact name, so branches that read alike (feature/foo, feature-foo, Feature-Foo) never
-          # share a Preview. Short enough that <name>-portfolio stays within a 63-character hostname
-          # label. Cloudflare serves the Preview at https://<name>-portfolio.<subdomain>.workers.dev.
-          slug="$(printf '%s' "$BRANCH" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/-/g; s/^-+|-+$//g' | cut -c1-30 | sed -E 's/-+$//')"
-          hash="$(printf '%s' "$BRANCH" | sha256sum | cut -c1-6)"
-          name="${slug:-branch}-$hash"
-          {
-            echo "branch=$BRANCH"
-            echo "name=$name"
-            echo "url=https://$name-portfolio.craga89.workers.dev"
-          } >> "$GITHUB_OUTPUT"
-
-  # Builds the branch. No Cloudflare token here: this runs the branch's own code (its dependencies,
-  # its build), which mustn't be able to read a token that can deploy every Worker on the account.
-  build:
-    name: Build the preview
-    needs: name
-    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
+    uses: Craga89/standards/.github/workflows/cloudflare-preview.yml@118ae2dac67218985916f2f95e069ec5e9394c7b # v1
     permissions:
       contents: read
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - uses: Craga89/standards/github/actions/setup-node@b8f7b51e18400dff89a9fcb8f296334c5e269e38 # v1
-      - uses: Craga89/standards/github/actions/setup-playwright@b8f7b51e18400dff89a9fcb8f296334c5e269e38 # v1
-      - name: Build
-        env:
-          # A preview: the preview bar, no visit counting, no service worker, noindex.
-          PREVIEW_BRANCH: ${{ needs.name.outputs.branch }}
-        run: |
-          # The open-source counts come from the oss branch, as in build.yml.
-          git fetch -q --depth=1 origin oss:refs/remotes/origin/oss || true
-          pnpm run build
-          # The live site's headers, plus noindex for every page: a Preview stays out of search
-          # engines. It goes inside the /* rule: a second /* rule would replace the first rather than
-          # add to it.
-          awk '{ print } $0 == "/*" && !done { print "  X-Robots-Tag: noindex"; done = 1 }
-            END { if (!done) printf "\n/*\n  X-Robots-Tag: noindex\n" }' cloudflare/_headers > site/_headers
-      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
-        with:
-          name: preview
-          path: site
-          include-hidden-files: true
-          if-no-files-found: error
-          retention-days: 3
-
-  # Uploads the build as the branch's Preview, or deletes the Preview of a deleted branch. Nothing
-  # from the branch runs here: the checkout is the default branch (reviewed, merged code), so
-  # wrangler, its version and the Worker's config are the default branch's, and only the branch's
-  # built files come in, from the build job. A change to the Worker's config reaches Previews once
-  # it's merged. The token is only given to wrangler.
-  deploy:
-    name: Cloudflare preview
-    needs: [name, build]
-    if: >-
-      always() && needs.name.result == 'success' && github.event_name != 'pull_request' &&
-      (github.event_name == 'delete' || needs.build.result == 'success')
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    permissions:
-      contents: read
-    env:
-      NAME: ${{ needs.name.outputs.name }}
-      WRANGLER: pnpm exec wrangler --config cloudflare/wrangler.jsonc
-    defaults:
-      run:
-        # Explicitly bash, which GitHub runs with pipefail: a failed wrangler piped into tee fails
-        # the step instead of passing it.
-        shell: bash
-    outputs:
-      url: ${{ steps.preview.outputs.url }}
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          ref: ${{ github.event.repository.default_branch }}
-          persist-credentials: false
-      - uses: Craga89/standards/github/actions/setup-node@b8f7b51e18400dff89a9fcb8f296334c5e269e38 # v1
-      - if: github.event_name == 'delete'
-        name: Delete the Preview
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-        run: $WRANGLER preview delete --name "$NAME" --skip-confirmation
-      - if: github.event_name != 'delete'
-        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
-        with:
-          name: preview
-          path: site
-      - if: github.event_name != 'delete'
-        name: Preview
-        id: preview
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-        run: |
-          $WRANGLER preview --name "$NAME" --json | tee "$RUNNER_TEMP/wrangler.json"
-          # The first workers.dev address in the output is the Preview's (it always serves the
-          # branch's latest deployment).
-          url="$(grep -oE 'https://[a-z0-9.-]+\.workers\.dev' "$RUNNER_TEMP/wrangler.json" | head -1 || true)"
-          if [ -z "$url" ]; then
-            echo "::error title=Preview::No workers.dev address in wrangler's output; see above"
-            exit 1
-          fi
-          echo "url=$url" >> "$GITHUB_OUTPUT"
-
-  # Checks the Preview serves the site, without the token.
-  check:
-    name: Check the preview
-    needs: deploy
-    if: github.event_name != 'delete' && github.event_name != 'pull_request'
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    permissions:
-      contents: read
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - name: Check it serves the site
-        env:
-          URL: ${{ needs.deploy.outputs.url }}
-        run: tools/cloudflare-check.sh "$URL" preview
-
-  # The commit's "Preview" status: green, linking to the Preview, only once it's up and checked;
-  # red, linking to this run, if any of it failed.
-  status:
-    name: Report the preview
-    needs: [name, build, deploy, check]
-    if: always() && needs.name.result == 'success' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    permissions:
       statuses: write # the "Preview" status on the commit
-    steps:
-      - env:
-          GH_TOKEN: ${{ github.token }}
-          OK: ${{ needs.check.result == 'success' }}
-          URL: ${{ needs.deploy.outputs.url }}
-          RUN: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-        run: |
-          if [ "$OK" = true ]; then
-            gh api "repos/$GITHUB_REPOSITORY/statuses/$GITHUB_SHA" -f state=success -f context="Preview" \
-              -f target_url="$URL/" -f description="This branch on Cloudflare" > /dev/null
-            echo "Preview: $URL/" >> "$GITHUB_STEP_SUMMARY"
-          else
-            gh api "repos/$GITHUB_REPOSITORY/statuses/$GITHUB_SHA" -f state=failure -f context="Preview" \
-              -f target_url="$RUN" -f description="The preview failed; see the run" > /dev/null
-          fi
-
-  comment:
-    name: Comment the preview link
-    needs: [name, check]
-    # After a push's Preview is up and checked, or when a pull request is opened (no build then).
-    if: >-
-      always() && needs.name.result == 'success' && github.event_name != 'delete' &&
-      (github.event_name == 'pull_request' || needs.check.result == 'success')
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    permissions:
-      pull-requests: write
-    # One at a time per branch, so a push and a pull request opening can't both post the comment.
-    concurrency:
-      group: preview-comment-${{ needs.name.outputs.branch }}
-      cancel-in-progress: false
-    steps:
-      - uses: Craga89/standards/github/actions/preview-comment@b8f7b51e18400dff89a9fcb8f296334c5e269e38 # v1
-        with:
-          branch: ${{ needs.name.outputs.branch }}
-          url: ${{ needs.name.outputs.url }}/
-          pr: ${{ github.event.pull_request.number }}
+      pull-requests: write # the comment with the link
+    with:
+      worker: portfolio # the "name" in cloudflare/wrangler.jsonc
+      workers-subdomain: craga89
+      config: cloudflare/wrangler.jsonc
+      headers: cloudflare/_headers
+      playwright: true
+      # The open-source counts come from the oss branch, as in build.yml.
+      build-command: git fetch -q --depth=1 origin oss:refs/remotes/origin/oss || true; pnpm run build
+      check-command: tools/cloudflare-check.sh "$PREVIEW_URL" preview
+    secrets:
+      cloudflare-api-token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      cloudflare-account-id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      access-client-id: ${{ secrets.CLOUDFLARE_ACCESS_CLIENT_ID }}
+      access-client-secret: ${{ secrets.CLOUDFLARE_ACCESS_CLIENT_SECRET }}
