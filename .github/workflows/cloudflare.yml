@@ -104,8 +104,10 @@ jobs:
           git fetch -q --depth=1 origin oss:refs/remotes/origin/oss || true
           pnpm run build
           # The live site's headers, plus noindex for every page: a Preview stays out of search
-          # engines. Headers from every rule a request matches are combined.
-          { cat cloudflare/_headers; printf '\n/*\n  X-Robots-Tag: noindex\n'; } > site/_headers
+          # engines. It goes inside the /* rule: a second /* rule would replace the first rather than
+          # add to it.
+          awk '{ print } $0 == "/*" && !done { print "  X-Robots-Tag: noindex"; done = 1 }
+            END { if (!done) printf "\n/*\n  X-Robots-Tag: noindex\n" }' cloudflare/_headers > site/_headers
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: preview
