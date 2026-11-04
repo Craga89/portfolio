@@ -4,11 +4,10 @@
 import Icon from '../Icon.astro';
 import ContactLinks from './ContactLinks.astro';
 import { SECTIONS } from '../../lib/sections';
-import { NAME } from '../../site';
 ---
 
 <header id="c-hdr" class="mbar">
-  <a class="brand" href="#top"><span class="c-dot" aria-hidden="true"></span><span class="labels"><span class="dom">craigthompson.dev</span><span class="name" aria-hidden="true">{NAME}</span></span></a>
+  <a class="brand" href="#top"><span class="c-dot" aria-hidden="true"></span>craigthompson.dev</a>
   <a class="cta" href="#contact">./get-in-touch</a>
   <details id="v2-menu" class="menu">
     <summary aria-label="Menu" title="Menu"><Icon name="menu" size={20} class="open" /><Icon name="close" size={20} class="shut" /></summary>
@@ -59,61 +58,6 @@ import { NAME } from '../../site';
   }
   .brand:hover {
     color: var(--head);
-  }
-  /* The domain, and the name that takes its place once the intro's name has scrolled away. */
-  .labels {
-    display: grid;
-  }
-  .dom,
-  .name {
-    grid-area: 1 / 1;
-    align-self: center;
-  }
-  .name {
-    opacity: 0;
-    font-family: var(--f-head);
-    font-size: 21px;
-    font-weight: 800;
-    line-height: 1;
-    letter-spacing: 0.01em;
-  }
-  /* Driven by the intro's name (Intro.astro), as it leaves the top of the screen. Longhands, as in
-     base.css. */
-  @media (prefers-reduced-motion: no-preference) {
-    @supports (animation-timeline: view()) {
-      :global(body) {
-        timeline-scope: --c-intro-name;
-      }
-      .dom,
-      .name {
-        animation-timing-function: linear;
-        animation-fill-mode: both;
-        animation-timeline: --c-intro-name;
-        animation-range: exit 20% exit 80%;
-      }
-      .dom {
-        animation-name: c-out;
-      }
-      .name {
-        animation-name: c-in;
-      }
-    }
-  }
-  @keyframes c-out {
-    to {
-      opacity: 0;
-      translate: 0 -30%;
-    }
-  }
-  @keyframes c-in {
-    from {
-      opacity: 0;
-      translate: 0 30%;
-    }
-    to {
-      opacity: 1;
-      translate: 0 0;
-    }
   }
   .c-dot {
     width: 9px;

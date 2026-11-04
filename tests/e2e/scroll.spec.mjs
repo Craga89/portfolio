@@ -1,6 +1,6 @@
-// Scroll-driven touches: the sidebar's lines that fill as each section passes, and on phones the
-// header taking over the name as the intro scrolls away. Both follow scroll timelines, so they're
-// checked by their computed styles at a scroll position.
+// Scroll-driven touches: the sidebar's lines that fill as each section passes, and the section
+// headings typing themselves out. Both follow scroll timelines, so they're checked by their
+// computed styles at a scroll position.
 import { test, expect } from '../fixtures.mjs';
 
 /** @param {import('@playwright/test').Page} page @param {number} top */
@@ -20,16 +20,19 @@ test("the explorer's lines fill as their sections pass @desktop", async ({ page 
   await expect.poll(() => fill('contact')).toBe(0);
 });
 
-test('on a phone the header shows the name once the intro has scrolled away @mobile', async ({ page }) => {
+test('section headings type out over the scroll, a character at a time @desktop', async ({ page }) => {
   await page.goto('/');
-  const opacity = (sel) => page.locator(`.mbar ${sel}`).evaluate((el) => Number(getComputedStyle(el).opacity));
-  expect(await opacity('.dom')).toBe(1);
-  expect(await opacity('.name')).toBe(0);
+  const h = page.locator('#stack .c-cmd');
+  const text = (await h.textContent())?.trim() ?? '';
+  expect(await h.evaluate((el) => el.style.getPropertyValue('--steps'))).toBe(String(text.length));
 
-  const bottom = await page.locator('.intro h1').evaluate((el) => el.getBoundingClientRect().bottom + window.scrollY);
-  await scrollTo(page, bottom + 100);
-  await expect.poll(() => opacity('.name')).toBe(1);
-  await expect.poll(() => opacity('.dom')).toBe(0);
-  // The link's name is still the site's, not read out twice.
-  await expect(page.locator('.mbar .brand')).toHaveAccessibleName('craigthompson.dev');
+  // With the heading a little way up from the bottom of the screen, it's part-typed.
+  const { top, vh } = await h.evaluate((el) => ({
+    top: el.getBoundingClientRect().top + window.scrollY,
+    vh: innerHeight,
+  }));
+  await scrollTo(page, top - vh * 0.85);
+  const clip = await h.evaluate((el) => getComputedStyle(el).clipPath);
+  expect(clip).not.toBe('none');
+  expect(clip).not.toMatch(/inset\(0(px)?\)$/);
 });

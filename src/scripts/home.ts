@@ -2,6 +2,7 @@
 import { whenIdle } from './dom';
 import './origin-trials';
 import './anchors';
+import './prompts';
 import './spy';
 import './deck';
 import './cases';

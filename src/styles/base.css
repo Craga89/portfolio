@@ -286,13 +286,18 @@ kbd {
   background: radial-gradient(circle, var(--line3) 2px, transparent 2.5px) left bottom / 16px 6px repeat-x;
 }
 
-@supports (animation-timeline: view()) {
-  .c-cmd {
-    animation-name: c-wipe;
-    animation-timing-function: steps(22, end);
-    animation-fill-mode: both;
-    animation-timeline: view();
-    animation-range: entry 20% entry 90%;
+/* Typed out a character at a time (--steps, the heading's length, set by scripts/prompts.ts) over
+   about a quarter of the screen's scroll, from when the line is fully on screen. Over its own
+   height alone it finished within a few pixels and simply appeared. */
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .c-cmd {
+      animation-name: c-wipe;
+      animation-timing-function: steps(var(--steps, 22), end);
+      animation-fill-mode: both;
+      animation-timeline: view();
+      animation-range: entry 100% cover 35%;
+    }
   }
 }
 
