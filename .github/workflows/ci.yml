@@ -1,15 +1,16 @@
 # Every change: quality checks, a build, then the tests on that build. On main, when everything
-# passes, the build is deployed to GitHub Pages and the ask.sh worker to Cloudflare.
+# passes, the site is deployed to Cloudflare (the portfolio Worker, which serves craigthompson.dev)
+# and the ask.sh worker too.
 #
 #   lint ────────────┐
-#   build ─┬─ unit ──┼─ deploy (store the live site) ─ pages (GitHub Pages)
-#          ├─ e2e ───┤   └─ worker (Cloudflare), smoke tests
+#   build ─┬─ unit ──┼─ deploy (the site, to Cloudflare) ─ indexnow
+#          ├─ e2e ───┤   └─ worker (ask.sh, Cloudflare), smoke tests
 #          ├─ a11y ──┘
 #          └─ visual (screenshots; reported, doesn't block)
 #
-# Branches also get a preview at /preview/<branch>-<hash>/, built without waiting for any of this
-# (preview.yml, then preview-deploy.yml). The actions and the Pages workflows come from
-# Craga89/standards; the job names are the ruleset's required checks, so keep them.
+# Branches also get a Cloudflare Preview, built without waiting for any of this (cloudflare.yml).
+# The actions come from Craga89/standards; the job names are the ruleset's required checks, so keep
+# them (deploy is still named "Deploy to GitHub Pages" for that reason).
 #
 # Daily, it runs again so live.json picks up the latest results from the report branches.
 name: CI
@@ -220,9 +221,10 @@ jobs:
   # Stores the live site at the root of the pages branch (the branch previews under preview/ are
   # kept), and `pages` then deploys the branch. This job keeps the name of the ruleset's required
   # "Deploy to GitHub Pages" check.
-  # Stores the live site on the pages branch for GitHub Pages, then deploys the same stamped build
-  # to Cloudflare (the portfolio Worker, cloudflare/wrangler.jsonc), which serves craigthompson.dev
-  # once its custom domain is attached. The job keeps its name: it's a required check.
+  # Deploys the build that passed every check to Cloudflare (the portfolio Worker,
+  # cloudflare/wrangler.jsonc), which serves craigthompson.dev, with live.json written and the commit
+  # stamped in, then checks it serves the live site. Named "Deploy to GitHub Pages" from before the
+  # move: it's a required check, so renaming it needs the ruleset changing too.
   deploy:
     name: Deploy to GitHub Pages
     needs: [lint, unit, e2e, a11y]
@@ -230,9 +232,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     permissions:
-      contents: write # the pages branch, which also holds the branch previews
-    env:
-      HAS_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN != '' }}
+      contents: read
     defaults:
       run:
         shell: bash # with pipefail, so a failed wrangler piped into tee fails the step
@@ -245,14 +245,14 @@ jobs:
         run: |
           for b in lighthouse accessibility evals oss; do git fetch -q --depth=1 origin "$b:refs/remotes/origin/$b" || true; done
           node tools/live.mjs site/live.json
-      # Stamps the commit into the pages (__BUILD_SHA__, __BUILD_SHORT__, __BUILD_AT__) as it stores.
-      - uses: Craga89/standards/github/actions/pages-store@b8f7b51e18400dff89a9fcb8f296334c5e269e38 # v1
-        with:
-          source: site
-      - if: env.HAS_TOKEN == 'true'
-        uses: Craga89/standards/github/actions/setup-node@b8f7b51e18400dff89a9fcb8f296334c5e269e38 # v1
-      - if: env.HAS_TOKEN == 'true'
-        name: Deploy to Cloudflare
+      # The commit the site was built from, in the pages (the sidebar's version link, and what
+      # Lighthouse looks for to know an address is serving this site).
+      - name: Stamp the commit
+        run: |
+          at="$(git log -1 --format=%cI "$GITHUB_SHA")"
+          find site -name '*.html' -exec sed -i "s/__BUILD_SHA__/${GITHUB_SHA}/g; s/__BUILD_SHORT__/${GITHUB_SHA:0:7}/g; s/__BUILD_AT__/${at}/g" {} +
+      - uses: Craga89/standards/github/actions/setup-node@b8f7b51e18400dff89a9fcb8f296334c5e269e38 # v1
+      - name: Deploy to Cloudflare
         id: cloudflare
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
@@ -262,29 +262,25 @@ jobs:
           pnpm exec wrangler deploy --config cloudflare/wrangler.jsonc | tee "$RUNNER_TEMP/wrangler.txt"
           url="$(grep -oE 'https://[a-z0-9.-]+\.workers\.dev' "$RUNNER_TEMP/wrangler.txt" | head -1 || true)"
           echo "url=${url:-https://craigthompson.dev}" >> "$GITHUB_OUTPUT"
-      - if: env.HAS_TOKEN == 'true'
-        name: Check Cloudflare serves the live site
+      - name: Check Cloudflare serves the live site
         env:
           URL: ${{ steps.cloudflare.outputs.url }}
         run: tools/cloudflare-check.sh "$URL" live
-
-  pages:
-    needs: deploy
-    uses: Craga89/standards/.github/workflows/pages-deploy.yml@b8f7b51e18400dff89a9fcb8f296334c5e269e38 # v1
-    permissions:
-      contents: read
-      pages: write
-      id-token: write
-      statuses: write # marks the branch previews it publishes live on their commits
+      # The site as deployed, for IndexNow to compare.
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: live
+          path: site
+          include-hidden-files: true
+          retention-days: 3
 
   # Bing, Yandex, Seznam, Naver and Yep recrawl the pages that changed (tools/lib/indexnow.mjs). It
-  # compares the live site just published (the root of the pages branch, previews left out) with the
-  # indexnow branch: the site as IndexNow was last told about it. That branch moves on only once
-  # IndexNow accepts, so a failed run's pages are sent again next time, and a failure here doesn't
-  # fail the deploy.
+  # compares the live site just deployed with the indexnow branch: the site as IndexNow was last
+  # told about it. That branch moves on only once IndexNow accepts, so a failed run's pages are sent
+  # again next time, and a failure here doesn't fail the deploy.
   indexnow:
     name: Tell search engines what changed (IndexNow)
-    needs: pages
+    needs: deploy
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:
@@ -294,15 +290,16 @@ jobs:
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version-file: .node-version
-      - name: The live site, before and after
+      - name: What IndexNow was last told
         run: |
           mkdir -p "$RUNNER_TEMP/before" "$RUNNER_TEMP/live"
           if git fetch -q --depth=1 origin indexnow; then
             git archive FETCH_HEAD | tar -x -C "$RUNNER_TEMP/before"
           fi
-          git fetch -q --depth=1 origin pages
-          git archive FETCH_HEAD | tar -x -C "$RUNNER_TEMP/live"
-          rm -rf "$RUNNER_TEMP/live/preview"
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: live
+          path: ${{ runner.temp }}/live
       - name: Tell search engines what changed (IndexNow)
         id: indexnow
         continue-on-error: true

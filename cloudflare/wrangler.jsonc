@@ -17,6 +17,9 @@
   // No copy at portfolio.craga89.workers.dev: craigthompson.dev is the site. Previews keep their own
   // addresses, which this doesn't affect.
   "workers_dev": false,
+  // Previews keep their workers.dev addresses. Explicit: without it, turning workers_dev off turned
+  // them off too.
+  "preview_urls": true,
   "previews": {},
   "assets": {
     // The build output (pnpm run build), with cloudflare/_headers copied in by the workflow.
