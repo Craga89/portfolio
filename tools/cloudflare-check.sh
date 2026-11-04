@@ -32,6 +32,7 @@ check "CV page" "$(status /cv/)" 200
 check "/cv redirects to /cv/" "$(status /cv | cut -c1-2)" 30
 check "unknown page" "$(status /no-such-page/)" 404
 check "home page title" "$(count '<title>' <<< "$home")" 1
+check "headers from cloudflare/_headers" "$(curl -sSI "$url/" | count '^x-content-type-options: nosniff')" 1
 
 robots="$(curl -sS "$url/robots.txt")"
 noindex="$(curl -sSI "$url/" | count '^x-robots-tag: noindex')"
