@@ -106,6 +106,43 @@ const first = all[0].data;
       width: auto;
     }
   }
+  /* Phones: the files in one row to swipe through, the one in the middle brought forward. */
+  @media (max-width: 600px) {
+    .tabs {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      overscroll-behavior-x: contain;
+      scroll-snap-type: x proximity;
+      scrollbar-width: none;
+      margin-inline: -16px;
+      padding: 4px 16px;
+      mask-image: linear-gradient(to right, transparent, #000 20px, #000 calc(100% - 20px), transparent);
+    }
+    .c-tab {
+      flex: none;
+      scroll-snap-align: center;
+    }
+    @media (prefers-reduced-motion: no-preference) {
+      @supports (animation-timeline: view()) {
+        .c-tab {
+          animation-name: c-near;
+          animation-timing-function: linear;
+          animation-fill-mode: both;
+          animation-timeline: view(inline);
+        }
+      }
+    }
+  }
+  /* Size only: fading the text would take it below the contrast it needs. */
+  @keyframes c-near {
+    0%,
+    100% {
+      scale: 0.9;
+    }
+    50% {
+      scale: 1;
+    }
+  }
   @media print {
     .cs {
       display: block;

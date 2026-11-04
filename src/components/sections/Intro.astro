@@ -306,6 +306,9 @@ const RIVER = 'M0 182 Q40 176 80 182 T160 182 T240 182 T320 182 T400 182 T480 18
     position: relative;
     isolation: isolate;
     overflow: hidden;
+    /* Clips the same, without making the window a scroll container, so the name's view timeline
+       follows the page (see h1). */
+    overflow: clip;
     border: 1px solid var(--line3);
     border-radius: 14px;
     background: var(--panel);
@@ -375,6 +378,34 @@ const RIVER = 'M0 182 Q40 176 80 182 T160 182 T240 182 T320 182 T400 182 T480 18
     letter-spacing: 0.005em;
     color: var(--head);
     text-wrap: balance;
+  }
+  /* On phones, where the header bar takes over: the name shrinks and fades as it scrolls away, and
+     the header's name comes in (MobileBar.astro, on this view timeline). */
+  @media (max-width: 600px), (max-width: 900px) and (max-height: 599px) {
+    h1 {
+      view-timeline-name: --c-intro-name;
+      transform-origin: left bottom;
+    }
+    :global([dir='rtl']) h1 {
+      transform-origin: right bottom;
+    }
+    @media (prefers-reduced-motion: no-preference) {
+      @supports (animation-timeline: view()) {
+        h1 {
+          animation-name: c-hand;
+          animation-timing-function: linear;
+          animation-fill-mode: both;
+          animation-timeline: view();
+          animation-range: exit 0% exit 100%;
+        }
+      }
+    }
+  }
+  @keyframes c-hand {
+    to {
+      scale: 0.7;
+      opacity: 0.2;
+    }
   }
   /* Each part of the role ("Head of Engineering", "hands-on, AI-first") stays on one line. */
   .role span {

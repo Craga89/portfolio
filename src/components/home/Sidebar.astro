@@ -66,6 +66,7 @@ const built = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 's
             <a href={`#${s.id}`} aria-current={i === 0 ? 'true' : 'false'} data-spy={s.id} data-dir={s.dir ? '' : undefined}>
               <i aria-hidden="true" />
               <bdi>{s.file}</bdi>
+              <b class="fill" aria-hidden="true" />
             </a>
           ),
         )
@@ -335,6 +336,111 @@ const built = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 's
       background 0.2s ease,
       color 0.2s ease,
       border-color 0.2s ease;
+  }
+  /* Under each file, a line that fills while its section passes on the home page (a view timeline per
+     section, shared with the sidebar through timeline-scope), as a guide to how far through it you
+     are. Elsewhere, or without scroll timelines, there's no line. */
+  .tree a {
+    position: relative;
+  }
+  .fill {
+    position: absolute;
+    inset-inline: 10px;
+    bottom: 3px;
+    height: 2px;
+    border-radius: 1px;
+    background: var(--acc);
+    opacity: 0.7;
+    transform: scaleX(0);
+    transform-origin: left center;
+  }
+  :global([dir='rtl']) .fill {
+    transform-origin: right center;
+  }
+  /* Written as longhands (see base.css). */
+  @media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    :global(.shell) {
+      timeline-scope: --sv-top, --sv-career, --sv-responsibilities, --sv-case-studies, --sv-stack, --sv-oss, --sv-blog, --sv-recommendations, --sv-faq, --sv-ask, --sv-contact;
+    }
+    :global(#top > .intro) {
+      view-timeline-name: --sv-top;
+    }
+    :global(#career) {
+      view-timeline-name: --sv-career;
+    }
+    :global(#responsibilities) {
+      view-timeline-name: --sv-responsibilities;
+    }
+    :global(#case-studies) {
+      view-timeline-name: --sv-case-studies;
+    }
+    :global(#stack) {
+      view-timeline-name: --sv-stack;
+    }
+    :global(#oss) {
+      view-timeline-name: --sv-oss;
+    }
+    :global(#blog) {
+      view-timeline-name: --sv-blog;
+    }
+    :global(#recommendations) {
+      view-timeline-name: --sv-recommendations;
+    }
+    :global(#faq) {
+      view-timeline-name: --sv-faq;
+    }
+    :global(#ask) {
+      view-timeline-name: --sv-ask;
+    }
+    :global(#contact) {
+      view-timeline-name: --sv-contact;
+    }
+    .fill {
+      animation-name: c-explore;
+      animation-timing-function: linear;
+      animation-fill-mode: both;
+      animation-range: cover 0% cover 100%;
+    }
+    .tree a[data-spy='top'] .fill {
+      animation-timeline: --sv-top;
+    }
+    .tree a[data-spy='career'] .fill {
+      animation-timeline: --sv-career;
+    }
+    .tree a[data-spy='responsibilities'] .fill {
+      animation-timeline: --sv-responsibilities;
+    }
+    .tree a[data-spy='case-studies'] .fill {
+      animation-timeline: --sv-case-studies;
+    }
+    .tree a[data-spy='stack'] .fill {
+      animation-timeline: --sv-stack;
+    }
+    .tree a[data-spy='oss'] .fill {
+      animation-timeline: --sv-oss;
+    }
+    .tree a[data-spy='blog'] .fill {
+      animation-timeline: --sv-blog;
+    }
+    .tree a[data-spy='recommendations'] .fill {
+      animation-timeline: --sv-recommendations;
+    }
+    .tree a[data-spy='faq'] .fill {
+      animation-timeline: --sv-faq;
+    }
+    .tree a[data-spy='ask'] .fill {
+      animation-timeline: --sv-ask;
+    }
+    .tree a[data-spy='contact'] .fill {
+      animation-timeline: --sv-contact;
+    }
+  }
+  }
+  @keyframes c-explore {
+    to {
+      transform: scaleX(1);
+    }
   }
   .tree a:hover {
     background: var(--panel2);
