@@ -36,6 +36,8 @@ describe('search', () => {
   it('tokenises without stop words or punctuation', () => {
     assert.deepEqual(toks('What does Craig know about AWS, C# and Node.js?'), ['know', 'aws', 'c#', 'node.js']);
     assert.deepEqual(toks(null), ['null']);
+    // Letters joined by & stay one word, rather than two dropped single letters.
+    assert.deepEqual(toks('R&D tax credits, M & A'), ['rd', 'tax', 'credits', 'ma']);
   });
 
   it('ranks title hits first and understands everyday words', () => {

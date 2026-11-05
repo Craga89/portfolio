@@ -48,7 +48,7 @@
         "Ran 1:1s and objectives feeding KPIs into board updates; promoted engineers to Senior and one to Deputy Head of Engineering; introduced and hired an AI Engineer role; managed redundancy and performance management.",
         "Technical expert on sales, customer and due-diligence calls; built a standard security Q&A set; handled SSO/SAML onboarding and data residency; primary escalation point for major customer issues.",
         "Set up the on-call rota (Jira Service Desk, Google Calendar) and status page; led on incidents from single-client issues to full outages; helped produce outage write-ups, runbooks and improvements; involved in the disaster recovery process.",
-        "Owned the substantial monthly AWS budget, with cost anomaly detection; managed technical and IT suppliers and negotiated renewals; consolidated software tools and licences.",
+        "Owned the substantial monthly AWS budget, with cost anomaly detection; managed technical and IT suppliers and negotiated renewals; consolidated software tools and licences; coordinated R&D tax credit claims over several years, with evidence from the roadmap and time tracking.",
         "Introduced and iterated on ways of working (Scrum, Kanban, project-based, AI-driven); documented the Secure Development Policy and coding guidelines in an AI-powered docs site; introduced cycle time and delivery time KPIs; worked through the move to mostly remote working.",
         "Worked directly with an outsourcing firm in India, onboarding 5+ Software Engineers and Automation Test Engineers to bolster the in-house team; many stayed for 2+ years.",
         "Was the technical point of contact for GDPR and ISO 27001 accreditation and annual audits; arranged yearly penetration tests with external vendors.",
@@ -131,6 +131,7 @@
         "Budget ownership",
         "Supplier management",
         "Contract negotiation",
+        "R&D tax credits",
         "Scrum",
         "Kanban",
         "Remote teams"
