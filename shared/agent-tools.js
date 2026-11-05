@@ -68,11 +68,16 @@ const STOP = new Set(
   ),
 );
 
-/** Lowercase search words, without stop words. @param {unknown} s @returns {string[]} */
+/**
+ * Lowercase search words, without stop words. Single letters joined by "&" (R&D, M&A) become one
+ * word, as single letters on their own are dropped.
+ * @param {unknown} s @returns {string[]}
+ */
 export const toks = (s) =>
   (
     String(s)
       .toLowerCase()
+      .replace(/\b([a-z])\s*&\s*([a-z])\b/g, '$1$2')
       .match(/[a-z0-9+#.]+/g) || []
   )
     .map((w) => w.replace(/\.+$/, ''))
