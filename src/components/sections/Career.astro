@@ -105,6 +105,27 @@ const items = await Promise.all(roles.map(async (r) => ({ data: r.data, Content:
   [data-kind='side'] .dot {
     border-color: var(--ok);
   }
+  /* Past roles' dots fill in as they reach the middle of the screen, following the line down. */
+  @media (prefers-reduced-motion: no-preference) {
+    @supports (animation-timeline: view()) {
+      [data-kind='past'] .dot,
+      [data-kind='side'] .dot {
+        animation-name: c-dot-lit;
+        animation-timing-function: linear;
+        animation-fill-mode: both;
+        animation-timeline: view();
+        animation-range: entry 100% cover 50%;
+      }
+    }
+  }
+  @keyframes c-dot-lit {
+    to {
+      background: var(--lit, var(--acc));
+    }
+  }
+  [data-kind='side'] .dot {
+    --lit: var(--ok);
+  }
   @keyframes ring {
     0% {
       box-shadow:

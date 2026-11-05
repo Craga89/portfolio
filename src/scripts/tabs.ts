@@ -67,7 +67,19 @@ export class Tabs {
       const panel = document.getElementById(t.getAttribute('aria-controls')!);
       if (panel) panel.hidden = !on;
     });
+    this.reveal(this.tabs[i]);
     this.onChange?.(i);
+  }
+
+  /** Where the tabs scroll sideways (the case studies on phones), brings the selected one to the
+   * middle of the row, without moving the page. */
+  reveal(tab: HTMLElement | undefined) {
+    const row = tab?.parentElement;
+    if (!tab || !row || row.scrollWidth <= row.clientWidth + 1) return;
+    const t = tab.getBoundingClientRect();
+    const r = row.getBoundingClientRect();
+    const smooth = !matchMedia('(prefers-reduced-motion: reduce)').matches;
+    row.scrollBy({ left: t.left + t.width / 2 - (r.left + r.width / 2), behavior: smooth ? 'smooth' : 'instant' });
   }
 
   step(by: number, dir = true) {
