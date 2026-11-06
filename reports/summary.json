@@ -1,0 +1,659 @@
+{
+  "mobile": {
+    "runs": 3,
+    "scores": {
+      "performance": 92,
+      "accessibility": 100,
+      "best-practices": 100,
+      "seo": 100
+    },
+    "metrics": {
+      "first-contentful-paint": 2242,
+      "largest-contentful-paint": 2870,
+      "total-blocking-time": 0,
+      "cumulative-layout-shift": 0,
+      "speed-index": 2826,
+      "interactive": 2910
+    },
+    "totalBytes": 221185,
+    "lcpElement": "[{\"type\":\"table\",\"headings\":[{\"key\":\"node\",\"valueType\":\"node\",\"label\":\"Element\"}],\"items\":[{\"node\":{\"type\":\"node\",\"lhId\":\"page-0-P\",\"path\":\"1,HTML,1,BODY,2,DIV,1,MAIN,0,SECTION,0,DIV,3,DIV,2,DIV,1,P\",\"selector\":\"div.term > div.body > div#about > p\",\"boundingRect\":{\"top\":482,\"bottom\":727,\"left\":41,\"right\":371,\"width\":330,\"height\":245},\"snippet\":\"<p>\",\"nodeLabel\":\"I’m a hands-on, full-stack engineer",
+    "failing": [
+      {
+        "category": "performance",
+        "id": "first-contentful-paint",
+        "title": "First Contentful Paint",
+        "score": 0.77,
+        "display": "2.2 s",
+        "items": []
+      },
+      {
+        "category": "performance",
+        "id": "largest-contentful-paint",
+        "title": "Largest Contentful Paint",
+        "score": 0.8,
+        "display": "2.9 s",
+        "items": []
+      },
+      {
+        "category": "performance",
+        "id": "cache-insight",
+        "title": "Use efficient cache lifetimes",
+        "score": 0,
+        "display": "Est savings of 4 KiB",
+        "items": [
+          {
+            "url": "https://static.cloudflareinsights.com/beacon.min.js/vce701823e78c4301a35b7e07294d87301792088814092",
+            "wastedBytes": 4191.2,
+            "totalBytes": 10478
+          }
+        ]
+      },
+      {
+        "category": "performance",
+        "id": "network-dependency-tree-insight",
+        "title": "Network dependency tree",
+        "score": 0,
+        "display": "",
+        "items": [
+          {
+            "value": {
+              "type": "network-tree",
+              "chains": {
+                "EFB95BD137F8ABA5E7FC35677B85BACC": {
+                  "url": "https://craigthompson.dev/",
+                  "navStartToEndTime": 100,
+                  "transferSize": 47759,
+                  "isLongest": true,
+                  "children": {
+                    "2905.18": {
+                      "url": "https://craigthompson.dev/assets/Base.astro_astro_type_script_index_0_lang.DPJRNE8L.js",
+                      "navStartToEndTime": 129,
+                      "transferSize": 6361,
+                      "isLongest": true,
+                      "children": {
+                        "2905.21": {
+                          "url": "https://craigthompson.dev/assets/site.CBZCmEoP.js",
+                          "navStartToEndTime": 805,
+                          "transferSize": 1797,
+                          "isLongest": true,
+                          "children": {
+                            "2905.33": {
+                              "url": "https://craigthompson.dev/cdn-cgi/rum?",
+                              "navStartToEndTime": 878,
+                              "transferSize": 462,
+                              "isLongest": true,
+                              "children": {}
+                            }
+                          }
+                        },
+                        "2905.20": {
+                          "url": "https://craigthompson.dev/assets/url.BcguYqzw.js",
+                          "navStartToEndTime": 146,
+                          "transferSize": 644,
+                          "children": {}
+                        }
+                      }
+                    },
+                    "2905.17": {
+                      "url": "https://craigthompson.dev/assets/index.astro_astro_type_script_index_0_lang.Doy5Jhfr.js",
+                      "navStartToEndTime": 809,
+                      "transferSize": 18163,
+                      "children": {
+                        "2905.32": {
+                          "url": "https://craigthompson.dev/assets/navigate.Suq7XmLc.js",
+                          "navStartToEndTime": 831,
+                          "transferSize": 718,
+                          "children": {}
+                        }
+                      }
+                    },
+                    "2905.8": {
+                      "url": "https://craigthompson.dev/assets/Sidebar.g96_mDU7.css",
+                      "navStartToEndTime": 302,
+                      "transferSize": 3794,
+                      "children": {}
+                    },
+                    "2905.11": {
+                      "url": "https://craigthompson.dev/assets/CaseStudyCard.BkSZ3Zy1.css",
+                      "navStartToEndTime": 228,
+                      "transferSize": 7135,
+                      "children": {}
+                    },
+                    "2905.5": {
+                      "url": "https://craigthompson.dev/assets/fonts.BIMLu4lF.css",
+                      "navStartToEndTime": 180,
+                      "transferSize": 1213,
+                      "children": {}
+                    },
+                    "2905.12": {
+                      "url": "https://craigthompson.dev/assets/PreviewBar.astro_astro_type_script_index_0_lang.Dy7vUPrF.js",
+                      "navStartToEndTime": 145,
+                      "transferSize": 1182,
+                      "children": {}
+                    },
+                    "2905.10": {
+                      "url": "https://craigthompson.dev/assets/ResponsibilityCard.BidYOAT0.css",
+                      "navStartToEndTime": 139,
+                      "transferSize": 1429,
+                      "children": {}
+                    },
+                    "2905.7": {
+                      "url": "https://craigthompson.dev/assets/index.CatOWvHt.css",
+                      "navStartToEndTime": 137,
+                      "transferSize": 12748,
+                      "children": {}
+                    },
+                    "2905.19": {
+                      "url": "https://static.cloudflareinsights.com/beacon.min.js/vce701823e78c4301a35b7e07294d87301792088814092",
+                      "navStartToEndTime": 131,
+                      "transferSize": 10478,
+                      "children": {}
+                    },
+                    "2905.9": {
+                      "url": "https://craigthompson.dev/assets/translate.DGGanBDF.css",
+                      "navStartToEndTime": 130,
+                      "transferSize": 2017,
+                      "children": {}
+                    },
+                    "2905.6": {
+                      "url": "https://craigthompson.dev/assets/Toggletip.DqFgZHkb.css",
+                      "navStartToEndTime": 119,
+                      "transferSize": 4366,
+                      "children": {}
+                    }
+                  }
+                }
+              },
+              "longestChain": {
+                "duration": 878
+              }
+            }
+          },
+          {
+            "description": "[preconnect](https://developer.chrome.com/docs/lighthouse/performance/uses-rel-preconnect/) hints help the browser establish a connection earlier in the page load, saving time when the first request for that origin is made. The following are the origins that the page preconnected to.",
+            "value": {
+              "type": "text",
+              "value": "no origins were preconnected"
+            }
+          },
+          {
+            "description": "Add [preconnect](https://developer.chrome.com/docs/lighthouse/performance/uses-rel-preconnect/) hints to your most important origins, but try to use no more than 4.",
+            "value": {
+              "type": "text",
+              "value": "No additional origins are good candidates for preconnecting"
+            }
+          }
+        ]
+      },
+      {
+        "category": "performance",
+        "id": "render-blocking-insight",
+        "title": "Render blocking requests",
+        "score": 0,
+        "display": "Est savings of 60 ms",
+        "items": [
+          {
+            "url": "https://craigthompson.dev/assets/Sidebar.g96_mDU7.css",
+            "wastedMs": 487,
+            "totalBytes": 3794
+          },
+          {
+            "url": "https://craigthompson.dev/assets/CaseStudyCard.BkSZ3Zy1.css",
+            "wastedMs": 330,
+            "totalBytes": 7135
+          },
+          {
+            "url": "https://craigthompson.dev/assets/fonts.BIMLu4lF.css",
+            "wastedMs": 173,
+            "totalBytes": 1213
+          },
+          {
+            "url": "https://craigthompson.dev/assets/ResponsibilityCard.BidYOAT0.css",
+            "wastedMs": 487,
+            "totalBytes": 1429
+          },
+          {
+            "url": "https://craigthompson.dev/assets/index.CatOWvHt.css",
+            "wastedMs": 801,
+            "totalBytes": 12748
+          }
+        ]
+      },
+      {
+        "category": "performance",
+        "id": "render-blocking-resources",
+        "title": "Eliminate render-blocking resources",
+        "score": 0,
+        "display": "Est savings of 100 ms",
+        "items": [
+          {
+            "url": "https://craigthompson.dev/assets/Sidebar.g96_mDU7.css",
+            "wastedMs": 503,
+            "totalBytes": 3794
+          },
+          {
+            "url": "https://craigthompson.dev/assets/CaseStudyCard.BkSZ3Zy1.css",
+            "wastedMs": 346,
+            "totalBytes": 7135
+          },
+          {
+            "url": "https://craigthompson.dev/assets/fonts.BIMLu4lF.css",
+            "wastedMs": 189,
+            "totalBytes": 1213
+          },
+          {
+            "url": "https://craigthompson.dev/assets/ResponsibilityCard.BidYOAT0.css",
+            "wastedMs": 503,
+            "totalBytes": 1429
+          },
+          {
+            "url": "https://craigthompson.dev/assets/index.CatOWvHt.css",
+            "wastedMs": 818,
+            "totalBytes": 12748
+          }
+        ]
+      },
+      {
+        "category": "performance",
+        "id": "legacy-javascript",
+        "title": "Avoid serving legacy JavaScript to modern browsers",
+        "score": 0.5,
+        "display": "Est savings of 10 KiB",
+        "items": [
+          {
+            "url": "https://static.cloudflareinsights.com/beacon.min.js/vce701823e78c4301a35b7e07294d87301792088814092",
+            "wastedBytes": 10414,
+            "totalBytes": 0
+          }
+        ]
+      },
+      {
+        "category": "performance",
+        "id": "uses-long-cache-ttl",
+        "title": "Serve static assets with an efficient cache policy",
+        "score": 0.5,
+        "display": "1 resource found",
+        "items": [
+          {
+            "url": "https://static.cloudflareinsights.com/beacon.min.js/vce701823e78c4301a35b7e07294d87301792088814092",
+            "wastedBytes": 4191.2,
+            "totalBytes": 10478
+          }
+        ]
+      },
+      {
+        "category": "performance",
+        "id": "dom-size",
+        "title": "Avoid an excessive DOM size",
+        "score": 0.5,
+        "display": "3,121 elements",
+        "items": [
+          {
+            "value": {
+              "type": "numeric",
+              "granularity": 1,
+              "value": 3121
+            }
+          },
+          {
+            "node": "<span class=\"fill\" data-astro-cid-oahdww5h=\"\">",
+            "value": {
+              "type": "numeric",
+              "granularity": 1,
+              "value": 15
+            }
+          },
+          {
+            "node": "<div class=\"grid\" role=\"img\" aria-label=\"59 merged pull requests to other projects from 2012 to 2026, busiest in 20…\" data-astro-cid-pipslqh7=\"\">",
+            "value": {
+              "type": "numeric",
+              "granularity": 1,
+              "value": 80
+            }
+          }
+        ]
+      },
+      {
+        "category": "performance",
+        "id": "largest-contentful-paint-element",
+        "title": "Largest Contentful Paint element",
+        "score": 0,
+        "display": "2,910 ms",
+        "items": [
+          {},
+          {}
+        ]
+      },
+      {
+        "category": "accessibility",
+        "id": "aria-allowed-role",
+        "title": "Uses ARIA roles on incompatible elements",
+        "score": 0,
+        "display": "",
+        "items": [
+          {
+            "node": "<article class=\"c-rs c-pop\" id=\"rp-lead\" role=\"tabpanel\" aria-label=\"leadership.md\" data-astro-cid-ooime6zq=\"\">"
+          },
+          {
+            "node": "<article class=\"c-pop case\" id=\"cp-mono\" role=\"tabpanel\" aria-label=\"monorepo.md\" data-astro-cid-w6e7c2ve=\"\">"
+          }
+        ]
+      }
+    ]
+  },
+  "desktop": {
+    "runs": 3,
+    "scores": {
+      "performance": 98,
+      "accessibility": 100,
+      "best-practices": 100,
+      "seo": 100
+    },
+    "metrics": {
+      "first-contentful-paint": 828,
+      "largest-contentful-paint": 932,
+      "total-blocking-time": 0,
+      "cumulative-layout-shift": 0.006,
+      "speed-index": 828,
+      "interactive": 932
+    },
+    "totalBytes": 221191,
+    "lcpElement": "[{\"type\":\"table\",\"headings\":[{\"key\":\"node\",\"valueType\":\"node\",\"label\":\"Element\"}],\"items\":[{\"node\":{\"type\":\"node\",\"lhId\":\"page-0-P\",\"path\":\"1,HTML,1,BODY,2,DIV,1,MAIN,0,SECTION,0,DIV,3,DIV,2,DIV,1,P\",\"selector\":\"div.term > div.body > div#about > p\",\"boundingRect\":{\"top\":470,\"bottom\":579,\"left\":95,\"right\":960,\"width\":865,\"height\":109},\"snippet\":\"<p>\",\"nodeLabel\":\"I’m a hands-on, full-stack engineer",
+    "failing": [
+      {
+        "category": "performance",
+        "id": "cache-insight",
+        "title": "Use efficient cache lifetimes",
+        "score": 0.5,
+        "display": "Est savings of 4 KiB",
+        "items": [
+          {
+            "url": "https://static.cloudflareinsights.com/beacon.min.js/vce701823e78c4301a35b7e07294d87301792088814092",
+            "wastedBytes": 4191.6,
+            "totalBytes": 10479
+          }
+        ]
+      },
+      {
+        "category": "performance",
+        "id": "network-dependency-tree-insight",
+        "title": "Network dependency tree",
+        "score": 0,
+        "display": "",
+        "items": [
+          {
+            "value": {
+              "type": "network-tree",
+              "chains": {
+                "932D1483566239EB73856B172A9FB8B1": {
+                  "url": "https://craigthompson.dev/",
+                  "navStartToEndTime": 105,
+                  "transferSize": 47758,
+                  "isLongest": true,
+                  "children": {
+                    "3550.18": {
+                      "url": "https://craigthompson.dev/assets/Base.astro_astro_type_script_index_0_lang.DPJRNE8L.js",
+                      "navStartToEndTime": 135,
+                      "transferSize": 6291,
+                      "isLongest": true,
+                      "children": {
+                        "3550.21": {
+                          "url": "https://craigthompson.dev/assets/site.CBZCmEoP.js",
+                          "navStartToEndTime": 180,
+                          "transferSize": 1797,
+                          "isLongest": true,
+                          "children": {
+                            "3550.33": {
+                              "url": "https://craigthompson.dev/cdn-cgi/rum?",
+                              "navStartToEndTime": 435,
+                              "transferSize": 456,
+                              "isLongest": true,
+                              "children": {}
+                            }
+                          }
+                        },
+                        "3550.20": {
+                          "url": "https://craigthompson.dev/assets/url.BcguYqzw.js",
+                          "navStartToEndTime": 221,
+                          "transferSize": 654,
+                          "children": {}
+                        }
+                      }
+                    },
+                    "3550.7": {
+                      "url": "https://craigthompson.dev/assets/index.CatOWvHt.css",
+                      "navStartToEndTime": 228,
+                      "transferSize": 12744,
+                      "children": {}
+                    },
+                    "3550.5": {
+                      "url": "https://craigthompson.dev/assets/fonts.BIMLu4lF.css",
+                      "navStartToEndTime": 224,
+                      "transferSize": 1205,
+                      "children": {}
+                    },
+                    "3550.8": {
+                      "url": "https://craigthompson.dev/assets/Sidebar.g96_mDU7.css",
+                      "navStartToEndTime": 221,
+                      "transferSize": 3801,
+                      "children": {}
+                    },
+                    "3550.10": {
+                      "url": "https://craigthompson.dev/assets/ResponsibilityCard.BidYOAT0.css",
+                      "navStartToEndTime": 215,
+                      "transferSize": 1429,
+                      "children": {}
+                    },
+                    "3550.17": {
+                      "url": "https://craigthompson.dev/assets/index.astro_astro_type_script_index_0_lang.Doy5Jhfr.js",
+                      "navStartToEndTime": 171,
+                      "transferSize": 18166,
+                      "children": {
+                        "3550.22": {
+                          "url": "https://craigthompson.dev/assets/navigate.Suq7XmLc.js",
+                          "navStartToEndTime": 212,
+                          "transferSize": 718,
+                          "children": {}
+                        }
+                      }
+                    },
+                    "3550.9": {
+                      "url": "https://craigthompson.dev/assets/translate.DGGanBDF.css",
+                      "navStartToEndTime": 196,
+                      "transferSize": 2018,
+                      "children": {}
+                    },
+                    "3550.12": {
+                      "url": "https://craigthompson.dev/assets/PreviewBar.astro_astro_type_script_index_0_lang.Dy7vUPrF.js",
+                      "navStartToEndTime": 177,
+                      "transferSize": 1184,
+                      "children": {}
+                    },
+                    "3550.19": {
+                      "url": "https://static.cloudflareinsights.com/beacon.min.js/vce701823e78c4301a35b7e07294d87301792088814092",
+                      "navStartToEndTime": 137,
+                      "transferSize": 10479,
+                      "children": {}
+                    },
+                    "3550.11": {
+                      "url": "https://craigthompson.dev/assets/CaseStudyCard.BkSZ3Zy1.css",
+                      "navStartToEndTime": 133,
+                      "transferSize": 7208,
+                      "children": {}
+                    },
+                    "3550.6": {
+                      "url": "https://craigthompson.dev/assets/Toggletip.DqFgZHkb.css",
+                      "navStartToEndTime": 129,
+                      "transferSize": 4372,
+                      "children": {}
+                    }
+                  }
+                }
+              },
+              "longestChain": {
+                "duration": 435
+              }
+            }
+          },
+          {
+            "description": "[preconnect](https://developer.chrome.com/docs/lighthouse/performance/uses-rel-preconnect/) hints help the browser establish a connection earlier in the page load, saving time when the first request for that origin is made. The following are the origins that the page preconnected to.",
+            "value": {
+              "type": "text",
+              "value": "no origins were preconnected"
+            }
+          },
+          {
+            "description": "Add [preconnect](https://developer.chrome.com/docs/lighthouse/performance/uses-rel-preconnect/) hints to your most important origins, but try to use no more than 4.",
+            "value": {
+              "type": "text",
+              "value": "No additional origins are good candidates for preconnecting"
+            }
+          }
+        ]
+      },
+      {
+        "category": "performance",
+        "id": "render-blocking-insight",
+        "title": "Render blocking requests",
+        "score": 0,
+        "display": "Est savings of 100 ms",
+        "items": [
+          {
+            "url": "https://craigthompson.dev/assets/index.CatOWvHt.css",
+            "wastedMs": 236,
+            "totalBytes": 12744
+          },
+          {
+            "url": "https://craigthompson.dev/assets/fonts.BIMLu4lF.css",
+            "wastedMs": 74,
+            "totalBytes": 1205
+          },
+          {
+            "url": "https://craigthompson.dev/assets/Sidebar.g96_mDU7.css",
+            "wastedMs": 182,
+            "totalBytes": 3801
+          },
+          {
+            "url": "https://craigthompson.dev/assets/ResponsibilityCard.BidYOAT0.css",
+            "wastedMs": 182,
+            "totalBytes": 1429
+          },
+          {
+            "url": "https://craigthompson.dev/assets/translate.DGGanBDF.css",
+            "wastedMs": 182,
+            "totalBytes": 2018
+          }
+        ]
+      },
+      {
+        "category": "performance",
+        "id": "render-blocking-resources",
+        "title": "Eliminate render-blocking resources",
+        "score": 0,
+        "display": "Est savings of 150 ms",
+        "items": [
+          {
+            "url": "https://craigthompson.dev/assets/index.CatOWvHt.css",
+            "wastedMs": 268,
+            "totalBytes": 12744
+          },
+          {
+            "url": "https://craigthompson.dev/assets/fonts.BIMLu4lF.css",
+            "wastedMs": 106,
+            "totalBytes": 1205
+          },
+          {
+            "url": "https://craigthompson.dev/assets/Sidebar.g96_mDU7.css",
+            "wastedMs": 214,
+            "totalBytes": 3801
+          },
+          {
+            "url": "https://craigthompson.dev/assets/ResponsibilityCard.BidYOAT0.css",
+            "wastedMs": 214,
+            "totalBytes": 1429
+          },
+          {
+            "url": "https://craigthompson.dev/assets/translate.DGGanBDF.css",
+            "wastedMs": 214,
+            "totalBytes": 2018
+          }
+        ]
+      },
+      {
+        "category": "performance",
+        "id": "legacy-javascript",
+        "title": "Avoid serving legacy JavaScript to modern browsers",
+        "score": 0.5,
+        "display": "Est savings of 10 KiB",
+        "items": [
+          {
+            "url": "https://static.cloudflareinsights.com/beacon.min.js/vce701823e78c4301a35b7e07294d87301792088814092",
+            "wastedBytes": 10414,
+            "totalBytes": 0
+          }
+        ]
+      },
+      {
+        "category": "performance",
+        "id": "uses-long-cache-ttl",
+        "title": "Serve static assets with an efficient cache policy",
+        "score": 0.5,
+        "display": "1 resource found",
+        "items": [
+          {
+            "url": "https://static.cloudflareinsights.com/beacon.min.js/vce701823e78c4301a35b7e07294d87301792088814092",
+            "wastedBytes": 4191.6,
+            "totalBytes": 10479
+          }
+        ]
+      },
+      {
+        "category": "performance",
+        "id": "dom-size",
+        "title": "Avoid an excessive DOM size",
+        "score": 0.5,
+        "display": "3,121 elements",
+        "items": [
+          {
+            "value": {
+              "type": "numeric",
+              "granularity": 1,
+              "value": 3121
+            }
+          },
+          {
+            "node": "<span class=\"fill\" data-astro-cid-oahdww5h=\"\">",
+            "value": {
+              "type": "numeric",
+              "granularity": 1,
+              "value": 15
+            }
+          },
+          {
+            "node": "<div class=\"grid\" role=\"img\" aria-label=\"59 merged pull requests to other projects from 2012 to 2026, busiest in 20…\" data-astro-cid-pipslqh7=\"\">",
+            "value": {
+              "type": "numeric",
+              "granularity": 1,
+              "value": 80
+            }
+          }
+        ]
+      },
+      {
+        "category": "accessibility",
+        "id": "aria-allowed-role",
+        "title": "Uses ARIA roles on incompatible elements",
+        "score": 0,
+        "display": "",
+        "items": [
+          {
+            "node": "<article class=\"c-rs c-pop\" id=\"rp-lead\" role=\"tabpanel\" aria-label=\"leadership.md\" data-astro-cid-ooime6zq=\"\">"
+          },
+          {
+            "node": "<article class=\"c-pop case\" id=\"cp-mono\" role=\"tabpanel\" aria-label=\"monorepo.md\" data-astro-cid-w6e7c2ve=\"\">"
+          }
+        ]
+      }
+    ]
+  }
+}
