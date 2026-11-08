@@ -172,7 +172,7 @@ The open-source section has a heatmap of merged pull requests to other projects 
 
 [Vale](https://vale.sh) checks the site's writing (`src/content`, apart from the archived blog, and this README) against a house style in `.vale/styles/House`, configured in `.vale.ini`:
 
-- **Errors** (they fail the **Writing** check): American spellings (`BritishSpelling`), idioms and stock phrases (`Idioms`), and claims without evidence such as "world-class" (`Hype`).
+- **Errors** (they fail the **Writing** check): American spellings (`BritishSpelling`), idioms and stock phrases (`Idioms`), and marketing claims with nothing behind them (`Hype`).
 - **Warnings** (annotations only): filler words (`Filler`), sentences over 35 words (`SentenceLength`) and exclamation marks (`Exclamation`).
 
 `.github/workflows/vale.yml` runs it on pull requests that change the writing, on the lines they change. Locally, with Vale installed: `vale src/content README.md`. To change the style, edit the rule's YAML; each says why it's there.
