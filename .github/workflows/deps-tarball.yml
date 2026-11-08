@@ -1,0 +1,39 @@
+# Development aid (never merged): adds packages, then publishes package.json, pnpm-lock.yaml and
+# node_modules (as a tarball) on the node-modules branch, for a sandbox that can't reach the npm
+# registry.
+name: node_modules tarball
+
+on:
+  push:
+    branches: ['deps/**']
+
+permissions:
+  contents: write
+
+jobs:
+  tarball:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .node-version
+      - name: Add the packages
+        run: pnpm add --save-exact --save-dev --config.strict-dep-builds=false astrobook@latest
+      - name: Pack
+        run: |
+          mkdir -p out
+          cp package.json pnpm-lock.yaml out/
+          tar -czf - node_modules | split -b 45m - out/node_modules.tgz.part-
+          ls -la out
+      - name: Publish
+        working-directory: out
+        run: |
+          git init -q -b node-modules
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -qm "node_modules for ${GITHUB_SHA}"
+          git push -qf "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" node-modules
