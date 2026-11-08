@@ -1,10 +1,13 @@
 // Weekly summary of the anonymous visit counts and ask.sh questions (D1 database craga-ask),
-// written to the GitHub Actions job summary. Needs wrangler and a Cloudflare API token with D1 read.
+// and Core Web Vitals from real visitors (Cloudflare Web Analytics), written to the GitHub Actions job
+// summary. Needs wrangler and a Cloudflare API token with D1 read, and Account Analytics read for the
+// Web Vitals.
 //   CLOUDFLARE_API_TOKEN=… CLOUDFLARE_ACCOUNT_ID=… node tools/stats-report.mjs [days]
 import { execFileSync } from 'node:child_process';
 import { appendFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { describe, vitals } from './lib/vitals.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const days = Number(process.argv[2] || 7);
@@ -81,10 +84,40 @@ const recent = q(
   `SELECT substr(at,1,10) AS day, question FROM questions WHERE at >= ${since} AND answered = 1 ORDER BY at DESC LIMIT 25`,
 );
 
+// Core Web Vitals: a section of the report, not a reason to fail it.
+let cwv;
+try {
+  const v = await vitals({
+    account: process.env.CLOUDFLARE_ACCOUNT_ID || '',
+    token: process.env.CLOUDFLARE_API_TOKEN || '',
+    days,
+  });
+  cwv = `**All pages:** ${Object.entries(describe(v.all))
+    .map(([k, x]) => `${k} ${x}`)
+    .join(' · ')}
+
+${table(
+  v.byPath.map((p) => Object.assign({ path: p.path }, describe(p))),
+  ['path', 'visits', 'LCP (p75)', 'INP (p75)', 'CLS (p75)'],
+)}
+${table(
+  v.byDevice.map((d) => Object.assign({ device: d.device }, describe(d))),
+  ['device', 'visits', 'LCP (p75)', 'INP (p75)', 'CLS (p75)'],
+)}`;
+} catch (err) {
+  const msg = String(/** @type {Error} */ (err).message);
+  console.log(
+    `::warning title=Core Web Vitals unavailable::${/authoriz|permission/i.test(msg) ? 'The CLOUDFLARE_API_TOKEN secret needs the Account → Account Analytics → Read permission. ' : ''}${msg}`,
+  );
+  cwv = `_Unavailable: ${msg}_\n`;
+}
+
 const md = `## craigthompson.dev · last ${days} days
 
 **${visits.n || 0} visits** (average ${visits.avg_s || 0}s on the page) · **${qs.n || 0} ask.sh questions**, ${qs.answered || 0} answered
 
+### Core Web Vitals (real visitors, 75th percentile, from Cloudflare Web Analytics)
+${cwv}
 ### Pages
 ${table(byPath, ['path', 'visits'])}
 ### Where visitors came from

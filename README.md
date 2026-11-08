@@ -156,10 +156,10 @@ The open-source section has a heatmap of merged pull requests to other projects 
 
 ## Visits and questions (anonymous)
 
-- **Cloudflare Web Analytics** (cookieless): Cloudflare adds the beacon to each page as it serves it (automatic setup, now that the domain is on Cloudflare), so the site has no snippet of its own; the Content-Security-Policy allows the beacon's script and endpoint. Settings and the dashboard: Cloudflare → Analytics & Logs → Web Analytics.
+- **Cloudflare Web Analytics** (cookieless): Cloudflare adds the beacon to each page as it serves it (automatic setup, now that the domain is on Cloudflare), so the site has no snippet of its own; the Content-Security-Policy allows the beacon's script and endpoint. The beacon also measures Core Web Vitals (LCP, INP, CLS) from real visitors, with the element behind each. Settings and the dashboard: Cloudflare → Analytics & Logs → Web Analytics (Core Web Vitals).
 
 - The Worker keeps two tables in the D1 database `craga-ask` (schema in `worker/schema.sql`). `questions` holds each ask.sh question, whether it was answered, the model and the sources. `visits` holds one row per page view: path, referring site, country, device class, sections seen and seconds on the page. No IP addresses, cookies or user agents are stored. Bots, CI traffic (`x-craga-test: 1`) and Do Not Track / Global Privacy Control visitors are skipped. The page says so in ask.sh, the chat and the FAQ.
-- `.github/workflows/stats.yml` writes a weekly summary to its run page: visits, referrers, how far people read, devices, countries, and the questions ask.sh couldn't answer (FAQ candidates). You can also query the tables in the Cloudflare dashboard (D1 → craga-ask → Console).
+- `.github/workflows/stats.yml` writes a weekly summary to its run page: Core Web Vitals at the 75th percentile, overall, by page and by device (`tools/lib/vitals.mjs`, through Cloudflare's GraphQL Analytics API, leaving out `/storybook/` and previews; the token needs Account Analytics read, and the section says so if it can't be read), visits, referrers, how far people read, devices, countries, and the questions ask.sh couldn't answer (FAQ candidates). You can also query the tables in the Cloudflare dashboard (D1 → craga-ask → Console).
 
 ## Quality checks in CI
 
