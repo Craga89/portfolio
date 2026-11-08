@@ -21,4 +21,7 @@ This repo follows [Craga89/standards](https://github.com/Craga89/standards). The
 - **Scopes** for commits and PR titles: `pages`, `content`, `cv`, `intro`, `theme`, `seo`,
   `contact`, `recommendations`, `ask`, `worker`, `a11y`, `e2e`, `preview`, `deploy`,
   `analytics`, `deps`.
+- **Significant decisions** (hosting, the framework, security policy, data collected, paid services,
+  shared tooling) get an architecture decision record in `docs/adr/`, from `template.md`, in the same
+  pull request. Read the records before reversing one of these choices.
 - Put `[visual]` in a commit message on `main` only when every screenshot change is intended.

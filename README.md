@@ -16,6 +16,7 @@ Personal site and CV of Craig Thompson, served by Cloudflare Workers (static ass
 - `astro.config.mjs` builds `src/` into `site/`, with a Content-Security-Policy (hashes for the two inline scripts) on every page. `integrations/` holds the build's own steps: `markdown.mjs` (code blocks) and `post-build.mjs`, which opens the finished site in Chromium to write ask.sh's search index and the worker's data, the social preview images, `cv.pdf` and the service worker.
 - `tools/` holds the scripts CI runs (stats, live results, evals, redirects, fonts, the blog import). `tools/lib/` holds modules they share (the static server, the redirect rules, the blog posts' front matter).
 - `worker/` is the ask.sh Cloudflare Worker (see below).
+- `docs/adr/` holds the architecture decision records: why the larger choices (hosting, the framework, the CSP, analytics, AI costs) were made, and what else was considered.
 - `tests/` holds the tests: `unit/` (Node's test runner), `e2e/`, `a11y/` and `visual/` (Playwright), and `smoke/` (the deployed worker).
 - `site/` and the worker's data (`worker/knowledge.json`, `worker/agent-data.json`) are build output. CI builds them; they aren't committed.
 
