@@ -12,7 +12,7 @@ permissions:
 
 jobs:
   build:
-    uses: ./.github/workflows/build.yml
+    uses: $/.github/workflows/build.yml
 
   links:
     needs: build

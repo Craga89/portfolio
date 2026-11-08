@@ -1,12 +1,15 @@
 # Weekly updates for the dev dependencies (the npm ecosystem, which covers pnpm-lock.yaml) and the
 # pinned GitHub Actions (Craga89/standards included), grouped into one
-# pull request each so CI checks them together.
+# pull request each so CI checks them together. Each waits a week after a release (cooldown), so a
+# compromised release is usually caught and pulled before it reaches us.
 version: 2
 updates:
   - package-ecosystem: npm
     directory: /
     schedule:
       interval: weekly
+    cooldown:
+      default-days: 7
     groups:
       dev-dependencies:
         patterns: ['*']
@@ -14,6 +17,8 @@ updates:
     directory: /
     schedule:
       interval: weekly
+    cooldown:
+      default-days: 7
     groups:
       actions:
         patterns: ['*']

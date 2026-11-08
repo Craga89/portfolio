@@ -15,6 +15,8 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - uses: Craga89/standards/github/actions/setup-node@b8f7b51e18400dff89a9fcb8f296334c5e269e38 # v1
       - uses: Craga89/standards/github/actions/setup-playwright@b8f7b51e18400dff89a9fcb8f296334c5e269e38 # v1
       - name: Fetch the open-source counts (oss branch)

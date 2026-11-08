@@ -8,9 +8,13 @@ on:
       url:
         description: Page to audit (blank = the first address that's serving this site)
         default: ''
-  workflow_run:
+  # zizmor flags workflow_run because it runs with write access after another run, which is unsafe
+  # when it uses that run's code or artifacts. This only follows CI's successful runs on main (never
+  # a pull request's), and audits the live site, not the run's build.
+  workflow_run: # zizmor: ignore[dangerous-triggers]
     workflows: [CI]
     types: [completed]
+    branches: [main]
   schedule:
     - cron: '43 5 * * 1' # Mondays, 05:43 UTC
 
@@ -31,18 +35,23 @@ jobs:
       URL: ${{ inputs.url }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # publish-branch pushes with the checkout's credentials.
+          persist-credentials: true
       - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version-file: .node-version
+      # Kept out of the site's lockfile; installed on its own here (see .github/zizmor.yml).
       - name: Install Lighthouse
         run: |
           mkdir -p "$RUNNER_TEMP/lighthouse" && cd "$RUNNER_TEMP/lighthouse"
           echo '{"private":true}' > package.json
           pnpm add lighthouse@12 --config.strict-dep-builds=false > /dev/null
-          echo "$RUNNER_TEMP/lighthouse/node_modules/.bin" >> "$GITHUB_PATH"
       - name: Audit
+        id: audit
         run: |
+          lighthouse() { "$RUNNER_TEMP/lighthouse/node_modules/.bin/lighthouse" "$@"; }
           mkdir -p out
           # The live site, on Cloudflare. It only counts if it serves this site (the home page carries
           # its build stamp, data-built), not a redirect elsewhere.
@@ -54,9 +63,9 @@ jobs:
             done
           fi
           [ -n "$URL" ] || { echo "::error::No address is serving the site"; exit 1; }
-          echo "::notice title=Lighthouse::Auditing $URL"; echo "URL=$URL" >> "$GITHUB_ENV"
+          echo "::notice title=Lighthouse::Auditing $URL"
           # SEO is only checked once the site is open to search engines.
-          if curl -sf -m 20 "${URL%/}/robots.txt" | grep -qx 'Disallow: /'; then echo "INDEXED=0" >> "$GITHUB_ENV"; else echo "INDEXED=1" >> "$GITHUB_ENV"; fi
+          if curl -sf -m 20 "${URL%/}/robots.txt" | grep -qx 'Disallow: /'; then echo "indexed=0" >> "$GITHUB_OUTPUT"; else echo "indexed=1" >> "$GITHUB_OUTPUT"; fi
           for preset in mobile desktop; do
             for i in 1 2 3; do
               flags=""; [ "$preset" = desktop ] && flags="--preset=desktop"
@@ -85,6 +94,8 @@ jobs:
       - name: Check thresholds
         # Fails the run if a score drops: performance under 95, or accessibility / best practices
         # under 100. SEO is only checked once the site is open to search engines (no noindex).
+        env:
+          INDEXED: ${{ steps.audit.outputs.indexed }}
         run: |
           node -e '
             const s = require("./out/summary.json");
