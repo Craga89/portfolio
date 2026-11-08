@@ -73,9 +73,18 @@ export async function vitals({ account, token, days, site = SITE_TAG, now = new 
     headers: { authorization: `Bearer ${token}`, 'content-type': 'application/json' },
     body: JSON.stringify({ query: QUERY, variables: { account, site, since, until } }),
   });
-  const body = /** @type {{ data?: any, errors?: { message: string }[] | null }} */ (await res.json());
+  // An error from a proxy or gateway may not be JSON, so read it as text first.
+  const text = await res.text();
+  /** @type {{ data?: any, errors?: { message: string }[] | null }} */
+  let body = {};
+  try {
+    body = JSON.parse(text);
+  } catch {
+    throw new Error(`HTTP ${res.status}: ${text.replace(/\s+/g, ' ').slice(0, 200)}`);
+  }
   if (!res.ok || body.errors?.length || !body.data) {
-    throw new Error(body.errors?.map((e) => e.message).join('; ') || `HTTP ${res.status}`);
+    const why = body.errors?.map((e) => e.message).join('; ');
+    throw new Error(why ? `HTTP ${res.status}: ${why}` : `HTTP ${res.status}`);
   }
   const a = body.data.viewer.accounts[0] ?? { all: [], byPath: [], byDevice: [] };
   /** @type {Group[]} */

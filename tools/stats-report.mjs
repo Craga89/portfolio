@@ -105,9 +105,11 @@ ${table(
   ['device', 'visits', 'LCP (p75)', 'INP (p75)', 'CLS (p75)'],
 )}`;
 } catch (err) {
-  const msg = String(/** @type {Error} */ (err).message);
+  // One line, with the characters workflow commands reserve escaped.
+  const msg = String(/** @type {Error} */ (err).message).replace(/\s+/g, ' ').slice(0, 900);
+  const escaped = msg.replaceAll('%', '%25');
   console.log(
-    `::warning title=Core Web Vitals unavailable::${/authoriz|permission/i.test(msg) ? 'The CLOUDFLARE_API_TOKEN secret needs the Account → Account Analytics → Read permission. ' : ''}${msg}`,
+    `::warning title=Core Web Vitals unavailable::${/authoriz|permission/i.test(msg) ? 'The CLOUDFLARE_API_TOKEN secret needs the Account → Account Analytics → Read permission. ' : ''}${escaped}`,
   );
   cwv = `_Unavailable: ${msg}_\n`;
 }

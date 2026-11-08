@@ -107,5 +107,9 @@ group('vitals', () => {
       /not authorized/,
     );
     await assert.rejects(vitals({ account: 'a', token: 't', days: 7, fetch: api({}, 403).fetch }), /HTTP 403/);
+    const gateway = /** @type {typeof globalThis.fetch} */ (
+      /** @type {unknown} */ (async () => new Response('<html>Bad gateway</html>', { status: 502 }))
+    );
+    await assert.rejects(vitals({ account: 'a', token: 't', days: 7, fetch: gateway }), /HTTP 502: <html>Bad gateway/);
   });
 });
