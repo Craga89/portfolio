@@ -207,8 +207,9 @@ jobs:
         env:
           MESSAGE: ${{ github.event.head_commit.message }}
           ASKED: ${{ inputs.update-screenshots }}
+          HAVE: ${{ steps.base.outputs.have }}
         run: |
-          if [ "$DEPLOY" = true ] && { [ "${{ steps.base.outputs.have }}" != true ] || [ "$ASKED" = true ] || grep -q '\[visual\]' <<< "$MESSAGE"; }; then
+          if [ "$DEPLOY" = true ] && { [ "$HAVE" != true ] || [ "$ASKED" = true ] || grep -q '\[visual\]' <<< "$MESSAGE"; }; then
             echo "update=true" >> "$GITHUB_OUTPUT"
           fi
       - name: Compare
