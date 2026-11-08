@@ -1,0 +1,28 @@
+# Idioms and stock phrases: say the plain thing instead. They're harder to read for anyone reading
+# in a second language, or through the site's machine translation.
+extends: existence
+message: "'%s' is an idiom: say what it means plainly."
+level: error
+ignorecase: true
+tokens:
+  - at the end of the day
+  - best of both worlds
+  - boil the ocean
+  - circle back
+  - deep dive
+  - game[- ]changer
+  - hit the ground running
+  - in a nutshell
+  - low[- ]hanging fruit
+  - move the needle
+  - moving the needle
+  - on the same page
+  - silver bullet
+  - the bottom line
+  - touch base
+  - win[- ]win
+  - heavy lifting
+  - raise the bar
+  - raised the bar
+  - from the ground up
+  - wear(s|ing)? many hats
