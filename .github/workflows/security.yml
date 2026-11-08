@@ -20,7 +20,7 @@ jobs:
     # Other labels don't re-run it. Filtered here, not in the called workflow, so a skipped run
     # can't replace a failed "security / Security review" check with a passing one.
     if: github.event.action != 'labeled' || github.event.label.name == 'security-accepted'
-    uses: Craga89/standards/.github/workflows/security-review.yml@cccdbeeba06544c6ef13a0edd1551a4e3319f473 # v1
+    uses: Craga89/standards/.github/workflows/security-review.yml@4203c0f41a39198d0c964b8de3aa85e1c53b045a # v1
     permissions:
       contents: read
       pull-requests: write # the review comments with the findings
