@@ -11,6 +11,7 @@ Personal site and CV of Craig Thompson, served by Cloudflare Workers (static ass
   - `layouts/`, `pages/` (the home page, the file pages, the blog, the CV, the 404 page, and the text, JSON, vCard and icon endpoints), `lib/` (build-time helpers), `scripts/` (the page's TypeScript, one module per behaviour) and `styles/` (the shared tokens and base styles; each component has its own scoped styles).
   - `cv.json` (JSON Resume) and `i18n.js` (on-device translation, loaded only when it's used).
   - There are no inline styles: state is shown with attributes (`data-*`, `aria-*`) and component CSS, and the few values only known at run time are set through the CSSOM.
+- `src/stories/` is the component catalogue, built by [Astrobook](https://github.com/ocavue/astrobook) into the site at [`/storybook/`](https://craigthompson.dev/storybook/) (noindexed, out of the sitemap): a story per component in Storybook's format (CSF), with the site's styles. Astrobook passes only props, so components that take content show an example: for the ones the content files use, their first use in `src/content` (`examples/*.mdx`, rendered by `Mdx.astro`; `pnpm run stories` refreshes them and adds a story for a new one), and for the rest a small `.astro` example. A unit test fails if a component has no story. Astrobook's own inline scripts are added to each catalogue page's CSP by hash, so scripts stay hash-only as on the rest of the site; only `style-src` allows inline styles, for the style attributes Astrobook's UI sets (`tools/lib/catalogue.mjs`).
 - `shared/` is code used by both the page and the worker: the agent tools and search (`agent-tools.js`), the translated languages (`langs.js`), and type declarations for browser APIs TypeScript doesn't describe yet (`globals.d.ts`).
 - `astro.config.mjs` builds `src/` into `site/`, with a Content-Security-Policy (hashes for the two inline scripts) on every page. `integrations/` holds the build's own steps: `markdown.mjs` (code blocks) and `post-build.mjs`, which opens the finished site in Chromium to write ask.sh's search index and the worker's data, the social preview images, `cv.pdf` and the service worker.
 - `tools/` holds the scripts CI runs (stats, live results, evals, redirects, fonts, the blog import). `tools/lib/` holds modules they share (the static server, the redirect rules, the blog posts' front matter).
@@ -29,6 +30,7 @@ pnpm run dev           # Astro's dev server, with live reload
 pnpm run build         # src/ → site/
 pnpm run serve         # site/ at http://127.0.0.1:4173/
 pnpm run verify        # lint, format check, type check and unit tests
+pnpm run stories       # refresh the component catalogue's examples from the content
 pnpm run test:e2e      # end-to-end tests on a desktop and a phone
 pnpm run test:a11y     # the WCAG 2.2 AA suite
 pnpm run test:visual   # screenshots against the baselines

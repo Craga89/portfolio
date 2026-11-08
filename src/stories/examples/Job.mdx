@@ -1,0 +1,28 @@
+{/* The first use of <Job> in the site's content: src/content/sections/cv.mdx. Written by tools/stories.mjs. */}
+
+<Job title="Head of Engineering — Hive HR" where="B2B SaaS, acquired by WorkBuzz · Newcastle upon Tyne, UK" when="Dec 2018 – Present">
+
+- Led engineering for a multi-tenant B2B SaaS employee engagement platform (surveys, peer-to-peer recognition and confidential feedback) running 24/7 for enterprise, mid-market and SME customers, with a cross-functional team of up to 12 engineers; set engineering strategy and aligned the technical roadmap with product goals.
+- Led the department's shift to AI-first engineering over the past year: the vast majority of code is now AI-generated and reviewed by AI alongside human reviewers, against style and coding guidelines iterated on in the repo; introduced an advisory AI risk rating on pull requests, AI summaries of Terraform plans and 20+ Claude Code skills for team workflows.
+- Helped start an AI agent service built with Mastra on Amazon Bedrock, in an isolated AWS account with evals in CI.
+- Led the consolidation of ~18 repositories into one TypeScript monorepo (100+ packages) with history intact, including CI/CD, Docker and local development.
+- Led the replacement of a legacy multi-tenant sign-in system with a new auth framework: SAML SSO, enforceable 2FA, per-identity rate limiting and zero-downtime key rotation.
+- Led repo-wide toolchain migrations by codemod: TSLint to ESLint, yarn to pnpm, Webpack to Vite, ESLint + Prettier to oxlint + oxfmt (4,366 files), TypeScript run natively by Node (3,502 files) and TypeScript 7.
+- Led the redesign of a core reporting data model on MongoDB, giving a 10× higher complexity ceiling and removing 1–3 s search stalls under load.
+- Built and continued to evolve the CI/CD platform: self-hosted Buildkite defined in Terraform, driven by an in-house TypeScript build engine that builds and deploys only affected packages; continuous deployment with daily automatic releases.
+- Led AWS architecture modernisation: ECS on EC2 to Fargate with ECS Service Connect, CloudFront and WAF as the only public entry, SSO through IAM Identity Center and Control Tower, SSM Session Manager and PrivateLink.
+- Led the inception of the first end-to-end automation suite on Cypress and evolved it in CI alongside the Test Automation Engineers; when performance suffered as the suite grew, led the switch to Playwright, with huge gains in performance and stability across CI/CD.
+- Drove evidence-led AWS cost reduction, with ≈ $1.3k a month documented from the first three changes alone.
+- Saw the company through from startup to its acquisition by WorkBuzz, providing technical leadership throughout and representing engineering right through due diligence.
+- Hired 10+ engineers, full-time and outsourced; designed the interview process with the CTO and Deputy Head, including a pre-interview technical screen and interactive coding exercises; evolved onboarding from people-led workflows to largely self-driven, AI-assisted documentation.
+- Reported to the CEO and CTO at different times, preparing board material on the roadmap and technical direction; worked closely with the Product Manager and Product Owner on the roadmap; contributed to build-versus-buy and packaging decisions.
+- Ran regular 1:1s and set near- and long-term objectives with direct reports, feeding KPIs into departmental and board updates; promoted engineers to Senior and one from Software Engineer to Deputy Head of Engineering; introduced and hired for a new AI Engineer role; managed redundancy and performance management processes.
+- Technical expert on sales, customer and due-diligence calls; helped produce a standard Q&A set for security questionnaires; handled SSO/SAML onboarding and data residency questions; primary escalation point for major customer issues alongside the Deputy Head.
+- Set up and maintained the on-call rota (Jira Service Desk, Google Calendar) and a status page; led on incidents from single-client issues to full outages; helped produce an outage suite of write-ups, runbooks and actionable improvements; directly involved in the business's disaster recovery process.
+- Owned the substantial monthly AWS budget for the SaaS platform, with cost anomaly detection across every area; managed all technical and IT suppliers, negotiating renewals and contracts; chose and consolidated software tools and licences; coordinated the company's R&D tax credit claims over several years, building the evidence from the roadmap and time-tracking systems.
+- Introduced and iterated on ways of working (Scrum, Kanban, project-based, AI-driven workflows); set up and documented most of the Secure Development Policy and coding guidelines in an AI-powered docs site; introduced delivery KPIs such as cycle time and delivery time; worked through the challenges of moving to mostly remote working.
+- Worked directly with an outsourcing firm in India to bolster in-house capacity, onboarding 5+ Software Engineers and Automation Test Engineers, many of whom stayed in the team for 2+ years.
+- Was the technical point of contact for GDPR and ISO 27001 accreditation and the annual audits; arranged the yearly penetration test with external vendors and tracked findings to closure.
+- Was the point person for internal IT: oversaw the hardware and IT estate, administered the Google Workspace directory, ran the MDM that provisions the Mac estate and enforces central InfoSec and compliance policies, and set up and maintained the IT service desk.
+
+</Job>

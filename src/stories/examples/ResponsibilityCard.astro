@@ -1,0 +1,14 @@
+---
+// <ResponsibilityCard>: a responsibility as on its own page, read from the content collection.
+import ResponsibilityCard from '../../components/files/ResponsibilityCard.astro';
+import { responsibilities } from '../../lib/files';
+
+interface Props {
+  /** The responsibility's file name; the first when not given. */
+  file?: string;
+}
+const all = await responsibilities();
+const index = Math.max(0, all.findIndex((e) => e.data.file === Astro.props.file));
+---
+
+<ResponsibilityCard entry={all[index]} index={index} total={all.length} level={2} standalone />

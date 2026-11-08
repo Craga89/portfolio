@@ -1,0 +1,22 @@
+---
+// The site's dialogs and pop-ups, shown open: on the site they open from a key, a button or a term.
+import Keys from '../../components/page/Keys.astro';
+import Palette from '../../components/page/Palette.astro';
+
+interface Props {
+  which: 'keys' | 'palette';
+}
+const { which } = Astro.props;
+---
+
+{which === 'keys' ? <Keys /> : <Palette />}
+<button type="button" data-open={which === 'keys' ? 'c-keys' : 'c-pal'}>Open the dialog</button>
+
+<script>
+  // Open it straight away, and again from the button after it's closed.
+  for (const b of document.querySelectorAll<HTMLButtonElement>('[data-open]')) {
+    const dialog = document.getElementById(b.dataset.open ?? '') as HTMLDialogElement | null;
+    b.addEventListener('click', () => dialog?.showModal());
+    dialog?.showModal();
+  }
+</script>

@@ -1,0 +1,20 @@
+---
+// <Focus>: a suggested reading order. On the site it shows when the address asks for one
+// (/?focus=leadership); here the chosen view is shown straight away.
+import Focus from '../../components/home/Focus.astro';
+
+interface Props {
+  view: 'leadership' | 'platform' | 'ai' | 'frontend';
+}
+---
+
+<div data-show-focus={Astro.props.view}>
+  <Focus />
+</div>
+
+<script>
+  for (const wrap of document.querySelectorAll<HTMLElement>('[data-show-focus]')) {
+    const view = wrap.querySelector<HTMLElement>(`[data-focus="${wrap.dataset.showFocus}"]`);
+    if (view) view.hidden = false;
+  }
+</script>

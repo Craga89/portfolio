@@ -1,6 +1,7 @@
 // The site: static HTML from src/pages, written to site/ (what CI tests and deploys).
 import { defineConfig } from 'astro/config';
 import mdx from '@astrojs/mdx';
+import astrobook from 'astrobook';
 import sitemap from '@astrojs/sitemap';
 import { createHash } from 'node:crypto';
 import { readFileSync, readdirSync } from 'node:fs';
@@ -57,12 +58,31 @@ export default defineConfig({
   integrations: [
     mdx(),
     sitemap({
-      filter: (page) => !page.endsWith('/404/') && !page.includes('/og-card/'),
+      filter: (page) => !page.endsWith('/404/') && !page.includes('/og-card/') && !page.includes('/storybook/'),
       // Blog posts carry their date as lastmod, which Bing in particular uses to decide what to
       // recrawl. Other pages have no reliable date of their own, so they go without one.
       serialize: (item) => {
         const date = POST_DATES.get(item.url);
         return date ? { ...item, lastmod: date } : item;
+      },
+    }),
+    // The component catalogue at /storybook (src/stories): every component, with the site's styles.
+    astrobook({
+      directory: 'src/stories',
+      subpath: '/storybook',
+      css: [
+        './src/styles/fonts.css',
+        './src/styles/tokens.css',
+        './src/styles/base.css',
+        './src/stories/catalogue.css',
+      ],
+      head: './src/stories/Head.astro',
+      title: 'craigthompson.dev components',
+      homeContent: {
+        title: 'craigthompson.dev components',
+        subtitle: 'Every component on the site, rendered with its styles and real content.',
+        version: false,
+        repo: false,
       },
     }),
     postBuild(),

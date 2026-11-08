@@ -1,0 +1,13 @@
+---
+// <Block>: the labelled frame other content components sit in (Cards, Tools and others).
+import Block from '../../components/content/Block.astro';
+
+interface Props {
+  tone?: 'acc';
+}
+const { tone } = Astro.props;
+---
+
+<Block label="What the block holds" tone={tone}>
+  <p>A labelled frame around a group of content: cards, tools, steps or a figure.</p>
+</Block>

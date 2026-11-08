@@ -1,0 +1,9 @@
+---
+// <Heatmap>: upstream pull requests by quarter, from the open-source snapshot (src/lib/oss.ts).
+import Heatmap from '../../components/home/Heatmap.astro';
+import { ossSnapshot } from '../../lib/oss';
+
+const snap = ossSnapshot();
+---
+
+{snap ? <Heatmap timeline={snap.timeline} /> : <p>No open-source snapshot in this build (it comes from the oss branch).</p>}

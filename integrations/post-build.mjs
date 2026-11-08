@@ -7,6 +7,7 @@ import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { serve } from '../tools/lib/serve.mjs';
 import { flattenSitemap } from '../tools/lib/sitemap.mjs';
+import { secureCatalogue } from '../tools/lib/catalogue.mjs';
 import { homePassages, postPassage } from './passages.mjs';
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url));
@@ -40,6 +41,7 @@ export function postBuild() {
           srv.close();
         }
         serviceWorker(out);
+        logger.info(`component catalogue: ${secureCatalogue(out)} pages' inline scripts hashed, inline styles allowed`);
         logger.info('post-build: done');
       },
     },

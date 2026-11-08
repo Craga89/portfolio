@@ -1,0 +1,43 @@
+---
+// Every icon in <Icon>, with its name, at the two sizes the site uses.
+import Icon from '../../components/Icon.astro';
+
+const NAMES = ['search','theme','sun','moon','menu','close','mail','copy','file','download','contact','code','clock','pause','mic','speaker','chevron','send','share','globe','check','play','github','linkedin','angel'] as const;
+---
+
+<ul class="icons">
+  {
+    NAMES.map((name) => (
+      <li>
+        <Icon name={name} size={24} />
+        <Icon name={name} size={16} />
+        <code>{name}</code>
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  .icons {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 12px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  li {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    padding: 12px;
+    border: 1px solid var(--line2);
+    border-radius: 8px;
+  }
+  code {
+    width: 100%;
+    font-size: 12px;
+    color: var(--mute);
+  }
+</style>

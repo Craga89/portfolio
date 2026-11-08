@@ -1,0 +1,46 @@
+---
+// Extra <head> tags for the component catalogue (/storybook): kept out of search engines, and the
+// site scripts the components rely on (copy buttons, term definitions, motion, the clock). Not the
+// whole of boot.ts, so the catalogue doesn't count visits. Astrobook's own toggle sets the theme on
+// html[data-theme], as the site does, so the components follow it.
+---
+
+<meta name="robots" content="noindex, nofollow" />
+{/* The saved motion setting, before anything paints, as on the site. */}
+<script is:inline>
+  try {
+    if (localStorage.getItem('motion') === 'off') document.documentElement.dataset.motion = 'off';
+  } catch {
+    // No storage (a private window, say): animations stay on.
+  }
+</script>
+<script>
+  import '../scripts/motion';
+  import '../scripts/copy';
+  import '../scripts/tips';
+  import '../scripts/clock';
+
+  // Astrobook moves between stories by swapping the page in place, which wouldn't run the site's
+  // scripts (or each example's) again for the new story. Loading each story as a whole page does;
+  // Astrobook keeps the sidebar's scroll, search and open folders across loads itself.
+  document.addEventListener(
+    'click',
+    (e) => {
+      const a = (e.target as Element).closest('a[href]');
+      if (a) a.setAttribute('data-astro-reload', '');
+    },
+    true,
+  );
+
+  // The site's "pause animations" switch (WCAG 2.2.2), for the components that keep moving.
+  const add = () => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'catalogue-motion';
+    b.dataset.motionToggle = '';
+    b.innerHTML = '<span class="when-moving">pause animations</span><span class="when-still">play animations</span>';
+    document.body.append(b);
+  };
+  if (document.body) add();
+  else addEventListener('DOMContentLoaded', add);
+</script>

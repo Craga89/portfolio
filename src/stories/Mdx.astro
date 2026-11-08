@@ -1,0 +1,30 @@
+---
+// Renders an MDX example (src/stories/examples) with the components the site's content files use,
+// and the CV, so a story can show a component with its slotted content, as it's written there.
+import { components as content } from '../components/mdx';
+import Job from '../components/cv/Job.astro';
+import Meta from '../components/cv/Meta.astro';
+
+// The CV's components too (src/content/sections/cv.mdx).
+const components = { ...content, Job, Meta };
+
+interface Props {
+  /** The example's default export (an MDX file's Content). */
+  content: (props: { components: typeof components }) => unknown;
+}
+const { content: Content } = Astro.props;
+---
+
+<div class="example">
+  <Content components={components} />
+</div>
+
+<style>
+  /* As inside a case study (CaseStudyCard.astro): the blocks stacked with room between them. */
+  .example {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    max-width: 900px;
+  }
+</style>
