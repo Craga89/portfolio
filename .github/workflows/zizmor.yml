@@ -1,0 +1,40 @@
+# Audits the GitHub Actions workflows with zizmor (https://docs.zizmor.sh): template injection,
+# credentials left in checkouts, permissions wider than a job needs, unpinned or impostor actions,
+# risky triggers and caching. A finding fails the check, with an annotation on the line. Runs on
+# every change to a workflow or an action, and weekly, since its online audits also catch newly
+# published advisories for the actions we use.
+name: Workflow audit
+
+on:
+  pull_request:
+    paths: ['.github/**']
+  push:
+    branches: [main]
+    paths: ['.github/**']
+  schedule:
+    - cron: '23 6 * * 3' # Wednesdays, 06:23 UTC
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: zizmor-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  zizmor:
+    name: zizmor
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: zizmorcore/zizmor-action@45d7276c9ca790aabd705e31ca99c6185c3e76dd # v0.8.1
+        with:
+          version: 1.32.0
+          # Findings as annotations and a failed check, not uploaded to code scanning.
+          advanced-security: false
+          annotations: true
