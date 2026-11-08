@@ -58,7 +58,7 @@ It also runs daily, so `live.json` picks up the latest results. Report branches 
 ## Performance
 
 - Fonts are self-hosted from `src/assets/fonts/` (fetched once from Google Fonts by `.github/workflows/fetch-fonts.yml`), with the `@font-face` rules in `src/styles/fonts.css`. Pages preload the ones used for first paint, and size-matched system fallbacks keep text from moving when the web fonts arrive.
-- Every page is static HTML with all its content. Scripts and styles are content-hashed modules in `assets/`; the home page's script, the command palette and translation each load only on the pages, or at the moment, they're needed.
+- Every page is static HTML with all its content, and its CSS inlined in `<style>` tags (`build.inlineStylesheets: 'always'`, hashed into the CSP like the rest), so the first paint waits on no stylesheet requests. Each component's styles were a separate file before, over 30 on the home page, which held mobile First Contentful Paint at about 3s on Lighthouse's slow 4G. Scripts are content-hashed modules in `assets/`; the home page's script, the command palette and translation each load only on the pages, or at the moment, they're needed.
 - The portrait is served as AVIF/WebP at the sizes it's shown. The build also renders the social preview card (`og.png`) and the home-screen icon.
 - `.github/workflows/lighthouse.yml` runs Lighthouse (3 runs each, mobile and desktop) after every deploy and saves a summary to the `lighthouse` branch (`reports/summary.json`).
 
