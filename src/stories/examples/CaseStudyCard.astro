@@ -1,0 +1,14 @@
+---
+// <CaseStudyCard>: a case study as on its own page, read from the content collection.
+import CaseStudyCard from '../../components/files/CaseStudyCard.astro';
+import { caseStudies } from '../../lib/files';
+
+interface Props {
+  /** The case study's file name; the first when not given. */
+  file?: string;
+}
+const all = await caseStudies();
+const entry = all.find((e) => e.data.file === Astro.props.file) ?? all[0];
+---
+
+<CaseStudyCard entry={entry} level={2} />

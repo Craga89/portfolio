@@ -1,0 +1,12 @@
+{/* The first use of <Pipeline> in the site's content: src/content/case-studies/auth.mdx. Written by tools/stories.mjs. */}
+
+<Pipeline label="Every sign-in, end to end" name="Sign-in flow">
+  <Stage title="sign-in request" note="from a tenant domain" />
+  <Stage title="resolve organisation" note="from the host name" />
+  <Stage title="choose a method">
+    <Tags items={['SAML SSO', 'magic link', 'password']} />
+  </Stage>
+  <Stage title="2FA" note="enforced per org" />
+  <Stage title="rate-limit check" note="per identity" />
+  <Stage final title="session + signed token" note="EdDSA · published keys" />
+</Pipeline>

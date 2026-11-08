@@ -1,0 +1,14 @@
+---
+// <Toast>: the short message shown after copying or similar, here with a button to show it.
+import Toast from '../../components/page/Toast.astro';
+---
+
+<Toast />
+<button type="button" data-show-toast>Show a toast</button>
+
+<script>
+  import { note } from '../../scripts/toast';
+  const show = () => note('Copied to the clipboard', { show: true, ms: 6000 });
+  document.querySelector('[data-show-toast]')?.addEventListener('click', show);
+  show();
+</script>

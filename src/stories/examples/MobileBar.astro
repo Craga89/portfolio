@@ -1,0 +1,22 @@
+---
+// <MobileBar>: the bar across the top of the home page on phones. On the site it shows only at
+// phone widths; here it's shown at any width.
+import MobileBar from '../../components/home/MobileBar.astro';
+---
+
+<p class="note">On the site this bar shows only on phones and short landscape screens.</p>
+<div class="frame"><MobileBar /></div>
+
+<style>
+  .note {
+    color: var(--mute);
+  }
+  .frame {
+    max-width: 412px;
+    border: 1px solid var(--line2);
+  }
+  .frame :global(.mbar) {
+    display: flex;
+    position: static;
+  }
+</style>

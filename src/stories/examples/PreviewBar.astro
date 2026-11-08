@@ -1,0 +1,15 @@
+---
+// <PreviewBar>: shown only on a branch preview (/preview/<branch>/), so a production build of the
+// catalogue shows only this note.
+import PreviewBar from '../../components/page/PreviewBar.astro';
+import { PREVIEW } from '../../lib/url';
+---
+
+{!PREVIEW && <p class="note">The preview bar shows only on branch previews. Open this story on a branch preview to see it.</p>}
+<PreviewBar />
+
+<style>
+  .note {
+    color: var(--mute);
+  }
+</style>

@@ -1,0 +1,27 @@
+---
+// <Ledger> and <LedgerItem>: the newest blog posts, as in the blog/ section.
+import Ledger from '../../components/home/Ledger.astro';
+import LedgerItem from '../../components/home/LedgerItem.astro';
+import { posts } from '../../lib/posts';
+import { url } from '../../lib/url';
+
+interface Props {
+  /** How many posts to show. */
+  count?: number;
+}
+const all = (await posts()).slice(0, Astro.props.count ?? 5);
+---
+
+<Ledger label="Blog posts, newest first">
+  {
+    all.map((p) => (
+      <LedgerItem
+        date={p.data.date}
+        title={p.data.title}
+        sub={`${p.slug}.md`}
+        href={url(`/blog/${p.slug}/`)}
+        meta={[...p.data.tags.slice(0, 3), `${p.minutes} min`].join(' · ')}
+      />
+    ))
+  }
+</Ledger>

@@ -1,0 +1,41 @@
+{/* The first use of <Routes> in the site's content: src/content/case-studies/this-site.mdx. Written by tools/stories.mjs. */}
+
+<Routes label="How a visit works">
+  <Route
+    name="the page"
+    hops={[{ name: 'Browser' }, { name: 'GitHub Pages', note: 'static, prerendered, works offline' }]}
+  />
+  <Route
+    name="ask.sh"
+    hops={[
+      { name: 'Browser' },
+      { name: 'Cloudflare Worker', note: 'rate-limited per visitor, and capped within the free daily AI allowance' },
+      { name: 'Workers AI', note: 'three models, each a fallback for the one before; answers only from this site' },
+    ]}
+  />
+  <Route
+    name="counts"
+    hops={[
+      { name: 'Browser' },
+      { name: 'Cloudflare Worker' },
+      { name: 'D1', note: 'anonymous question log and visit counts' },
+    ]}
+  />
+  <Route
+    name="agents"
+    hops={[
+      { name: 'AI agent', note: 'in the browser' },
+      {
+        name: 'WebMCP or MCP',
+        note: 'the same tools, on the page or on the Worker: profile, career, files, search and ask.sh',
+      },
+    ]}
+  />
+  <Route
+    name="translation"
+    hops={[
+      { name: 'Browser', note: 'its built-in Translator API, when the visitor wants another language' },
+      { name: 'on the device', note: '38 languages, right-to-left included; nothing is sent anywhere' },
+    ]}
+  />
+</Routes>

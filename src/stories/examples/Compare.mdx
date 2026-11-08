@@ -1,0 +1,19 @@
+{/* The first use of <Compare> in the site's content: src/content/case-studies/accessibility.mdx. Written by tools/stories.mjs. */}
+
+<Compare label="What the first full audit caught, before and after">
+  <Row area="contrast" before="muted text under 4.5:1">
+    Every text colour at 4.6:1 or more on every background it sits on
+  </Row>
+  <Row area="focus" before="some controls with no ring">
+    A visible focus ring on everything that can take focus
+  </Row>
+  <Row area="obscured focus" before="focus could hide off screen">
+    Scroll padding clears the sticky bars; hidden UI leaves the tab order
+  </Row>
+  <Row area="targets" before="18px links">
+    24px minimum
+  </Row>
+  <Row area="wide tables" before="unreachable by keyboard">
+    Focusable, named scroll regions
+  </Row>
+</Compare>

@@ -1,0 +1,15 @@
+{/* The first use of <Explainer> in the site's content: src/content/case-studies/auth.mdx. Written by tools/stories.mjs. */}
+
+<Explainer
+  title="rate limiting by identity, not just IP"
+  text="Separate buckets per user, email, token and IP, per organisation, so one noisy office network can't lock out everyone behind it."
+>
+  <Buckets
+    items={[
+      { label: 'user', fill: 62 },
+      { label: 'email', fill: 38 },
+      { label: 'token', fill: 20 },
+      { label: 'IP', fill: 80 },
+    ]}
+  />
+</Explainer>

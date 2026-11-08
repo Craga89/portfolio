@@ -1,0 +1,14 @@
+---
+// Extra <head> tags for the component catalogue (/storybook): kept out of search engines, and the
+// site scripts the components rely on (copy buttons, term definitions, motion, the clock). Not the
+// whole of boot.ts, so the catalogue doesn't count visits. Astrobook's own toggle sets the theme on
+// html[data-theme], as the site does, so the components follow it.
+---
+
+<meta name="robots" content="noindex, nofollow" />
+<script>
+  import '../scripts/motion';
+  import '../scripts/copy';
+  import '../scripts/tips';
+  import '../scripts/clock';
+</script>
