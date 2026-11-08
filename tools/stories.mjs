@@ -23,12 +23,17 @@ const walk = (dir) =>
  * @param {string} text @param {string} name @returns {string | undefined}
  */
 export function firstUse(text, name) {
-  const open = new RegExp(`<${name}(?=[\\s/>])`, 'g');
-  const m = open.exec(text);
-  if (!m) return undefined;
-  const start = m.index;
-  // The opening tag's end, skipping > inside quotes or braces.
-  let i = start + name.length + 1;
+  const at = firstUseAt(text, name);
+  return at && dedent(text, at.start, at.end);
+}
+
+/**
+ * The end of the opening tag that starts at `start` (just past its >), skipping > inside quotes or
+ * braces.
+ * @param {string} text @param {number} start
+ */
+function tagEnd(text, start) {
+  let i = start + 1;
   let quote = '';
   let depth = 0;
   for (; i < text.length; i++) {
@@ -40,17 +45,61 @@ export function firstUse(text, name) {
     else if (c === '}') depth--;
     else if (c === '>' && depth === 0) break;
   }
-  if (text[i - 1] === '/') return dedent(text, start, i + 1);
+  return i + 1;
+}
+
+/**
+ * Where the first whole element `<Name …>…</Name>` is in `text`.
+ * @param {string} text @param {string} name @returns {{ start: number, end: number } | undefined}
+ */
+function firstUseAt(text, name) {
+  const open = new RegExp(`<${name}(?=[\\s/>])`, 'g');
+  const m = open.exec(text);
+  if (!m) return undefined;
+  const start = m.index;
+  const i = tagEnd(text, start);
+  if (text[i - 2] === '/') return { start, end: i };
   // Find the matching close, counting nested elements of the same name.
   const tag = new RegExp(`<${name}(?=[\\s/>])[^>]*?(/?)>|</${name}>`, 'g');
-  tag.lastIndex = i + 1;
+  tag.lastIndex = i;
   let level = 1;
   for (let t; (t = tag.exec(text));) {
     if (t[0].startsWith('</')) level--;
     else if (t[1] !== '/') level++;
-    if (level === 0) return dedent(text, start, t.index + t[0].length);
+    if (level === 0) return { start, end: t.index + t[0].length };
   }
   return undefined;
+}
+
+/**
+ * The first use of `<Name>`, as {@link firstUse}, but still inside the components it sits in when
+ * it's one of their items (on a line of its own): a <Row> in its <Compare>, say, since a row alone
+ * isn't a table. The components around it keep their attributes but nothing else.
+ * @param {string} text @param {string} name @returns {string | undefined}
+ */
+export function inContext(text, name) {
+  const at = firstUseAt(text, name);
+  if (!at) return undefined;
+  const own = dedent(text, at.start, at.end);
+  const lineStart = text.lastIndexOf('\n', at.start) + 1;
+  if (!/^\s*$/.test(text.slice(lineStart, at.start))) return own;
+  // The components still open where it starts, outermost first.
+  /** @type {string[]} */
+  const open = [];
+  const tag = /<(\/?)([A-Z]\w*)(?=[\s/>])/g;
+  for (let t; (t = tag.exec(text)) && t.index < at.start;) {
+    if (t[1]) {
+      open.pop();
+      continue;
+    }
+    const end = tagEnd(text, t.index);
+    if (text[end - 2] !== '/') open.push(text.slice(t.index, end));
+    tag.lastIndex = end;
+  }
+  return open.reduceRight((inner, o) => {
+    const n = /^<(\w+)/.exec(o)?.[1];
+    return `${o}\n${inner.replace(/^/gm, '  ')}\n</${n}>`;
+  }, own);
 }
 
 /** @param {string} text @param {number} start @param {number} end */
@@ -79,7 +128,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   /** @type {string[]} */
   const missing = [];
   for (const { name } of names()) {
-    const hit = files.map((f) => ({ f, use: firstUse(f.text, name) })).find((h) => h.use);
+    const hit = files.map((f) => ({ f, use: inContext(f.text, name) })).find((h) => h.use);
     if (!hit) {
       missing.push(name);
       continue;
@@ -87,7 +136,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     const from = hit.f.p.slice(ROOT.length);
     writeFileSync(
       join(OUT, `${name}.mdx`),
-      `{/* The first use of <${name}> in the site's content: ${from}. Written by tools/stories.mjs. */}\n\n${hit.use}\n`,
+      `{/* The first use of <${name}> in the site's content, in the components it sits in: ${from}. Written by tools/stories.mjs. */}\n\n${hit.use}\n`,
     );
   }
   let stories = 0;

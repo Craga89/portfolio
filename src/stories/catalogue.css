@@ -22,3 +22,18 @@
   font-size: 0.85rem;
   cursor: pointer;
 }
+
+/* A story's own page (no sidebar) scrolls as a whole page, so a full-page screenshot shows all of
+   it. On the dashboard, <main> scrolls beside the sidebar, and Head.astro lets it take focus. */
+body:not(:has(#astrobook-sidebar)) {
+  max-height: none;
+}
+body:not(:has(#astrobook-sidebar)) main {
+  overflow: visible;
+}
+
+/* The token stories: what the numbers under each text colour are. */
+.tokens-key {
+  margin: 0 0 8px;
+  font: 0.85rem var(--f-mono);
+}
