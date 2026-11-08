@@ -6,3 +6,19 @@
   background: var(--bg);
   color: var(--text);
 }
+
+/* The "pause animations" switch (Head.astro), in the corner of every story. */
+.catalogue-motion {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 10;
+  padding: 6px 12px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+}

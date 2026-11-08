@@ -12,5 +12,7 @@ export default {
     'src/assets/fonts/**',
     'src/content/**',
     'src/data/**',
+    // Copied from src/content as written (tools/stories.mjs), so formatted as the content is.
+    'src/stories/examples/*.mdx',
   ],
 };

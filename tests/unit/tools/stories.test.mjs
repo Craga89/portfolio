@@ -3,7 +3,7 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, readdirSync, statSync } from 'node:fs';
-import { join, basename } from 'node:path';
+import { basename, dirname, join, resolve } from 'node:path';
 import { firstUse } from '../../../tools/stories.mjs';
 
 const ROOT = new URL('../../../', import.meta.url).pathname;
@@ -38,11 +38,22 @@ describe('stories', () => {
   });
 
   it('has a story for every component', () => {
-    const stories = walk(join(ROOT, 'src/stories'), '').filter((p) => /\.(astro|ts|mdx)$/.test(p));
-    const text = stories.map((p) => readFileSync(p, 'utf8')).join('\n');
+    // What each story renders: the component it imports from src/components, or the elements in
+    // the example it imports. Not the wrappers' own imports (Mdx.astro's Job, say), which render
+    // nothing unless a story's example uses them.
+    /** @type {Set<string>} */
+    const shown = new Set();
+    for (const story of walk(join(ROOT, 'src/stories'), '.stories.ts')) {
+      for (const [, path] of readFileSync(story, 'utf8').matchAll(/^import \w+ from '([^']+)';/gm)) {
+        const p = resolve(dirname(story), path);
+        if (p.includes('/src/components/')) shown.add(basename(p, '.astro'));
+        else if (p.includes('/src/stories/examples/'))
+          for (const [, n] of readFileSync(p, 'utf8').matchAll(/<([A-Z]\w*)[\s/>]/g)) shown.add(n);
+      }
+    }
     const missing = walk(join(ROOT, 'src/components'), '.astro')
       .map((p) => basename(p, '.astro'))
-      .filter((n) => !new RegExp(`<${n}[\\s/>]|/${n}\\.astro'`).test(text));
+      .filter((n) => !shown.has(n));
     assert.deepEqual(
       missing,
       [],

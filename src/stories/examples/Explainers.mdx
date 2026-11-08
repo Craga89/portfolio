@@ -1,23 +1,10 @@
 {/* The first use of <Explainers> in the site's content: src/content/case-studies/auth.mdx. Written by tools/stories.mjs. */}
 
 <Explainers>
-  <Explainer
-    title="rate limiting by identity, not just IP"
-    text="Separate buckets per user, email, token and IP, per organisation, so one noisy office network can't lock out everyone behind it."
-  >
-    <Buckets
-      items={[
-        { label: 'user', fill: 62 },
-        { label: 'email', fill: 38 },
-        { label: 'token', fill: 20 },
-        { label: 'IP', fill: 80 },
-      ]}
-    />
+  <Explainer title="rate limiting by identity, not just IP" text="Separate buckets per user, email, token and IP, per organisation, so one noisy office network can't lock out everyone behind it.">
+    <Buckets items={[{ label: 'user', fill: 62 }, { label: 'email', fill: 38 }, { label: 'token', fill: 20 }, { label: 'IP', fill: 80 }]} />
   </Explainer>
-  <Explainer
-    title="zero-downtime key rotation"
-    text="Verifiers accept old and new keys during an overlap window, so signing keys rotate without logging anyone out."
-  >
+  <Explainer title="zero-downtime key rotation" text="Verifiers accept old and new keys during an overlap window, so signing keys rotate without logging anyone out.">
     <KeyRotation />
   </Explainer>
 </Explainers>

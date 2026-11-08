@@ -9,15 +9,9 @@
   </ArchStack>
   <ArchStack after label="after · 2026" access="Operator access: SSO + SSM, no SSH">
     <Layer>Internet</Layer>
-    <Layer tone="acc" note="the only public entry">
-      CloudFront + WAF
-    </Layer>
-    <Layer tone="ok" note="private">
-      Internal load balancer
-    </Layer>
-    <Layer tone="ok" note="no hosts">
-      Fargate · Service Connect
-    </Layer>
+    <Layer tone="acc" note="the only public entry">CloudFront + WAF</Layer>
+    <Layer tone="ok" note="private">Internal load balancer</Layer>
+    <Layer tone="ok" note="no hosts">Fargate · Service Connect</Layer>
     <Layer tone="ok">Database via PrivateLink</Layer>
   </ArchStack>
 </Stacks>

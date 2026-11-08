@@ -30,6 +30,31 @@ test('the catalogue lists the stories and renders them, without errors @desktop'
   expect(errors).toEqual([]);
 });
 
+test("moving between stories from the sidebar runs each story's scripts @desktop", async ({ page }) => {
+  await page.goto('/storybook/dashboard/sections/intro/intro/');
+  await page.locator('#astrobook-sidebar a[href*="/sections/career/career/"]').click();
+  await expect(page).toHaveURL(/\/sections\/career\/career\/$/);
+  // A term opens its definition, which needs tips.ts to have found this story's popover.
+  await page.locator('main .c-term').first().click();
+  await expect(page.locator('#c-tip')).toBeVisible();
+  await expect(page.locator('#c-tip .title')).not.toBeEmpty();
+
+  await page.locator('#astrobook-sidebar a[href*="/page/toast/"]').first().click();
+  await expect(page.locator('[data-toast]')).toHaveAttribute('data-show', '');
+});
+
+test('every story has the switch that pauses animations @desktop', async ({ page }) => {
+  await page.goto('/storybook/dashboard/figures/build-bars/build-bars/');
+  const toggle = page.locator('.catalogue-motion');
+  await expect(toggle).toHaveAccessibleName('pause animations');
+  await toggle.click();
+  await expect(page.locator('html')).toHaveAttribute('data-motion', 'off');
+  await expect(toggle).toHaveAccessibleName('play animations');
+  // Kept for the next story, as on the site.
+  await page.reload();
+  await expect(page.locator('html')).toHaveAttribute('data-motion', 'off');
+});
+
 test('the catalogue is not in the sitemap @desktop', async () => {
   const sitemap = readFileSync(new URL('../../site/sitemap.xml', import.meta.url), 'utf8');
   expect(sitemap).not.toContain('/storybook/');
