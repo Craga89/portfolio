@@ -1,6 +1,6 @@
 # The site's tone is plain; let the work make the point.
 extends: existence
-message: "Drop the exclamation mark."
+message: 'Drop the exclamation mark.'
 level: warning
 nonword: true
 tokens:
