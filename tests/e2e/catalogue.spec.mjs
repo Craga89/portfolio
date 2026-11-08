@@ -7,9 +7,14 @@ test('the catalogue lists the stories and renders them, without errors @desktop'
   /** @type {string[]} */
   const errors = [];
   page.on('pageerror', (e) => errors.push(String(e)));
+  page.on('console', (m) => m.type() === 'error' && /Content Security Policy/.test(m.text()) && errors.push(m.text()));
   await page.goto('/storybook/');
   await expect(page).toHaveTitle(/craigthompson\.dev components/);
   await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', /noindex/);
+  // Scripts stay hash-only, as on the rest of the site; only inline styles are allowed.
+  const csp = (await page.locator('meta[http-equiv="content-security-policy"]').getAttribute('content')) ?? '';
+  expect(csp.split(';').find((d) => d.startsWith('script-src'))).not.toContain('unsafe-inline');
+  expect(csp.split(';').find((d) => d.startsWith('style-src'))).toContain("'unsafe-inline'");
 
   await page.goto('/storybook/dashboard/sections/career/career/');
   await expect(page.locator('main')).toContainText('Head of Engineering');
