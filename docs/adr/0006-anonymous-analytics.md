@@ -17,7 +17,8 @@ needed for these questions.
   leaves, with the page, referring site, country, device class, sections seen and time on the page.
   No IP addresses, cookies or user agents are stored. Do Not Track, Global Privacy Control, bots,
   CI and previews are skipped.
-- A weekly report (`.github/workflows/stats.yml`) summarises both.
+- A weekly report (`.github/workflows/stats.yml`) summarises the visit counts and ask.sh's
+  questions from D1. Page views and Core Web Vitals are in the Cloudflare dashboard.
 
 ## Options considered
 

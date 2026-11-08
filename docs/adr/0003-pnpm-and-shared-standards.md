@@ -32,5 +32,6 @@ without review.
   version bump.
 - Contributors need pnpm. `npm` and `npx` are gone from the scripts and docs.
 - The shared workflows are pinned to merge commits newer than standards' `v1` branch, so their
-  `# v1` comments don't match the pin (zizmor reports this; `.github/zizmor.yml` accepts it until
-  standards tags its releases).
+  `# v1` comments don't match the pin, and Dependabot, which reads them, may try to move the pins
+  back to `v1`. Until standards tags these releases or moves `v1`, check those Dependabot updates by
+  hand.

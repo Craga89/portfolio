@@ -13,9 +13,11 @@ place to see each one on its own, review a change to one, or test one in isolati
 
 Build a catalogue of every component with Astrobook, into the site at `/storybook/`, with a story
 per component in Storybook's format (CSF) and the site's own styles. Components that take content
-show their first use in `src/content` (`tools/stories.mjs`). Each story is audited with axe and
-compared with an approved screenshot, in both themes. The catalogue is `noindex` and out of the
-sitemap.
+show their first use in `src/content` (`tools/stories.mjs`). The catalogue is `noindex` and out
+of the sitemap.
+
+#47 then tests each story on its own: an axe audit and a comparison with an approved screenshot,
+in both themes.
 
 ## Options considered
 
