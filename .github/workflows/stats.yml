@@ -11,15 +11,22 @@ on:
         description: How many days to cover
         default: '7'
 
+permissions: {}
+
 jobs:
   report:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       # The report runs wrangler, a dev dependency.
       - uses: Craga89/standards/github/actions/setup-node@b8f7b51e18400dff89a9fcb8f296334c5e269e38 # v1
       - name: Report
-        run: node tools/stats-report.mjs "${{ inputs.days || '7' }}"
+        run: node tools/stats-report.mjs "$DAYS"
         env:
+          DAYS: ${{ inputs.days || '7' }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}

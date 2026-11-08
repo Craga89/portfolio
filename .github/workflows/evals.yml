@@ -4,9 +4,13 @@
 name: ask.sh answer tests
 
 on:
-  workflow_run:
+  # zizmor flags workflow_run because it runs with write access after another run, which is unsafe
+  # when it uses that run's code or artifacts. This only follows CI's successful pushes to main, and
+  # checks out main itself.
+  workflow_run: # zizmor: ignore[dangerous-triggers]
     workflows: [CI]
     types: [completed]
+    branches: [main]
   schedule:
     - cron: '23 5 * * 1' # Mondays, 05:23 UTC
   workflow_dispatch:
@@ -26,6 +30,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # publish-branch pushes with the checkout's credentials.
+          persist-credentials: true
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version-file: .node-version
