@@ -32,6 +32,16 @@
     true,
   );
 
+  // Astrobook's <main> is the part that scrolls, so it takes focus, to scroll it from the keyboard
+  // (WCAG 2.1.1).
+  const scrolls = () => {
+    const main = document.querySelector('main');
+    if (main && !main.hasAttribute('tabindex')) {
+      main.tabIndex = 0;
+      main.setAttribute('aria-label', 'Story');
+    }
+  };
+
   // The site's "pause animations" switch (WCAG 2.2.2), for the components that keep moving.
   const add = () => {
     const b = document.createElement('button');
@@ -41,6 +51,10 @@
     b.innerHTML = '<span class="when-moving">pause animations</span><span class="when-still">play animations</span>';
     document.body.append(b);
   };
-  if (document.body) add();
-  else addEventListener('DOMContentLoaded', add);
+  const ready = () => {
+    add();
+    scrolls();
+  };
+  if (document.body) ready();
+  else addEventListener('DOMContentLoaded', ready);
 </script>
