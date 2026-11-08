@@ -32,7 +32,9 @@ export default defineConfig({
   // A preview of a branch is built to live under /preview/<branch>/ (see .github/workflows/preview.yml).
   base,
   trailingSlash: 'always',
-  build: { format: 'directory', assets: 'assets' },
+  // CSS inlined into each page: each component's styles were their own render-blocking request
+  // (over 30 on the home page), which slowed the first paint on mobile networks.
+  build: { format: 'directory', assets: 'assets', inlineStylesheets: 'always' },
   // Every page gets a Content-Security-Policy with hashes for its own scripts and styles.
   security: {
     csp: {

@@ -3,6 +3,10 @@
 // before, or they pick one from the language menu.
 import { $$, store } from './dom';
 import { LANGS } from '../../shared/langs.js';
+// The translation bar's styles. Astro puts a page script's CSS in the page whether it's imported
+// here or lazily, so a lazy import only added a request for a file the page already has (and, with
+// the styles inlined, one that doesn't exist).
+import '../styles/translate.css';
 
 if ('Translator' in self) {
   const L = LANGS as readonly string[];
@@ -16,7 +20,7 @@ if ('Translator' in self) {
   let p: Promise<typeof import('../i18n.js')> | null = null;
   const I = (window.CRAGA_I18N = {
     langs: L,
-    load: () => (p ??= Promise.all([import('../i18n.js'), import('../styles/translate.css')]).then(([m]) => m)),
+    load: () => (p ??= import('../i18n.js')),
   });
   const saved = store.get('craga-lang');
   const no = store.get('craga-lang-no');
