@@ -1,0 +1,20 @@
+# Claims that sound like marketing and say nothing a reader can check. Show the evidence instead.
+extends: existence
+message: "'%s' is a claim without evidence: say what it did, or drop it."
+level: error
+ignorecase: true
+tokens:
+  - best[- ]in[- ]class
+  - cutting[- ]edge
+  - world[- ]class
+  - state[- ]of[- ]the[- ]art
+  - revolutionary
+  - rockstar
+  - ninja
+  - synergy
+  - synergies
+  - leverag(e|es|ed|ing)
+  - seamless(ly)?
+  - passionate
+  - visionary
+  - thought leader(ship)?

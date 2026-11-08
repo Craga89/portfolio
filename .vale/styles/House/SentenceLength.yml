@@ -1,0 +1,7 @@
+# Long sentences are hard to follow, and harder still in translation.
+extends: occurrence
+message: 'Over 35 words: split the sentence.'
+scope: sentence
+level: warning
+max: 35
+token: \b(\w+)\b

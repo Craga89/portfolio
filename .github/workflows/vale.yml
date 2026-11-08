@@ -1,0 +1,37 @@
+# Checks the writing in a pull request against the house style (.vale.ini, .vale/styles/House):
+# British spelling, idioms and unsupported claims fail the check; filler words, long sentences and
+# exclamation marks are annotated as warnings. Only the lines a pull request changes are checked.
+name: Writing
+
+on:
+  pull_request:
+    paths:
+      - 'src/content/**'
+      - 'README.md'
+      - '.vale.ini'
+      - '.vale/**'
+      - '.github/workflows/vale.yml'
+
+permissions: {}
+
+concurrency:
+  group: vale-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  vale:
+    name: Vale
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      pull-requests: read # the changed lines, to annotate
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: errata-ai/vale-action@518a9136acc6e6668ce7c00d367051e0941e87ff # v3.0.0
+        with:
+          version: 3.26.0
+          files: '["src/content/career", "src/content/case-studies", "src/content/responsibilities", "src/content/sections", "README.md"]'
+          fail_on_error: true

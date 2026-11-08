@@ -1,0 +1,28 @@
+# British spelling, as the rest of the site is written. Code is skipped, and so are capitalised
+# words, which here are product names (IAM Identity Center, AWS Organizations).
+extends: substitution
+message: "Use British spelling: '%s', not '%s'."
+level: error
+ignorecase: false
+swap:
+  analyz(e|ed|es|ing): analys$1
+  behavior(s|al)?: behaviour$1
+  catalog(s)?: catalogue$1
+  center(s|ed|ing)?: centre$1
+  color(s|ed|ful)?: colour$1
+  defense(s)?: defence$1
+  favor(s|ed|ite|ites)?: favour$1
+  honor(s|ed)?: honour$1
+  labor: labour
+  modeling: modelling
+  organiz(e|ed|es|ing|ation|ations): organis$1
+  optimiz(e|ed|es|ing|ation|ations): optimis$1
+  prioritiz(e|ed|es|ing|ation): prioritis$1
+  recogniz(e|ed|es|ing): recognis$1
+  standardiz(e|ed|es|ing|ation): standardis$1
+  summariz(e|ed|es|ing): summaris$1
+  utiliz(e|ed|es|ing|ation): utilis$1
+  canceled: cancelled
+  traveled: travelled
+  labeled: labelled
+  modeled: modelled

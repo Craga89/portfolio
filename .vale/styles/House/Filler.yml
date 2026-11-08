@@ -1,0 +1,16 @@
+# Words that usually add nothing. A warning, not an error: sometimes they're the right word.
+extends: existence
+message: "'%s' usually adds nothing: try the sentence without it."
+level: warning
+ignorecase: true
+tokens:
+  - very
+  - really
+  - basically
+  - actually
+  - simply
+  - literally
+  - quite
+  - just
+  - obviously
+  - clearly
