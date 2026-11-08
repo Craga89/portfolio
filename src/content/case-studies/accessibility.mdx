@@ -16,6 +16,8 @@ Accessible UI has been part of my work since building UI libraries held to WCAG 
 
 <Checks label="What the suite checks">
   <Check tag="axe-core · WCAG 2.0–2.2 A/AA" title="Every automated rule, in every state">Both themes, desktop and mobile, every tab, open FAQs, search results, ask.sh, the chat, the search dialogs and every file page: 284 page states per run.</Check>
+  <Check tag="axe-core · screenshots · /storybook" title="Every component on its own">Each component in the component catalogue, in both themes, audited alone and compared with its approved screenshot, so a failure names the component rather than the page.</Check>
+  <Check tag="1.4.3 · design tokens" title="Contrast set in the tokens">A unit test checks every text colour against every surface it sits on, in both themes, with more contrast and in print: 4.5:1 or more, or the check fails.</Check>
   <Check tag="2.1.1 · 2.4.7" title="Keyboard only">A Tab-key walk through every focus stop, confirming each one shows a visible focus ring.</Check>
   <Check tag="2.4.11 · new in 2.2" title="Focus never hidden">Nothing focused can sit behind the sticky header or the chat bar.</Check>
   <Check tag="2.5.8 · new in 2.2" title="Targets you can hit">Controls are at least 24px, or spaced so a miss won't land on a neighbour.</Check>

@@ -1,0 +1,105 @@
+---
+// The colour tokens (src/styles/tokens.css), read from the stylesheet so this can't fall behind it.
+// Each theme is shown in its own colours, whichever theme the catalogue is in. A text colour shows
+// its contrast with the theme's page, panel and raised panel; tests/unit/tools/lib/tokens.test.mjs
+// fails the build if any is under 4.5:1.
+import css from '../../styles/tokens.css?raw';
+import { SURFACES, TEXT, contrast, themes } from '../../../tools/lib/tokens.mjs';
+
+interface Props {
+  theme: 'dark' | 'light' | 'dark-more' | 'light-more' | 'print';
+}
+const t = themes(css)[Astro.props.theme];
+const GROUPS: [string, string[]][] = [
+  ['Surfaces', ['bg', 'panel', 'panel2', 'acc-bg', 'ok-bg']],
+  ['Lines', ['line', 'line2', 'line3', 'conn', 'bar0']],
+  ['Text', TEXT],
+  ['Heatmap', ['hm1', 'hm2', 'hm3', 'hm4']],
+];
+const ratio = (fg: string, bg: string) => contrast(fg, bg).toFixed(1);
+---
+
+<div class="tokens" style={`background:${t.bg};color:${t.text}`}>
+  {
+    GROUPS.map(([label, names]) => (
+      <section>
+        <h3 style={`color:${t.head}`}>{label}</h3>
+        {label === 'Text' && (
+          <p class="tokens-key" style={`color:${t.dim}`}>
+            Under each: its contrast on --bg, --panel and --panel2 (4.5:1 or more is required).
+          </p>
+        )}
+        <ul>
+          {names
+            .filter((n) => t[n]?.startsWith('#'))
+            .map((n) => (
+              <li style={`border-color:${t.line}`}>
+                <span class="chip" style={`background:${t[n]};border-color:${t.line3}`} />
+                <code>--{n}</code>
+                <code style={`color:${t.dim}`}>{t[n]}</code>
+                {TEXT.includes(n) && (
+                  <span class="ratios">
+                    {SURFACES.map((s) => (
+                      <span style={`background:${t[s]};color:${t[n]}`} title={`on --${s}`}>
+                        {ratio(t[n], t[s])}
+                      </span>
+                    ))}
+                  </span>
+                )}
+              </li>
+            ))}
+        </ul>
+      </section>
+    ))
+  }
+</div>
+
+<style>
+  .tokens {
+    display: grid;
+    gap: 24px;
+    padding: 24px;
+    border-radius: 8px;
+  }
+  h3 {
+    margin: 0 0 8px;
+    font: 600 1rem var(--f-body);
+  }
+  ul {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  li {
+    display: grid;
+    grid-template-columns: 32px 1fr auto;
+    align-items: center;
+    gap: 4px 10px;
+    padding: 8px;
+    border: 1px solid;
+    border-radius: 6px;
+  }
+  .chip {
+    grid-row: span 2;
+    width: 32px;
+    height: 32px;
+    border: 1px solid;
+    border-radius: 4px;
+  }
+  code {
+    font: 0.85rem var(--f-mono);
+  }
+  .ratios {
+    display: flex;
+    grid-column: 2 / -1;
+    gap: 4px;
+  }
+  .ratios span {
+    padding: 2px 6px;
+    border-radius: 4px;
+    font: 600 0.8rem var(--f-mono);
+  }
+</style>

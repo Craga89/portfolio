@@ -4,7 +4,7 @@ import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { basename, dirname, join, resolve } from 'node:path';
-import { firstUse } from '../../../tools/stories.mjs';
+import { firstUse, inContext } from '../../../tools/stories.mjs';
 
 const ROOT = new URL('../../../', import.meta.url).pathname;
 /** @param {string} dir @param {string} ext @returns {string[]} */
@@ -35,6 +35,21 @@ describe('stories', () => {
   it("doesn't match a longer name, and finds nothing when unused", () => {
     assert.equal(firstUse('<Cards>x</Cards>', 'Card'), undefined);
     assert.equal(firstUse('nothing here', 'Card'), undefined);
+  });
+
+  it('keeps an item inside the components it sits in, and nothing else of theirs', () => {
+    const text =
+      '<Stacks>\n  <ArchStack label="a > b">\n    <Layer>one</Layer>\n    <Layer>two</Layer>\n  </ArchStack>\n  <Done />\n</Stacks>';
+    assert.equal(
+      inContext(text, 'Layer'),
+      '<Stacks>\n  <ArchStack label="a > b">\n    <Layer>one</Layer>\n  </ArchStack>\n</Stacks>',
+    );
+    assert.equal(inContext('<Done />\n<Card>x</Card>', 'Card'), '<Card>x</Card>', 'a closed sibling is not around it');
+  });
+
+  it('leaves an element inside a sentence on its own', () => {
+    assert.equal(inContext('<Phase>\nSee <Term id="x">x</Term>.\n</Phase>', 'Term'), '<Term id="x">x</Term>');
+    assert.equal(inContext('nothing', 'Term'), undefined);
   });
 
   it('has a story for every component', () => {

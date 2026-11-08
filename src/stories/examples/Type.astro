@@ -1,0 +1,74 @@
+---
+// The type tokens: the three families, as the site uses them, and the layout tokens.
+const FAMILIES = [
+  ['--f-head', 'Headings', 'Engineering, from start-up to acquisition'],
+  ['--f-body', 'Body text', 'Head of Engineering at Hive HR, leading the team from start-up through the buy-out.'],
+  ['--f-mono', 'Code, labels and the file tree', 'case-studies/accessibility.md'],
+];
+const LAYOUT = [
+  ['--side-w', '280px', 'the sidebar’s width on wide screens'],
+  ['--hdr-h', '0px', 'the sticky header’s height, measured on the page (scripts/anchors.ts)'],
+  ['--dx', '1 (−1 right to left)', 'mirrors transforms in right-to-left languages'],
+];
+---
+
+<div class="type">
+  {
+    FAMILIES.map(([token, use, sample]) => (
+      <section>
+        <p class="meta">
+          <code>{token}</code> · {use}
+        </p>
+        <p class="sample" style={`font-family:var(${token})`}>
+          {sample}
+        </p>
+      </section>
+    ))
+  }
+  <section>
+    <p class="meta">Layout</p>
+    <dl>
+      {
+        LAYOUT.map(([token, value, use]) => (
+          <>
+            <dt>
+              <code>{token}</code> <span>{value}</span>
+            </dt>
+            <dd>{use}</dd>
+          </>
+        ))
+      }
+    </dl>
+  </section>
+</div>
+
+<style>
+  .type {
+    display: grid;
+    gap: 28px;
+    max-width: 900px;
+  }
+  .meta {
+    margin: 0 0 6px;
+    color: var(--dim);
+    font: 0.85rem var(--f-mono);
+  }
+  .sample {
+    margin: 0;
+    color: var(--head);
+    font-size: 1.6rem;
+  }
+  dl {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 6px 16px;
+    margin: 0;
+  }
+  dt span {
+    color: var(--dim);
+  }
+  dd {
+    margin: 0;
+    color: var(--text2);
+  }
+</style>
