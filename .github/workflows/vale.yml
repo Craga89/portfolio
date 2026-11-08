@@ -35,4 +35,3 @@ jobs:
           version: 3.26.0
           files: '["src/content/career", "src/content/case-studies", "src/content/responsibilities", "src/content/sections", "README.md"]'
           fail_on_error: true
-          filter_mode: nofilter # TEMP: check everything once
