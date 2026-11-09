@@ -30,8 +30,8 @@ jobs:
         with:
           # publish-branch pushes with the checkout's credentials.
           persist-credentials: true
-      - uses: Craga89/standards/github/actions/setup-node@b8f7b51e18400dff89a9fcb8f296334c5e269e38 # v1
-      - uses: Craga89/standards/github/actions/setup-playwright@b8f7b51e18400dff89a9fcb8f296334c5e269e38 # v1
+      - uses: Craga89/standards/github/actions/setup-node@853466a9240bc03d592fa6a406378379f7c6dc7e # v1.1.0
+      - uses: Craga89/standards/github/actions/setup-playwright@853466a9240bc03d592fa6a406378379f7c6dc7e # v1.1.0
       - name: Run the suite
         id: run
         continue-on-error: true
@@ -41,11 +41,11 @@ jobs:
         run: |
           mkdir -p out/reports && cp a11y.json out/reports/latest.json
       - if: always() && hashFiles('a11y.json') != ''
-        uses: Craga89/standards/github/actions/report-meta@b8f7b51e18400dff89a9fcb8f296334c5e269e38 # v1
+        uses: Craga89/standards/github/actions/report-meta@853466a9240bc03d592fa6a406378379f7c6dc7e # v1.1.0
         with:
           dir: out/reports
       - if: always() && hashFiles('a11y.json') != ''
-        uses: Craga89/standards/github/actions/publish-branch@b8f7b51e18400dff89a9fcb8f296334c5e269e38 # v1
+        uses: Craga89/standards/github/actions/publish-branch@853466a9240bc03d592fa6a406378379f7c6dc7e # v1.1.0
         with:
           branch: accessibility
           source: out
