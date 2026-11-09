@@ -3,6 +3,18 @@
 # which adds X-Robots-Tag: noindex for Previews. The Content-Security-Policy stays in each page's
 # <meta> for now: Astro writes per-page hashes there.
 
+# Speculation-Rules: load pages ahead of a click (src/pages/speculation-rules.json.ts). A header, not
+# a script in each page, so search engines don't crawl its URL patterns as addresses.
 /*
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
+  Speculation-Rules: "/speculation-rules.json"
+
+/speculation-rules.json
+  Content-Type: application/speculationrules+json
+
+# Downloads, not pages: kept out of search results.
+/craig-thompson.vcf
+  X-Robots-Tag: noindex
+/cv.json
+  X-Robots-Tag: noindex

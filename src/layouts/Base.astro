@@ -46,16 +46,6 @@ const {
 const canonical = SITE + '/' + path;
 const imageUrl = new URL(image, SITE).href;
 const [dark, light] = CHROME[chrome];
-// Speculation rules: load these pages ahead of a click (on hover or touch).
-const prerender = {
-  prerender: [
-    {
-      source: 'document',
-      where: { or: ['/', '/cv/', '/blog/*', '/case-studies/*', '/responsibilities/*'].map((p) => ({ href_matches: url(p) })) },
-      eagerness: 'moderate',
-    },
-  ],
-};
 ---
 
 <!doctype html>
@@ -105,7 +95,6 @@ const prerender = {
     <link rel="preload" href={headFont} as="font" type="font/woff2" crossorigin />
     <link rel="preload" href={bodyFont} as="font" type="font/woff2" crossorigin />
     {mono && <link rel="preload" href={monoFont} as="font" type="font/woff2" crossorigin />}
-    <script type="speculationrules" set:html={JSON.stringify(prerender)} />
     <slot name="head" />
   </head>
   <body>

@@ -1,11 +1,12 @@
 // A small static file server for the built site, used by the build (to prerender the page) and
 // by the end-to-end tests. Serves index.html for directories and the site's 404 page for anything
-// missing, like GitHub Pages.
+// missing, and, from the command line, the live site's response headers (cloudflare/_headers).
 //   node tools/lib/serve.mjs [dir=site] [port=4173]
 import http from 'node:http';
 import { existsSync, readFileSync, statSync } from 'node:fs';
 import { extname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { headersFor, parseHeaders } from './headers.mjs';
 
 /** @type {Record<string, string>} */
 const TYPES = {
@@ -31,10 +32,12 @@ const TYPES = {
  * @param {string} dir
  * @param {number} [port] 0 picks a free port
  * @param {string} [base] the path the site is mounted under, such as /preview/x/
+ * @param {string} [headers] the text of a _headers file whose rules to apply
  * @returns {Promise<http.Server & { url: string }>}
  */
-export function serve(dir, port = 0, base = '/') {
+export function serve(dir, port = 0, base = '/', headers = '') {
   const root = resolve(dir);
+  const rules = parseHeaders(headers);
   const prefix = base.replace(/\/?$/, '/');
   const server = http.createServer((req, res) => {
     let path;
@@ -57,7 +60,10 @@ export function serve(dir, port = 0, base = '/') {
       res.end(existsSync(notFound) ? readFileSync(notFound) : 'Not found');
       return;
     }
-    res.writeHead(200, { 'content-type': TYPES[extname(file)] || 'application/octet-stream' });
+    res.writeHead(200, {
+      'content-type': TYPES[extname(file)] || 'application/octet-stream',
+      ...headersFor(rules, '/' + path.slice(prefix.length)),
+    });
     res.end(readFileSync(file));
   });
   return new Promise((done, fail) => {
@@ -71,6 +77,8 @@ export function serve(dir, port = 0, base = '/') {
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
-  const server = await serve(process.argv[2] || 'site', Number(process.argv[3] || 4173), process.argv[4]);
+  const file = fileURLToPath(new URL('../../cloudflare/_headers', import.meta.url));
+  const headers = existsSync(file) ? readFileSync(file, 'utf8') : '';
+  const server = await serve(process.argv[2] || 'site', Number(process.argv[3] || 4173), process.argv[4], headers);
   console.log(`serving ${process.argv[2] || 'site'} at ${server.url}`);
 }
