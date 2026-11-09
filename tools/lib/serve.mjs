@@ -60,10 +60,11 @@ export function serve(dir, port = 0, base = '/', headers = '') {
       res.end(existsSync(notFound) ? readFileSync(notFound) : 'Not found');
       return;
     }
-    res.writeHead(200, {
-      'content-type': TYPES[extname(file)] || 'application/octet-stream',
-      ...headersFor(rules, '/' + path.slice(prefix.length)),
-    });
+    const extra = headersFor(rules, '/' + path.slice(prefix.length));
+    // _headers is written for a site at /: under a base path, the rules file is under it too.
+    if (extra['speculation-rules'])
+      extra['speculation-rules'] = extra['speculation-rules'].replaceAll('"/', `"${prefix}`);
+    res.writeHead(200, { 'content-type': TYPES[extname(file)] || 'application/octet-stream', ...extra });
     res.end(readFileSync(file));
   });
   return new Promise((done, fail) => {

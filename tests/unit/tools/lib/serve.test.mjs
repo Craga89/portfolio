@@ -51,6 +51,16 @@ describe('serve', () => {
     }
   });
 
+  it('points the speculation rules under the base path, and matches header rules within it', async () => {
+    const sub = await serve(dir, 0, '/preview/x/', '/*\n  Speculation-Rules: "/rules.json"\n/cv/\n  X-Cv: yes\n');
+    try {
+      assert.equal((await fetch(sub.url)).headers.get('speculation-rules'), '"/preview/x/rules.json"');
+      assert.equal((await fetch(sub.url + 'cv/')).headers.get('x-cv'), 'yes');
+    } finally {
+      sub.close();
+    }
+  });
+
   it('serves the site under a base path, and nothing outside it', async () => {
     const sub = await serve(dir, 0, '/preview/x');
     try {
