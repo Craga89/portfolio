@@ -40,6 +40,27 @@ describe('serve', () => {
     assert.ok(r.status === 403 || r.status === 404, String(r.status));
   });
 
+  it("sends a _headers file's headers, overriding the file's type", async () => {
+    const withHeaders = await serve(dir, 0, '/', '/*\n  X-Test: yes\n/app.js\n  Content-Type: text/x-test\n');
+    try {
+      assert.equal((await fetch(withHeaders.url)).headers.get('x-test'), 'yes');
+      assert.equal((await fetch(withHeaders.url + 'app.js')).headers.get('content-type'), 'text/x-test');
+      assert.equal((await fetch(withHeaders.url + 'nope')).headers.get('x-test'), null);
+    } finally {
+      withHeaders.close();
+    }
+  });
+
+  it('points the speculation rules under the base path, and matches header rules within it', async () => {
+    const sub = await serve(dir, 0, '/preview/x/', '/*\n  Speculation-Rules: "/rules.json"\n/cv/\n  X-Cv: yes\n');
+    try {
+      assert.equal((await fetch(sub.url)).headers.get('speculation-rules'), '"/preview/x/rules.json"');
+      assert.equal((await fetch(sub.url + 'cv/')).headers.get('x-cv'), 'yes');
+    } finally {
+      sub.close();
+    }
+  });
+
   it('serves the site under a base path, and nothing outside it', async () => {
     const sub = await serve(dir, 0, '/preview/x');
     try {
