@@ -4,7 +4,7 @@
 // commit on main with [visual] in its message approves its first screenshot (see ci.yml).
 import { existsSync } from 'node:fs';
 import { stories } from '../stories.mjs';
-import { test, expect, addStyle } from '../fixtures.mjs';
+import { test, expect, addStyle, LIVE } from '../fixtures.mjs';
 
 // The clock changes on its own; the catalogue's motion switch isn't part of any component.
 const STEADY = '[data-clock]{visibility:hidden!important} .catalogue-motion{display:none!important}';
@@ -23,7 +23,7 @@ for (const scheme of /** @type {const} */ (['dark', 'light'])) {
         await page.goto(s.path);
         await addStyle(page, STEADY);
         await page.evaluate(() => document.fonts.ready);
-        await expect(page).toHaveScreenshot(name, { fullPage: true });
+        await expect(page).toHaveScreenshot(name, { fullPage: true, mask: [page.locator(LIVE)] });
       });
     }
   });

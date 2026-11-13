@@ -2,7 +2,7 @@
 // catch unintended visual changes. A commit with "[visual]" in its message accepts the new look.
 //   pnpm exec playwright test --project=visual                      compare
 //   pnpm exec playwright test --project=visual --update-snapshots   accept the current look
-import { test, expect, addStyle } from '../fixtures.mjs';
+import { test, expect, addStyle, LIVE } from '../fixtures.mjs';
 
 // Things that change on their own (the clock, the build stamp) or float over content (the chat bar).
 const STEADY =
@@ -50,9 +50,9 @@ for (const v of VIEWS) {
       await page.evaluate(() => document.fonts.ready);
       if (v.el) {
         await page.locator(v.el).scrollIntoViewIfNeeded();
-        await expect(page.locator(v.el)).toHaveScreenshot(v.name + '.png');
+        await expect(page.locator(v.el)).toHaveScreenshot(v.name + '.png', { mask: [page.locator(LIVE)] });
       } else {
-        await expect(page).toHaveScreenshot(v.name + '.png', { fullPage: !!v.full });
+        await expect(page).toHaveScreenshot(v.name + '.png', { fullPage: !!v.full, mask: [page.locator(LIVE)] });
       }
     });
   });
