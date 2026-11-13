@@ -1,6 +1,21 @@
 # From LinkedIn, quoted as written. A blank line in a quote starts a new paragraph.
-harry-wright:
+gareth-lowrie:
   order: 1
+  name: Gareth Lowrie
+  role: Deputy Head of Engineering at Hive HR
+  when: November 2026 · reported to Craig directly
+  quote: |-
+    I’ve worked closely with Craig at Hive for a long time, and honestly, he’s the main reason I stayed.
+
+    Craig is one of the most technically capable people I’ve worked with. His knowledge of AWS infrastructure is deep, and whenever I want a second opinion on a problem, he’s a great person to talk it through with. He’s also brilliant at getting stuff done quickly without cutting corners on security, which is a rare combination.
+
+    Whether we’re planning and prioritising the roadmap or halfway through a build and hitting problems, he’s a great person to bounce ideas off. He’ll challenge the requirements, spot the gaps early and help land on something that actually works.
+
+    He’s also really generous with what he knows and always happy to share it with me and the wider team.
+
+    On top of all that, he’s just great to work with. Any team would be lucky to have him.
+harry-wright:
+  order: 2
   name: Harry Wright
   role: Product Manager at Hive HR
   when: November 2026 · worked with Craig on the same team
@@ -13,7 +28,7 @@ harry-wright:
 
     I’d highly recommend Craig as a colleague, a leader and a genuinely great person to work with.
 lloyd-rodrigues-powell:
-  order: 2
+  order: 3
   name: Lloyd Rodrigues Powell
   role: Head of Software Development at Northumbria Healthcare NHS Foundation Trust
   when: May 2021 · worked with Craig on the same team
@@ -24,13 +39,13 @@ lloyd-rodrigues-powell:
 
     Even after a number of years separated professionally, I still call Craig a friend and wouldn't think twice about accepting the invitation of a catch up over a cold beverage. I'd also jump at the chance to collaborate again in the future and I really hope our paths will cross again!
 joe-forster:
-  order: 3
+  order: 4
   name: Joe Forster
   role: Senior AI Programmer at Ubisoft Reflections
   when: October 2012 · worked with Craig on the same team
   quote: Craig is a very able developer, who is capable of putting together high-quality front-end solutions at lightning speed. Always friendly and willing to lend his expertise JavaScript, jQuery, CSS and related web technologies, he is indispensable part of the Auto Club Revolution web team.
 peter-davies:
-  order: 4
+  order: 5
   name: Peter Davies
   role: Software Engineering Leader | Product Business | Technology
   when: October 2012 · worked with Craig at different companies
