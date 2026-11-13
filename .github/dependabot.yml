@@ -21,6 +21,11 @@ updates:
       # The types follow the Node version in .node-version, so they move with it, by hand.
       - dependency-name: '@types/node'
         update-types: ['version-update:semver-major']
+      # Pinned in package.json so astro check's WebAssembly parser gets the runtime it was built for:
+      # left to pnpm, it took rolldown's 2.0 beta, which stops astro check loading. Remove both
+      # when astro check supports emnapi 2.
+      - dependency-name: '@emnapi/runtime'
+        update-types: ['version-update:semver-major']
   - package-ecosystem: github-actions
     directory: /
     schedule:
