@@ -161,6 +161,16 @@ describe('context selection', () => {
     assert.ok(ids('Is he good at hiring?').includes('resp-hire'));
   });
 
+  it('has a whole passage for each recommendation, so a new one cuts none short', () => {
+    const recs = knowledge.passages.filter((p) => p.id.startsWith('recommendation-'));
+    assert.ok(recs.length >= 4, `${recs.length} recommendation passages`);
+    for (const p of recs) {
+      assert.match(p.title, /^Recommendation from \S/);
+      assert.ok(!p.text.endsWith('…'), `${p.id} is cut short`);
+    }
+    assert.ok(ids('What did Lloyd say about him?').some((id) => id.startsWith('recommendation-')));
+  });
+
   it('gives career questions the whole career, and unmatched ones a fallback', () => {
     assert.ok(ids('Who did he work for before Hive HR?').includes('career-3'));
     assert.ok(ids('Where has he worked?').includes('career-4'));
