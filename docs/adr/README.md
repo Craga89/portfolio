@@ -17,6 +17,7 @@ decision. Their dates are when the decision took effect.
 | [0006](0006-anonymous-analytics.md)                  | Anonymous analytics, with no cookies or identifiers                  | Accepted |
 | [0007](0007-translation-on-the-visitors-device.md)   | Translation on the visitor's device                                  | Accepted |
 | [0008](0008-component-catalogue-with-astrobook.md)   | A component catalogue with Astrobook                                 | Accepted |
+| [0009](0009-dependency-updates-merge-themselves.md)  | Dependency updates merge themselves                                  | Accepted |
 
 ## Writing one
 

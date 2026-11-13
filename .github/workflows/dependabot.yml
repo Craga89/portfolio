@@ -1,0 +1,21 @@
+# Merges Dependabot's patch and minor updates by themselves once every required check on main
+# passes, so only majors and failures need a person (docs/adr/0009). Signs in as a GitHub App, its
+# client ID and key in Dependabot secrets (MERGE_APP_CLIENT_ID, MERGE_APP_PRIVATE_KEY).
+name: Dependabot
+
+on: pull_request
+
+permissions:
+  contents: read
+
+jobs:
+  auto-merge:
+    # The pull request's author, not whoever started the run.
+    if: github.event.pull_request.user.login == 'dependabot[bot]'
+    uses: Craga89/standards/.github/workflows/dependabot-auto-merge.yml@dc97ef65e42347438ef985da2ac8155b69f405bc # v1.2.0
+    permissions:
+      contents: read
+      pull-requests: read # reads which dependencies the pull request updates
+    secrets:
+      app-client-id: ${{ secrets.MERGE_APP_CLIENT_ID }}
+      app-private-key: ${{ secrets.MERGE_APP_PRIVATE_KEY }}
