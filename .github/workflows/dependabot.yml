@@ -12,7 +12,7 @@ jobs:
   auto-merge:
     # The pull request's author, not whoever started the run.
     if: github.event.pull_request.user.login == 'dependabot[bot]'
-    uses: Craga89/standards/.github/workflows/dependabot-auto-merge.yml@dc97ef65e42347438ef985da2ac8155b69f405bc # v1.2.0
+    uses: Craga89/standards/.github/workflows/dependabot-auto-merge.yml@506739f7df8eaf38b550d472e17d11fb4dedb9e5 # v1.2.0
     permissions:
       contents: read
       pull-requests: read # reads which dependencies the pull request updates
