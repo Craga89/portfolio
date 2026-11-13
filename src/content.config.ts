@@ -94,13 +94,20 @@ const focus = defineCollection({
 
 const recommendations = defineCollection({
   loader: file('./src/data/recommendations.yaml'),
-  schema: z.object({
-    order: z.number().int(),
-    name: z.string(),
-    role: z.string(),
-    when: z.string(),
-    quote: z.string(),
-  }),
+  schema: z
+    .object({
+      order: z.number().int(),
+      name: z.string(),
+      role: z.string(),
+      when: z.string(),
+      quote: z.string(),
+      /** The line the card shows, copied word for word from the quote. */
+      highlight: z.string().min(1),
+    })
+    .refine((r) => r.quote.includes(r.highlight), {
+      message: 'highlight must be copied word for word from the quote',
+      path: ['highlight'],
+    }),
 });
 
 /** Open-source projects. `{stars}`, `{forks}` and `{commits}` in the text are qTip2's live counts. */
