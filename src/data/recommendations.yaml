@@ -1,6 +1,19 @@
 # From LinkedIn, quoted as written. A blank line in a quote starts a new paragraph.
-lloyd-rodrigues-powell:
+harry-wright:
   order: 1
+  name: Harry Wright
+  role: Product Manager at Hive HR
+  when: November 2026 · worked with Craig on the same team
+  quote: |-
+    I’ve had the pleasure of working alongside Craig for several years. His ability to lead a team and bring everyone together around a shared vision has been key to engineering’s success at Hive.
+
+    Craig made sure engineering didn’t just work closely with product (something I’m genuinely grateful for). He also helped teams across the business understand how engineering contributes to our wider goals, and how we could all help each other succeed.
+
+    More recently, he was a key voice in Hive’s move to become AI-first, both in how we work and how we build. Honestly, I don’t think we’d have hit our roadmap goals without his passion and determination to create a better product and a better place to work.
+
+    I’d highly recommend Craig as a colleague, a leader and a genuinely great person to work with.
+lloyd-rodrigues-powell:
+  order: 2
   name: Lloyd Rodrigues Powell
   role: Head of Software Development at Northumbria Healthcare NHS Foundation Trust
   when: May 2021 · worked with Craig on the same team
@@ -11,13 +24,13 @@ lloyd-rodrigues-powell:
 
     Even after a number of years separated professionally, I still call Craig a friend and wouldn't think twice about accepting the invitation of a catch up over a cold beverage. I'd also jump at the chance to collaborate again in the future and I really hope our paths will cross again!
 joe-forster:
-  order: 2
+  order: 3
   name: Joe Forster
   role: Senior AI Programmer at Ubisoft Reflections
   when: October 2012 · worked with Craig on the same team
   quote: Craig is a very able developer, who is capable of putting together high-quality front-end solutions at lightning speed. Always friendly and willing to lend his expertise JavaScript, jQuery, CSS and related web technologies, he is indispensable part of the Auto Club Revolution web team.
 peter-davies:
-  order: 3
+  order: 4
   name: Peter Davies
   role: Software Engineering Leader | Product Business | Technology
   when: October 2012 · worked with Craig at different companies

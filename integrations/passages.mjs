@@ -107,16 +107,18 @@ export function homePassages() {
         .join(', '),
   );
   if (rows.length) add('stack', 'Skills and tools (stack)', rows.join('. '), '#stack');
-  for (const [sec, title] of [
-    ['oss', 'Open source'],
-    ['recommendations', 'Recommendations'],
-  ]) {
-    const n = q('#' + sec);
-    // Recognition and education sit inside the recommendations section; they get their own passage.
-    const c = /** @type {Element | undefined} */ (n?.cloneNode(true));
-    c?.querySelector('section[aria-labelledby="c-awards"]')?.remove();
-    if (c) add(sec, title, txt(c), '#' + sec);
-  }
+  const oss = q('#oss');
+  if (oss) add('oss', 'Open source', txt(oss), '#oss');
+  // One passage per recommendation, so a new one can't push the others past the length limit.
+  qa('#recommendations figure:has(> blockquote)').forEach((f, i) => {
+    const [name, role, when] = ['.name', '.role', '.when'].map((s) => clean(txt(q(s, f))));
+    add(
+      'recommendation-' + (i + 1),
+      `Recommendation from ${name}, ${role}`,
+      `${txt(q('blockquote', f))} (${[name, role, when].filter(Boolean).join(', ')})`,
+      '#recommendations',
+    );
+  });
   // Who used the old jQuery plugins: at the end of the open-source section, past its passage's length.
   const used = q('#oss .used');
   if (used) add('oss-used-by', 'Open source: who used the jQuery plugins', txt(used), '#oss');
