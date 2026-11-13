@@ -110,7 +110,7 @@ export function homePassages() {
   const oss = q('#oss');
   if (oss) add('oss', 'Open source', txt(oss), '#oss');
   // One passage per recommendation, so a new one can't push the others past the length limit.
-  qa('#recommendations figure:has(> blockquote)').forEach((f, i) => {
+  qa('#recommendations figure:has(blockquote)').forEach((f, i) => {
     const [name, role, when] = ['.name', '.role', '.when'].map((s) => clean(txt(q(s, f))));
     add(
       'recommendation-' + (i + 1),

@@ -1,6 +1,9 @@
 ---
 // recommendations.txt: LinkedIn recommendations, quoted as written (src/data/recommendations.yaml).
+// Each card shows one line from its recommendation; the whole text opens below it, and the card
+// then takes the full width.
 import { getCollection } from 'astro:content';
+import { excerpt } from '../../../shared/excerpt.js';
 import Section from '../home/Section.astro';
 import { LINKEDIN } from '../../site';
 
@@ -11,30 +14,31 @@ const recs = await getCollection('recommendations').then((all) => all.sort((a, b
   <p class="intro">From LinkedIn, quoted as written. <a href={`${LINKEDIN}details/recommendations/`}>See them on LinkedIn →</a></p>
   <div class="grid">
     {
-      recs.map(({ data: r }) => {
-        const paras = r.quote.split(/\n\s*\n/);
-        return (
-          <figure class:list={['c-card', { wide: paras.length > 1 }]}>
+      recs.map(({ data: r }) => (
+        <figure class="c-card">
+          <p class="hl">
+            <span class="q" aria-hidden="true">
+              “
+            </span>
+            {excerpt(r.quote, r.highlight)}
+          </p>
+          <figcaption>
+            <div class="name">{r.name}</div>
+            <div class="role">{r.role}</div>
+            <div class="when">{r.when}</div>
+          </figcaption>
+          <details>
+            <summary>
+              Read the full recommendation<span class="c-sr"> from {r.name}</span>
+            </summary>
             <blockquote>
-              {paras.map((text, i) => (
-                <p>
-                  {i === 0 && (
-                    <span class="q" aria-hidden="true">
-                      “
-                    </span>
-                  )}
-                  {text}
-                </p>
+              {r.quote.split(/\n\s*\n/).map((text) => (
+                <p>{text}</p>
               ))}
             </blockquote>
-            <figcaption>
-              <div class="name">{r.name}</div>
-              <div class="role">{r.role}</div>
-              <div class="when">{r.when}</div>
-            </figcaption>
-          </figure>
-        );
-      })
+          </details>
+        </figure>
+      ))
     }
   </div>
 </Section>
@@ -48,15 +52,15 @@ const recs = await getCollection('recommendations').then((all) => all.sort((a, b
   }
   .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, max(420px, calc(50% - 9px))), 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
     gap: 18px;
   }
   .c-card {
     display: flex;
     flex-direction: column;
-    gap: 18px;
+    gap: 16px;
     margin: 0;
-    padding: 26px;
+    padding: 24px;
     border: 1px solid var(--line2);
     border-radius: 12px;
     background: var(--panel);
@@ -68,40 +72,29 @@ const recs = await getCollection('recommendations').then((all) => all.sort((a, b
     border-color: var(--acc);
     transform: translateY(-4px);
   }
-  blockquote {
-    margin: 0;
-    font-size: 16px;
-    line-height: 1.7;
-    color: var(--text2);
-  }
-  blockquote p {
-    margin: 0;
-  }
-  blockquote p + p {
-    margin-top: 12px;
-  }
-  /* A longer recommendation, in paragraphs: the full width, in two columns where there's room. */
-  .wide {
+  /* Opened: the whole row, so the full text has room for two columns. */
+  .c-card:has(details[open]) {
     grid-column: 1 / -1;
+    border-color: var(--acc);
+    transform: none;
   }
-  .wide blockquote {
-    columns: 2 340px;
-    column-gap: 40px;
-  }
-  .wide blockquote p {
-    break-inside: avoid;
+  .hl {
+    margin: 0;
+    font-size: 19px;
+    font-weight: 500;
+    line-height: 1.45;
+    color: var(--head);
+    text-wrap: pretty;
   }
   .q {
     margin-inline-end: 4px;
-    font-size: 28px;
+    font-size: 30px;
     line-height: 0;
     vertical-align: -10px;
     color: var(--acc);
   }
   figcaption {
     margin-top: auto;
-    padding-top: 14px;
-    border-top: 1px solid var(--line);
   }
   .name {
     font-weight: 700;
@@ -116,9 +109,63 @@ const recs = await getCollection('recommendations').then((all) => all.sort((a, b
     font-size: 12px;
     color: var(--dim);
   }
+  details {
+    border-top: 1px solid var(--line);
+  }
+  summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    min-height: 44px;
+    padding-top: 10px;
+    list-style: none;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--acc);
+  }
+  summary::marker,
+  summary::-webkit-details-marker {
+    display: none;
+  }
+  summary::after {
+    content: '+' / '';
+    font-family: var(--f-mono);
+    font-size: 18px;
+    transition: transform 0.25s ease;
+  }
+  summary:hover {
+    color: var(--acc-h);
+  }
+  details[open] summary::after {
+    transform: rotate(45deg);
+  }
+  blockquote {
+    margin: 12px 0 0;
+    columns: 2 340px;
+    column-gap: 40px;
+    font-size: 15px;
+    line-height: 1.65;
+    color: var(--text2);
+  }
+  blockquote p {
+    margin: 0 0 12px;
+    break-inside: avoid;
+  }
+  /* On paper, the whole text of each, without the highlight or the control. */
   @media print {
     .c-card {
+      grid-column: 1 / -1;
       break-inside: avoid;
+    }
+    .hl,
+    summary {
+      display: none;
+    }
+    details::details-content {
+      content-visibility: visible;
+      display: contents;
     }
   }
   @media (forced-colors: active) {
