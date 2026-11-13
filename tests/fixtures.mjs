@@ -119,3 +119,10 @@ export const settle = (page) =>
  */
 export const translated = (page) =>
   expect(page.locator('.tr-bar')).toHaveAttribute('data-kind', 'done', { timeout: 60_000 });
+
+/**
+ * The open-source counts and the pull-request heatmap: built from the oss branch, which a workflow
+ * refreshes, so they change without any change to the code. Screenshots mask them, or every
+ * refresh would fail every pull request's comparison.
+ */
+export const LIVE = '[data-oss], .hm .grid, .hm .leg .note';
