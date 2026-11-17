@@ -32,7 +32,7 @@ const month = (ym: string) =>
     <ol class="log">
       {
         entries.map((e) => (
-          <li>
+          <li data-dept={e.dept} data-when={month(e.date)}>
             <time datetime={e.date}>
               <span aria-hidden="true">{e.date}</span>
               <span class="c-sr">{month(e.date)}</span>
