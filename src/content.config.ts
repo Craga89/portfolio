@@ -110,6 +110,16 @@ const recommendations = defineCollection({
     }),
 });
 
+/** Hive Fives (Hive's way of thanking a colleague): a selection, credited by department, never by name. */
+const hiveFives = defineCollection({
+  loader: file('./src/data/hive-fives.yaml'),
+  schema: z.object({
+    date: z.string().regex(/^\d{4}-\d{2}$/),
+    dept: z.enum(['Customer Success', 'Engineering', 'Leadership', 'Operations', 'People', 'Product', 'Sales']),
+    quote: z.string().min(1),
+  }),
+});
+
 /** Open-source projects. `{stars}`, `{forks}` and `{commits}` in the text are qTip2's live counts. */
 const projects = defineCollection({
   loader: file('./src/data/projects.yaml'),
@@ -149,6 +159,7 @@ export const collections = {
   stack,
   focus,
   recommendations,
+  hiveFives,
   projects,
   contributions,
   usedBy,

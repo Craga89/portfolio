@@ -107,6 +107,8 @@ export function homePassages() {
         .join(', '),
   );
   if (rows.length) add('stack', 'Skills and tools (stack)', rows.join('. '), '#stack');
+  const hf = q('#hive-fives');
+  if (hf) add('hive-fives', 'Hive Fives: thanks from colleagues at Hive HR', txt(hf), '#hive-fives');
   const oss = q('#oss');
   if (oss) add('oss', 'Open source', txt(oss), '#oss');
   // One passage per recommendation, so a new one can't push the others past the length limit.

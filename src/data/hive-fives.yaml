@@ -1,0 +1,52 @@
+# Hive Fives: Hive's way of thanking a colleague. A selection of the ones Craig was sent, quoted
+# word for word ("…" marks where a quote is cut), credited by the sender's department and month
+# only, never by name. Leave out anything marked private, and any customer's or colleague's name.
+# The counts the section shows (total, years, departments) are in HiveFives.astro.
+saving-the-day:
+  date: 2026-02
+  dept: Customer Success
+  quote: 'Thank you for saving the day last night!'
+team-inclusive:
+  date: 2025-10
+  dept: Engineering
+  quote: '… appreciate the way you made this a team-inclusive decision and plan.'
+first-ai-feature:
+  date: 2025-09
+  dept: Engineering
+  quote: "… we’ve just released our first AI platform feature, all thanks to the investigating and groundwork you've been putting in."
+line-manager:
+  date: 2024-03
+  dept: Engineering
+  quote: '… I never had a line manager/ head of engineering as good as you.'
+iso-27001:
+  date: 2023-10
+  dept: Operations
+  quote: 'Thank you for your time, support, and input with the ISO 27001 recertification!'
+technical-questions:
+  date: 2023-09
+  dept: Sales
+  quote: 'You jumped on those 300+ technical questions … in record time'
+patience:
+  date: 2023-07
+  dept: Operations
+  quote: 'If patience is a virtue, you must be the most virtuous of all!'
+problem-you-cant-fix:
+  date: 2023-03
+  dept: Customer Success
+  quote: "Is there a problem you can't fix?!"
+saint-craga:
+  date: 2022-06
+  dept: Operations
+  quote: 'Saint Craga, patron saint of Slack pestering patience!'
+so-chill:
+  date: 2021-09
+  dept: People
+  quote: "… you being so chill always keeps me calm, even when I'm flapping."
+never-accept-defeat:
+  date: 2021-03
+  dept: Leadership
+  quote: '… never accept defeat, and constantly strive for better …'
+new-architecture:
+  date: 2019-07
+  dept: Product
+  quote: 'Awesome job with the migration to the new architecture.'
