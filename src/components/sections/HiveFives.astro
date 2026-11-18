@@ -1,0 +1,154 @@
+---
+// hive-fives.log: thanks from colleagues through Hive Five, Hive's recognition feature, shown as a
+// terminal session (src/data/hive-fives.yaml). Credited by department, never by name.
+import { getCollection } from 'astro:content';
+
+// From the full export: 121 Hive Fives, less the 4 marked private, from March 2019 to July 2026.
+const TOTAL = 117;
+const YEARS = '2019–2026';
+const DEPARTMENTS = 7;
+
+const entries = (await getCollection('hiveFives')).map((e) => e.data).sort((a, b) => b.date.localeCompare(a.date));
+const slug = (dept: string) => dept.toLowerCase().replace(/\s+/g, '-');
+const month = (ym: string) =>
+  new Date(`${ym}-01T00:00:00Z`).toLocaleDateString('en-GB', { month: 'long', year: 'numeric', timeZone: 'UTC' });
+---
+
+<section id="hive-fives" aria-labelledby="c-hive-fives" class="hf">
+  <h2 id="c-hive-fives" class="c-cmd">
+    <span translate="no">$ cd ~/hive-fives</span> <span class="note"># thanks from colleagues</span>
+  </h2>
+  <p class="lede">
+    Hive Five is Hive’s way of thanking a colleague. I was sent {TOTAL} between {YEARS.replace('–', ' and ')}, from {
+      DEPARTMENTS
+    } departments. A selection, quoted as written, newest first.
+  </p>
+  <div class="term">
+    <p class="cmd" aria-hidden="true"><span class="ps">~/hive-fives $</span> <span translate="no">wc -l hive-fives.log</span></p>
+    <p class="out" aria-hidden="true">
+      {TOTAL} hive-fives.log <span class="cmt"># {YEARS}, from {DEPARTMENTS} departments</span>
+    </p>
+    <p class="cmd" aria-hidden="true"><span class="ps">~/hive-fives $</span> <span translate="no">cat highlights.log</span></p>
+    <ol class="log">
+      {
+        entries.map((e) => (
+          <li data-dept={e.dept} data-when={month(e.date)}>
+            <time datetime={e.date}>
+              <span aria-hidden="true">{e.date}</span>
+              <span class="c-sr">{month(e.date)}</span>
+            </time>
+            <span class="dept">
+              <span aria-hidden="true" translate="no">{slug(e.dept)}</span>
+              <span class="c-sr">from {e.dept}</span>
+            </span>
+            <q>{e.quote}</q>
+          </li>
+        ))
+      }
+    </ol>
+    <p class="cmd last" aria-hidden="true"><span class="ps">~/hive-fives $</span> <span class="cursor"></span></p>
+  </div>
+</section>
+
+<style>
+  .hf {
+    margin-top: clamp(72px, 10vw, 128px);
+  }
+  h2 {
+    margin: 0 0 12px;
+    font-size: clamp(16px, 2vw, 20px);
+    font-weight: 500;
+    color: var(--ok);
+  }
+  .note {
+    color: var(--dim);
+  }
+  .lede {
+    max-width: 70ch;
+    margin: 0 0 20px;
+    font-size: 14px;
+    color: var(--mute);
+  }
+  .term {
+    padding: 14px 20px 16px;
+    border: 1px solid var(--line2);
+    border-radius: 12px;
+    background: var(--panel);
+    font-family: var(--f-mono);
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--text2);
+  }
+  .term p {
+    margin: 0;
+  }
+  .cmd {
+    color: var(--head);
+  }
+  .ps,
+  .cmt {
+    color: var(--dim);
+  }
+  .out {
+    margin-bottom: 12px !important;
+  }
+  .log {
+    margin: 4px 0 10px;
+    padding: 0;
+    list-style: none;
+  }
+  .log li {
+    display: grid;
+    grid-template-columns: 8ch 18ch minmax(0, 1fr);
+    gap: 16px;
+    padding: 7px 0;
+    border-bottom: 1px dashed var(--line);
+  }
+  time {
+    color: var(--dim);
+  }
+  .dept {
+    color: var(--acc);
+  }
+  q {
+    color: var(--head);
+  }
+  .cursor {
+    display: inline-block;
+    width: 0.6em;
+    height: 1.1em;
+    vertical-align: -0.2em;
+    background: var(--acc);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    :global(html:not([data-motion='off'])) .cursor {
+      animation: blink 1.1s steps(1) infinite;
+    }
+  }
+  @keyframes blink {
+    50% {
+      opacity: 0;
+    }
+  }
+  /* Narrow screens: the date and department on one line, the quote under them. */
+  @media (max-width: 640px) {
+    .log li {
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: 2px 12px;
+    }
+    q {
+      grid-column: 1 / -1;
+    }
+  }
+  @media print {
+    .hf {
+      margin-top: 20pt;
+      break-inside: avoid;
+    }
+    .cmd,
+    .out,
+    .cursor {
+      display: none;
+    }
+  }
+</style>

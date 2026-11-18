@@ -107,6 +107,21 @@ export function homePassages() {
         .join(', '),
   );
   if (rows.length) add('stack', 'Skills and tools (stack)', rows.join('. '), '#stack');
+  // Hive Fives: the intro, then each quote with its month and department. Those are written for
+  // screen readers (.c-sr), which txt() leaves out, so they're read from the entry's data.
+  const hf = q('#hive-fives');
+  if (hf) {
+    const quotes = qa('.log li', hf).map(
+      (li) =>
+        `"${clean(txt(q('q', li)))}" (${/** @type {HTMLElement} */ (li).dataset.dept}, ${/** @type {HTMLElement} */ (li).dataset.when})`,
+    );
+    add(
+      'hive-fives',
+      'Hive Fives: thanks from colleagues at Hive HR',
+      [clean(txt(q('.lede', hf))), ...quotes].join(' '),
+      '#hive-fives',
+    );
+  }
   const oss = q('#oss');
   if (oss) add('oss', 'Open source', txt(oss), '#oss');
   // One passage per recommendation, so a new one can't push the others past the length limit.
