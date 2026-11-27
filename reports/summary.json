@@ -1,0 +1,537 @@
+{
+  "mobile": {
+    "runs": 3,
+    "scores": {
+      "performance": 94,
+      "accessibility": 100,
+      "best-practices": 100,
+      "seo": 100
+    },
+    "metrics": {
+      "first-contentful-paint": 2177,
+      "largest-contentful-paint": 2582,
+      "total-blocking-time": 0,
+      "cumulative-layout-shift": 0,
+      "speed-index": 2177,
+      "interactive": 2638
+    },
+    "totalBytes": 221004,
+    "lcpElement": "[{\"type\":\"table\",\"headings\":[{\"key\":\"node\",\"valueType\":\"node\",\"label\":\"Element\"}],\"items\":[{\"node\":{\"type\":\"node\",\"lhId\":\"page-0-P\",\"path\":\"1,HTML,1,BODY,2,DIV,1,MAIN,0,SECTION,0,DIV,3,DIV,2,DIV,1,P\",\"selector\":\"div.term > div.body > div#about > p\",\"boundingRect\":{\"top\":482,\"bottom\":727,\"left\":41,\"right\":371,\"width\":330,\"height\":245},\"snippet\":\"<p>\",\"nodeLabel\":\"I’m a hands-on, full-stack engineer",
+    "failing": [
+      {
+        "category": "performance",
+        "id": "first-contentful-paint",
+        "title": "First Contentful Paint",
+        "score": 0.78,
+        "display": "2.2 s",
+        "items": []
+      },
+      {
+        "category": "performance",
+        "id": "largest-contentful-paint",
+        "title": "Largest Contentful Paint",
+        "score": 0.87,
+        "display": "2.6 s",
+        "items": []
+      },
+      {
+        "category": "performance",
+        "id": "cache-insight",
+        "title": "Use efficient cache lifetimes",
+        "score": 0,
+        "display": "Est savings of 4 KiB",
+        "items": [
+          {
+            "url": "https://static.cloudflareinsights.com/beacon.min.js/vce701823e78c4301a35b7e07294d87301792088814092",
+            "wastedBytes": 4191.2,
+            "totalBytes": 10478
+          }
+        ]
+      },
+      {
+        "category": "performance",
+        "id": "network-dependency-tree-insight",
+        "title": "Network dependency tree",
+        "score": 0,
+        "display": "",
+        "items": [
+          {
+            "value": {
+              "type": "network-tree",
+              "chains": {
+                "B871386CD4BB13399997E716091A031F": {
+                  "url": "https://craigthompson.dev/",
+                  "navStartToEndTime": 101,
+                  "transferSize": 76982,
+                  "isLongest": true,
+                  "children": {
+                    "2922.12": {
+                      "url": "https://craigthompson.dev/assets/Base.astro_astro_type_script_index_0_lang.DJDU7x9C.js",
+                      "navStartToEndTime": 128,
+                      "transferSize": 5524,
+                      "isLongest": true,
+                      "children": {
+                        "2922.15": {
+                          "url": "https://craigthompson.dev/assets/toast.3uzCHBjR.js",
+                          "navStartToEndTime": 212,
+                          "transferSize": 1284,
+                          "isLongest": true,
+                          "children": {
+                            "2922.30": {
+                              "url": "https://craigthompson.dev/cdn-cgi/rum?",
+                              "navStartToEndTime": 272,
+                              "transferSize": 459,
+                              "isLongest": true,
+                              "children": {}
+                            }
+                          }
+                        },
+                        "2922.16": {
+                          "url": "https://craigthompson.dev/assets/clock.Cr3gIC11.js",
+                          "navStartToEndTime": 213,
+                          "transferSize": 1712,
+                          "children": {}
+                        },
+                        "2922.17": {
+                          "url": "https://craigthompson.dev/assets/copy.CgnLqJoF.js",
+                          "navStartToEndTime": 213,
+                          "transferSize": 1083,
+                          "children": {}
+                        },
+                        "2922.18": {
+                          "url": "https://craigthompson.dev/assets/site.D5SW1Rfy.js",
+                          "navStartToEndTime": 212,
+                          "transferSize": 764,
+                          "children": {}
+                        },
+                        "2922.14": {
+                          "url": "https://craigthompson.dev/assets/url.BcguYqzw.js",
+                          "navStartToEndTime": 212,
+                          "transferSize": 677,
+                          "children": {}
+                        }
+                      }
+                    },
+                    "2922.11": {
+                      "url": "https://craigthompson.dev/assets/index.astro_astro_type_script_index_0_lang.C6Zc_4_2.js",
+                      "navStartToEndTime": 143,
+                      "transferSize": 18189,
+                      "children": {
+                        "2922.19": {
+                          "url": "https://craigthompson.dev/assets/navigate.Suq7XmLc.js",
+                          "navStartToEndTime": 213,
+                          "transferSize": 752,
+                          "children": {}
+                        }
+                      }
+                    },
+                    "2922.13": {
+                      "url": "https://static.cloudflareinsights.com/beacon.min.js/vce701823e78c4301a35b7e07294d87301792088814092",
+                      "navStartToEndTime": 212,
+                      "transferSize": 10478,
+                      "children": {}
+                    },
+                    "2922.6": {
+                      "url": "https://craigthompson.dev/assets/PreviewBar.astro_astro_type_script_index_0_lang.Dy7vUPrF.js",
+                      "navStartToEndTime": 149,
+                      "transferSize": 1218,
+                      "children": {}
+                    }
+                  }
+                }
+              },
+              "longestChain": {
+                "duration": 272
+              }
+            }
+          },
+          {
+            "description": "[preconnect](https://developer.chrome.com/docs/lighthouse/performance/uses-rel-preconnect/) hints help the browser establish a connection earlier in the page load, saving time when the first request for that origin is made. The following are the origins that the page preconnected to.",
+            "value": {
+              "type": "text",
+              "value": "no origins were preconnected"
+            }
+          },
+          {
+            "description": "Add [preconnect](https://developer.chrome.com/docs/lighthouse/performance/uses-rel-preconnect/) hints to your most important origins, but try to use no more than 4.",
+            "value": {
+              "type": "table",
+              "headings": [
+                {
+                  "key": "origin",
+                  "valueType": "text",
+                  "label": "Origin"
+                },
+                {
+                  "key": "wastedMs",
+                  "valueType": "ms",
+                  "label": "Est LCP savings"
+                }
+              ],
+              "items": [
+                {
+                  "origin": "https://static.cloudflareinsights.com",
+                  "wastedMs": 59.158
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "category": "performance",
+        "id": "unused-css-rules",
+        "title": "Reduce unused CSS",
+        "score": 0.5,
+        "display": "Est savings of 16 KiB",
+        "items": [
+          {
+            "url": "@font-face{font-family:Big Shoulders Display;font-style:normal;font-weight:600 900; … } …",
+            "wastedBytes": 16350,
+            "totalBytes": 25158
+          }
+        ]
+      },
+      {
+        "category": "performance",
+        "id": "legacy-javascript",
+        "title": "Avoid serving legacy JavaScript to modern browsers",
+        "score": 0.5,
+        "display": "Est savings of 10 KiB",
+        "items": [
+          {
+            "url": "https://static.cloudflareinsights.com/beacon.min.js/vce701823e78c4301a35b7e07294d87301792088814092",
+            "wastedBytes": 10414,
+            "totalBytes": 0
+          }
+        ]
+      },
+      {
+        "category": "performance",
+        "id": "uses-long-cache-ttl",
+        "title": "Serve static assets with an efficient cache policy",
+        "score": 0.5,
+        "display": "1 resource found",
+        "items": [
+          {
+            "url": "https://static.cloudflareinsights.com/beacon.min.js/vce701823e78c4301a35b7e07294d87301792088814092",
+            "wastedBytes": 4191.2,
+            "totalBytes": 10478
+          }
+        ]
+      },
+      {
+        "category": "performance",
+        "id": "dom-size",
+        "title": "Avoid an excessive DOM size",
+        "score": 0.5,
+        "display": "3,286 elements",
+        "items": [
+          {
+            "value": {
+              "type": "numeric",
+              "granularity": 1,
+              "value": 3286
+            }
+          },
+          {
+            "node": "<span class=\"fill\" data-astro-cid-oahdww5h=\"\">",
+            "value": {
+              "type": "numeric",
+              "granularity": 1,
+              "value": 15
+            }
+          },
+          {
+            "node": "<div class=\"grid\" role=\"img\" aria-label=\"59 merged pull requests to other projects from 2012 to 2026, busiest in 20…\" data-astro-cid-pipslqh7=\"\">",
+            "value": {
+              "type": "numeric",
+              "granularity": 1,
+              "value": 80
+            }
+          }
+        ]
+      },
+      {
+        "category": "performance",
+        "id": "largest-contentful-paint-element",
+        "title": "Largest Contentful Paint element",
+        "score": 0,
+        "display": "2,640 ms",
+        "items": [
+          {},
+          {}
+        ]
+      },
+      {
+        "category": "accessibility",
+        "id": "aria-allowed-role",
+        "title": "Uses ARIA roles on incompatible elements",
+        "score": 0,
+        "display": "",
+        "items": [
+          {
+            "node": "<article class=\"c-rs c-pop\" id=\"rp-lead\" role=\"tabpanel\" aria-label=\"leadership.md\" data-astro-cid-ooime6zq=\"\">"
+          },
+          {
+            "node": "<article class=\"c-pop case\" id=\"cp-mono\" role=\"tabpanel\" aria-label=\"monorepo.md\" data-astro-cid-w6e7c2ve=\"\">"
+          }
+        ]
+      }
+    ]
+  },
+  "desktop": {
+    "runs": 3,
+    "scores": {
+      "performance": 100,
+      "accessibility": 100,
+      "best-practices": 100,
+      "seo": 100
+    },
+    "metrics": {
+      "first-contentful-paint": 631,
+      "largest-contentful-paint": 689,
+      "total-blocking-time": 0,
+      "cumulative-layout-shift": 0.006,
+      "speed-index": 631,
+      "interactive": 690
+    },
+    "totalBytes": 221044,
+    "lcpElement": "[{\"type\":\"table\",\"headings\":[{\"key\":\"node\",\"valueType\":\"node\",\"label\":\"Element\"}],\"items\":[{\"node\":{\"type\":\"node\",\"lhId\":\"page-0-P\",\"path\":\"1,HTML,1,BODY,2,DIV,1,MAIN,0,SECTION,0,DIV,3,DIV,2,DIV,1,P\",\"selector\":\"div.term > div.body > div#about > p\",\"boundingRect\":{\"top\":470,\"bottom\":579,\"left\":95,\"right\":960,\"width\":865,\"height\":109},\"snippet\":\"<p>\",\"nodeLabel\":\"I’m a hands-on, full-stack engineer",
+    "failing": [
+      {
+        "category": "performance",
+        "id": "cache-insight",
+        "title": "Use efficient cache lifetimes",
+        "score": 0.5,
+        "display": "Est savings of 4 KiB",
+        "items": [
+          {
+            "url": "https://static.cloudflareinsights.com/beacon.min.js/vce701823e78c4301a35b7e07294d87301792088814092",
+            "wastedBytes": 4191.2,
+            "totalBytes": 10478
+          }
+        ]
+      },
+      {
+        "category": "performance",
+        "id": "network-dependency-tree-insight",
+        "title": "Network dependency tree",
+        "score": 0,
+        "display": "",
+        "items": [
+          {
+            "value": {
+              "type": "network-tree",
+              "chains": {
+                "A37BCC3F33F62D4D98887C64FBC9D608": {
+                  "url": "https://craigthompson.dev/",
+                  "navStartToEndTime": 139,
+                  "transferSize": 76984,
+                  "isLongest": true,
+                  "children": {
+                    "3316.12": {
+                      "url": "https://craigthompson.dev/assets/Base.astro_astro_type_script_index_0_lang.DJDU7x9C.js",
+                      "navStartToEndTime": 169,
+                      "transferSize": 5520,
+                      "isLongest": true,
+                      "children": {
+                        "3316.15": {
+                          "url": "https://craigthompson.dev/assets/toast.3uzCHBjR.js",
+                          "navStartToEndTime": 256,
+                          "transferSize": 1286,
+                          "isLongest": true,
+                          "children": {
+                            "3316.30": {
+                              "url": "https://craigthompson.dev/cdn-cgi/rum?",
+                              "navStartToEndTime": 404,
+                              "transferSize": 455,
+                              "isLongest": true,
+                              "children": {}
+                            }
+                          }
+                        },
+                        "3316.16": {
+                          "url": "https://craigthompson.dev/assets/clock.Cr3gIC11.js",
+                          "navStartToEndTime": 353,
+                          "transferSize": 1714,
+                          "children": {}
+                        },
+                        "3316.14": {
+                          "url": "https://craigthompson.dev/assets/url.BcguYqzw.js",
+                          "navStartToEndTime": 257,
+                          "transferSize": 675,
+                          "children": {}
+                        },
+                        "3316.17": {
+                          "url": "https://craigthompson.dev/assets/copy.CgnLqJoF.js",
+                          "navStartToEndTime": 257,
+                          "transferSize": 1083,
+                          "children": {}
+                        },
+                        "3316.18": {
+                          "url": "https://craigthompson.dev/assets/site.D5SW1Rfy.js",
+                          "navStartToEndTime": 257,
+                          "transferSize": 759,
+                          "children": {}
+                        }
+                      }
+                    },
+                    "3316.6": {
+                      "url": "https://craigthompson.dev/assets/PreviewBar.astro_astro_type_script_index_0_lang.Dy7vUPrF.js",
+                      "navStartToEndTime": 342,
+                      "transferSize": 1219,
+                      "children": {}
+                    },
+                    "3316.11": {
+                      "url": "https://craigthompson.dev/assets/index.astro_astro_type_script_index_0_lang.C6Zc_4_2.js",
+                      "navStartToEndTime": 257,
+                      "transferSize": 18231,
+                      "children": {
+                        "3316.29": {
+                          "url": "https://craigthompson.dev/assets/navigate.Suq7XmLc.js",
+                          "navStartToEndTime": 321,
+                          "transferSize": 752,
+                          "children": {}
+                        }
+                      }
+                    },
+                    "3316.13": {
+                      "url": "https://static.cloudflareinsights.com/beacon.min.js/vce701823e78c4301a35b7e07294d87301792088814092",
+                      "navStartToEndTime": 256,
+                      "transferSize": 10478,
+                      "children": {}
+                    }
+                  }
+                }
+              },
+              "longestChain": {
+                "duration": 404
+              }
+            }
+          },
+          {
+            "description": "[preconnect](https://developer.chrome.com/docs/lighthouse/performance/uses-rel-preconnect/) hints help the browser establish a connection earlier in the page load, saving time when the first request for that origin is made. The following are the origins that the page preconnected to.",
+            "value": {
+              "type": "text",
+              "value": "no origins were preconnected"
+            }
+          },
+          {
+            "description": "Add [preconnect](https://developer.chrome.com/docs/lighthouse/performance/uses-rel-preconnect/) hints to your most important origins, but try to use no more than 4.",
+            "value": {
+              "type": "table",
+              "headings": [
+                {
+                  "key": "origin",
+                  "valueType": "text",
+                  "label": "Origin"
+                },
+                {
+                  "key": "wastedMs",
+                  "valueType": "ms",
+                  "label": "Est LCP savings"
+                }
+              ],
+              "items": [
+                {
+                  "origin": "https://static.cloudflareinsights.com",
+                  "wastedMs": 75.541
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "category": "performance",
+        "id": "unused-css-rules",
+        "title": "Reduce unused CSS",
+        "score": 0.5,
+        "display": "Est savings of 15 KiB",
+        "items": [
+          {
+            "url": "@font-face{font-family:Big Shoulders Display;font-style:normal;font-weight:600 900; … } …",
+            "wastedBytes": 15530,
+            "totalBytes": 25159
+          }
+        ]
+      },
+      {
+        "category": "performance",
+        "id": "legacy-javascript",
+        "title": "Avoid serving legacy JavaScript to modern browsers",
+        "score": 0.5,
+        "display": "Est savings of 10 KiB",
+        "items": [
+          {
+            "url": "https://static.cloudflareinsights.com/beacon.min.js/vce701823e78c4301a35b7e07294d87301792088814092",
+            "wastedBytes": 10414,
+            "totalBytes": 0
+          }
+        ]
+      },
+      {
+        "category": "performance",
+        "id": "uses-long-cache-ttl",
+        "title": "Serve static assets with an efficient cache policy",
+        "score": 0.5,
+        "display": "1 resource found",
+        "items": [
+          {
+            "url": "https://static.cloudflareinsights.com/beacon.min.js/vce701823e78c4301a35b7e07294d87301792088814092",
+            "wastedBytes": 4191.2,
+            "totalBytes": 10478
+          }
+        ]
+      },
+      {
+        "category": "performance",
+        "id": "dom-size",
+        "title": "Avoid an excessive DOM size",
+        "score": 0.5,
+        "display": "3,286 elements",
+        "items": [
+          {
+            "value": {
+              "type": "numeric",
+              "granularity": 1,
+              "value": 3286
+            }
+          },
+          {
+            "node": "<span class=\"fill\" data-astro-cid-oahdww5h=\"\">",
+            "value": {
+              "type": "numeric",
+              "granularity": 1,
+              "value": 15
+            }
+          },
+          {
+            "node": "<div class=\"grid\" role=\"img\" aria-label=\"59 merged pull requests to other projects from 2012 to 2026, busiest in 20…\" data-astro-cid-pipslqh7=\"\">",
+            "value": {
+              "type": "numeric",
+              "granularity": 1,
+              "value": 80
+            }
+          }
+        ]
+      },
+      {
+        "category": "accessibility",
+        "id": "aria-allowed-role",
+        "title": "Uses ARIA roles on incompatible elements",
+        "score": 0,
+        "display": "",
+        "items": [
+          {
+            "node": "<article class=\"c-rs c-pop\" id=\"rp-lead\" role=\"tabpanel\" aria-label=\"leadership.md\" data-astro-cid-ooime6zq=\"\">"
+          },
+          {
+            "node": "<article class=\"c-pop case\" id=\"cp-mono\" role=\"tabpanel\" aria-label=\"monorepo.md\" data-astro-cid-w6e7c2ve=\"\">"
+          }
+        ]
+      }
+    ]
+  }
+}
